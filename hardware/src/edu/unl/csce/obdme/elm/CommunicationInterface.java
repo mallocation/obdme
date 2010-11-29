@@ -20,7 +20,7 @@ public class CommunicationInterface {
 	/** The Baud Rate. */
 	private int BAUD_RATE = 38400;
 	
-	/** The ASCI i_ ne w_ line. */
+	/** The ASCII new line. */
 	private byte ASCII_NEW_LINE = 0x0a;
 	
 	/** The log. */
@@ -68,6 +68,11 @@ public class CommunicationInterface {
 					SerialPort.STOPBITS_1,
 					SerialPort.PARITY_NONE);
 			
+			while (inputStream.available() > 0) {
+				inputStream.read();
+			}
+			outputStream.flush();
+			
 		} catch (NoSuchPortException nspe) {
 			log.error("NoSuchPortException", nspe);
 		} catch (PortInUseException piue) {
@@ -77,10 +82,93 @@ public class CommunicationInterface {
 		} catch (UnsupportedCommOperationException ucoe) {
 			log.error("UnsupportedCommOperationException", ucoe);
 		}
+		
+		
 	}
 	
-	public void establishConnection() {
+	public void establishConnection() throws IOException {
+		
+		if (inputStream.available() > 0) {
 
+			log.info("Data recieved on input stream.");
+
+			//Initialize the string buffer and received char variable
+			StringBuffer recievedData = new StringBuffer();
+			byte recievedByte = 0;
+
+			//While there are bytes available in the buffer, read them until
+			//a return character in encountered (end of command)
+			do {
+				recievedByte = (byte) inputStream.read();
+				recievedData.append((char)recievedByte);
+			} while (inputStream.available() > 0);
+
+			//Trim the input data (remove the carriage return and the new line return)
+			String receivedString = recievedData.substring(0, recievedData.length()-2);
+			log.info("Data recieved: " + receivedString);
+
+			//Check if the received data was an ACK command from the device
+			
+		}
+
+	}
+	
+	public void sendString(String command) throws Exception{
+
+		byte[] byteArray = new String(command + "\r").getBytes("ASCII");
+		
+		outputStream.write(byteArray);
+		
+		StringBuffer recievedData = new StringBuffer();
+		byte recievedByte = 0;
+		
+		while (inputStream.available() <= 0) {
+			
+		}
+				
+		do {
+			recievedByte = (byte) inputStream.read();
+			recievedData.append((char)recievedByte);
+		} while (inputStream.available() > 0);
+
+		//Trim the input data (remove the carriage return and the new line return)
+		String receivedString = recievedData.substring(0, recievedData.length()-2);
+		log.info("Data recieved: " + receivedString);
+
+		//Send the byte command
+		log.info("Sending byte array: " + byteArrayToHexString(byteArray));
+		outputStream.write(byteArray);
+
+	}
+	
+	public static String byteArrayToHexString(byte[] b) {
+		
+		//Initialize the string buffer
+		StringBuffer sb = new StringBuffer(b.length * 2);
+		
+		//Start constructing the byte array
+		sb.append("[ ");
+		
+		//For all the bytes in the array
+		for (int i = 0; i < b.length; i++) {
+			
+			//Convert the byte to an integer
+			int v = b[i] & 0xff;
+			
+			//Left shift
+			if (v < 16) {
+				sb.append('0');
+			}
+			
+			//Add the hex string representation of the byte 
+			sb.append("0x" + Integer.toHexString(v).toUpperCase() + " ");
+		}
+		
+		//Close the byte array string
+		sb.append("]");
+		
+		//Convert the string buffer to a string a return it
+		return sb.toString();
 	}
 
 }
