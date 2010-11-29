@@ -3,6 +3,7 @@ package edu.unl.csce.obdme.elm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -22,6 +23,8 @@ public class CommunicationInterface {
 	
 	/** The ASCII new line. */
 	private byte ASCII_NEW_LINE = 0x0a;
+	
+	private String RESPONSE_OK = "OK\r";
 	
 	/** The log. */
 	private Logger log;
@@ -113,31 +116,52 @@ public class CommunicationInterface {
 
 	}
 	
-	public void sendString(String command) throws Exception{
+	public boolean sendConfigCommand(String command) {
 
-		byte[] byteArray = new String(command + "\r").getBytes("ASCII");
+		//Construct the command
+		String commandString = "AT" + command + "\r";
+		log.info("Sending Config Command: " + command);
 		
-		outputStream.write(byteArray);
+		try {
+			//Construct the ASCII Byte Array
+			byte[] commandByteArray = new String(commandString).getBytes("ASCII");
+			
+			//Send the command to the device
+			log.info("Sending Bytes: " + byteArrayToHexString(commandByteArray));
+			outputStream.write(commandByteArray);
+		} catch (UnsupportedEncodingException uee) {
+			log.error("UnsupportedEncodingException", uee);
+		} catch (IOException ioe) {
+			log.error("IOException", ioe);
+		}
 		
 		StringBuffer recievedData = new StringBuffer();
-		byte recievedByte = 0;
 		
-		while (inputStream.available() <= 0) {
+		try {
+			//Wait for the confirmation
+			while (inputStream.available() <= 3);
 			
+			do {
+				//Cast a byte from the buffer as a char and append it to the received string
+				recievedData.append((char)inputStream.read());
+			} while (inputStream.available() > 0);
+			
+		} catch (IOException ioe) {
+			log.error("IOException", ioe);
 		}
-				
-		do {
-			recievedByte = (byte) inputStream.read();
-			recievedData.append((char)recievedByte);
-		} while (inputStream.available() > 0);
 
-		//Trim the input data (remove the carriage return and the new line return)
-		String receivedString = recievedData.substring(0, recievedData.length()-2);
-		log.info("Data recieved: " + receivedString);
+		//Trim the input data (remove the carriage return)
+		String receivedString = recievedData.substring(0, recievedData.length()-1);
+		log.info("Recieved String: " + receivedString);
 
-		//Send the byte command
-		log.info("Sending byte array: " + byteArrayToHexString(byteArray));
-		outputStream.write(byteArray);
+		if (receivedString.equals(RESPONSE_OK)) {
+			log.info("OK recieved for " + command + " command");
+			return true;
+		}
+		else {
+			log.error("No OK recieved for " + command + " command");
+			return false;
+		}
 
 	}
 	

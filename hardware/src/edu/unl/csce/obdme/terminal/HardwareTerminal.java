@@ -88,13 +88,6 @@ public class HardwareTerminal implements ActionListener {
 
 		CommunicationInterface commInterface = new CommunicationInterface("/dev/tty.OBDMe-DevB");
 
-		try {
-			commInterface.sendString("ATZ");	
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		//HardwareTerminal o = new HardwareTerminal();
 		//o.show();
 	}
