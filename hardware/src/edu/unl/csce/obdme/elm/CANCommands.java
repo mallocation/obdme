@@ -2,11 +2,10 @@ package edu.unl.csce.obdme.elm;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CANCommands.
  */
-public class CANCommands extends ELM327CommandSet {
+public class CANCommands extends OBDCommands {
 	
 	/** The Log4J logger object. */
 	private Logger log;

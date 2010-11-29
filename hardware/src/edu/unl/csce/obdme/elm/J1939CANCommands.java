@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 /**
  * The Class J1939CANCommands.
  */
-public class J1939CANCommands extends ELM327CommandSet{
+public class J1939CANCommands extends OBDCommands {
 	
 	/** The Log4J logger object. */
 	private Logger log;
