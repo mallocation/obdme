@@ -1,4 +1,4 @@
-package obdme.hardware;
+package edu.unl.csce.obdme.terminal;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -12,8 +12,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-
-
 
 public class HardwareTerminal implements ActionListener {
 	
