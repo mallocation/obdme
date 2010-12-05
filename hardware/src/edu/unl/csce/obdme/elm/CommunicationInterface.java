@@ -22,9 +22,20 @@ public class CommunicationInterface {
 	private int BAUD_RATE = 38400;
 	
 	/** The ASCII new line. */
-	private byte ASCII_NEW_LINE = 0x0a;
+	private static final byte ASCII_NEW_LINE = 0x0a;
+	
+	/** The ASCII carriage return. */
+	private static final byte ASCII_CARRIAGE_RETURN = 0x0d;
+	
+	/** The ASCII carriage return. */
+	private boolean ECHO_COMMAND = true;
+	
+	/** The ASCII carriage return. */
+	private static final char ASCII_COMMAND_PROMPT = '>';
 	
 	private String RESPONSE_OK = "OK\r";
+	
+	private String lastCommand = "";
 	
 	/** The log. */
 	private Logger log;
@@ -89,78 +100,109 @@ public class CommunicationInterface {
 		
 	}
 	
-	public void establishConnection() throws IOException {
+	public void initializeConnection() throws Exception {
+
+		log.info("Initializing Connection with the ELM");
 		
-		if (inputStream.available() > 0) {
-
-			log.info("Data recieved on input stream.");
-
-			//Initialize the string buffer and received char variable
-			StringBuffer recievedData = new StringBuffer();
-			byte recievedByte = 0;
-
-			//While there are bytes available in the buffer, read them until
-			//a return character in encountered (end of command)
-			do {
-				recievedByte = (byte) inputStream.read();
-				recievedData.append((char)recievedByte);
-			} while (inputStream.available() > 0);
-
-			//Trim the input data (remove the carriage return and the new line return)
-			String receivedString = recievedData.substring(0, recievedData.length()-2);
-			log.info("Data recieved: " + receivedString);
-
-			//Check if the received data was an ACK command from the device
-			
+		log.info("Flushing the input stream of unread bytes.");
+		while (this.inputStream.available() > 0) {
+			this.inputStream.read();
 		}
-
-	}
-	
-	public boolean sendConfigCommand(String command) {
-
-		//Construct the command
-		String commandString = "AT" + command + "\r";
-		log.info("Sending Config Command: " + command);
 		
+		log.info("Restarting the ELM Device");
 		try {
-			//Construct the ASCII Byte Array
-			byte[] commandByteArray = new String(commandString).getBytes("ASCII");
-			
-			//Send the command to the device
+			byte[] commandByteArray = new String("ATZ\r").getBytes("ASCII");
+			this.lastCommand = "ATZ\r";
 			log.info("Sending Bytes: " + byteArrayToHexString(commandByteArray));
-			outputStream.write(commandByteArray);
+			this.outputStream.write(commandByteArray);
+			this.outputStream.flush();
 		} catch (UnsupportedEncodingException uee) {
 			log.error("UnsupportedEncodingException", uee);
 		} catch (IOException ioe) {
 			log.error("IOException", ioe);
 		}
 		
+		//Check that we got a response after the device restart
+		if (!recieveResponse().contains("ELM327 v1.4")) {
+			log.error("The connectecd device is not an ELM device.");
+			throw new Exception("The connectecd device is not an ELM device.");
+		}
+		else {
+			log.info("Connection Successfully Established.");
+		}
+	
+	}
+	
+	public String recieveResponse() {
+		
 		StringBuffer recievedData = new StringBuffer();
+
+		log.info("Waiting for response from the device.");
+		
+		char currentChar = ' ';
+
+		try {
+			do {
+				if (this.inputStream.available() > 0) {
+					//Cast a byte from the buffer as a char and append it to the received string
+					currentChar = (char)this.inputStream.read();
+					recievedData.append(currentChar);
+				}
+			} while (currentChar != ASCII_COMMAND_PROMPT);
+
+		} catch (IOException ioe) {
+			log.error("IOException when receiving data from the device:", ioe);
+		}
+
+		String recievedString = recievedData.toString();
+		
+		if (ECHO_COMMAND) {
+			recievedString = recievedString.replace(this.lastCommand, "");
+		}
+		
+		recievedString = recievedString.replace("\r", "");
+		recievedString = recievedString.replace(">", "");
+		recievedString = recievedString.trim();
+	
+		log.info("Received string from device:" + recievedString);
+		
+		//Return the data without a carriage return
+		return recievedString;
+	
+	}
+	
+	public void sendATCommand(String command) {
+
+		log.info("Sending Config Command: " + command);
 		
 		try {
-			//Wait for the confirmation
-			while (inputStream.available() <= 3);
-			
-			do {
-				//Cast a byte from the buffer as a char and append it to the received string
-				recievedData.append((char)inputStream.read());
-			} while (inputStream.available() > 0);
-			
+			byte[] commandByteArray = new String("AT" + command + "\r").getBytes("ASCII");
+			this.lastCommand = "AT" + command + "\r";
+			log.info("Sending Bytes: " + byteArrayToHexString(commandByteArray));
+			this.outputStream.write(commandByteArray);
+			this.outputStream.flush();
+		} catch (UnsupportedEncodingException uee) {
+			log.error("UnsupportedEncodingException", uee);
 		} catch (IOException ioe) {
 			log.error("IOException", ioe);
 		}
 
-		//Trim the input data (remove the carriage return)
-		String receivedString = recievedData.substring(0, recievedData.length()-1);
-		log.info("Recieved String: " + receivedString);
+	}
+	
+	public void sendOBDCommand(String command) {
 
-		if (receivedString.equals(RESPONSE_OK)) {
-			log.info("OK recieved for " + command + " command");
-			return true;
-		}
-		else {
-			log.error("No OK recieved for " + command + " command");
-			return false;
+		log.info("Sending Config Command: " + command);
+		
+		try {
+			byte[] commandByteArray = new String(command + "\r").getBytes("ASCII");
+			this.lastCommand = command + "\r";
+			log.info("Sending Bytes: " + byteArrayToHexString(commandByteArray));
+			this.outputStream.write(commandByteArray);
+			//this.outputStream.flush();
+		} catch (UnsupportedEncodingException uee) {
+			log.error("UnsupportedEncodingException", uee);
+		} catch (IOException ioe) {
+			log.error("IOException", ioe);
 		}
 
 	}

@@ -33,18 +33,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean repeatLastCommand() {
-		log.info("Sending repeat the last command command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("<CR>")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending repeating the last command command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -90,16 +79,16 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean allToDefaults() {
-		log.info("Sending set all to defaults command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("D")) {
-			
-			//Return true for success
+		//Send the command
+		this.serialInterface.sendATCommand("D");
+		
+		//Check if we got what we expected in return
+		if(this.serialInterface.recieveResponse().contains("OK")) {
+			log.info("The device was sucessfully set to defaults.");
 			return true;
 		}
 		else {
-			//Otherwise return false for failure
-			log.error("Error sending set all to defaults command");
+			log.error("The device never responded after the defaults request.");
 			return false;
 		}
 	}
@@ -112,19 +101,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean echoOff() {
-		log.info("Sending set echo off command");
-		
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("E0")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending set echo off command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -135,18 +112,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean echoOn() {
-		log.info("Sending set echo on command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("E0")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending set echo on command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -162,18 +128,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean forgetEvents() {
-		log.info("Sending forget events command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("FE")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending forget events command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -200,18 +155,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean lowPowerMode() {
-		log.info("Sending low power mode command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("LP")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending low power mode command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -242,18 +186,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean memoryOn() {
-		log.info("Sending set memory on command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("M1")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending set memory on command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -284,18 +217,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean memoryOff() {
-		log.info("Sending set memory off command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("M0")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending set memory off command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -335,18 +257,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean warmStart() {
-		log.info("Sending warm start command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("WS")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending warm start command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -358,16 +269,17 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean restartAll() {
-		log.info("Sending reset all command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("WS")) {
-			
-			//Return true for success
+		
+		//Send the command
+		this.serialInterface.sendATCommand("Z");
+		
+		//Check if we got what we expected in return
+		if(this.serialInterface.recieveResponse().contains("ELM v1.4")) {
+			log.info("The device was successfully restarted.");
 			return true;
 		}
 		else {
-			//Otherwise return false for failure
-			log.error("Error sending reset all command");
+			log.error("The device never responded after restart request.");
 			return false;
 		}
 	}

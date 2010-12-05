@@ -19,6 +19,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import edu.unl.csce.obdme.elm.CommunicationInterface;
+import edu.unl.csce.obdme.obd.OBDCommunication;
+
 //import edu.unl.csce.obdme.elm.CommunicationInterface;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -144,6 +147,23 @@ public class HardwareTerminal {
 		// TODO Auto-generated method stub
 
 		//CommunicationInterface commInterface = new CommunicationInterface("/dev/tty.OBDMe-DevB");
+		
+		CommunicationInterface commInterface = new CommunicationInterface("/dev/tty.CBT-DevB");
+		
+		try {
+			commInterface.initializeConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		OBDCommunication obdCommands = new OBDCommunication(commInterface);
+		
+		try {
+			obdCommands.getSupportedPIDS();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		HardwareTerminal o = new HardwareTerminal();
 		o.show();

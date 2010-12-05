@@ -36,18 +36,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean allowLongMessages() {
-		log.info("Sending allow long messages command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("AL")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending allow long messages command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -67,18 +56,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean automaticallyReceive() {
-		log.info("Sending automatically receive command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("AR")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending automatically receive command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -120,18 +98,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean bypassInitialzationSequence() {
-		log.info("Sending bypass initialzation sequence command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("BI")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending bypass initialzation sequence command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -182,16 +149,16 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean headersOn() {
-		log.info("Sending headers on command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("H1")) {
-			
-			//Return true for success
+		//Send the command
+		this.serialInterface.sendATCommand("H1");
+		
+		//Check if we got what we expected in return
+		if(this.serialInterface.recieveResponse().contains("OK")) {
+			log.info("The device completed auto set protocol function");
 			return true;
 		}
 		else {
-			//Otherwise return false for failure
-			log.error("Error sending headers on command");
+			log.error("The device never responded after restart request.");
 			return false;
 		}
 	}
@@ -211,18 +178,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean headersOff() {
-		log.info("Sending headers off command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("H0")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending headers off command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -260,18 +216,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean monitorAll() {
-		log.info("Sending monitor all command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("MA")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending monitor all command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -333,18 +278,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean normalLengthMessages() {
-		log.info("Sending normal length messages command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("NL")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending normal length messages command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -358,18 +292,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean protocolClose() {
-		log.info("Sending protocol close command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("PC")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending Sending protocol close command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -392,18 +315,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean responsesOn() {
-		log.info("Sending reponses on command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("R1")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending reponses on command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -426,18 +338,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean responsesOff() {
-		log.info("Sending reponses off command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("R0")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending reponses off command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -455,18 +356,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean printSpacesOn() {
-		log.info("Sending print spaces on command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("S1")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending print spaces on command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -484,18 +374,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean printSpacesOff() {
-		log.info("Sending print spaces off command");
-		//If the command was received successfully
-		if (this.serialInterface.sendConfigCommand("S0")) {
-			
-			//Return true for success
-			return true;
-		}
-		else {
-			//Otherwise return false for failure
-			log.error("Error sending print spaces off command");
-			return false;
-		}
+		return false;
 	}
 	
 	/**
@@ -583,8 +462,18 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean setProtocolAuto() {
-		//TODO This needs to be implemented
-		return false;
+		//Send the command
+		this.serialInterface.sendATCommand("SP0");
+		
+		//Check if we got what we expected in return
+		if(this.serialInterface.recieveResponse().contains("OK")) {
+			log.info("The device completed auto set protocol function");
+			return true;
+		}
+		else {
+			log.error("The device never responded after restart request.");
+			return false;
+		}
 	}
 	
 	/**
