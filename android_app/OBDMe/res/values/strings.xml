@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title">ODBMe</string>
+    <string name="app_name">OBDMe</string>
+    <string name="sendButtonText">Send</string>
+    <string name="commandText">Enter Command</string>
+    <string name="commandWindowText">Command window text will go here...</string>
+</resources>
