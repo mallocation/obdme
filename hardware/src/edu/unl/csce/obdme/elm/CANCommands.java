@@ -2,6 +2,8 @@ package edu.unl.csce.obdme.elm;
 
 import org.apache.log4j.Logger;
 
+import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class CANCommands.

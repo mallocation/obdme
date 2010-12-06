@@ -2,6 +2,8 @@ package edu.unl.csce.obdme.elm;
 
 import org.apache.log4j.Logger;
 
+import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
+
 /**
  * The Class OBDCommands.
  */
@@ -116,8 +118,18 @@ public class OBDCommands extends ELM327CommandSet {
 	 */
 	
 	public String describeCurrentProtocol() {
-		//TODO This needs to be implemented
-		return null;
+		
+		String commandResponse = this.serialInterface.sendATCommand("DP");
+		
+		if(commandResponse.length() > 0) {
+			log.info("The device completed auto set protocol function");
+			log.info("The set protocol is " + commandResponse);
+			return commandResponse;
+		}
+		else {
+			log.error("The device never responded after describe protocol request.");
+			return null;
+		}
 	}
 	
 	/**
@@ -149,11 +161,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean headersOn() {
-		//Send the command
-		this.serialInterface.sendATCommand("H1");
-		
-		//Check if we got what we expected in return
-		if(this.serialInterface.recieveResponse().contains("OK")) {
+		if(this.serialInterface.sendATCommand("H1").contains("OK")) {
 			log.info("The device completed auto set protocol function");
 			return true;
 		}
@@ -462,11 +470,8 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean setProtocolAuto() {
-		//Send the command
-		this.serialInterface.sendATCommand("SP0");
 		
-		//Check if we got what we expected in return
-		if(this.serialInterface.recieveResponse().contains("OK")) {
+		if(this.serialInterface.sendATCommand("SP0").contains("OK")) {
 			log.info("The device completed auto set protocol function");
 			return true;
 		}

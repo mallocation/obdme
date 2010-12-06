@@ -1,54 +1,72 @@
 package edu.unl.csce.obdme.obd;
 
-import java.util.Iterator;
+import java.util.EnumMap;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import edu.unl.csce.obdme.elm.CommunicationInterface;
-import edu.unl.csce.obdme.elm.ELM327CommandSet;
-import edu.unl.csce.obdme.elm.OBDCommands;
+import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
 
+
+/**
+ * The Class OBDCommunication.
+ */
 public class OBDCommunication {
 	
 	/** The serial interface to the ELM327. */
-	protected CommunicationInterface serialInterface;
+	private CommunicationInterface serialInterface;
 	
-	protected Logger log;
+	/** The log. */
+	private Logger log;
 	
-	protected OBDDataHelpers helper;
+	/** The helper. */
+	private OBDDataHelpers helper;
 	
-	protected PIDS pids;
+	/** The valid PIDS. */
+	private EnumMap<PIDS, Boolean> validPIDS;
 	
-	protected MODES modes;
-	
+	/**
+	 * Instantiates a new oBD communication.
+	 *
+	 * @param serialInterface the serial interface
+	 */
 	public OBDCommunication(CommunicationInterface serialInterface) {
 		//Save a reference to the serial interface object
 		this.serialInterface = serialInterface;
 		
 		//Instantiate the data helper
 		this.helper = new OBDDataHelpers();
-				
+		
+		this.validPIDS = new EnumMap<PIDS, Boolean>(PIDS.class);
+						
 		//Initialize the logger for this instance
-		log = Logger.getLogger(ELM327CommandSet.class);
+		log = Logger.getLogger(OBDCommunication.class);
+		
+		try {
+			getSupportedPIDS();
+		} catch (Exception e) {
+			log.error("OBD Communication constructor could not get valid PIDS.");
+		}
 		
 	}
-	
+
+	/**
+	 * Gets the supported PIDS from the onboard ECU.
+	 *
+	 * @return the supported pids
+	 * @throws Exception the exception
+	 */
 	public void getSupportedPIDS() throws Exception {
 		
-		OBDCommands commands = new OBDCommands(this.serialInterface);
-
-		//Send the command
-		this.serialInterface.sendOBDCommand(MODES.CURRENT_DATA.getMode() + PIDS.SUPPORTED_PIDS.getPid());
-		
-		//Check if we got what we expected in return
-		String receivedData = this.serialInterface.recieveResponse();
+		//Send the command and receive the response
+		String receivedData = this.serialInterface.sendOBDCommand(MODES.CURRENT_DATA.getMode() + 
+				PIDS.SUPPORTED_PIDS.getPid());
 		
 		List<Integer> responseValues = helper.stringToIntArray(receivedData);
 		
 		//Check the header info on the response
-		responseValues = helper.processHeader(responseValues, MODES.CURRENT_DATA.getValue(), 
-				PIDS.SUPPORTED_PIDS.getValue());
+		responseValues = helper.processHeader(responseValues, MODES.CURRENT_DATA, PIDS.SUPPORTED_PIDS);
 		
 		//Make sure that our response size is correct
 		if (responseValues.size() > PIDS.SUPPORTED_PIDS.getReturnSize()) {
@@ -56,17 +74,56 @@ public class OBDCommunication {
 			responseValues = responseValues.subList(0, 4);
 		}
 		
-		Iterator<Integer> responseValueItr = responseValues.iterator();
-		StringBuffer encodedBits = new StringBuffer();
+		String encodedBits = helper.makeBitString(responseValues);
 		
-		while (responseValueItr.hasNext()) {
-			encodedBits.append(Integer.toBinaryString(responseValueItr.next()));
+		log.info("Supported PID's bit string: " + encodedBits);
+		
+		for (PIDS pid : PIDS.values()) {
+			if (encodedBits.charAt(pid.getValue()) == '1') {
+				log.info("Setting " + pid.toString() + " as a supported PID");
+				this.validPIDS.put(pid, true);
+			}
+			else {
+				log.info("Setting " + pid.toString() + " as a unsupported PID");
+				this.validPIDS.put(pid, false);
+			}
 		}
 		
-		log.info("Supported PID's bit string: " + encodedBits.toString());
+	}
+	
+	/**
+	 * Read the PID sensor/property value using the ELM327
+	 *
+	 * @param mode the mode
+	 * @param pid the pid
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public String readPIDValue(MODES mode, PIDS pid) throws Exception {
 		
+		//Send command and wait for response
+		String receivedData = this.serialInterface.sendOBDCommand(mode.getMode() + pid.getPid());
 		
+		List<Integer> responseValues = helper.stringToIntArray(receivedData);
 		
+		//Check the header info on the response
+		responseValues = helper.processHeader(responseValues, mode, pid);
+		
+		if (responseValues.size() > pid.getReturnSize()) {
+			log.warn("Result was not expected size, trimming results to size.");
+			responseValues = responseValues.subList(0, pid.getReturnSize());
+		}
+		
+		return Double.toString(pid.evalResult(responseValues));
+	}	
+	
+	/**
+	 * Gets the valid PIDS enumerator map.
+	 *
+	 * @return the valid pids
+	 */
+	public EnumMap<PIDS, Boolean> getValidPIDS() {
+		return validPIDS;
 	}
 
 }

@@ -2,6 +2,8 @@ package edu.unl.csce.obdme.elm;
 
 import org.apache.log4j.Logger;
 
+import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
+
 /**
  * The Class J1939CANCommands.
  */

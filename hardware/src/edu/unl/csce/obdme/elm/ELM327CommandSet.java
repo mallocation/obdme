@@ -2,6 +2,8 @@ package edu.unl.csce.obdme.elm;
 
 import org.apache.log4j.Logger;
 
+import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
+
 /**
  * The Class ELM327CommandSet.
  */
@@ -79,11 +81,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean allToDefaults() {
-		//Send the command
-		this.serialInterface.sendATCommand("D");
-		
-		//Check if we got what we expected in return
-		if(this.serialInterface.recieveResponse().contains("OK")) {
+		if(this.serialInterface.sendATCommand("D").contains("OK")) {
 			log.info("The device was sucessfully set to defaults.");
 			return true;
 		}
@@ -101,7 +99,15 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean echoOff() {
-		return false;
+		if(this.serialInterface.sendATCommand("E0").contains("OK")) {
+			serialInterface.setEchoCommand(false);
+			log.info("The command echo option was sucessfully disabled.");
+			return true;
+		}
+		else {
+			log.error("The device never responded after the echo off request.");
+			return false;
+		}
 	}
 	
 	/**
@@ -112,7 +118,15 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean echoOn() {
-		return false;
+		if(this.serialInterface.sendATCommand("E1").contains("OK")) {
+			serialInterface.setEchoCommand(true);
+			log.info("The command echo option was sucessfully enabled.");
+			return true;
+		}
+		else {
+			log.error("The device never responded after the echo on request.");
+			return false;
+		}
 	}
 	
 	/**
@@ -128,7 +142,14 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean forgetEvents() {
-		return false;
+		if(this.serialInterface.sendATCommand("FE").contains("OK")) {
+			log.info("The forget events command option was sucessfully executed.");
+			return true;
+		}
+		else {
+			log.error("The device never responded after the forget events request.");
+			return false;
+		}
 	}
 	
 	/**
@@ -139,8 +160,17 @@ public class ELM327CommandSet {
 	 * @return the string
 	 */
 	public String printVersionID() {
-		//TODO This needs to be implemented
-		return null;
+		
+		String versionID = this.serialInterface.sendATCommand("I");
+		
+		if(!versionID.isEmpty()) {
+			log.info("The version id request was sucessfully executed.");
+			return versionID;
+		}
+		else {
+			log.error("The device never responded after the version id request.");
+			return null;
+		}
 	}
 	
 	/**
@@ -155,7 +185,14 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean lowPowerMode() {
-		return false;
+		if(this.serialInterface.sendATCommand("LP").contains("OK")) {
+			log.info("The low power mode option was sucessfully enabled.");
+			return true;
+		}
+		else {
+			log.error("The device never responded after the low power mode request.");
+			return false;
+		}
 	}
 	
 	/**
@@ -270,18 +307,15 @@ public class ELM327CommandSet {
 	 */
 	public boolean restartAll() {
 		
-		//Send the command
-		this.serialInterface.sendATCommand("Z");
-		
-		//Check if we got what we expected in return
-		if(this.serialInterface.recieveResponse().contains("ELM v1.4")) {
-			log.info("The device was successfully restarted.");
+		if(this.serialInterface.sendATCommand("Z").contains("ELM v1.4")) {
+			log.info("The device was successfully hard restarted.");
 			return true;
 		}
 		else {
-			log.error("The device never responded after restart request.");
+			log.error("The device never responded after hard restart request.");
 			return false;
 		}
+		
 	}
 	
 	/**

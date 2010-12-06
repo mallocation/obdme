@@ -2,7 +2,8 @@ package edu.unl.csce.obdme.elm;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
+import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
+
 /**
  * The Class ISOCommands.
  */
