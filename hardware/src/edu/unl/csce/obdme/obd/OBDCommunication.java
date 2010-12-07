@@ -27,9 +27,9 @@ public class OBDCommunication {
 	private EnumMap<PIDS, Boolean> validPIDS;
 	
 	/**
-	 * Instantiates a new oBD communication.
+	 * Instantiates a new OBD communication.
 	 *
-	 * @param serialInterface the serial interface
+	 * @param serialInterface the serial interface (bluetooth)
 	 */
 	public OBDCommunication(CommunicationInterface serialInterface) {
 		//Save a reference to the serial interface object
@@ -52,10 +52,10 @@ public class OBDCommunication {
 	}
 
 	/**
-	 * Gets the supported PIDS from the onboard ECU.
+	 * Gets the supported PIDS from the on board ECU.
 	 *
-	 * @return the supported pids
-	 * @throws Exception the exception
+	 * @return the supported PIDs
+	 * @throws Exception the exception thrown by called methods
 	 */
 	public void getSupportedPIDS() throws Exception {
 		
@@ -94,10 +94,10 @@ public class OBDCommunication {
 	/**
 	 * Read the PID sensor/property value using the ELM327
 	 *
-	 * @param mode the mode
-	 * @param pid the pid
-	 * @return the string
-	 * @throws Exception the exception
+	 * @param mode the mode enumeration
+	 * @param pid the PID enumeration
+	 * @return the string value of the result
+	 * @throws Exception the exception thrown by called methods
 	 */
 	public String readPIDValue(MODES mode, PIDS pid) throws Exception {
 		
@@ -120,7 +120,7 @@ public class OBDCommunication {
 	/**
 	 * Gets the valid PIDS enumerator map.
 	 *
-	 * @return the valid pids
+	 * @return the valid PID's enumerator map
 	 */
 	public EnumMap<PIDS, Boolean> getValidPIDS() {
 		return validPIDS;

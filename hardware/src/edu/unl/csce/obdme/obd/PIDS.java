@@ -8,100 +8,100 @@ import java.util.List;
 public enum PIDS {
 	
 	/** The supported PID's. */
-	SUPPORTED_PIDS(			"00",	0,	4,	"%",		"PIDs supported [01 - 20]"),
+	SUPPORTED_PIDS(	"00", 0, 4, "%", "PIDs supported [01 - 20]"),
 	
 	/** The monitor status. */
-	MONITOR_STATUS(			"01",	1,	4,	"",			"Monitor status since DTCs cleared"),
+	MONITOR_STATUS("01", 1, 4, "", "Monitor status since DTCs cleared"),
 	
 	/** The freeze DTC command. */
-	FREEZE_DTC(				"02",	2,	2,	"",			"Freeze DTC"),
+	FREEZE_DTC("02", 2, 2, "", "Freeze DTC"),
 	
 	/** The fuel status. */
-	FUEL_STATUS(			"03",	3,	2,	"",			"Fuel system status"),
+	FUEL_STATUS("03", 3, 2, "", "Fuel system status"),
 	
 	/** The engine load. */
-	ENGINE_LOAD(			"04",	4,	1,	"%",		"Calculated engine load value"),
+	ENGINE_LOAD("04", 4, 1, "%", "Calculated engine load value"),
 	
 	/** The engine coolant temperature. */
-	ENGINE_COOLANT_TEMP(	"05",	5,	1,	"C",		"Engine coolant temperature"),
+	ENGINE_COOLANT_TEMP("05", 5, 1, "C", "Engine coolant temperature"),
 	
 	/** The short term fuel % (bank 1). */
-	SHORT_FUEL_BANK1(		"06",	6,	1,	"%",		"Short term fuel % trim—Bank 1"),
+	SHORT_FUEL_BANK1("06", 6, 1, "%", "Short term fuel % trim—Bank 1"),
 	
 	/** The long term fuel % (bank 1). */
-	LONG_FUEL_BANK1(		"07",	7,	1,	"%",		"Long term fuel % trim—Bank 1"),
+	LONG_FUEL_BANK1("07", 7, 1, "%", "Long term fuel % trim—Bank 1"),
 	
 	/** The short term fuel % (bank 2). */
-	SHORT_FUEL_BANK2(		"08",	8,	1,	"%",		"Short term fuel % trim—Bank 2"),
+	SHORT_FUEL_BANK2("08", 8, 1, "%", "Short term fuel % trim—Bank 2"),
 	
 	/** The long term fuel % (bank 2). */
-	LONG_FUEL_BANK2(		"09",	9,	1,	"%",		"Long term fuel % trim—Bank 2"),
+	LONG_FUEL_BANK2("09", 9, 1, "%", "Long term fuel % trim—Bank 2"),
 	
 	/** The fuel pressure. */
-	FUEL_PREASSURE(			"0A",	10,	1,	"kPaG",		"Fuel pressure"),
+	FUEL_PREASSURE("0A", 10, 1, "kPaG", "Fuel pressure"),
 	
 	/** The intake manifold pressure. */
-	INTK_MAN_PRESSURE(		"0B",	11,	1,	"kPa",		"Intake manifold absolute pressure"),
+	INTK_MAN_PRESSURE( "0B", 11, 1, "kPa", "Intake manifold absolute pressure"),
 	
 	/** The engine RPM's */
-	ENGINE_RPM(				"0C",	12,	2,	"RPM",		"Engine RPM"),
+	ENGINE_RPM("0C", 12, 2, "RPM", "Engine RPM"),
 	
 	/** The vehicle speed. */
-	VECH_SPEED(				"0D",	13,	1,	"Km/Hr",	"Vehicle speed"),
+	VECH_SPEED("0D", 13, 1, "Km/Hr", "Vehicle speed"),
 	
 	/** The timing advance. */
-	TIMING_ADV(				"0E",	14,	1,	"Degrees",	"Timing advance"),
+	TIMING_ADV("0E", 14, 1, "Degrees", "Timing advance"),
 	
 	/** The intake air temperature. */
-	INTK_AIR_TEMP(			"0F",	15,	1,	"C",		"Intake air temperature"),
+	INTK_AIR_TEMP( "0F", 15, 1, "C", "Intake air temperature"),
 	
-	/** The MAF air flwo rate. */
-	MAF_AIR_FLOW(			"10",	16,	2,	"gm/sec",	"MAF air flow rate"),
+	/** The MAF air flow rate. */
+	MAF_AIR_FLOW("10", 16, 2, "gm/sec", "MAF air flow rate"),
 	
-	/** The throttle posistion. */
-	THROTTLE_POS(			"11",	17,	1,	"%",		"Throttle position"),
+	/** The throttle position. */
+	THROTTLE_POS("11", 17, 1, "%", "Throttle position"),
 	
 	/** The commanded secondary air status. */
-	CMD_SEC_AIR_STATUS(		"12",	18,	1,	"",			"Commanded secondary air status"),
+	CMD_SEC_AIR_STATUS( "12", 18, 1, "", "Commanded secondary air status"),
 	
 	/** The oxygen sensors present. */
-	OXY_SENS_PRES(			"13",	19,	1,	"",			"Oxygen sensors present"),
+	OXY_SENS_PRES("13", 19, 1, "", "Oxygen sensors present"),
 	
 	/** Bank 1, Sensor 1:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK1_SNS1(		"14",	20,	2,	"",			"Bank 1, Sensor 1:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK1_SNS1("14", 20, 2, "", "Bank 1, Sensor 1:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** Bank 1, Sensor 2:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK1_SNS2(		"15",	21,	2,	"",			"Bank 1, Sensor 2:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK1_SNS2("15", 21, 2, "", "Bank 1, Sensor 2:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** Bank 1, Sensor 3:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK1_SNS3(		"16",	22,	2,	"",			"Bank 1, Sensor 3:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK1_SNS3("16", 22, 2, "", "Bank 1, Sensor 3:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** Bank 1, Sensor 4:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK1_SNS4(		"17",	23,	2,	"",			"Bank 1, Sensor 4:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK1_SNS4("17", 23, 2, "", "Bank 1, Sensor 4:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** Bank 2, Sensor 1:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK2_SNS1(		"18",	24,	2,	"",			"Bank 2, Sensor 1:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK2_SNS1("18", 24, 2, "", "Bank 2, Sensor 1:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** Bank 2, Sensor 2:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK2_SNS2(		"19",	25,	2,	"",			"Bank 2, Sensor 2:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK2_SNS2("19", 25, 2, "", "Bank 2, Sensor 2:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** Bank 2, Sensor 3:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK2_SNS3(		"1A",	26,	2,	"",			"Bank 2, Sensor 3:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK2_SNS3("1A", 26, 2, "", "Bank 2, Sensor 3:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** Bank 2, Sensor 4:Oxygen sensor voltage,Short term fuel trim. */
-	OXY_SENS_BNK2_SNS4(		"1B",	27,	2,	"",			"Bank 2, Sensor 4:Oxygen sensor voltage,Short term fuel trim"),
+	OXY_SENS_BNK2_SNS4("1B", 27, 2, "", "Bank 2, Sensor 4:Oxygen sensor voltage,Short term fuel trim"),
 	
 	/** The OBD standards this vehicle conforms to. */
-	OBD_STANDARDS(			"1C",	28,	1,	"",			"OBD standards this vehicle conforms to"),
+	OBD_STANDARDS("1C",	28,	1, "", "OBD standards this vehicle conforms to"),
 	
 	/** The Oxygen sensors present. */
-	OXY_SENS_PRES2(			"1D",	29,	1,	"",			"Oxygen sensors present"),
+	OXY_SENS_PRES2("1D", 29, 1, "", "Oxygen sensors present"),
 	
 	/** The Auxiliary input status. */
-	AUX_STATUS(				"1E",	30,	1,	"",			"Auxiliary input status"),
+	AUX_STATUS("1E", 30, 1, "", "Auxiliary input status"),
 	
 	/** The Run time since engine start. */
-	RUN_TIME(				"1F",	31,	2,	"Seconds",	"Run time since engine start");
+	RUN_TIME("1F", 31, 2, "Seconds", "Run time since engine start");
 	
 	/** The hex string of the PID. */
 	private final String pid;
@@ -121,11 +121,11 @@ public enum PIDS {
 	/**
 	 * Instantiates a new PID enumerator.
 	 *
-	 * @param pid the pid
-	 * @param value the value
-	 * @param returnSize the return size
-	 * @param unit the unit
-	 * @param description the description
+	 * @param pid the PID
+	 * @param value the integer value of the PID
+	 * @param returnSize the return size of the request (in bytes)
+	 * @param unit the units of the data returned
+	 * @param description the description of the PID
 	 */
 	private PIDS(String pid, int value, int returnSize, String unit, String description) {
 		this.pid = pid;
@@ -138,9 +138,9 @@ public enum PIDS {
 	/**
 	 * Evaluates the command result based on the PID.
 	 *
-	 * @param bytes the bytes
-	 * @return the double
-	 * @throws Exception the exception
+	 * @param bytes the bytes required by the calculation
+	 * @return the double value of the result
+	 * @throws Exception the exception thrown if there are not enough bytes supplied for the given PID
 	 */
 	double evalResult(List<Integer> bytes) throws Exception{
 		double A = bytes.get(0);
@@ -204,10 +204,10 @@ public enum PIDS {
     }
 	
 	/**
-	 * Gets the status of a PID.  This is for none numeric PID results.
+	 * Gets the status of a PID.  This is for non numeric PID results.
 	 *
-	 * @param bytes the bytes
-	 * @return the status
+	 * @param bytes the bytes required by the calculation
+	 * @return the status of the PID (as a string)
 	 * @throws Exception the exception
 	 */
 	String getStatus(List<Integer> bytes) throws Exception{
@@ -249,7 +249,7 @@ public enum PIDS {
 	/**
 	 * Gets the PID hex string.
 	 *
-	 * @return the pid
+	 * @return the PID as a hex string
 	 */
 	public String getPid() {
 		return pid;
@@ -259,7 +259,7 @@ public enum PIDS {
 	/**
 	 * Gets the PID integer value.
 	 *
-	 * @return the value
+	 * @return the value of the PID as an integer
 	 */
 	public int getValue() {
 		return value;
@@ -269,7 +269,7 @@ public enum PIDS {
 	/**
 	 * Gets the number of bytes returned by the PID request.
 	 *
-	 * @return the returnSize
+	 * @return the return size of the request (in bytes)
 	 */
 	public int getReturnSize() {
 		return returnSize;
@@ -287,7 +287,7 @@ public enum PIDS {
 	/**
 	 * Gets the units of the returned result.
 	 *
-	 * @return the unit
+	 * @return the units of the PID value
 	 */
 	public String getUnit() {
 		return unit;

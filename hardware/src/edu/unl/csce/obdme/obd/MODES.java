@@ -26,7 +26,7 @@ public enum MODES {
 	/** The show pending DTC codes mode. */
 	SHOW_PEND_DTC("07", 7, "Show pending Diagnostic Trouble Codes"),
 	
-	/** The control OBD componenent/system mode. */
+	/** The control OBD component/system mode. */
 	CTRL_OBD("08", 8, "Control operation of on-board component/system"),
 	
 	/** The vehicle information request mode. */
@@ -35,7 +35,7 @@ public enum MODES {
 	/** The permanent DTC code mode */
 	PERM_DTC("0A", 10, " Permanent DTC's");
 	
-	/** The hexstring of the mode. */
+	/** The hex string of the mode. */
 	private final String mode;
 	
 	/** The integer value of the mode. */
@@ -47,9 +47,9 @@ public enum MODES {
 	/**
 	 * Instantiates a new OBD modes enumeration.
 	 *
-	 * @param mode the mode
-	 * @param value the value
-	 * @param description the description
+	 * @param mode hex string of the mode
+	 * @param value the integer value of the mode
+	 * @param description the plain English description of the mode
 	 */
 	private MODES(String mode, int value, String description) {
 		this.mode = mode;
@@ -58,7 +58,7 @@ public enum MODES {
 	}
 
 	/**
-	 * Gets the mode.hex string
+	 * Gets the mode hex string
 	 *
 	 * @return the mode
 	 */
@@ -76,7 +76,7 @@ public enum MODES {
 	}
 
 	/**
-	 * @return the description
+	 * @return the plain English description of the mode
 	 */
 	public String getDescription() {
 		return description;

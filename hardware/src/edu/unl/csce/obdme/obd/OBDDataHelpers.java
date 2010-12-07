@@ -45,31 +45,31 @@ public class OBDDataHelpers {
 	
 	/**
 	 * Process the OBD header information.  This method checks to make sure that this
-	 * response is related to the one that we requested.
+	 * response correlates to the one that we requested.
 	 *
-	 * @param header the header
-	 * @param mode the mode
-	 * @param pid the pid
-	 * @return the list
-	 * @throws Exception the exception
+	 * @param response the response passed in for processing
+	 * @param mode the mode enumeration
+	 * @param pid the PID enumeration
+	 * @return the returned response with the verified header removed
+	 * @throws Exception the exception thrown when the header is not what was expected
 	 */
-	public List<Integer> processHeader(List<Integer> header, MODES mode, PIDS pid) throws Exception {
+	public List<Integer> processHeader(List<Integer> response, MODES mode, PIDS pid) throws Exception {
 		
-		if (header.get(0) == Integer.parseInt(Integer.toString(mode.getValue() + 40),16)) {
-			header.remove(0);
+		if (response.get(0) == Integer.parseInt(Integer.toString(mode.getValue() + 40),16)) {
+			response.remove(0);
 		}
 		else {
 			throw new Exception("The response did not have the expected mode.");
 		}
 		
-		if (header.get(0).equals(pid.getValue())) {
-			header.remove(0);
+		if (response.get(0).equals(pid.getValue())) {
+			response.remove(0);
 		}
 		else {
 			throw new Exception("The response did not have the expected PID.");
 		}
 		
-		return header;
+		return response;
 		
 	}
 	
@@ -77,12 +77,12 @@ public class OBDDataHelpers {
 	 * Make bit string from a list of integers.  This method returns a string of
 	 * bits (each integer is represented by exactly 8-bits.
 	 *
-	 * @param responseValues the response values
-	 * @return the string
+	 * @param responseValues the list of integers from byte values in the response
+	 * @return the bit string
 	 */
-	public String makeBitString(List<Integer> responseValues) {
+	public String makeBitString(List<Integer> response) {
 		
-		Iterator<Integer> responseValueItr = responseValues.iterator();
+		Iterator<Integer> responseValueItr = response.iterator();
 		StringBuffer encodedBits = new StringBuffer();
 		
 		
@@ -102,9 +102,9 @@ public class OBDDataHelpers {
 	}
 	
 	/**
-	 * Prints the supported pids.
+	 * Prints the supported PIDs.
 	 *
-	 * @param validPIDS the valid pids
+	 * @param validPIDS the list of valid PID's
 	 */
 	public void printSupportedPIDS(EnumMap<PIDS, Boolean> validPIDS) {
 		
