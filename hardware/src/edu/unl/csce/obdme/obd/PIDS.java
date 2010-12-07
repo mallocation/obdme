@@ -115,7 +115,7 @@ public enum PIDS {
 	/** The units of the data returned. */
 	private final String unit;
 	
-	/** The plain english description of the PID. */
+	/** The plain English description of the PID. */
 	private final String description;
 
 	/**
