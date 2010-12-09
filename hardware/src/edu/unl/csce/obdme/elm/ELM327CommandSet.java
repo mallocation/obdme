@@ -81,7 +81,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean allToDefaults() {
-		if(this.serialInterface.sendATCommand("D").contains("OK")) {
+		if(this.serialInterface.sendCommand("ATD").contains("OK")) {
 			log.info("The device was sucessfully set to defaults.");
 			return true;
 		}
@@ -99,7 +99,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean echoOff() {
-		if(this.serialInterface.sendATCommand("E0").contains("OK")) {
+		if(this.serialInterface.sendCommand("ATE0").contains("OK")) {
 			serialInterface.setEchoCommand(false);
 			log.info("The command echo option was sucessfully disabled.");
 			return true;
@@ -118,7 +118,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean echoOn() {
-		if(this.serialInterface.sendATCommand("E1").contains("OK")) {
+		if(this.serialInterface.sendCommand("ATE1").contains("OK")) {
 			serialInterface.setEchoCommand(true);
 			log.info("The command echo option was sucessfully enabled.");
 			return true;
@@ -142,7 +142,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean forgetEvents() {
-		if(this.serialInterface.sendATCommand("FE").contains("OK")) {
+		if(this.serialInterface.sendCommand("ATFE").contains("OK")) {
 			log.info("The forget events command option was sucessfully executed.");
 			return true;
 		}
@@ -161,7 +161,7 @@ public class ELM327CommandSet {
 	 */
 	public String printVersionID() {
 		
-		String versionID = this.serialInterface.sendATCommand("I");
+		String versionID = this.serialInterface.sendCommand("ATI");
 		
 		if(!versionID.isEmpty()) {
 			log.info("The version id request was sucessfully executed.");
@@ -185,7 +185,7 @@ public class ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean lowPowerMode() {
-		if(this.serialInterface.sendATCommand("LP").contains("OK")) {
+		if(this.serialInterface.sendCommand("ATLP").contains("OK")) {
 			log.info("The low power mode option was sucessfully enabled.");
 			return true;
 		}
@@ -307,7 +307,7 @@ public class ELM327CommandSet {
 	 */
 	public boolean restartAll() {
 		
-		if(this.serialInterface.sendATCommand("Z").contains("ELM v1.4")) {
+		if(this.serialInterface.sendCommand("ATZ").contains("ELM v1.4")) {
 			log.info("The device was successfully hard restarted.");
 			return true;
 		}

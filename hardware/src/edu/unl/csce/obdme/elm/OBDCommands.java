@@ -119,7 +119,7 @@ public class OBDCommands extends ELM327CommandSet {
 	
 	public String describeCurrentProtocol() {
 		
-		String commandResponse = this.serialInterface.sendATCommand("DP");
+		String commandResponse = this.serialInterface.sendCommand("ATDP");
 		
 		if(commandResponse.length() > 0) {
 			log.info("The device completed auto set protocol function");
@@ -161,7 +161,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 * @return true, if successful
 	 */
 	public boolean headersOn() {
-		if(this.serialInterface.sendATCommand("H1").contains("OK")) {
+		if(this.serialInterface.sendCommand("ATH1").contains("OK")) {
 			log.info("The device completed auto set protocol function");
 			return true;
 		}
@@ -471,7 +471,7 @@ public class OBDCommands extends ELM327CommandSet {
 	 */
 	public boolean setProtocolAuto() {
 		
-		if(this.serialInterface.sendATCommand("SP0").contains("OK")) {
+		if(this.serialInterface.sendCommand("ATSP0").contains("OK")) {
 			log.info("The device completed auto set protocol function");
 			return true;
 		}

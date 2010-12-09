@@ -97,11 +97,12 @@ public class CommunicationInterface {
 	}
 	
 	/**
-	 * Initialize connection to the ELM327 Device
+	 * Initialize connection to the ELM327 Device.
 	 *
+	 * @return true, if successful
 	 * @throws Exception the exception
 	 */
-	public void initializeConnection() throws Exception {
+	public synchronized boolean initializeConnection() throws Exception {
 
 		log.debug("Initializing Connection with the ELM327 Device.");
 		
@@ -132,43 +133,9 @@ public class CommunicationInterface {
 		}
 		else {
 			log.debug("Connection to the ELM327 successfully established.");
+			return true;
 		}
 	
-	}
-	
-	/**
-	 * Send an AT command to the device.  This is done through the ELM command objects.
-	 *
-	 * @param command the command
-	 * @return the string
-	 */
-	public String sendATCommand(String command) {
-		
-		log.info("Sending AT command AT" + command);
-		String commandString = "AT" + command + "\r";
-
-		try {
-			
-			//Form the byte array
-			byte[] commandByteArray = new String(commandString).getBytes("ASCII");
-			log.info("Sending bytes: " + byteArrayToHexString(commandByteArray));
-			
-			//Send the bytes and flush the output stream
-			this.outputStream.write(commandByteArray);
-			this.outputStream.flush();
-			
-		} catch (UnsupportedEncodingException uee) {
-			log.error("Error sending AT" + command + "command.", uee);
-		} catch (IOException ioe) {
-			log.error("Error sending AT" + command + "command.", ioe);
-		}
-		
-		//Save this as the last command executed
-		this.lastCommand = commandString;
-		
-		//Return the response
-		return receiveResponse();
-
 	}
 	
 	/**
@@ -177,9 +144,9 @@ public class CommunicationInterface {
 	 * @param command the command
 	 * @return the string
 	 */
-	public String sendOBDCommand(String command) {
+	public synchronized String sendCommand(String command) {
 
-		log.debug("Sending OBD command " + command);
+		log.debug("Send command " + command);
 		
 		try {
 			
@@ -192,9 +159,9 @@ public class CommunicationInterface {
 			this.outputStream.flush();
 			
 		} catch (UnsupportedEncodingException uee) {
-			log.error("Error sending " + command + " OBD command.", uee);
+			log.error("Error sending " + command + " command.", uee);
 		} catch (IOException ioe) {
-			log.error("Error sending " + command + " OBD command.", ioe);
+			log.error("Error sending " + command + " command.", ioe);
 		}
 		
 		//Set the last command and return the response
@@ -210,7 +177,7 @@ public class CommunicationInterface {
 	 *
 	 * @return the string
 	 */
-	public String receiveResponse() {
+	private synchronized String receiveResponse() {
 		
 		log.debug("Waiting for response from the device.");
 		
@@ -256,10 +223,10 @@ public class CommunicationInterface {
 	/**
 	 * Converts a byte array to hex string.
 	 *
-	 * @param b the b
+	 * @param byteArray the byte array
 	 * @return the string
 	 */
-	public static String byteArrayToHexString(byte[] byteArray) {
+	private static String byteArrayToHexString(byte[] byteArray) {
 		
 		//Initialize the string buffer
 		StringBuffer stringBuffer = new StringBuffer(byteArray.length * 2);

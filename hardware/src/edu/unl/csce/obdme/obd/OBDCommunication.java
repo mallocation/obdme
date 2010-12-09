@@ -60,7 +60,7 @@ public class OBDCommunication {
 	public void getSupportedPIDS() throws Exception {
 		
 		//Send the command and receive the response
-		String receivedData = this.serialInterface.sendOBDCommand(MODES.CURRENT_DATA.getMode() + 
+		String receivedData = this.serialInterface.sendCommand(MODES.CURRENT_DATA.getMode() + 
 				PIDS.SUPPORTED_PIDS.getPid());
 		
 		List<Integer> responseValues = helper.stringToIntArray(receivedData);
@@ -102,7 +102,7 @@ public class OBDCommunication {
 	public String readPIDValue(MODES mode, PIDS pid) throws Exception {
 		
 		//Send command and wait for response
-		String receivedData = this.serialInterface.sendOBDCommand(mode.getMode() + pid.getPid());
+		String receivedData = this.serialInterface.sendCommand(mode.getMode() + pid.getPid());
 		
 		List<Integer> responseValues = helper.stringToIntArray(receivedData);
 		
