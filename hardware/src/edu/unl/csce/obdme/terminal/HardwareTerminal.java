@@ -203,8 +203,7 @@ public class HardwareTerminal extends JFrame {
 	private void sendCommand(String command) {		
 		if (this.commInterface != null) {
 			txtOut.append("> " + command + "\n");
-			this.commInterface.sendOBDCommand(command);
-			String responseString = commInterface.receiveResponse();
+			String responseString = this.commInterface.sendCommand(command);
 			txtOut.append(responseString + "\n");
 		} else {
 			txtOut.append("Please select a serial interface.\n");
