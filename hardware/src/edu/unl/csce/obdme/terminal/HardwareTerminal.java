@@ -1,11 +1,20 @@
 package edu.unl.csce.obdme.terminal;
 
+import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
+import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
+
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Enumeration;
 
 import javax.swing.JButton;
@@ -17,160 +26,209 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-
-import edu.unl.csce.obdme.elm.CommunicationInterface;
-import edu.unl.csce.obdme.obd.OBDCommunication;
-
-//import edu.unl.csce.obdme.elm.CommunicationInterface;
-import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
 
 
-
-public class HardwareTerminal {
-
-	private static final int ENTER_KEY_CODE = 10;
+public class HardwareTerminal extends JFrame {
 	
-	//private CommunicationInterface commInterface;
-	private JFrame mainWindow;
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private JPanel commandPanel;
-	private JTextField txtCommand;
-	private JButton bSendCommand;
-
-	private JPanel terminalPanel;
-	private JTextArea txtTerminal;
-	private JScrollPane spTerminal;
-	private JMenuBar frameMenuBar;
-	private JMenu frameDevicesMenu;	
+	private JTextField commandText;
+	private JButton btnSendCommand;
+	private JTextArea txtOut;
+	private JButton btnClear;
+	private JMenuBar menuBar;
+	private JMenu devicesMenu;
 	
-	HardwareTerminal() {
-		mainWindow = new JFrame("Hardware Terminal");
-		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainWindow.setSize(700, 500);
-
-		commandPanel = new JPanel();
-		commandPanel.setLayout(new BorderLayout());
-
-		txtCommand = new JTextField();
-		bSendCommand = new JButton("Send");
+	private CommunicationInterface commInterface;
+	
+	
+	
+	public HardwareTerminal() {
+		this.setLayout(new GridBagLayout());
 		
-		txtCommand.addKeyListener(new KeyAdapter(){
+		this.setMinimumSize(new Dimension(800, 600));
+		this.setResizable(false);
+		
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		
+		commandPanel = new JPanel();		
+		commandPanel.setLayout(new BorderLayout());
+		
+		
+		commandText = new JTextField();		
+		commandText.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == ENTER_KEY_CODE) {
-					JTextField textField = (JTextField) e.getSource();
-					sendCommand(textField.getText());
-					textField.setText("");				
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					sendCommand(commandText.getText());
+					commandText.setText("");
 				}
 			}
-		});		
-
 		
-		bSendCommand.addActionListener(new ActionListener() {
+		});
+		
+		btnSendCommand = new JButton("Send");
+		btnSendCommand.addActionListener(new ActionListener() {
 			@Override
 			
 			public void actionPerformed(ActionEvent arg0) {
-				sendCommand(txtCommand.getText());		
-				txtCommand.setText("");
+				sendCommand(commandText.getText());
+				commandText.setText("");
 			}
 		});
 		
-
-		commandPanel.add(txtCommand, BorderLayout.CENTER);
-		commandPanel.add(bSendCommand, BorderLayout.LINE_END);
-
-		terminalPanel = new JPanel();
-		terminalPanel.setLayout(new GridLayout());
-		txtTerminal= new JTextArea();
-		txtTerminal.setEditable(false);
-		//txtTerminal.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-		spTerminal = new JScrollPane(txtTerminal);
-		spTerminal.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		terminalPanel.add(spTerminal);
-		//terminalPanel.add(txtTerminal);
-
-		mainWindow.setLayout(new BorderLayout());
-
-
-		mainWindow.add(commandPanel, BorderLayout.PAGE_START);
-		mainWindow.add(terminalPanel, BorderLayout.CENTER);
-
-		
-		frameMenuBar = new JMenuBar();
-		frameDevicesMenu = new JMenu("Devices");
+		commandPanel.add(commandText, BorderLayout.CENTER);
+		commandPanel.add(btnSendCommand, BorderLayout.LINE_END);
 		
 		
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.PAGE_START;
+		gbc.weightx = 1;
+		gbc.weighty = 0;
+		this.add(commandPanel, gbc);
 		
-		Enumeration e = CommPortIdentifier.getPortIdentifiers();		
+		
+		txtOut = new JTextArea();
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.anchor = GridBagConstraints.CENTER;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(2, 2, 2, 2);
+		this.add(new JScrollPane(txtOut), gbc);
+		
+		btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				clearOutputWindow();				
+			}
+		});
+		
+		
+		
+		
+		gbc.gridy = 2;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.anchor = GridBagConstraints.LAST_LINE_END;
+		gbc.weightx = 0.3;
+		gbc.weighty = 0;
+		gbc.insets = new Insets(0,0,0,0);		
+		this.add(btnClear, gbc);
+		
+		/* End of building the main layout t*/
+		
+		/* Build the devices menu */
+		menuBar = new JMenuBar();
+		this.setJMenuBar(menuBar);
+		
+		devicesMenu = new JMenu("Devices");
+		menuBar.add(devicesMenu);
+		
+		Enumeration e = CommPortIdentifier.getPortIdentifiers();
 		while (e.hasMoreElements()) {
-			JMenuItem device = new JMenuItem(((CommPortIdentifier)e.nextElement()).getName());
-			device.addActionListener(new ActionListener() {				
+			CommPortIdentifier cpi = (CommPortIdentifier)e.nextElement();
+			JMenuItem cpiMenuItem = new JMenuItem(cpi.getName());
+			cpiMenuItem.addActionListener(new ActionListener() {				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					JMenuItem dev = (JMenuItem) e.getSource();
+					JMenuItem src = (JMenuItem)e.getSource();
 					CommPortIdentifier selectedPort = null;
 					try {
-						selectedPort = CommPortIdentifier.getPortIdentifier(dev.getText());
-					} catch (NoSuchPortException e1) {
+						selectedPort = CommPortIdentifier.getPortIdentifier(src.getText());
+					} catch (NoSuchPortException nspe) {
 						selectedPort = null;
 					}
-					if (selectedPort != null) enableCommPort(selectedPort);
+					if (selectedPort != null) enableCommPort(selectedPort);				
 				}
 			});
-			frameDevicesMenu.add(device);
+			devicesMenu.add(cpiMenuItem);
 		}
+		/* End of building the devices menu */
 		
-		frameMenuBar.add(frameDevicesMenu);
-		mainWindow.setJMenuBar(frameMenuBar);
+		this.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {}
+			@Override
+			public void windowIconified(WindowEvent e) {}
+			@Override
+			public void windowDeiconified(WindowEvent e) {}
+			@Override
+			public void windowDeactivated(WindowEvent e) {}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				closeCommInterface();				
+			}			
+			@Override
+			public void windowClosed(WindowEvent e) {}
+			@Override
+			public void windowActivated(WindowEvent e) {}
+		});		
 	}
 	
-	private void enableCommPort(CommPortIdentifier commPort) {
-		txtTerminal.setText("");
-		txtTerminal.append("Connection changed to " + commPort.getName() + "\n");
-		mainWindow.setTitle("Hardware Terminal - " + commPort.getName());
+	private void enableCommPort(CommPortIdentifier cpiToEnable) {
+		clearOutputWindow();
+		
+		CommunicationInterface newInterface = new CommunicationInterface(cpiToEnable.getName());
+		
+		try {
+			newInterface.initializeConnection();			
+			txtOut.append("Connection changed to " + cpiToEnable.getName() + "\n");
+			this.setTitle("Hardware Terminal - " + cpiToEnable.getName());
+			this.closeCommInterface();
+			this.commInterface = newInterface;
+		} catch (Exception e) {
+			newInterface.closeConnection();
+			txtOut.append("Unable to connect to " + cpiToEnable.getName() + "\n");			
+		}		
 	}
 	
-	private void sendCommand(String command) {
-		txtTerminal.append("> " + command + "\n");
+	private void closeCommInterface() {
+		if (this.commInterface != null)
+			this.commInterface.closeConnection();
 	}
-
-	private void show() {
-		mainWindow.setVisible(true);
+	
+	
+	
+	private void sendCommand(String command) {		
+		if (this.commInterface != null) {
+			txtOut.append("> " + command + "\n");
+			this.commInterface.sendOBDCommand(command);
+			String responseString = commInterface.receiveResponse();
+			txtOut.append(responseString + "\n");
+		} else {
+			txtOut.append("Please select a serial interface.\n");
+		}
 	}
-
+	
+	
+	
+	private void clearOutputWindow(){
+		this.txtOut.setText("");
+	}
+	
+	
+	
+	
+	
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		HardwareTerminal ht = new HardwareTerminal();
+		ht.setVisible(true);
 
-		//CommunicationInterface commInterface = new CommunicationInterface("/dev/tty.OBDMe-DevB");
-		
-		CommunicationInterface commInterface = new CommunicationInterface("/dev/tty.CBT-DevB");
-		
-		try {
-			commInterface.initializeConnection();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		OBDCommunication obdCommands = new OBDCommunication(commInterface);
-		
-		try {
-			obdCommands.getSupportedPIDS();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		HardwareTerminal o = new HardwareTerminal();
-		o.show();
 	}
 
-
-
-
 }
-
