@@ -47,6 +47,7 @@ public class HardwareTerminal extends JFrame {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	public HardwareTerminal() {
 		this.setLayout(new GridBagLayout());
 		
@@ -155,8 +156,7 @@ public class HardwareTerminal extends JFrame {
 		}
 		/* End of building the devices menu */
 		
-		this.addWindowListener(new WindowListener() {
-			
+		this.addWindowListener(new WindowListener() {			
 			@Override
 			public void windowOpened(WindowEvent e) {}
 			@Override

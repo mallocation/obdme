@@ -138,6 +138,13 @@ public class CommunicationInterface {
 	
 	}
 	
+	/*
+	 * Close the existing connection.
+	 */
+	public void closeConnection() {
+		this.serialPort.close();
+	}
+	
 	/**
 	 * Send OBD command to the device.  This is done through the OBD Communications objects.
 	 *
