@@ -91,8 +91,7 @@ public class ElmSimulator {
 	}
 	
 	public static void main(String[] args) {
-		ElmSimulator sim = new ElmSimulator(EMULATOR_PORT_NAME);
-		
+		ElmSimulator sim = new ElmSimulator(EMULATOR_PORT_NAME);		
 	}
 
 }
