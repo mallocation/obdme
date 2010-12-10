@@ -128,8 +128,8 @@ public class CommunicationInterface {
 		
 		//Check that we got a response after the device restart
 		if (!receiveResponse().contains(DEVICE_IDENTIFIER)) {
-			log.error("The connectecd device is not an ELM327 v1.4 device.");
-			throw new Exception("The connectecd device is not an ELM327 v1.4 device.");
+			log.error("The connected device is not an ELM327 v1.4 device.");
+			throw new Exception("The connected device is not an ELM327 v1.4 device.");
 		}
 		else {
 			log.debug("Connection to the ELM327 successfully established.");
