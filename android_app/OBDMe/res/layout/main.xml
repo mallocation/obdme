@@ -4,26 +4,34 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <EditText
-		android:id="@+id/commandEditText"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:text=""
-	/>
-	<Button
-		android:id="@+id/sendButton"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:text="@string/sendButtonText"
-		android:onClick="sendButtonMethod"
-	/>
-	<TextView  
-		android:id="@+id/outputTextView"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:background="@drawable/back"
-		android:text="test"
-		android:textColor="#000000"
-		android:editable="true"
-	/>
+    <ListView android:id="@+id/in"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        android:layout_weight="1"
+    />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        >
+    </LinearLayout>
 </LinearLayout>
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--	android:orientation="vertical" android:layout_width="fill_parent"-->
+<!--	android:layout_height="fill_parent">-->
+<!--	<EditText android:id="@+id/commandEditText"-->
+<!--		android:layout_width="fill_parent" android:layout_height="wrap_content"-->
+<!--		android:text="" />-->
+<!--	<Button android:id="@+id/sendButton" android:layout_width="fill_parent"-->
+<!--		android:layout_height="wrap_content" android:text="@string/sendButtonText"-->
+<!--		android:onClick="sendButtonMethod" />-->
+<!--	<TextView android:id="@+id/outputTextView"-->
+<!--		android:layout_width="fill_parent" android:layout_height="fill_parent"-->
+<!--		android:background="@drawable/back" android:text="test"-->
+<!--		android:textColor="#000000" android:editable="true" />-->
+<!--</LinearLayout>-->

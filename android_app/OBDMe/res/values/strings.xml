@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OBDMe</string>
-    <string name="sendButtonText">Send</string>
+	<string name="app_name">OBDMe</string>
+	<string name="sendButtonText">Send</string>
+
+	<!-- Bluetooth Status -->
+	<string name="not_connected">You are not connected to a OBD device</string>
+	<string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving OBDMe.</string>
+	<string name="title_connecting">connecting...</string>
+	<string name="title_connected_to">connected: </string>
+	<string name="title_not_connected">not connected</string>
+
+	<!-- DeviceListActivity -->
+	<string name="scanning">scanning for OBD devices...</string>
+	<string name="select_device">select a OBD device to connect</string>
+	<string name="none_paired">No OBD devices have been paired</string>
+	<string name="none_found">No OBD devices found</string>
+	<string name="title_paired_devices">Paired OBD Devices</string>
+	<string name="title_other_devices">Other Available Devices</string>
+	<string name="button_scan">Scan for OBD devices</string>
+
+	<!-- Options Menu -->
+	<string name="connect">Connect a device</string>
+
 </resources>
