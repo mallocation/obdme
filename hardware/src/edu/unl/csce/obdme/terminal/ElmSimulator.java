@@ -79,7 +79,7 @@ public class ElmSimulator {
 		}
 		
 		private void respond(String request) {
-			String response = "SHIT";
+			String response = "Response";
 			try {
 				byte[] bytes = response.getBytes("ASCII");
 				this.out.write(bytes,0, bytes.length);
