@@ -1,8 +1,11 @@
 package edu.unl.csce.obdme.terminal;
 
 import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
+import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -15,6 +18,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 
 import javax.swing.JButton;
@@ -27,8 +33,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.apache.log4j.Logger;
 
-public class HardwareTerminal extends JFrame {
+
+public class HardwareTerminal extends JFrame implements SerialPortEventListener {
 	
 	/**
 	 * 
@@ -45,10 +53,14 @@ public class HardwareTerminal extends JFrame {
 	
 	private CommunicationInterface commInterface;
 	
+	private Logger log;
+	
 	
 	
 	@SuppressWarnings("unchecked")
 	public HardwareTerminal() {
+		this.log = Logger.getLogger(this.getClass());
+		
 		this.setLayout(new GridBagLayout());
 		
 		this.setMinimumSize(new Dimension(800, 600));
@@ -113,10 +125,7 @@ public class HardwareTerminal extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				clearOutputWindow();				
 			}
-		});
-		
-		
-		
+		});		
 		
 		gbc.gridy = 2;
 		gbc.fill = GridBagConstraints.NONE;
@@ -139,17 +148,26 @@ public class HardwareTerminal extends JFrame {
 		while (e.hasMoreElements()) {
 			CommPortIdentifier cpi = (CommPortIdentifier)e.nextElement();
 			JMenuItem cpiMenuItem = new JMenuItem(cpi.getName());
+
 			cpiMenuItem.addActionListener(new ActionListener() {				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JMenuItem src = (JMenuItem)e.getSource();
-					CommPortIdentifier selectedPort = null;
+					CommPortIdentifier portID = null;
+					
 					try {
-						selectedPort = CommPortIdentifier.getPortIdentifier(src.getText());
-					} catch (NoSuchPortException nspe) {
-						selectedPort = null;
-					}
-					if (selectedPort != null) enableCommPort(selectedPort);				
+						portID = CommPortIdentifier.getPortIdentifier(src.getText());
+						
+						if (portID.isCurrentlyOwned()) {
+							log.error("Serial port " + portID.getName() + " is in use.");
+						} else {
+							enableCommPort(portID);
+							
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						System.exit(-1);
+					}			
 				}
 			});
 			devicesMenu.add(cpiMenuItem);
@@ -179,18 +197,23 @@ public class HardwareTerminal extends JFrame {
 	private void enableCommPort(CommPortIdentifier cpiToEnable) {
 		clearOutputWindow();
 		
-		CommunicationInterface newInterface = new CommunicationInterface(cpiToEnable.getName());
-		
 		try {
-			newInterface.initializeConnection();			
-			txtOut.append("Connection changed to " + cpiToEnable.getName() + "\n");
-			this.setTitle("Hardware Terminal - " + cpiToEnable.getName());
-			this.closeCommInterface();
-			this.commInterface = newInterface;
+			CommPort commPort = cpiToEnable.open(cpiToEnable.getName(), 2000);
+			
+			if (commPort instanceof SerialPort) {
+				SerialPort serPort = (SerialPort)commPort;
+				serPort.setSerialPortParams(38400, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+				
+				this.in = serPort.getInputStream();
+				this.out = serPort.getOutputStream();
+				
+				serPort.addEventListener(this);
+				serPort.notifyOnDataAvailable(true);
+			}
 		} catch (Exception e) {
-			newInterface.closeConnection();
-			txtOut.append("Unable to connect to " + cpiToEnable.getName() + "\n");			
-		}		
+			e.printStackTrace();
+			System.exit(-1);
+		}	
 	}
 	
 	private void closeCommInterface() {
@@ -201,10 +224,24 @@ public class HardwareTerminal extends JFrame {
 	
 	
 	private void sendCommand(String command) {		
-		if (this.commInterface != null) {
-			txtOut.append("> " + command + "\n");
-			String responseString = this.commInterface.sendCommand(command);
-			txtOut.append(responseString + "\n");
+		if (this.in != null) {
+			String cmd = command + "\r";
+			txtOut.append("> " + command + "\n");			
+			byte[] bytes = null;
+			try {
+				bytes = cmd.getBytes("ASCII");
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+			if (bytes != null) {
+				try {
+					this.out.write(bytes);
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(-1);
+				}
+			}
 		} else {
 			txtOut.append("Please select a serial interface.\n");
 		}
@@ -216,10 +253,29 @@ public class HardwareTerminal extends JFrame {
 		this.txtOut.setText("");
 	}
 	
+	private InputStream in;
+	private OutputStream out;
 	
-	
-	
-	
+	@Override
+	public void serialEvent(SerialPortEvent arg0) {
+		int data;
+		byte[] buffer = new byte[1024];
+		try {
+			int len = 0;
+			while ( (data = in.read()) > -1) {
+				if (data == '\r') {
+					break;
+				}
+				buffer[len++] = (byte)data;
+			}
+			String sData = new String(buffer,0,len);
+			this.txtOut.append(sData + "\n");
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}		
+	}
 
 	/**
 	 * @param args
@@ -231,3 +287,4 @@ public class HardwareTerminal extends JFrame {
 	}
 
 }
+

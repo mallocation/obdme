@@ -49,7 +49,7 @@ public class ElmSimulator {
 		
 	}
 	
-	public static class SerialReader implements SerialPortEventListener {
+	private static class SerialReader implements SerialPortEventListener {
 		private InputStream in;
 		private OutputStream out;
 		private byte[] buffer = new byte[1024];
