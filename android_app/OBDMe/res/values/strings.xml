@@ -4,6 +4,7 @@
 	<string name="sendButtonText">Send</string>
 
 	<!-- Bluetooth Status -->
+	<string name="send">Send</string>
 	<string name="not_connected">You are not connected to a OBD device</string>
 	<string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving OBDMe.</string>
 	<string name="title_connecting">connecting...</string>

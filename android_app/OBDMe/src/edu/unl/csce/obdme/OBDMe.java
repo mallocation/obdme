@@ -11,10 +11,18 @@ import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,20 +38,19 @@ public class OBDMe extends Activity {
 	/** The Constant DEBUG. */
 	private static final boolean DEBUG = true;
 	
-    /** The Constant MESSAGE_STATE_CHANGE. */
     public static final int MESSAGE_STATE_CHANGE = 1;
-    
-    /** The Constant MESSAGE_DEVICE_NAME. */
-    public static final int MESSAGE_DEVICE_NAME = 2;
-    
-    /** The Constant MESSAGE_TOAST. */
-    public static final int MESSAGE_TOAST = 3;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
 
 	/** The Constant REQUEST_CONNECT_DEVICE. */
 	private static final int REQUEST_CONNECT_DEVICE = 1;
 	
 	/** The Constant REQUEST_ENABLE_BT. */
 	private static final int REQUEST_ENABLE_BT = 2;
+	
+
 
 	/** The Constant DEVICE_NAME. */
 	public static final String DEVICE_NAME = "device_name";
@@ -56,6 +63,17 @@ public class OBDMe extends Activity {
 	
     /** The m connected device name. */
     private String mConnectedDeviceName = null;
+    
+    // Layout Views
+    private TextView mTitle;
+    private ListView mConversationView;
+    private EditText mOutEditText;
+    private Button mSendButton;
+    
+    // Array adapter for the conversation thread
+    private ArrayAdapter<String> mConversationArrayAdapter;
+    // String buffer for outgoing messages
+    private StringBuffer mOutStringBuffer;
     
     /** The bluetooth adapter. */
     private BluetoothAdapter bluetoothAdapter = null;
@@ -161,18 +179,76 @@ public class OBDMe extends Activity {
             startActivity(discoverableIntent);
         }
     }
+    
+    /**
+     * Sends a message.
+     * @param message  A string of text to send.
+     */
+    private void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (bluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            bluetoothService.write(message);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+            mOutEditText.setText(mOutStringBuffer);
+        }
+    }
+
+    // The action listener for the EditText widget, to listen for the return key
+    private TextView.OnEditorActionListener mWriteListener =
+        new TextView.OnEditorActionListener() {
+        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+            // If the action is a key-up event on the return key, send the message
+            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
+                String message = view.getText().toString();
+                sendMessage(message);
+            }
+            if(DEBUG) Log.i(DEBUG_TAG, "END onEditorAction");
+            return true;
+        }
+    };
 	
 	/**
 	 * Setup obd connection.
 	 */
-	private void setupOBDConnection() {
+    
+    private void setupOBDConnection() {
+        Log.d(DEBUG_TAG, "Setting up OBD Connection");
 
-		bluetoothService = new BluetoothService(this, messageHandler);
-		if(DEBUG) Log.d(DEBUG_TAG, "Back in the setup OBD area, trying to send ATZ");
-		//if(DEBUG) Log.i(DEBUG_TAG, bluetoothService.sendCommand("ATZ"));
-		
-		
-	}
+        // Initialize the array adapter for the conversation thread
+        mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
+        mConversationView = (ListView) findViewById(R.id.in);
+        mConversationView.setAdapter(mConversationArrayAdapter);
+
+        // Initialize the compose field with a listener for the return key
+        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+        mOutEditText.setOnEditorActionListener(mWriteListener);
+
+        // Initialize the send button with a listener that for click events
+        mSendButton = (Button) findViewById(R.id.button_send);
+        mSendButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                // Send a message using content of the edit text widget
+                TextView view = (TextView) findViewById(R.id.edit_text_out);
+                String message = view.getText().toString();
+                sendMessage(message);
+            }
+        });
+
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        bluetoothService = new BluetoothService(this, messageHandler);
+
+        // Initialize the buffer for outgoing messages
+        mOutStringBuffer = new StringBuffer("");
+    }
 
 	// The Handler that gets information back from the BluetoothChatService
 	/** The m handler. */
@@ -197,6 +273,17 @@ public class OBDMe extends Activity {
 					break;
 				}
 				break;
+				
+            case MESSAGE_WRITE:
+                byte[] writeBuf = (byte[]) msg.obj;
+                // construct a string from the buffer
+                String writeMessage = new String(writeBuf);
+                mConversationArrayAdapter.add(">" + writeMessage);
+                break;
+            case MESSAGE_READ:
+               String readMessage = (String) msg.obj;
+                mConversationArrayAdapter.add(readMessage);
+                break;
 			case MESSAGE_DEVICE_NAME:
 				mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
 				Toast.makeText(getApplicationContext(), "Connected to "

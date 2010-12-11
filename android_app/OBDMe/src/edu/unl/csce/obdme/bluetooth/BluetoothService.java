@@ -25,9 +25,6 @@ import android.util.Log;
  */
 public class BluetoothService {
 
-	/** The Constant DEVICE_IDENTIFIER. */
-	private static final String DEVICE_IDENTIFIER = "ELM327 v1.4";
-
 	/** The Constant ASCII_COMMAND_PROMPT. */
 	private static final char ASCII_COMMAND_PROMPT = '>';
 
@@ -175,9 +172,7 @@ public class BluetoothService {
 
 		// Start the thread to manage the connection and perform transmissions
 		commConnectedThread = new CommunicationConnectedThread(socket);
-		//commConnectedThread.start();
-		
-		if (DEBUG) Log.d(DEBUG_TAG, commConnectedThread.sendCommand("ATZ"));
+		commConnectedThread.start();
 		
 		// Send the name of the connected device back to the UI Activity
 		Message msg = appHandler.obtainMessage(OBDMe.MESSAGE_DEVICE_NAME);
@@ -205,7 +200,7 @@ public class BluetoothService {
 		setState(STATE_NONE);
 	}
 
-	public String sendCommand(String command) {
+	public void write(String command) {
 		// Create temporary object
 		CommunicationConnectedThread thread;
 		// Synchronize a copy of the ConnectedThread
@@ -214,7 +209,7 @@ public class BluetoothService {
 			thread = commConnectedThread;
 		}
 		// Perform the write unsynchronized
-		return thread.sendCommand(command);
+		thread.write(command);
 	}
 
 
@@ -359,6 +354,12 @@ public class BluetoothService {
 
 		/** The output stream. */
 		private final OutputStream outputStream;
+		
+		/** The echo command. */
+		private boolean echoCommand = true;
+		
+		/** The last command. */
+		private String lastCommand = "";
 
 		/**
 		 * Instantiates a new connection connected thread.
@@ -382,63 +383,66 @@ public class BluetoothService {
 			outputStream = tmpOut;
 		}
 
-		private synchronized String receiveResponse() {
+        public void run() {
+            Log.i(DEBUG_TAG, "BEGIN mConnectedThread");
 
-			Log.d(DEBUG_TAG, "Waiting for response from the device.");
+            // Keep listening to the InputStream while connected
+            while (true) {
+                try {
+                	
+                	StringBuffer recievedData = new StringBuffer();
+            		char currentChar = ' ';
+                	
+                	do {
+        				
+        				//If there are bytes available, read them
+        				if (inputStream.available() > 0) {
+        					
+        					//Append the read byte to the buffer
+        					currentChar = (char)this.inputStream.read();
+        					recievedData.append(currentChar);
+        				}
+        			} while (currentChar != ASCII_COMMAND_PROMPT); //Continue until we reach a prompt character
 
-			//Initialize the buffers
-			StringBuffer recievedData = new StringBuffer();
-			char currentChar = ' ';
+                	String recievedString = recievedData.toString();
+                	
+//                	if (echoCommand) {
+           			recievedString = recievedString.replace(this.lastCommand, "");
+//            		}
+                	
+            		recievedString = recievedString.replace(">", "");
+            		recievedString = recievedString.trim();
+                	
+                    // Send the obtained bytes to the UI Activity
+                    appHandler.obtainMessage(OBDMe.MESSAGE_READ, recievedString)
+                            .sendToTarget();
+                } catch (IOException e) {
+                    Log.e(DEBUG_TAG, "disconnected", e);
+                    connectionLost();
+                    break;
+                }
+            }
+        }
 
-			try {
-				do {
+        /**
+         * Write to the connected OutStream.
+         * @param buffer  The bytes to write
+         */
+        public void write(String command) {
+            try {
+            	
+            	byte[] commandByteArray = new String(command + "\r").getBytes("ASCII");
+            	outputStream.write(commandByteArray);
+            	
+            	this.lastCommand = command + "\r";
 
-					//If there are bytes available, read them
-					if (this.inputStream.available() > 0) {
-
-						//Append the read byte to the buffer
-						currentChar = (char)this.inputStream.read();
-						recievedData.append(currentChar);
-					}
-				} while (currentChar != ASCII_COMMAND_PROMPT); //Continue until we reach a prompt character
-
-			} catch (IOException ioe) {
-				Log.e(DEBUG_TAG, "Exception when receiving data from the device:", ioe);
-			}
-
-			String recievedString = recievedData.toString();
-
-			//Remove extra characters and trim the string
-			recievedString = recievedString.replace("\r", "");
-			recievedString = recievedString.replace(">", "");
-			recievedString = recievedString.trim();
-
-			Log.d(DEBUG_TAG, "Received string from device: " + recievedString);
-
-			//Return the received data
-			return recievedString;
-
-		}
-		public String sendCommand(String command) {
-			try {
-				//Send the bytes and flush the output stream
-				if (DEBUG) Log.d(DEBUG_TAG, "Generating command byte array");
-				byte[] commandByteArray = new String(command + "\r").getBytes("ASCII");
-
-				//Flush the output stream
-				if (DEBUG) Log.d(DEBUG_TAG, "Writing bytes to the output stream.");
-				this.outputStream.write(commandByteArray);
-				this.outputStream.flush();
-
-			} catch (UnsupportedEncodingException uee) {
-				Log.e(DEBUG_TAG, "UnsupportedEncodingException", uee);
-			} catch (IOException ioe) {
-				Log.e(DEBUG_TAG, "IOException", ioe);
-			}
-
-			//Set the last command and return the response
-			return receiveResponse();
-		}
+                // Share the sent message back to the UI Activity
+                appHandler.obtainMessage(OBDMe.MESSAGE_WRITE, -1, -1, commandByteArray)
+                        .sendToTarget();
+            } catch (IOException e) {
+                Log.e(DEBUG_TAG, "Exception during write", e);
+            }
+        }
 
 		/**
 		 * Cancel.
@@ -449,36 +453,6 @@ public class BluetoothService {
 			} catch (IOException ioe) {
 				Log.e(DEBUG_TAG, "IOException when closing connected socket", ioe);
 			}
-		}
-
-		private String byteArrayToHexString(byte[] byteArray) {
-
-			//Initialize the string buffer
-			StringBuffer stringBuffer = new StringBuffer(byteArray.length * 2);
-
-			//Start constructing the byte array
-			stringBuffer.append("[ ");
-
-			//For all the bytes in the array
-			for (int i = 0; i < byteArray.length; i++) {
-
-				//Convert the byte to an integer
-				int v = byteArray[i] & 0xff;
-
-				//Left shift
-				if (v < 16) {
-					stringBuffer.append('0');
-				}
-
-				//Add the hex string representation of the byte 
-				stringBuffer.append("0x" + Integer.toHexString(v).toUpperCase() + " ");
-			}
-
-			//Close the byte array string
-			stringBuffer.append("]");
-
-			//Convert the string buffer to a string a return it
-			return stringBuffer.toString();
 		}
 	}
 }
