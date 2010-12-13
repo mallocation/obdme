@@ -1,6 +1,5 @@
 package edu.unl.csce.obdme.terminal;
 
-import edu.unl.csce.obdme.bluetooth.CommunicationInterface;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -38,10 +37,8 @@ import org.apache.log4j.Logger;
 
 public class HardwareTerminal extends JFrame implements SerialPortEventListener {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	private static final String WINDOW_TITLE = "Hardware Terminal";
 	
 	private JPanel commandPanel;
 	private JTextField commandText;
@@ -50,12 +47,8 @@ public class HardwareTerminal extends JFrame implements SerialPortEventListener 
 	private JButton btnClear;
 	private JMenuBar menuBar;
 	private JMenu devicesMenu;
-	
-	private CommunicationInterface commInterface;
-	
+		
 	private Logger log;
-	
-	
 	
 	@SuppressWarnings("unchecked")
 	public HardwareTerminal() {
@@ -65,6 +58,7 @@ public class HardwareTerminal extends JFrame implements SerialPortEventListener 
 		
 		this.setMinimumSize(new Dimension(800, 600));
 		this.setResizable(false);
+		this.setTitle(WINDOW_TITLE);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -184,9 +178,7 @@ public class HardwareTerminal extends JFrame implements SerialPortEventListener 
 			@Override
 			public void windowDeactivated(WindowEvent e) {}
 			@Override
-			public void windowClosing(WindowEvent e) {
-				closeCommInterface();				
-			}			
+			public void windowClosing(WindowEvent e) {}			
 			@Override
 			public void windowClosed(WindowEvent e) {}
 			@Override
@@ -209,19 +201,16 @@ public class HardwareTerminal extends JFrame implements SerialPortEventListener 
 				
 				serPort.addEventListener(this);
 				serPort.notifyOnDataAvailable(true);
+				
+				this.setTitle(WINDOW_TITLE + " - " + serPort.getName());
+				this.txtOut.setText("");
+				this.txtOut.append("Connection changed to " + serPort.getName() + "\n");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}	
 	}
-	
-	private void closeCommInterface() {
-		if (this.commInterface != null)
-			this.commInterface.closeConnection();
-	}
-	
-	
 	
 	private void sendCommand(String command) {		
 		if (this.in != null) {
