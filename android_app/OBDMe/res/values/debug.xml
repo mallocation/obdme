@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<bool name="debug">true</bool>
+	<string name="debug.tag.launcher">OBDMeLauncher</string>
+	<string name="debug.tag.setupwizrd.main">OBDMeSetupWizardMain</string>
+	<string name="debug.tag.setupwizrd.account">OBDMeSetupWizardAccount</string>
+	<string name="debug.tag.setupwizrd.bluetooth">OBDMeSetupWizardBluetooth</string>
+</resources>

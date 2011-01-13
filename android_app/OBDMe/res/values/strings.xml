@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+	<!-- Setup Wizard Main Activity -->
+	<string name="setupwizard.main.label">Bluetooth Setup Wizard</string>
+	<string name="setupwizard.main.heading.text">Welcome to OBDMe!</string>
+	<string name="setupwizard.main.text">It appears that this is the first time that you are starting OBDMe.\n\n
+										This setup wizard will guide you through the processes of creating an 
+										OBDMe account and configuring your OBD dongle.</string>
+	<string name="setupwizard.main.button.next.text">Next</string>
+	
+	<!-- Setup Wizard Account Activity -->
+	<string name="setupwizard.account.label">OBDMe Account Setup Wizard</string>
+	<string name="setupwizard.account.heading.text">Account Setup</string>
+	<string name="setupwizard.account.text">Please enter your existing OBDMe account information below.  
+										If you do not have an account, you may create one here by filling in your information.</string>
+	<string name="setupwizard.account.email.text">Username (Email Address)</string>
+	<string name="setupwizard.account.password.text">Password</string>
+	<string name="setupwizard.account.confirmpassword.text">Confirm Password</string>
+	<string name="setupwizard.account.button.signin.text">Log in</string>
+	<string name="setupwizard.account.button.createaccount.text">Create Account</string>
+	
+	<!-- Setup Wizard Bluetooth Activity -->
+	<string name="setupwizard.bluetooth.label">Bluetooth Setup Wizard</string>
+	<string name="setupwizard.bluetooth.heading.text">Bluetooth Setup</string>
+	<string name="setupwizard.bluetooth.text.check">This screen will guide you through the Bluetooth setup process.  Use the button below to check for Bluetooth support\n</string>
+	<string name="setupwizard.bluetooth.text.enable">Bluetooth is supported by your device.  Use the button below to check if Bluetooth is enabled.\n</string>
+	<string name="setupwizard.bluetooth.text.select">Bluetooth is currently enabled.  Use the button below to select your OBDMe device.\n</string>
+	<string name="setupwizard.bluetooth.text.connect">Your OBDMe device was paired successfully.  Use the button below to connect to the device.\n</string>
+	<string name="setupwizard.bluetooth.text.next">The Bluetooth setup is complete!  Use the button below to continue.\n</string>
+	<string name="setupwizard.bluetooth.list.supported.text">Bluetooth Supported</string>
+	<string name="setupwizard.bluetooth.list.enabled.text">Bluetooth Enabled</string>
+	<string name="setupwizard.bluetooth.list.select.text">Select Device</string>
+	<string name="setupwizard.bluetooth.list.connected.text">Device Connected</string>
+	<string name="setupwizard.bluetooth.button.check.text">Check for Bluetooth support</string>
+	<string name="setupwizard.bluetooth.button.enable.text">Check if Bluetooth is enabled</string>
+	<string name="setupwizard.bluetooth.button.select.text">Select new device</string>
+	<string name="setupwizard.bluetooth.button.connect.text">Connect to device</string>
+	<string name="setupwizard.bluetooth.button.next.text">Next</string>
+	
+	<!-- Bluetooth Discovery Activity -->
+	<string name="btdiscovery.scanning">Scanning for devices...</string>
+	<string name="btdiscovery.selectdevice">Scan Complete.  Select a device.</string>
+	<string name="btdiscovery.nonepaired">No devices have been paired</string>
+	<string name="btdiscovery.nonefound">No devices were found</string>
+	<string name="btdiscovery.title.paireddevices.text">Paired Devices</string>
+	<string name="btdiscovery.title.newdevices.text">New Devices</string>
+	<string name="btdiscovery.title.otherdevices.text">Other Available Devices</string>
+	<string name="btdiscovery.button.scan.text">Scan for new devices</string>
+
 	<string name="app_name">OBDMe</string>
 	<string name="sendButtonText">Send</string>
 
@@ -11,14 +59,20 @@
 	<string name="title_connected_to">connected: </string>
 	<string name="title_not_connected">not connected</string>
 
-	<!-- DeviceListActivity -->
-	<string name="scanning">scanning for OBD devices...</string>
-	<string name="select_device">select a OBD device to connect</string>
-	<string name="none_paired">No OBD devices have been paired</string>
-	<string name="none_found">No OBD devices found</string>
-	<string name="title_paired_devices">Paired OBD Devices</string>
-	<string name="title_other_devices">Other Available Devices</string>
-	<string name="button_scan">Scan for OBD devices</string>
+
+	
+	<!-- No Device Connected Screen -->
+	<string name="noDeviceConnected">No OBD Device Connected</string>
+	
+	<!-- Basic Data Display -->
+	<string name="speed">Vehicle Speed</string>
+	<string name="speedValue">00.0</string>
+	<string name="rpms">Engine RPMS</string>
+	<string name="rpmsValue">0000</string>
+	<string name="instMPG">Instantaneous MPG</string>
+	<string name="instMPGValue">00.0</string>
+	<string name="avgMPG">Average MPG</string>
+	<string name="avgMPGValue">00.0</string>
 
 	<!-- Options Menu -->
 	<string name="connect">Connect a device</string>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical">
+	<ScrollView android:id="@+id/ScrollView01"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:orientation="vertical">
+			<TextView android:id="@+id/setupwizard.account.heading"
+				style="@style/setupwizard.header" android:text="@string/setupwizard.account.heading.text"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="0"></TextView>
+			<TextView android:id="@+id/setupwizard.account"
+				android:text="@string/setupwizard.account.text" style="@style/setupwizard.body"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="0"></TextView>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				style="@style/setupwizard.body" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:orientation="vertical"
+				android:layout_weight="0">
+				<TextView android:id="@+id/setupwizard.account.email"
+					android:text="@string/setupwizard.account.email.text" style="@style/setupwizard.body"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_weight="0"></TextView>
+				<EditText android:id="@+id/setupwizard.account.email.input"
+					android:layout_weight="0" android:layout_width="fill_parent"
+					android:layout_height="wrap_content"></EditText>
+			</LinearLayout>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:orientation="vertical" style="@style/setupwizard.body"
+				android:layout_weight="0">
+				<TextView android:id="@+id/setupwizard.account.password"
+					android:text="@string/setupwizard.account.password.text" style="@style/setupwizard.body"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_weight="0"></TextView>
+				<EditText android:id="@+id/setupwizard.account.password.input"
+					android:password="true" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_weight="0"></EditText>
+			</LinearLayout>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:orientation="vertical" android:layout_weight="1"
+				style="@style/setupwizard.body">
+				<TextView android:id="@+id/setupwizard.account.confirmpassword"
+					android:visibility="invisible"
+					android:text="@string/setupwizard.account.confirmpassword.text"
+					style="@style/setupwizard.body" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_weight="0"></TextView>
+				<EditText android:id="@+id/setupwizard.account.confirmpassword.input"
+					android:visibility="invisible" android:password="true"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_weight="0"></EditText>
+			</LinearLayout>
+			<Button android:text="@string/setupwizard.account.button.signin.text"
+				android:id="@+id/setupwizard.account.button" android:layout_width="fill_parent"
+				android:layout_height="wrap_content"></Button>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

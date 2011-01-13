@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical">
+	<TextView android:id="@+id/setupwizard.main.heading" style="@style/setupwizard.header"
+		android:text="@string/setupwizard.main.heading.text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="0"></TextView>
+	<TextView android:id="@+id/setupwizard.main" android:text="@string/setupwizard.main.text"
+		style="@style/setupwizard.body" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_weight="1"></TextView>
+	<Button android:text="@string/setupwizard.main.button.next.text"
+		android:id="@+id/setupwizard.main.button.next" android:layout_width="fill_parent"
+		android:layout_height="wrap_content"></Button>
+</LinearLayout>

@@ -1,7 +1,7 @@
 package edu.unl.csce.obdme;
 
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
-import edu.unl.csce.obdme.bluetooth.DeviceListActivity;
+import edu.unl.csce.obdme.bluetooth.OBDMeBluetoothDiscovery;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -88,7 +88,6 @@ public class OBDMe extends Activity {
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Debug.waitForDebugger();
 		super.onCreate(savedInstanceState);
 		if(DEBUG) Log.e(DEBUG_TAG, "+++ OBDMe CREATE +++");
 
@@ -166,19 +165,6 @@ public class OBDMe extends Activity {
         if (bluetoothService != null) bluetoothService.stop();
         if(DEBUG) Log.e(DEBUG_TAG, "--- OBDME ON DESTROY ---");
     }
-
-    /**
-     * Ensure discoverable.
-     */
-    private void ensureDiscoverable() {
-        if(DEBUG) Log.d(DEBUG_TAG, "ensure discoverable");
-        if (bluetoothAdapter.getScanMode() !=
-            BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
-    }
     
     /**
      * Sends a message.
@@ -223,26 +209,6 @@ public class OBDMe extends Activity {
     private void setupOBDConnection() {
         Log.d(DEBUG_TAG, "Setting up OBD Connection");
 
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
-        mConversationView = (ListView) findViewById(R.id.in);
-        mConversationView.setAdapter(mConversationArrayAdapter);
-
-        // Initialize the compose field with a listener for the return key
-        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-        mOutEditText.setOnEditorActionListener(mWriteListener);
-
-        // Initialize the send button with a listener that for click events
-        mSendButton = (Button) findViewById(R.id.button_send);
-        mSendButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                // Send a message using content of the edit text widget
-                TextView view = (TextView) findViewById(R.id.edit_text_out);
-                String message = view.getText().toString();
-                sendMessage(message);
-            }
-        });
-
         // Initialize the BluetoothChatService to perform bluetooth connections
         bluetoothService = new BluetoothService(this, messageHandler);
 
@@ -269,6 +235,7 @@ public class OBDMe extends Activity {
 				case BluetoothService.STATE_LISTEN:
 					
 				case BluetoothService.STATE_NONE:
+					Intent myIntent = new Intent();
 					titleBar.setText(R.string.title_not_connected);
 					break;
 				}
@@ -306,7 +273,7 @@ public class OBDMe extends Activity {
 		case REQUEST_CONNECT_DEVICE:
 			if (resultCode == Activity.RESULT_OK) {
 				String address = data.getExtras()
-				.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+				.getString(OBDMeBluetoothDiscovery.EXTRA_DEVICE_ADDRESS);
 				BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
 				bluetoothService.connect(device);
 				if(DEBUG) Log.d(DEBUG_TAG, "Back in the activity result area.");
@@ -339,7 +306,7 @@ public class OBDMe extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.scan:
-            Intent serverIntent = new Intent(this, DeviceListActivity.class);
+            Intent serverIntent = new Intent(this, OBDMeBluetoothDiscovery.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
             return true;
         }

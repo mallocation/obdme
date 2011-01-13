@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	android:versionCode="1" android:versionName="1.0" package="edu.unl.csce.obdme">
-	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:debuggable="true">
-		<activity android:label="@string/app_name" android:name="edu.unl.csce.obdme.OBDMe">
+	<application android:label="@string/app_name"
+		android:debuggable="true" android:icon="@drawable/app_logo">
+		<activity android:label="@string/app_name" android:name="OBDMeLauncher">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name="edu.unl.csce.obdme.bluetooth.DeviceListActivity"></activity>
+
+		<activity android:label="@string/app_name" android:name=".setupwizard.OBDMeSetupWizardMain"></activity>
+		<activity android:name=".setupwizard.OBDMeSetupWizardBluetooth"
+			android:label="@string/setupwizard.bluetooth.label"></activity>
+
+		<activity android:label="@string/setupwizard.account.label"
+			android:name=".setupwizard.OBDMeSetupWizardAccount"></activity>
+		<activity android:label="@string/app_name" android:name=".bluetooth.OBDMeBluetoothDiscovery"></activity>
 	</application>
 	<uses-sdk android:minSdkVersion="8" />
 	<uses-permission android:name="android.permission.BLUETOOTH" />
