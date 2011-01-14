@@ -71,6 +71,19 @@
 							android:layout_height="wrap_content"></TextView>
 					</LinearLayout>
 				</TableRow>
+				<TableRow>
+					<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+						android:layout_width="fill_parent" android:layout_height="fill_parent"
+						android:orientation="horizontal">
+						<ImageView android:id="@+id/setupwizard.bluetooth.list.verify.image"
+							android:src="@drawable/grey_tick" android:layout_height="match_parent"
+							android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
+						<TextView android:id="@+id/setupwizard.bluetooth.list.verify"
+							android:text="@string/setupwizard.bluetooth.list.verify.text"
+							android:layout_width="fill_parent" style="@style/setupwizard.list"
+							android:layout_height="wrap_content"></TextView>
+					</LinearLayout>
+				</TableRow>
 			</TableLayout>
 		</LinearLayout>
 	</ScrollView>

@@ -27,22 +27,26 @@
 	<!-- Setup Wizard Bluetooth Activity -->
 	<string name="setupwizard.bluetooth.label">Bluetooth Setup Wizard</string>
 	<string name="setupwizard.bluetooth.heading.text">Bluetooth Setup</string>
-	<string name="setupwizard.bluetooth.text.check">This screen will guide you through the Bluetooth setup process.  Use the button below to check for Bluetooth support\n</string>
-	<string name="setupwizard.bluetooth.text.enable">Bluetooth is supported by your device.  Use the button below to check if Bluetooth is enabled.\n</string>
-	<string name="setupwizard.bluetooth.text.select">Bluetooth is currently enabled.  Use the button below to select your OBDMe device.\n</string>
-	<string name="setupwizard.bluetooth.text.connect">Your OBDMe device was paired successfully.  Use the button below to connect to the device.\n</string>
-	<string name="setupwizard.bluetooth.text.next">The Bluetooth setup is complete!  Use the button below to continue.\n</string>
+	<string name="setupwizard.bluetooth.text.check">This screen will guide you through the Bluetooth setup process.  Use the button below to check for Bluetooth support.</string>
+	<string name="setupwizard.bluetooth.text.enable">Bluetooth is supported by your device.  Use the button below to check if Bluetooth is enabled.</string>
+	<string name="setupwizard.bluetooth.text.select">Bluetooth is currently enabled.  Use the button below to select your OBDMe device.</string>
+	<string name="setupwizard.bluetooth.text.connect.error">Connection to the selected device failed.  Please select another device to connect to.</string>
+	<string name="setupwizard.bluetooth.text.connect">Now that you\'ve selected your device, use the button below to connect to your device.</string>
+	<string name="setupwizard.bluetooth.text.verify">Your OBDMe device was paired successfully.  Use the button below to verify the hardware version of your device.</string>
+	<string name="setupwizard.bluetooth.text.next">The Bluetooth setup is complete!  Use the button below to continue.</string>
 	<string name="setupwizard.bluetooth.list.supported.text">Bluetooth Supported</string>
 	<string name="setupwizard.bluetooth.list.enabled.text">Bluetooth Enabled</string>
 	<string name="setupwizard.bluetooth.list.select.text">Select Device</string>
-	<string name="setupwizard.bluetooth.list.connected.text">Device Connected</string>
-	<string name="setupwizard.bluetooth.button.check.text">Check for Bluetooth support</string>
-	<string name="setupwizard.bluetooth.button.enable.text">Check if Bluetooth is enabled</string>
-	<string name="setupwizard.bluetooth.button.select.text">Select new device</string>
-	<string name="setupwizard.bluetooth.button.connect.text">Connect to device</string>
+	<string name="setupwizard.bluetooth.list.connected.text">Connect to Device</string>
+	<string name="setupwizard.bluetooth.list.verify.text">Verify Hardware</string>
+	<string name="setupwizard.bluetooth.button.check.text">Check for Bluetooth Support</string>
+	<string name="setupwizard.bluetooth.button.enable.text">Check if Bluetooth is Enabled</string>
+	<string name="setupwizard.bluetooth.button.select.text">Select New Device</string>
+	<string name="setupwizard.bluetooth.button.connect.text">Connect to Device</string>
+	<string name="setupwizard.bluetooth.button.verify.text">Verify Hardware Version</string>
 	<string name="setupwizard.bluetooth.button.next.text">Next</string>
 	<string name="setupwizard.bluetooth.error.notenabled">Bluetooth must be enable to use the OBDMe Application</string>
-	<string name="setupwizard.bluetooth.error.notsupported">Your phone does not support Bluetooth.  OBDMe will now exit.</string>
+	<string name="setupwizard.bluetooth.error.notsupported">Your phone does not support Bluetooth.</string>
 	<string name="setupwizard.bluetooth.dialog.connecting">Connecting...</string>
 	
 	<!-- Setup Wizard Complete Activity -->

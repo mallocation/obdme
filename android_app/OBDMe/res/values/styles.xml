@@ -17,7 +17,7 @@
 		<item name="android:padding">10dip</item>
 	</style>
 	<style name="setupwizard.body.bluetooth" parent="setupwizard.body">
-		<item name="android:layout_height">100dip</item>
+		<item name="android:layout_height">90dip</item>
 	</style>
 	<style name="bluetooth.discovery.list" parent="android:Theme">
 		<item name="android:background">#fff</item>
