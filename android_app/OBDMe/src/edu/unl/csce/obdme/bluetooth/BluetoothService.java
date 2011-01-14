@@ -65,6 +65,8 @@ public class BluetoothService {
 
 	/** The Constant STATE_CONNECTED. */
 	public static final int STATE_CONNECTED = 3;
+	
+	public static final int STATE_FAILED = 4;
 
 	/**
 	 * Instantiates a new bluetooth service.
@@ -217,14 +219,7 @@ public class BluetoothService {
 	 * Connection failed.
 	 */
 	private void connectionFailed() {
-		setState(STATE_LISTEN);
-
-		// Send a failure message back to the Activity
-		Message msg = appHandler.obtainMessage(OBDMe.MESSAGE_TOAST);
-		Bundle bundle = new Bundle();
-		bundle.putString(OBDMe.TOAST, "Unable to connect to OBD device");
-		msg.setData(bundle);
-		appHandler.sendMessage(msg);
+		setState(STATE_FAILED);
 	}
 
 
@@ -308,11 +303,13 @@ public class BluetoothService {
 			} catch (IOException ioe) {
 				if (DEBUG) Log.e(DEBUG_TAG, "IOException while trying to connect to the device.", ioe);
 				connectionFailed();
-
+				setState(STATE_FAILED);
+				
 				try {
 					bluetoothSocket.close();
 				} catch (IOException e2) {
 					Log.e(DEBUG_TAG, "Unable to close socket during connection failure", e2);
+					setState(STATE_FAILED);
 				}
 
 				BluetoothService.this.start();

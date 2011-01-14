@@ -2,7 +2,8 @@
 <resources>
 	<bool name="debug">true</bool>
 	<string name="debug.tag.launcher">OBDMeLauncher</string>
-	<string name="debug.tag.setupwizrd.main">OBDMeSetupWizardMain</string>
-	<string name="debug.tag.setupwizrd.account">OBDMeSetupWizardAccount</string>
-	<string name="debug.tag.setupwizrd.bluetooth">OBDMeSetupWizardBluetooth</string>
+	<string name="debug.tag.setupwizard.main">OBDMeSetupWizardMain</string>
+	<string name="debug.tag.setupwizard.account">OBDMeSetupWizardAccount</string>
+	<string name="debug.tag.setupwizard.bluetooth">OBDMeSetupWizardBluetooth</string>
+	<string name="debug.tag.setupwizard.complete">OBDMeSetupWizardComplete</string>
 </resources>

@@ -3,4 +3,6 @@
 	<string name="prefs.tag">OBDMePrefs</string>
 	<string name="prefs.firstrun">OBDMePrefsFirstRun</string>
 	<string name="prefs.bluetooth.device">OBDMeBluetoothDevice</string>
+	<string name="prefs.account.username">OBDMeAccountUsername</string>
+	<string name="prefs.account.password">OBDMeAccountPassword</string>
 </resources>

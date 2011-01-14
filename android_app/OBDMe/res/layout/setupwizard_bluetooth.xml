@@ -6,66 +6,74 @@
 		style="@style/setupwizard.header" android:text="@string/setupwizard.bluetooth.heading.text"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:layout_weight="0"></TextView>
-	<TextView android:id="@+id/setupwizard.bluetooth.text"
-		android:text="@string/setupwizard.bluetooth.text.check" style="@style/setupwizard.body.bluetooth"
-		android:layout_width="fill_parent" android:layout_weight="0"></TextView>
-	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent" android:layout_height="fill_parent"
-		android:shrinkColumns="true" android:layout_weight="1">
-		<TableRow>
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	<ScrollView android:id="@+id/ScrollView"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="1">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:orientation="vertical">
+			<TextView android:id="@+id/setupwizard.bluetooth.text"
+				android:text="@string/setupwizard.bluetooth.text.check" style="@style/setupwizard.body.bluetooth"
+				android:layout_width="fill_parent" android:layout_weight="0"></TextView>
+			<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
-				android:orientation="horizontal">
-				<ImageView android:id="@+id/setupwizard.bluetooth.list.supported.image"
-					android:src="@drawable/red_x" android:layout_height="match_parent"
-					android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
-				<TextView android:id="@+id/setupwizard.bluetooth.list.supported"
-					android:text="@string/setupwizard.bluetooth.list.supported.text"
-					style="@style/setupwizard.list" android:layout_width="fill_parent"
-					android:layout_height="wrap_content"></TextView>
-			</LinearLayout>
-		</TableRow>
-		<TableRow>
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:layout_width="fill_parent" android:layout_height="fill_parent"
-				android:orientation="horizontal">
-				<ImageView android:id="@+id/setupwizard.bluetooth.list.enabled.image"
-					android:src="@drawable/red_x" android:layout_height="match_parent"
-					android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
-				<TextView android:id="@+id/setupwizard.bluetooth.list.enabled"
-					android:text="@string/setupwizard.bluetooth.list.enabled.text"
-					style="@style/setupwizard.list" android:layout_width="fill_parent"
-					android:layout_height="wrap_content"></TextView>
-			</LinearLayout>
-		</TableRow>
-		<TableRow>
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:layout_width="fill_parent" android:layout_height="fill_parent"
-				android:orientation="horizontal">
-				<ImageView android:id="@+id/setupwizard.bluetooth.list.paired.image"
-					android:src="@drawable/red_x" android:layout_height="match_parent"
-					android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
-				<TextView android:id="@+id/setupwizard.bluetooth.list.select"
-					android:text="@string/setupwizard.bluetooth.list.select.text"
+				android:shrinkColumns="true" android:layout_weight="1">
+				<TableRow>
+					<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+						android:layout_width="fill_parent" android:layout_height="fill_parent"
+						android:orientation="horizontal">
+						<ImageView android:id="@+id/setupwizard.bluetooth.list.supported.image"
+							android:src="@drawable/grey_tick" android:layout_height="match_parent"
+							android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
+						<TextView android:id="@+id/setupwizard.bluetooth.list.supported"
+							android:text="@string/setupwizard.bluetooth.list.supported.text"
+							style="@style/setupwizard.list" android:layout_width="fill_parent"
+							android:layout_height="wrap_content"></TextView>
+					</LinearLayout>
+				</TableRow>
+				<TableRow>
+					<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+						android:layout_width="fill_parent" android:layout_height="fill_parent"
+						android:orientation="horizontal">
+						<ImageView android:id="@+id/setupwizard.bluetooth.list.enabled.image"
+							android:src="@drawable/grey_tick" android:layout_height="match_parent"
+							android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
+						<TextView android:id="@+id/setupwizard.bluetooth.list.enabled"
+							android:text="@string/setupwizard.bluetooth.list.enabled.text"
+							style="@style/setupwizard.list" android:layout_width="fill_parent"
+							android:layout_height="wrap_content"></TextView>
+					</LinearLayout>
+				</TableRow>
+				<TableRow>
+					<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+						android:layout_width="fill_parent" android:layout_height="fill_parent"
+						android:orientation="horizontal">
+						<ImageView android:id="@+id/setupwizard.bluetooth.list.paired.image"
+							android:src="@drawable/grey_tick" android:layout_height="match_parent"
+							android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
+						<TextView android:id="@+id/setupwizard.bluetooth.list.select"
+							android:text="@string/setupwizard.bluetooth.list.select.text"
 
-					android:layout_width="fill_parent" style="@style/setupwizard.list"
-					android:layout_height="wrap_content"></TextView>
-			</LinearLayout>
-		</TableRow>
-		<TableRow>
-			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:layout_width="fill_parent" android:layout_height="fill_parent"
-				android:orientation="horizontal">
-				<ImageView android:id="@+id/setupwizard.bluetooth.list.connected.image"
-					android:src="@drawable/red_x" android:layout_height="match_parent"
-					android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
-				<TextView android:id="@+id/setupwizard.bluetooth.list.connected"
-					android:text="@string/setupwizard.bluetooth.list.connected.text"
-					android:layout_width="fill_parent" style="@style/setupwizard.list"
-					android:layout_height="wrap_content"></TextView>
-			</LinearLayout>
-		</TableRow>
-	</TableLayout>
+							android:layout_width="fill_parent" style="@style/setupwizard.list"
+							android:layout_height="wrap_content"></TextView>
+					</LinearLayout>
+				</TableRow>
+				<TableRow>
+					<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+						android:layout_width="fill_parent" android:layout_height="fill_parent"
+						android:orientation="horizontal">
+						<ImageView android:id="@+id/setupwizard.bluetooth.list.connected.image"
+							android:src="@drawable/grey_tick" android:layout_height="match_parent"
+							android:layout_width="wrap_content" style="@style/setupwizard.list"></ImageView>
+						<TextView android:id="@+id/setupwizard.bluetooth.list.connected"
+							android:text="@string/setupwizard.bluetooth.list.connected.text"
+							android:layout_width="fill_parent" style="@style/setupwizard.list"
+							android:layout_height="wrap_content"></TextView>
+					</LinearLayout>
+				</TableRow>
+			</TableLayout>
+		</LinearLayout>
+	</ScrollView>
 	<Button android:text="@string/setupwizard.bluetooth.button.check.text"
 		android:id="@+id/setupwizard.bluetooth.button" android:layout_width="fill_parent"
 		android:layout_height="wrap_content"></Button>

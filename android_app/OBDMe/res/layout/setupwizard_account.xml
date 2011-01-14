@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	android:orientation="vertical">
-	<ScrollView android:id="@+id/ScrollView01"
-		android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<TextView android:id="@+id/setupwizard.account.heading" style="@style/setupwizard.header"
+		android:text="@string/setupwizard.account.heading.text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="0"></TextView>
+	<ScrollView android:id="@+id/ScrollView"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="1">
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
 			android:orientation="vertical">
-			<TextView android:id="@+id/setupwizard.account.heading"
-				style="@style/setupwizard.header" android:text="@string/setupwizard.account.heading.text"
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:layout_weight="0"></TextView>
 			<TextView android:id="@+id/setupwizard.account"
 				android:text="@string/setupwizard.account.text" style="@style/setupwizard.body"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -44,18 +45,17 @@
 				android:orientation="vertical" android:layout_weight="1"
 				style="@style/setupwizard.body">
 				<TextView android:id="@+id/setupwizard.account.confirmpassword"
-					android:visibility="invisible"
+					android:visibility="gone"
 					android:text="@string/setupwizard.account.confirmpassword.text"
 					style="@style/setupwizard.body" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" android:layout_weight="0"></TextView>
+					android:layout_height="wrap_content"></TextView>
 				<EditText android:id="@+id/setupwizard.account.confirmpassword.input"
-					android:visibility="invisible" android:password="true"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
-					android:layout_weight="0"></EditText>
+					android:visibility="gone" android:password="true"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
 			</LinearLayout>
-			<Button android:text="@string/setupwizard.account.button.signin.text"
-				android:id="@+id/setupwizard.account.button" android:layout_width="fill_parent"
-				android:layout_height="wrap_content"></Button>
 		</LinearLayout>
 	</ScrollView>
+	<Button android:text="@string/setupwizard.account.button.signin.text"
+		android:id="@+id/setupwizard.account.button" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:padding="10dip"></Button>
 </LinearLayout>

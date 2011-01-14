@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.ImageView;
 
 
 public class OBDMeLauncher extends Activity {
@@ -21,7 +25,7 @@ public class OBDMeLauncher extends Activity {
 			public void run() {
 				try {
 					int waited = 0;
-					while (waited < 5000) {
+					while (waited < getResources().getInteger(R.integer.splash_wait_milliseconds)) {
 						sleep(500);
 						waited += 500;
 					}
@@ -46,7 +50,7 @@ public class OBDMeLauncher extends Activity {
 					//Start the desired activity
 					Intent intent = new Intent();
 					intent.setClass(getBaseContext(), intentTarget);
-					
+										
 					//Finish the splash screen
 					finish();
 					
