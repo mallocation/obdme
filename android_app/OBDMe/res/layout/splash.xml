@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@drawable/gradient">
 	<ImageView android:src="@drawable/splash_logo" android:id="@+id/SplashImageView"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
 	</ImageView>

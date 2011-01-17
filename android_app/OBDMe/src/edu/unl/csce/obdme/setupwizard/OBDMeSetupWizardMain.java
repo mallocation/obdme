@@ -29,7 +29,6 @@ public class OBDMeSetupWizardMain extends Activity {
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
             	Intent intent = new Intent(view.getContext(), OBDMeSetupWizardAccount.class);
-        		finish();
         		startActivity(intent);
             }
 

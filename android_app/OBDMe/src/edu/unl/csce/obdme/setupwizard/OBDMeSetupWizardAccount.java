@@ -196,7 +196,6 @@ public class OBDMeSetupWizardAccount extends Activity {
 					
 					//Start the bluetooth setup wizzard
 					Intent intent = new Intent(view.getContext(), OBDMeSetupWizardBluetooth.class);
-					finish();
 					startActivity(intent);
 				}
 			}

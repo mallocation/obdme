@@ -2,7 +2,7 @@
 <resources>
 
 	<!-- Setup Wizard Main Activity -->
-	<string name="setupwizard.main.label">Bluetooth Setup Wizard</string>
+	<string name="setupwizard.main.label">OBDMe Setup Wizard</string>
 	<string name="setupwizard.main.heading.text">Welcome to OBDMe!</string>
 	<string name="setupwizard.main.text">It appears that this is the first time that you are starting OBDMe.\n\n
 										This setup wizard will guide you through the processes of creating an 
@@ -10,7 +10,7 @@
 	<string name="setupwizard.main.button.next.text">Next</string>
 	
 	<!-- Setup Wizard Account Activity -->
-	<string name="setupwizard.account.label">OBDMe Account Setup Wizard</string>
+	<string name="setupwizard.account.label">Account Setup</string>
 	<string name="setupwizard.account.heading.text">Account Setup</string>
 	<string name="setupwizard.account.text">Please enter your existing OBDMe account information below.  
 										If you do not have an account, you may create one here by filling in your information.</string>
@@ -25,7 +25,7 @@
 	<string name="setupwizard.account.email.error.bad">Your email address is not valid</string>
 	
 	<!-- Setup Wizard Bluetooth Activity -->
-	<string name="setupwizard.bluetooth.label">Bluetooth Setup Wizard</string>
+	<string name="setupwizard.bluetooth.label">Bluetooth Setup</string>
 	<string name="setupwizard.bluetooth.heading.text">Bluetooth Setup</string>
 	<string name="setupwizard.bluetooth.text.check">This screen will guide you through the Bluetooth setup process.  Use the button below to check for Bluetooth support.</string>
 	<string name="setupwizard.bluetooth.text.enable">Bluetooth is supported by your device.  Use the button below to check if Bluetooth is enabled.</string>
@@ -50,7 +50,7 @@
 	<string name="setupwizard.bluetooth.dialog.connecting">Connecting...</string>
 	
 	<!-- Setup Wizard Complete Activity -->
-	<string name="setupwizard.complete.label">Setup Complete!</string>
+	<string name="setupwizard.complete.label">Setup Complete</string>
 	<string name="setupwizard.complete.heading.text">Setup Complete</string>
 	<string name="setupwizard.complete.body.text">That\'s it!  You are now ready to start using OBDMe.  Hit the next button below to continue to the main screen.
 												If you created your account here, please finish the setup process online.</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical">
+	android:orientation="vertical" android:background="@drawable/gradient">
 	<TextView android:id="@+id/setupwizard.main.heading" style="@style/setupwizard.header"
 		android:text="@string/setupwizard.main.heading.text"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"

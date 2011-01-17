@@ -111,7 +111,6 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 				//Bluetooth setup is complete.  Proceed.
 				case 5:
 					Intent intent = new Intent(view.getContext(), OBDMeSetupWizardComplete.class);
-					finish();
 					startActivity(intent);
 					break;
 

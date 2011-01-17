@@ -30,6 +30,8 @@ public class OBDMeSetupWizardComplete extends Activity {
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
             	Intent intent = new Intent(view.getContext(), OBDMe.class);
+            	
+            	
         		finish();
         		startActivity(intent);
             }
