@@ -309,7 +309,11 @@ public class OBDMe extends Activity {
             Intent serverIntent = new Intent(this, OBDMeBluetoothDiscovery.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
             return true;
+		case R.id.settings:
+        	startActivity(new Intent(this, OBDMeSettings.class));
+            return true;
         }
+
         return false;
     }
 }

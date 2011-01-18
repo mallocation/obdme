@@ -68,6 +68,7 @@
 
 	<string name="app_name">OBDMe</string>
 	<string name="sendButtonText">Send</string>
+	<string name="settings_title">OBDMe Settings</string>
 
 	<!-- Bluetooth Status -->
 	<string name="send">Send</string>
@@ -92,5 +93,6 @@
 
 	<!-- Options Menu -->
 	<string name="connect">Connect a device</string>
+	<string name="settings">Settings</string>
 
 </resources>
