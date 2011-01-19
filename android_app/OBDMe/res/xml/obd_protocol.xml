@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ 
+<!-- OBDII Protocol Definition -->
+<obd-protocol>
+	<mode hex="00" name="Show current data">
+		<pid hex="00" return="4" unit="" eval="ENCODED" name="PIDs supported [01 - 20]">
+			<code bit="0" value="01" />
+			<code bit="1" value="02" />
+			<code bit="2" value="03" />
+			<code bit="3" value="04" />
+			<code bit="4" value="05" />
+			<code bit="5" value="06" />
+			<code bit="6" value="07" />
+			<code bit="7" value="08" />
+			<code bit="8" value="09" />
+			<code bit="9" value="0A" />
+			<code bit="10" value="0B" />
+			<code bit="11" value="0C" />
+			<code bit="12" value="0D" />
+			<code bit="13" value="0E" />
+			<code bit="14" value="0F" />
+			<code bit="15" value="10" />
+			<code bit="16" value="11" />
+			<code bit="17" value="12" />
+			<code bit="18" value="13" />
+			<code bit="19" value="14" />
+			<code bit="20" value="15" />
+			<code bit="21" value="16" />
+			<code bit="22" value="17" />
+			<code bit="23" value="18" />
+			<code bit="24" value="19" />
+			<code bit="25" value="1A" />
+			<code bit="26" value="1B" />
+			<code bit="27" value="1C" />
+			<code bit="28" value="1D" />
+			<code bit="29" value="1E" />
+			<code bit="30" value="1F" />
+			<code bit="31" value="20" />
+		</pid>
+		<pid hex="01" return="2" unit="" eval="ENCODED"
+			name="Monitor status since DTCs cleared" />
+		<pid hex="02" return="2" unit="" eval="" name="Freeze DTC" />
+		<pid hex="03" return="2" unit="" eval="ENCODED" name="Fuel system status">
+			<code bit="0" value="Open loop due to insufficient engine temperature" />
+			<code bit="1"
+				value="Closed loop, using oxygen sensor feedback to determine fuel mix" />
+			<code bit="2"
+				value="Open loop due to engine load OR fuel cut due to deacceleration" />
+			<code bit="3" value="Open loop due to system failure" />
+			<code bit="4"
+				value="Closed loop, using at least one oxygen sensor but there is a fault in the feedback system" />
+		</pid>
+		<pid hex="04" return="1" unit="%" eval="A*100/255"
+			name="Calculated engine load value" />
+		<pid hex="05" return="1" unit="C" eval="A-40"
+			name="Engine coolant temperature" />
+		<pid hex="06" return="1" unit="%" eval="(A-128)*100/128"
+			name="Short term fuel % trim—Bank 1" />
+		<pid hex="07" return="1" unit="%" eval="(A-128)*100/128"
+			name="Long term fuel % trim—Bank 1" />
+		<pid hex="08" return="1" unit="%" eval="(A-128)*100/128"
+			name="Short term fuel % trim—Bank 2" />
+		<pid hex="09" return="1" unit="%" eval="(A-128)*100/128"
+			name="Long term fuel % trim—Bank 2" />
+		<pid hex="0A" return="1" unit="kPa" eval="A*3" name="Fuel pressure" />
+		<pid hex="0B" return="1" unit="kPa" eval="A"
+			name="Intake manifold absolute pressure" />
+		<pid hex="0C" return="2" unit="RPM" eval="((A*256)+B)/4" name="Engine RPM" />
+		<pid hex="0D" return="1" unit="km/h" eval="A" name="Vehicle speed" />
+		<pid hex="0E" return="1" unit="" eval="A/2-64" name="Timing advance" />
+		<pid hex="0F" return="1" unit="C" eval="A-40" name="Intake air temperature" />
+		<pid hex="10" return="2" unit="g/s" eval="((A*256)+B) / 100" name="MAF air flow rate" />
+		<pid hex="11" return="1" unit="%" eval="A*100/255" name="Throttle position" />
+		<pid hex="12" return="1" unit="" eval="ENCODED"
+			name="Commanded secondary air status">
+			<code bit="0" value="Upstream of catalytic converter" />
+			<code bit="1" value="Downstream of catalytic converter" />
+			<code bit="2" value="From the outside atmosphere or off" />
+		</pid>
+		<pid hex="13" return="1" unit="" eval="" name="Oxygen sensors present" />
+		<pid hex="14" return="2" unit="Volts %" eval=""
+			name="Bank 1, Sensor 1: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="15" return="2" unit="Volts %" eval=""
+			name="Bank 1, Sensor 2: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="16" return="2" unit="Volts %" eval=""
+			name="Bank 1, Sensor 3: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="17" return="2" unit="Volts %" eval=""
+			name="Bank 1, Sensor 4: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="18" return="2" unit="Volts %" eval=""
+			name="Bank 2, Sensor 1: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="19" return="2" unit="Volts %" eval=""
+			name="Bank 2, Sensor 2: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="1A" return="2" unit="Volts %" eval=""
+			name="Bank 2, Sensor 3: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="1B" return="2" unit="Volts %" eval=""
+			name="Bank 2, Sensor 4: Oxygen sensor voltage, Short term fuel trim" />
+		<pid hex="1C" return="1" unit="" eval="ENCODED"
+			name="OBD standards this vehicle conforms to" />
+		<pid hex="1D" return="1" unit="" eval="" name="Oxygen sensors present" />
+		<pid hex="1E" return="1" unit="" eval="" name="Auxiliary input status" />
+		<pid hex="1F" return="2" unit="seconds" eval="(A*256)+B"
+			name="Run time since engine start" />
+		<pid hex="20" return="4" unit="" eval="ENCODED" name="PIDs supported 21-40">
+			<code bit="0" value="21" />
+			<code bit="1" value="22" />
+			<code bit="2" value="23" />
+			<code bit="3" value="24" />
+			<code bit="4" value="25" />
+			<code bit="5" value="26" />
+			<code bit="6" value="27" />
+			<code bit="7" value="28" />
+			<code bit="8" value="29" />
+			<code bit="9" value="2A" />
+			<code bit="10" value="2B" />
+			<code bit="11" value="2C" />
+			<code bit="12" value="2D" />
+			<code bit="13" value="2E" />
+			<code bit="14" value="2F" />
+			<code bit="15" value="30" />
+			<code bit="16" value="31" />
+			<code bit="17" value="32" />
+			<code bit="18" value="33" />
+			<code bit="19" value="34" />
+			<code bit="20" value="35" />
+			<code bit="21" value="36" />
+			<code bit="22" value="37" />
+			<code bit="23" value="38" />
+			<code bit="24" value="39" />
+			<code bit="25" value="3A" />
+			<code bit="26" value="3B" />
+			<code bit="27" value="3C" />
+			<code bit="28" value="3D" />
+			<code bit="29" value="3E" />
+			<code bit="30" value="3F" />
+			<code bit="31" value="40" />
+		</pid>
+		<pid hex="21" return="2" unit="km" eval="(A*256)+B"
+			name="Distance traveled with malfunction indicator lamp (MIL) on" />
+		<pid hex="22" return="2" unit="kPa" eval="(((A*256)+B) * 10) / 128"
+			name="Fuel Rail Pressure (relative to manifold vacuum)" />
+		<pid hex="23" return="2" unit="kPa" eval="((A*256)+B) * 10"
+			name="Fuel Rail Pressure (diesel)" />
+		<pid hex="24" return="4" unit="V" eval=""
+			name="O2S1_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="25" return="4" unit="V" eval=""
+			name="O2S2_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="26" return="4" unit="V" eval=""
+			name="O2S3_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="27" return="4" unit="V" eval=""
+			name="O2S4_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="28" return="4" unit="V" eval=""
+			name="O2S5_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="29" return="4" unit="V" eval=""
+			name="O2S6_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="2A" return="4" unit="V" eval=""
+			name="O2S7_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="2B" return="4" unit="V" eval=""
+			name="O2S8_WR_lambda(1): Equivalence Ratio Voltage" />
+		<pid hex="2C" return="1" unit="%" eval="100*A/255" name="Commanded EGR" />
+		<pid hex="2D" return="1" unit="%" eval="(A-128) * 100/128" name="EGR Error" />
+		<pid hex="2E" return="1" unit="%" eval="100*A/255"
+			name="Commanded evaporative purge" />
+		<pid hex="2F" return="1" unit="%" eval="100*A/255" name="Fuel Level Input" />
+		<pid hex="30" return="1" unit="" eval="A"
+			name="Number of warm-ups since codes cleared" />
+		<pid hex="31" return="2" unit="km" eval="(A*256)+B"
+			name="Distance traveled since codes cleared" />
+		<pid hex="32" return="2" unit="Pa" eval="((A*256)+B)/4"
+			name="Evap. System Vapor Pressure" />
+		<pid hex="33" return="1" unit="kPa" eval="A" name="Barometric pressure" />
+		<pid hex="34" return="4" unit="" eval=""
+			name="O2S1_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="35" return="4" unit="" eval=""
+			name="O2S2_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="36" return="4" unit="" eval=""
+			name="O2S3_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="37" return="4" unit="" eval=""
+			name="O2S4_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="38" return="4" unit="" eval=""
+			name="O2S5_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="39" return="4" unit="" eval=""
+			name="O2S6_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="3A" return="4" unit="" eval=""
+			name="O2S7_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="3B" return="4" unit="" eval=""
+			name="O2S8_WR_lambda(1): Equivalence Ratio Current" />
+		<pid hex="3C" return="2" unit="C" eval="((A*256)+B)/10 - 40"
+			name="Catalyst Temperature Bank 1, Sensor 1" />
+		<pid hex="3D" return="2" unit="C" eval="((A*256)+B)/10 - 40"
+			name="Catalyst Temperature Bank 2, Sensor 1" />
+		<pid hex="3E" return="2" unit="C" eval="((A*256)+B)/10 - 40"
+			name="Catalyst Temperature Bank 1, Sensor 2" />
+		<pid hex="3F" return="2" unit="C" eval="((A*256)+B)/10 - 40"
+			name="Catalyst Temperature Bank 2, Sensor 2" />
+		<pid hex="40" return="2" unit="" eval="ENCODED" name="PIDs supported 41-60">
+			<code bit="0" value="41" />
+			<code bit="1" value="42" />
+			<code bit="2" value="43" />
+			<code bit="3" value="44" />
+			<code bit="4" value="45" />
+			<code bit="5" value="46" />
+			<code bit="6" value="47" />
+			<code bit="7" value="48" />
+			<code bit="8" value="49" />
+			<code bit="9" value="4A" />
+			<code bit="10" value="4B" />
+			<code bit="11" value="4C" />
+			<code bit="12" value="4D" />
+			<code bit="13" value="4E" />
+			<code bit="14" value="4F" />
+			<code bit="15" value="50" />
+			<code bit="16" value="51" />
+			<code bit="17" value="52" />
+			<code bit="18" value="53" />
+			<code bit="19" value="54" />
+			<code bit="20" value="55" />
+			<code bit="21" value="56" />
+			<code bit="22" value="57" />
+			<code bit="23" value="58" />
+			<code bit="24" value="59" />
+			<code bit="25" value="5A" />
+			<code bit="26" value="5B" />
+			<code bit="27" value="5C" />
+			<code bit="28" value="5D" />
+			<code bit="29" value="5E" />
+			<code bit="30" value="5F" />
+			<code bit="31" value="60" />
+		</pid>
+		<pid hex="41" return="4" unit="" eval=""
+			name="Monitor status this drive cycle" />
+		<pid hex="42" return="4" unit="V" eval="((A*256)+B)/1000" name="Control module voltage" />
+		<pid hex="43" return="" unit="%" eval="((A*256)+B)*100/255" name="Absolute load value" />
+		<pid hex="44" return="" unit="" eval="((A*256)+B)/32768" name="Command equivalence ratio" />
+		<pid hex="45" return="" unit="%" eval="A*100/255" name="Relative throttle position" />
+		<pid hex="46" return="" unit="C" eval="A-40" name="Ambient air temperature" />
+		<pid hex="47" return="" unit="%" eval="A*100/255"
+			name="Absolute throttle position B" />
+		<pid hex="48" return="" unit="%" eval="A*100/255"
+			name="Absolute throttle position C" />
+		<pid hex="49" return="" unit="%" eval="A*100/255"
+			name="Accelerator pedal position D" />
+		<pid hex="4A" return="" unit="%" eval="A*100/255"
+			name="Accelerator pedal position E" />
+		<pid hex="4B" return="" unit="%" eval="A*100/255"
+			name="Accelerator pedal position F" />
+		<pid hex="4C" return="" unit="%" eval="A*100/255"
+			name="Commanded throttle actuator" />
+		<pid hex="4D" return="" unit="minutes" eval="(A*256)+B" name="Time run with MIL on" />
+		<pid hex="4E" return="" unit="minutes" eval="(A*256)+B"
+			name="Time since trouble codes cleared" />
+		<pid hex="51" return="" unit="" eval="ENCODED" name="Fuel Type">
+			<code byte-value="01" value="Gasoline" />
+			<code byte-value="02" value="Methanol" />
+			<code byte-value="03" value="Ethanol" />
+			<code byte-value="04" value="Diesel" />
+			<code byte-value="05" value="LPG" />
+			<code byte-value="06" value="CNG" />
+			<code byte-value="07" value="Propane" />
+			<code byte-value="08" value="Electric" />
+			<code byte-value="09" value="Bifuel running Gasoline" />
+			<code byte-value="0A" value="Bifuel running Methanol" />
+			<code byte-value="0B" value="Bifuel running Ethanol" />
+			<code byte-value="0C" value="Bifuel running LPG" />
+			<code byte-value="0D" value="Bifuel running CNG" />
+			<code byte-value="0E" value="Bifuel running Prop" />
+			<code byte-value="0F" value="Bifuel running Electricity" />
+			<code byte-value="10" value="Bifuel mixed gas/electric" />
+			<code byte-value="11" value="Hybrid Gasoline" />
+			<code byte-value="12" value="Hybrid Ethanol" />
+			<code byte-value="13" value="Hybrid Diesel" />
+			<code byte-value="14" value="Hybrid Electric" />
+			<code byte-value="15" value="Hybrid Mixed fuel" />
+			<code byte-value="16" value="Hybrid Regenerative" />
+		</pid>
+		<pid hex="52" return="" unit="%" eval="A*100/255" name="Ethanol fuel %" />
+		<pid hex="53" return="" unit="kPa" eval=""
+			name="Absoulute Evap system Vapour Pressure" />
+	</mode>
+	<mode hex="02" name="Show freeze frame data" />
+	<mode hex="03" name="Show stored Diagnostic Trouble Codes" />
+	<mode hex="09" name="Request vehicle information">
+		<pid hex="00" return="4" unit="" name="Mode 9 supported PIDs 01 to 20" />
+		<pid hex="02" return="25" unit=""
+			name="Vehicle identification number (VIN)" />
+	</mode>
+</obd-protocol>
