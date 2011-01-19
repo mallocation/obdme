@@ -1,8 +1,9 @@
 package edu.unl.csce.obdme.setupwizard;
 
 import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
-import edu.unl.csce.obdme.bluetooth.OBDMeBluetoothDiscovery;
+import edu.unl.csce.obdme.hardware.ELMFramework;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -11,12 +12,9 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +26,7 @@ import android.widget.Toast;
 /**
  * The Class OBDMeSetupWizardBluetooth.
  */
-public class OBDMeSetupWizardBluetooth extends Activity {
+public class SetupWizardBluetooth extends Activity {
 
 	/** The Constant REQUEST_ENABLE_BT. */
 	private static final int REQUEST_ENABLE_BT = 0;
@@ -59,10 +57,13 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 
 	/** The connect dialog. */
 	private ProgressDialog connectDialog;
+	
+	private ELMFramework elmFramework;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
@@ -76,6 +77,7 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 		//Setup the button on-click listener
 		Button next = (Button) findViewById(R.id.setupwizard_bluetooth_button);
 		next.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View view) {
 
 
@@ -87,35 +89,40 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 					checkBluetoothAvailability();
 					break;
 
-				//Check that Bluetooth is Enabled.  If not, ask the user to enable it
+					//Check that Bluetooth is Enabled.  If not, ask the user to enable it
 				case 1:
 					checkBluetoothEnabled();
 					break;
 
-				//Prompt the user to select the device from the list of devices
+					//Prompt the user to select the device from the list of devices
 				case 2:
 					selectBluetoothDevice();
 					break;
 
-				//Attempt to connect to the device.  On failure, return to state 2
+					//Attempt to connect to the device.  On failure, return to state 2
 				case 3:
 					connectBluetoothDevice();
 					break;
 
-				//Check the hardware version of the device.  This will verify that it is an ELM327
-				//and that it is version 1.4 or greater
+					//Check the hardware version of the device.  This will verify that it is an ELM327
+					//and that it is version 1.4 or greater
 				case 4:
 					checkHardwareVersion();
 					break;
 
-				//Bluetooth setup is complete.  Proceed.
+					//Bluetooth setup is complete.  Proceed.
 				case 5:
-					Intent intent = new Intent(view.getContext(), OBDMeSetupWizardComplete.class);
+					Intent intent = new Intent(view.getContext(), SetupWizardComplete.class);
 					startActivity(intent);
 					break;
 
-				//Prompt the user to select the device from the list of devices
+					//Prompt the user to select the device from the list of devices
 				case 6:
+					selectBluetoothDevice();
+					break;
+					
+					//Prompt the user to select the device from the list of devices
+				case 7:
 					selectBluetoothDevice();
 					break;
 				}
@@ -134,7 +141,7 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 		//Switch on the current state of the setup
 		switch(SETUP_STATE) {
 
-		//Post bluetooth is supported
+		//Post Bluetooth is supported
 		case 1:
 			ImageView supportedImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_supported_image);
 			supportedImage.setImageDrawable(getResources().getDrawable(R.drawable.green_tick));
@@ -180,6 +187,13 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 			text.setText(R.string.setupwizard_bluetooth_text_connect_error);
 			button.setText(R.string.setupwizard_bluetooth_button_select_text);
 			break;
+			
+		case 7:
+			ImageView selectedImage3 = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_paired_image);
+			selectedImage3.setImageDrawable(getResources().getDrawable(R.drawable.blue_r_arrow));
+			text.setText(R.string.setupwizard_bluetooth_text_verify_error);
+			button.setText(R.string.setupwizard_bluetooth_button_select_text);
+			break;
 
 		}
 	}
@@ -204,8 +218,9 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 			builder.setMessage(getResources().getString(R.string.setupwizard_bluetooth_error_notsupported))
 			.setCancelable(false)
 			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int id) {
-					OBDMeSetupWizardBluetooth.this.finish();
+					SetupWizardBluetooth.this.finish();
 				}
 			});
 			AlertDialog alert = builder.create();
@@ -246,7 +261,7 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 	public void selectBluetoothDevice() {
 
 		//Start the discovery and selector intent
-		Intent serverIntent = new Intent(this, OBDMeBluetoothDiscovery.class);
+		Intent serverIntent = new Intent(this, BluetoothDiscovery.class);
 		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 	}
 
@@ -269,21 +284,32 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 			Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
 			return;
 		}
-		
-		SETUP_STATE = 5;
-		updateView();
 
-		// Check that there's actually something to send
-		//        if (message.length() > 0) {
-		//            // Get the message bytes and tell the BluetoothChatService to write
-		//            bluetoothService.write(message);
-		//        }
+		//Check the hardware version.  If supported, continue
+		elmFramework = new ELMFramework(bluetoothService);
+		elmFramework.initConnection();
+		elmFramework.verifyHardwareVersion();
+		if (elmFramework.verifyHardwareVersion()) {
+			SETUP_STATE = 5;
+			updateView();
+		}
+		
+		//Otherwise, prompt the user to select a new device
+		else {
+			ImageView verifyImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_verify_image);
+			ImageView connectedImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_connected_image);
+			verifyImage.setImageDrawable(getResources().getDrawable(R.drawable.red_x));
+			connectedImage.setImageDrawable(getResources().getDrawable(R.drawable.grey_tick));
+			SETUP_STATE = 7;
+			updateView();
+		}
 
 	}
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
 	 */
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(getResources().getBoolean(R.bool.debug)) Log.d(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
 				"onActivityResult " + resultCode);
@@ -298,7 +324,7 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 
 				//Get the address of the device
 				String address = data.getExtras()
-				.getString(OBDMeBluetoothDiscovery.EXTRA_DEVICE_ADDRESS);
+				.getString(BluetoothDiscovery.EXTRA_DEVICE_ADDRESS);
 
 				//Save the device address to prefs for later
 				SharedPreferences.Editor editor = prefs.edit();
@@ -310,7 +336,7 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 				updateView();
 
 				if(getResources().getBoolean(R.bool.debug)) Log.d(getResources().getString(R.string.debug_tag_setupwizard_bluetooth), 
-						"Device Connected.");
+				"Device Connected.");
 			}
 			break;
 
@@ -336,6 +362,7 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 
 	/** The message handler. */
 	private final Handler messageHandler = new Handler() {
+		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 
@@ -372,7 +399,7 @@ public class OBDMeSetupWizardBluetooth extends Activity {
 				case BluetoothService.STATE_CONNECTING:
 
 					//Show the connecting dialog box
-					connectDialog = ProgressDialog.show(OBDMeSetupWizardBluetooth.this, "", getResources().getString(R.string.setupwizard_bluetooth_dialog_connecting), true);
+					connectDialog = ProgressDialog.show(SetupWizardBluetooth.this, "", getResources().getString(R.string.setupwizard_bluetooth_dialog_connecting), true);
 					break;
 
 					//The service currently doesn't have a state.  This is possible on initial start, failure, or lost connection.

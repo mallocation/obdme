@@ -7,17 +7,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 
 /**
  * The Class OBDMeSetupWizardMain.
  */
-public class OBDMeSetupWizardComplete extends Activity {
+public class SetupWizardComplete extends Activity {
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_complete),
@@ -28,7 +28,8 @@ public class OBDMeSetupWizardComplete extends Activity {
         
         Button next = (Button) findViewById(R.id.setupwizard_complete_button_next);
         next.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
+            @Override
+			public void onClick(View view) {
             	Intent intent = new Intent(view.getContext(), OBDMe.class);
             	
             	

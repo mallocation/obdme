@@ -3,25 +3,24 @@
 	android:versionCode="1" android:versionName="1.0" package="edu.unl.csce.obdme">
 	<application android:label="@string/app_name"
 		android:debuggable="true" android:icon="@drawable/app_logo">
-		<activity android:label="@string/app_name" android:name="OBDMeLauncher">
+		<activity android:label="@string/app_name" android:name="Splash">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
-		<activity android:label="@string/app_name" android:name=".setupwizard.OBDMeSetupWizardMain"></activity>
-		<activity android:name=".setupwizard.OBDMeSetupWizardBluetooth"
-			android:label="@string/setupwizard.bluetooth.label"></activity>
+		<activity android:label="@string/app_name" android:name=".setupwizard.SetupWizardMain"></activity>
+		<activity android:label="@string/setupwizard.bluetooth.label" android:name=".setupwizard.SetupWizardBluetooth"></activity>
 
-		<activity android:label="@string/setupwizard.account.label"
-			android:name=".setupwizard.OBDMeSetupWizardAccount"></activity>
-		<activity android:label="@string/app_name" android:name=".bluetooth.OBDMeBluetoothDiscovery"></activity>
+		<activity android:label="@string/setupwizard.account.label" android:name=".setupwizard.SetupWizardAccount"></activity>
+		<activity android:label="@string/app_name" android:name=".bluetooth.BluetoothDiscovery"></activity>
 	
 
 
 
-<activity android:label="@string/setupwizard.complete.label" android:name=".setupwizard.OBDMeSetupWizardComplete"></activity>
+
+<activity android:label="@string/setupwizard.complete.label" android:name=".setupwizard.SetupWizardComplete"></activity>
 <activity android:name="OBDMe"></activity>
 
 <activity android:name="OBDMeSettings"></activity>

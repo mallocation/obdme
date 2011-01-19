@@ -7,7 +7,6 @@ import edu.unl.csce.obdme.utils.OBDMeSecurity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources.NotFoundException;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,7 +20,7 @@ import android.widget.Toast;
 /**
  * The Class OBDMeSetupWizardAccount.
  */
-public class OBDMeSetupWizardAccount extends Activity {
+public class SetupWizardAccount extends Activity {
 
 	/** New account. */
 	private static boolean NEW_ACCOUNT = false;
@@ -195,7 +194,7 @@ public class OBDMeSetupWizardAccount extends Activity {
 					editor.commit();
 					
 					//Start the bluetooth setup wizzard
-					Intent intent = new Intent(view.getContext(), OBDMeSetupWizardBluetooth.class);
+					Intent intent = new Intent(view.getContext(), SetupWizardBluetooth.class);
 					startActivity(intent);
 				}
 			}

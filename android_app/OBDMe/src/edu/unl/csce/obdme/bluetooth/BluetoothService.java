@@ -3,16 +3,15 @@ package edu.unl.csce.obdme.bluetooth;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import edu.unl.csce.obdme.OBDMe;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.Bundle;
@@ -65,7 +64,7 @@ public class BluetoothService {
 
 	/** The Constant STATE_CONNECTED. */
 	public static final int STATE_CONNECTED = 3;
-	
+
 	public static final int STATE_FAILED = 4;
 
 	/**
@@ -175,7 +174,7 @@ public class BluetoothService {
 		// Start the thread to manage the connection and perform transmissions
 		commConnectedThread = new CommunicationConnectedThread(socket);
 		commConnectedThread.start();
-		
+
 		// Send the name of the connected device back to the UI Activity
 		Message msg = appHandler.obtainMessage(OBDMe.MESSAGE_DEVICE_NAME);
 		Bundle bundle = new Bundle();
@@ -214,6 +213,17 @@ public class BluetoothService {
 		thread.write(command);
 	}
 
+	public String getResponseFromQueue(boolean block) {
+		// Create temporary object
+		CommunicationConnectedThread thread;
+		// Synchronize a copy of the ConnectedThread
+		synchronized (this) {
+			if (messageState != STATE_CONNECTED);
+			thread = commConnectedThread;
+		}
+		// Perform the write unsynchronized
+		return thread.getResponseFromQueue(block);
+	}
 
 	/**
 	 * Connection failed.
@@ -288,6 +298,7 @@ public class BluetoothService {
 		/* (non-Javadoc)
 		 * @see java.lang.Thread#run()
 		 */
+		@Override
 		public void run() {
 			Log.i(DEBUG_TAG, "Running communication connect thread");
 			setName("ConnectThread");
@@ -304,7 +315,7 @@ public class BluetoothService {
 				if (DEBUG) Log.e(DEBUG_TAG, "IOException while trying to connect to the device.", ioe);
 				connectionFailed();
 				setState(STATE_FAILED);
-				
+
 				try {
 					bluetoothSocket.close();
 				} catch (IOException e2) {
@@ -351,12 +362,14 @@ public class BluetoothService {
 
 		/** The output stream. */
 		private final OutputStream outputStream;
-		
+
 		/** The echo command. */
 		private boolean echoCommand = true;
-		
+
 		/** The last command. */
 		private String lastCommand = "";
+
+		private ConcurrentLinkedQueue<String> responseQueue;
 
 		/**
 		 * Instantiates a new connection connected thread.
@@ -378,68 +391,73 @@ public class BluetoothService {
 
 			inputStream = tmpIn;
 			outputStream = tmpOut;
+
+			responseQueue = new ConcurrentLinkedQueue<String>();
 		}
 
-        public void run() {
-            Log.i(DEBUG_TAG, "BEGIN mConnectedThread");
+		@Override
+		public void run() {
+			Log.i(DEBUG_TAG, "BEGIN mConnectedThread");
 
-            // Keep listening to the InputStream while connected
-            while (true) {
-                try {
-                	
-                	StringBuffer recievedData = new StringBuffer();
-            		char currentChar = ' ';
-                	
-                	do {
-        				
-        				//If there are bytes available, read them
-        				if (inputStream.available() > 0) {
-        					
-        					//Append the read byte to the buffer
-        					currentChar = (char)this.inputStream.read();
-        					recievedData.append(currentChar);
-        				}
-        			} while (currentChar != ASCII_COMMAND_PROMPT); //Continue until we reach a prompt character
+			// Keep listening to the InputStream while connected
+			while (true) {
+				try {
 
-                	String recievedString = recievedData.toString();
-                	
-//                	if (echoCommand) {
-           			recievedString = recievedString.replace(this.lastCommand, "");
-//            		}
-                	
-            		recievedString = recievedString.replace(">", "");
-            		recievedString = recievedString.trim();
-                	
-                    // Send the obtained bytes to the UI Activity
-                    appHandler.obtainMessage(OBDMe.MESSAGE_READ, recievedString)
-                            .sendToTarget();
-                } catch (IOException e) {
-                    Log.e(DEBUG_TAG, "disconnected", e);
-                    connectionLost();
-                    break;
-                }
-            }
-        }
+					StringBuffer recievedData = new StringBuffer();
+					char currentChar = ' ';
 
-        /**
-         * Write to the connected OutStream.
-         * @param buffer  The bytes to write
-         */
-        public void write(String command) {
-            try {
-            	
-            	byte[] commandByteArray = new String(command + "\r").getBytes("ASCII");
-            	outputStream.write(commandByteArray);
-            	
-            	this.lastCommand = command + "\r";
+					do {
 
-                // Share the sent message back to the UI Activity
-                appHandler.obtainMessage(OBDMe.MESSAGE_WRITE, -1, -1, commandByteArray)
-                        .sendToTarget();
-            } catch (IOException e) {
-                Log.e(DEBUG_TAG, "Exception during write", e);
-            }
-        }
+						//If there are bytes available, read them
+						if (inputStream.available() > 0) {
+
+							//Append the read byte to the buffer
+							currentChar = (char)this.inputStream.read();
+							recievedData.append(currentChar);
+						}
+					} while (currentChar != ASCII_COMMAND_PROMPT); //Continue until we reach a prompt character
+
+					String recievedString = recievedData.toString();
+					recievedString = recievedString.trim();
+
+					responseQueue.add(recievedString);
+
+				} catch (IOException e) {
+					Log.e(DEBUG_TAG, "disconnected", e);
+					connectionLost();
+					break;
+				}
+			}
+		}
+
+		public String getResponseFromQueue(boolean block) {
+
+			if (block) {
+				while(responseQueue.isEmpty()) {
+					//Wait
+				}
+				return responseQueue.poll();
+			}
+
+			return responseQueue.poll();
+		}
+
+		/**
+		 * Write to the connected OutStream.
+		 * @param buffer  The bytes to write
+		 */
+		public void write(String command) {
+			try {
+
+				byte[] commandByteArray = new String(command + "\r").getBytes("ASCII");
+				outputStream.write(commandByteArray);
+
+				this.lastCommand = command + "\r";
+
+			} catch (IOException e) {
+				Log.e(DEBUG_TAG, "Exception during write", e);
+			}
+		}
 
 		/**
 		 * Cancel.

@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 
 
-public class OBDMeLauncher extends Activity {
+public class Splash extends Activity {
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_launcher),
@@ -44,7 +41,7 @@ public class OBDMeLauncher extends Activity {
 						intentTarget = edu.unl.csce.obdme.OBDMe.class;
 					} else {
 						//This is the first time the user is running the app, start the setup process.
-						intentTarget = edu.unl.csce.obdme.setupwizard.OBDMeSetupWizardMain.class;
+						intentTarget = edu.unl.csce.obdme.setupwizard.SetupWizardMain.class;
 					}
 					
 					//Start the desired activity

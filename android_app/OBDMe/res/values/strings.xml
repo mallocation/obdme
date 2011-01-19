@@ -33,6 +33,7 @@
 	<string name="setupwizard.bluetooth.text.connect.error">Connection to the selected device failed.  Please select another device to connect to.</string>
 	<string name="setupwizard.bluetooth.text.connect">Now that you\'ve selected your device, use the button below to connect to your device.</string>
 	<string name="setupwizard.bluetooth.text.verify">Your OBDMe device was paired successfully.  Use the button below to verify the hardware version of your device.</string>
+	<string name="setupwizard.bluetooth.text.verify.error">The device that you are connected to is not supported by OBDMe.  Please select another device to connect to.</string>
 	<string name="setupwizard.bluetooth.text.next">The Bluetooth setup is complete!  Use the button below to continue.</string>
 	<string name="setupwizard.bluetooth.list.supported.text">Bluetooth Supported</string>
 	<string name="setupwizard.bluetooth.list.enabled.text">Bluetooth Enabled</string>

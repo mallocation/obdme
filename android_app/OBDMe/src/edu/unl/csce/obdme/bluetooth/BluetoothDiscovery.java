@@ -23,7 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class OBDMeBluetoothDiscovery extends Activity {
+public class BluetoothDiscovery extends Activity {
 	private static final String DEBUG_TAG = "DeviceListActivity";
 	private static final boolean DEBUG = true;
 

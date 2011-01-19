@@ -6,17 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 
 /**
  * The Class OBDMeSetupWizardMain.
  */
-public class OBDMeSetupWizardMain extends Activity {
+public class SetupWizardMain extends Activity {
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_launcher),
@@ -27,8 +27,9 @@ public class OBDMeSetupWizardMain extends Activity {
         
         Button next = (Button) findViewById(R.id.setupwizard_main_button_next);
         next.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-            	Intent intent = new Intent(view.getContext(), OBDMeSetupWizardAccount.class);
+            @Override
+			public void onClick(View view) {
+            	Intent intent = new Intent(view.getContext(), SetupWizardAccount.class);
         		startActivity(intent);
             }
 

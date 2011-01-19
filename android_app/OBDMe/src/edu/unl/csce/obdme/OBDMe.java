@@ -1,7 +1,7 @@
 package edu.unl.csce.obdme;
 
+import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
-import edu.unl.csce.obdme.bluetooth.OBDMeBluetoothDiscovery;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -273,7 +273,7 @@ public class OBDMe extends Activity {
 		case REQUEST_CONNECT_DEVICE:
 			if (resultCode == Activity.RESULT_OK) {
 				String address = data.getExtras()
-				.getString(OBDMeBluetoothDiscovery.EXTRA_DEVICE_ADDRESS);
+				.getString(BluetoothDiscovery.EXTRA_DEVICE_ADDRESS);
 				BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
 				bluetoothService.connect(device);
 				if(DEBUG) Log.d(DEBUG_TAG, "Back in the activity result area.");
@@ -306,7 +306,7 @@ public class OBDMe extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.scan:
-            Intent serverIntent = new Intent(this, OBDMeBluetoothDiscovery.class);
+            Intent serverIntent = new Intent(this, BluetoothDiscovery.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
             return true;
 		case R.id.settings:
