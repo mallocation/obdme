@@ -1,8 +1,10 @@
 package edu.unl.csce.obdme.settingsmenu;
 
-import edu.unl.csce.obdme.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -11,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 
 public class SettingsMenu extends Activity {
 	/** The title bar. */
@@ -54,29 +58,42 @@ public class SettingsMenu extends Activity {
             	TextView textView = (TextView) itemClicked;
                 String strText = textView.getText().toString();
                 if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_modeselect))) {
-                    // Launch the Game Activity
-                    //startActivity(new Intent(QuizMenuActivity.this, QuizGameActivity.class));
-                	
+                	selectMode();
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_accountinformation))) {
-                    // Launch the Help Activity
-                    //startActivity(new Intent(QuizMenuActivity.this, QuizHelpActivity.class));
+                    // Launch the Account Info Activity
+                    startActivity(new Intent(SettingsMenu.this, SettingsMenuAccountInfo.class));
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_vehicleinformation))) {
-                    // Launch the Settings Activity
-                    //startActivity(new Intent(QuizMenuActivity.this, QuizSettingsActivity.class));
+                    // Launch the Vehicle Info Activity
+                    startActivity(new Intent(SettingsMenu.this, SettingsMenuVehicleInfo.class));
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_bluetoothsettings))) {
-                    // Launch the Scores Activity
-                    //startActivity(new Intent(QuizMenuActivity.this, QuizScoresActivity.class));
+                    // Launch the Bluetooth Settings Activity
+                    startActivity(new Intent(SettingsMenu.this, BluetoothDiscovery.class));
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_dataupload))) {
-                    // Launch the Scores Activity
-                    //startActivity(new Intent(QuizMenuActivity.this, QuizScoresActivity.class));
+                    // Launch the Data Upload Activity
+                    
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_datacollection))) {
-                    // Launch the Scores Activity
-                    //startActivity(new Intent(QuizMenuActivity.this, QuizScoresActivity.class));
+                    // Launch the Data Collection Activity
+                    
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_displaydata))) {
-                    // Launch the Scores Activity
-                    //startActivity(new Intent(QuizMenuActivity.this, QuizScoresActivity.class));
+                    // Launch the Display Data Activity
+                    startActivity(new Intent(SettingsMenu.this, SettingsMenuDisplayData.class));
                 }
             }
         });
+	}
+	
+	private void selectMode() {
+		final CharSequence[] items = {"User Mode", "Mechanic Mode"};
+
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setTitle("Select a Mode");
+    	builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+    	    public void onClick(DialogInterface dialog, int item) {
+    	        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
+    	    }
+    	});
+    	AlertDialog alert = builder.create();
+    	
+    	alert.show();
 	}
 }
