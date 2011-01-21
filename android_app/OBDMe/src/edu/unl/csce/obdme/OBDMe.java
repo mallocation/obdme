@@ -2,6 +2,7 @@ package edu.unl.csce.obdme;
 
 import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.settingsmenu.SettingsMenu;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -310,7 +311,7 @@ public class OBDMe extends Activity {
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
             return true;
 		case R.id.settings:
-        	startActivity(new Intent(this, OBDMeSettings.class));
+        	startActivity(new Intent(this, SettingsMenu.class));
             return true;
         }
 

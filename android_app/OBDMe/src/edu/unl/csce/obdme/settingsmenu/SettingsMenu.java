@@ -1,5 +1,6 @@
-package edu.unl.csce.obdme;
+package edu.unl.csce.obdme.settingsmenu;
 
+import edu.unl.csce.obdme.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class OBDMeSettings extends Activity {
-	
+public class SettingsMenu extends Activity {
 	/** The title bar. */
 	private TextView titleBar;
 	
@@ -56,9 +56,7 @@ public class OBDMeSettings extends Activity {
                 if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_modeselect))) {
                     // Launch the Game Activity
                     //startActivity(new Intent(QuizMenuActivity.this, QuizGameActivity.class));
-                	toastText = "mode select";
-                	toast = Toast.makeText(context, toastText, toastDuration);
-                	toast.show();
+                	
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_accountinformation))) {
                     // Launch the Help Activity
                     //startActivity(new Intent(QuizMenuActivity.this, QuizHelpActivity.class));
@@ -81,5 +79,4 @@ public class OBDMeSettings extends Activity {
             }
         });
 	}
-
 }

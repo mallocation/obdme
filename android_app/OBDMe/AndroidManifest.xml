@@ -23,7 +23,8 @@
 <activity android:label="@string/setupwizard.complete.label" android:name=".setupwizard.SetupWizardComplete"></activity>
 <activity android:name="OBDMe"></activity>
 
-<activity android:name="OBDMeSettings"></activity>
+
+<activity android:name=".settingsmenu.SettingsMenu"></activity>
 </application>
 	<uses-sdk android:minSdkVersion="8" />
 	<uses-permission android:name="android.permission.BLUETOOTH" />
