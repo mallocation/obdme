@@ -95,5 +95,14 @@
 	<!-- Options Menu -->
 	<string name="connect">Connect a device</string>
 	<string name="settings">Settings</string>
+	
+	<!-- Settings Menu Selections -->
+	<string name="settings.modeselect">Mode Selection</string>
+	<string name="settings.accountinformation">Account Information</string>
+	<string name="settings.vehicleinformation">Vehicle Information</string>
+	<string name="settings.bluetoothsettings">Bluetooth Settings</string>
+	<string name="settings.dataupload">Data Upload Options</string>
+	<string name="settings.datacollection">Data Collection Rate</string>
+	<string name="settings.displaydata">Data To Display</string>
 
 </resources>
