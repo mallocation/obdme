@@ -6,4 +6,6 @@
 	<string name="debug.tag.setupwizard.account">OBDMeSetupWizardAccount</string>
 	<string name="debug.tag.setupwizard.bluetooth">OBDMeSetupWizardBluetooth</string>
 	<string name="debug.tag.setupwizard.complete">OBDMeSetupWizardComplete</string>
+	<string name="debug.tag.obdframework.parseconfig">OBDFrameworkParseConfig</string>
+	<string name="debug.tag.obdframework.parseprotocol">OBDFrameworkParseProtocol</string>
 </resources>

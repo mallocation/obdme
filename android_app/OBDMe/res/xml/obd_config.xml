@@ -28,7 +28,6 @@
 		<pid hex="51" />
 		<pid hex="52" />
 		<pid hex="53" />
-		<pid hex="" />
 	</mode>
 	<mode hex="09">
 		<pid hex="00" />
