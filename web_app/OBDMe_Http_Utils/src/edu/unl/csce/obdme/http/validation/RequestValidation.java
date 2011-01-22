@@ -7,7 +7,7 @@ import java.util.Map;
 import edu.unl.csce.obdme.http.encryption.EncryptionUtils;
 import edu.unl.csce.obdme.http.request.ParamConstants;
 
-public class RequestValidation {
+public class RequestValidation {	
 	
 	public static boolean isValidHttpRequest(Map<String, String> requestParams) {
 		
