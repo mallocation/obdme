@@ -1,8 +1,10 @@
-package edu.unl.csce.obdme.http.encryption;
+package edu.unl.csce.obdme.http.request;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+
+import edu.unl.csce.obdme.http.encryption.EncryptionUtils;
 
 public class RequestBuilder {
 	
