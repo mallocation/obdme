@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:background="@drawable/gradient">
+	<TextView android:id="@+id/setupwizard.vehicle.heading" style="@style/setupwizard.header"
+		android:text="@string/setupwizard.vehicle.heading.text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="0"></TextView>
+	<ScrollView android:id="@+id/ScrollView"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="1">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:orientation="vertical">
+			<TextView android:id="@+id/setupwizard.vehicle"
+				android:text="@string/setupwizard.vehicle.body.text.identify" style="@style/setupwizard.body"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="0"></TextView>
+		</LinearLayout>
+	</ScrollView>
+	<Button android:text="@string/setupwizard.vehicle.button.identify.text"
+		android:id="@+id/setupwizard.vehicle.button" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:padding="10dip"></Button>
+</LinearLayout>

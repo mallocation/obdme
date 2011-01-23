@@ -29,7 +29,7 @@ public class SetupWizardMain extends Activity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
 			public void onClick(View view) {
-            	Intent intent = new Intent(view.getContext(), SetupWizardAccount.class);
+            	Intent intent = new Intent(view.getContext(), SetupWizardBluetooth.class);
         		startActivity(intent);
             }
 

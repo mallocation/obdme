@@ -286,9 +286,9 @@ public class SetupWizardBluetooth extends Activity {
 		}
 
 		//Check the hardware version.  If supported, continue
-		elmFramework = new ELMFramework(getBaseContext(), bluetoothService);
-		elmFramework.verifyHardwareVersion();
-		if (elmFramework.verifyHardwareVersion()) {
+		elmFramework = new ELMFramework(getBaseContext(), bluetoothService, true);
+		elmFramework.getObdFramework().queryValidPIDS();
+		if (elmFramework.isHardwareVerified()) {
 			SETUP_STATE = 5;
 			updateView();
 		}

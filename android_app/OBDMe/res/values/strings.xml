@@ -4,37 +4,52 @@
 	<!-- Setup Wizard Main Activity -->
 	<string name="setupwizard.main.label">OBDMe Setup Wizard</string>
 	<string name="setupwizard.main.heading.text">Welcome to OBDMe!</string>
-	<string name="setupwizard.main.text">It appears that this is the first time that you are starting OBDMe.\n\n
-										This setup wizard will guide you through the processes of creating an 
-										OBDMe account and configuring your OBD dongle.</string>
+	<string name="setupwizard.main.text">It appears that this is the first time that you are
+		starting OBDMe.\n\n
+		This setup wizard will guide you through the processes of creating an
+		OBDMe account and configuring your OBD dongle.</string>
 	<string name="setupwizard.main.button.next.text">Next</string>
-	
+
 	<!-- Setup Wizard Account Activity -->
 	<string name="setupwizard.account.label">Account Setup</string>
 	<string name="setupwizard.account.heading.text">Account Setup</string>
-	<string name="setupwizard.account.text">Please enter your existing OBDMe account information below.  
-										If you do not have an account, you may create one here by filling in your information.</string>
+	<string name="setupwizard.account.text">Please enter your existing OBDMe account
+		information below.
+		If you do not have an account, you may create one here by filling in
+		your information.</string>
 	<string name="setupwizard.account.email.text">Username (Email Address)</string>
 	<string name="setupwizard.account.password.text">Password</string>
 	<string name="setupwizard.account.confirmpassword.text">Confirm Password</string>
 	<string name="setupwizard.account.button.signin.text">Log in</string>
 	<string name="setupwizard.account.button.createaccount.text">Create Account</string>
-	<string name="setupwizard.account.password.error.bad">Your password does not meet the minimum requirement of 6 characters</string>
-	<string name="setupwizard.account.password.error.incorrect">The password you have entered does not match the supplied username</string>
+	<string name="setupwizard.account.password.error.bad">Your password does not meet the minimum requirement
+		of 6 characters</string>
+	<string name="setupwizard.account.password.error.incorrect">The password you have entered does not match the
+		supplied username</string>
 	<string name="setupwizard.account.password.error.match">Your passwords do not match</string>
 	<string name="setupwizard.account.email.error.bad">Your email address is not valid</string>
-	
+
 	<!-- Setup Wizard Bluetooth Activity -->
 	<string name="setupwizard.bluetooth.label">Bluetooth Setup</string>
 	<string name="setupwizard.bluetooth.heading.text">Bluetooth Setup</string>
-	<string name="setupwizard.bluetooth.text.check">This screen will guide you through the Bluetooth setup process.  Use the button below to check for Bluetooth support.</string>
-	<string name="setupwizard.bluetooth.text.enable">Bluetooth is supported by your device.  Use the button below to check if Bluetooth is enabled.</string>
-	<string name="setupwizard.bluetooth.text.select">Bluetooth is currently enabled.  Use the button below to select your OBDMe device.</string>
-	<string name="setupwizard.bluetooth.text.connect.error">Connection to the selected device failed.  Please select another device to connect to.</string>
-	<string name="setupwizard.bluetooth.text.connect">Now that you\'ve selected your device, use the button below to connect to your device.</string>
-	<string name="setupwizard.bluetooth.text.verify">Your OBDMe device was paired successfully.  Use the button below to verify the hardware version of your device.</string>
-	<string name="setupwizard.bluetooth.text.verify.error">The device that you are connected to is not supported by OBDMe.  Please select another device to connect to.</string>
-	<string name="setupwizard.bluetooth.text.next">The Bluetooth setup is complete!  Use the button below to continue.</string>
+	<string name="setupwizard.bluetooth.text.check">This screen will guide you through the Bluetooth
+		setup process. Use the button below to check for Bluetooth support.
+	</string>
+	<string name="setupwizard.bluetooth.text.enable">Bluetooth is supported by your device. Use the
+		button below to check if Bluetooth is enabled.</string>
+	<string name="setupwizard.bluetooth.text.select">Bluetooth is currently enabled. Use the button
+		below to select your OBDMe device.</string>
+	<string name="setupwizard.bluetooth.text.connect.error">Connection to the selected device failed. Please
+		select another device to connect to.</string>
+	<string name="setupwizard.bluetooth.text.connect">Now that you\'ve selected your device, use the
+		button below to connect to your device.</string>
+	<string name="setupwizard.bluetooth.text.verify">Your OBDMe device was paired successfully. Use the
+		button below to verify the hardware version of your device.</string>
+	<string name="setupwizard.bluetooth.text.verify.error">The device that you are connected to is not
+		supported by OBDMe. Please select another device to connect to.
+	</string>
+	<string name="setupwizard.bluetooth.text.next">The Bluetooth setup is complete! Use the button
+		below to continue.</string>
 	<string name="setupwizard.bluetooth.list.supported.text">Bluetooth Supported</string>
 	<string name="setupwizard.bluetooth.list.enabled.text">Bluetooth Enabled</string>
 	<string name="setupwizard.bluetooth.list.select.text">Select Device</string>
@@ -46,20 +61,31 @@
 	<string name="setupwizard.bluetooth.button.connect.text">Connect to Device</string>
 	<string name="setupwizard.bluetooth.button.verify.text">Verify Hardware Version</string>
 	<string name="setupwizard.bluetooth.button.next.text">Next</string>
-	<string name="setupwizard.bluetooth.error.notenabled">Bluetooth must be enable to use the OBDMe Application</string>
+	<string name="setupwizard.bluetooth.error.notenabled">Bluetooth must be enable to use the OBDMe
+		Application</string>
 	<string name="setupwizard.bluetooth.error.notsupported">Your phone does not support Bluetooth.</string>
 	<string name="setupwizard.bluetooth.dialog.connecting">Connecting...</string>
-	
+
+	<!-- Setup Wizard Vehicle Activity -->
+	<string name="setupwizard.vehicle.label">Vehicle Setup</string>
+	<string name="setupwizard.vehicle.heading.text">Vehicle Setup</string>
+	<string name="setupwizard.vehicle.body.text.identify">The setup wizard will now try to identify your
+		vehicle automatically.\n\nIn order to do this, the vehicle must be running. Please
+		start you vehicle and click next to proceed</string>
+	<string name="setupwizard.vehicle.button.identify.text">Identify Vehicle</string>
+
 	<!-- Setup Wizard Complete Activity -->
 	<string name="setupwizard.complete.label">Setup Complete</string>
 	<string name="setupwizard.complete.heading.text">Setup Complete</string>
-	<string name="setupwizard.complete.body.text">That\'s it!  You are now ready to start using OBDMe.  Hit the next button below to continue to the main screen.
-												If you created your account here, please finish the setup process online.</string>
+	<string name="setupwizard.complete.body.text">That\'s it! You are now ready to start using OBDMe.
+		Hit the next button below to continue to the main screen.
+		If you created your account here, please finish the setup process
+		online.</string>
 	<string name="setupwizard.complete.button.next.text">Next</string>
-	
+
 	<!-- Bluetooth Discovery Activity -->
 	<string name="btdiscovery.scanning">Scanning for devices...</string>
-	<string name="btdiscovery.selectdevice">Scan Complete.  Select a device.</string>
+	<string name="btdiscovery.selectdevice">Scan Complete. Select a device.</string>
 	<string name="btdiscovery.nonepaired">No devices have been paired</string>
 	<string name="btdiscovery.nonefound">No devices were found</string>
 	<string name="btdiscovery.title.paireddevices.text">Paired Devices</string>
@@ -84,7 +110,7 @@
 
 	<!-- No Device Connected Screen -->
 	<string name="noDeviceConnected">No OBD Device Connected</string>
-	
+
 	<!-- Basic Data Display -->
 	<string name="speed">Vehicle Speed</string>
 	<string name="speedValue">00.0</string>
