@@ -24,14 +24,15 @@ public class DataAccessBase {
 			for (int i=0;i<parameters.size();i++){sb.append("?,");}
 			sb.deleteCharAt(sb.length() - 1);
 		}		
-		sb.append(")");		
+		sb.append(")");
+		System.out.println("Executing : " + sb.toString());
 		try {
 			cs = c.prepareCall(sb.toString());
 			if (parameters != null) {
 				int i=1;
 				for (SqlProcedureParameter param : parameters) {
-
 					cs.setObject(i, param.getParameterValue(), param.getSqlDataType());
+					i++;
 				}
 			}
 			rs = cs.executeQuery();
