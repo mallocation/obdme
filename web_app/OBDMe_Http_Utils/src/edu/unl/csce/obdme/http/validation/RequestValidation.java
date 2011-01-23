@@ -11,6 +11,11 @@ public class RequestValidation {
 	
 	public static boolean isValidHttpRequest(Map<String, String> requestParams) {
 		
+		//Need to have an api key
+		if (!requestParams.containsKey(ParamConstants.OBDME_REQUEST_APIKEY_PARAM)) {
+			return false;
+		}
+		
 		//Need to have a signature		
 		if (!requestParams.containsKey(ParamConstants.OBDME_REQUEST_SIGNATURE_PARAM)) {
 			return false;
