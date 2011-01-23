@@ -79,7 +79,7 @@ public class OBDPID {
 	 *
 	 * @return the OBD request
 	 */
-	public OBDRequest generateRequest() {
+	public OBDRequest generateOBDRequest() {
 		
 		//Make the new request object
 		OBDRequest request = new OBDRequest(this.getParentMode().getModeHex(), this.getPidHex());

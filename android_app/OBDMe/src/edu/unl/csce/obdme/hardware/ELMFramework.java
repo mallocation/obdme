@@ -42,7 +42,7 @@ public class ELMFramework {
 	 *
 	 * @param bluetoothService the bluetooth service
 	 */
-	public ELMFramework(Context context, BluetoothService bluetoothService) {
+	public ELMFramework(Context context, BluetoothService bluetoothService, boolean autoStart) {
 		this.bluetoothService = bluetoothService;
 		this.setConnectionInit(false);
 		this.setHardwareVerified(false);
@@ -52,6 +52,10 @@ public class ELMFramework {
 		//Create a new OBD Framework
 		this.obdFramework = new OBDFramework(context, this);
 		
+		//Automatically find protocols
+		if(autoStart) {
+			this.autoSearchProtocols();
+		}
 	}
 
 	/**
@@ -341,6 +345,20 @@ public class ELMFramework {
 	 */
 	public boolean isProtocolSet() {
 		return protocolSet;
+	}
+
+	/**
+	 * @param obdFramework the obdFramework to set
+	 */
+	public void setObdFramework(OBDFramework obdFramework) {
+		this.obdFramework = obdFramework;
+	}
+
+	/**
+	 * @return the obdFramework
+	 */
+	public OBDFramework getObdFramework() {
+		return obdFramework;
 	}
 
 }

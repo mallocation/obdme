@@ -8,8 +8,6 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import edu.unl.csce.obdme.OBDMe;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -18,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import edu.unl.csce.obdme.OBDMe;
 
 /**
  * The Class BluetoothService.

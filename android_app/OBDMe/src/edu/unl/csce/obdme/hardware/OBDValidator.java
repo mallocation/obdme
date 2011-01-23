@@ -18,7 +18,7 @@ public abstract class OBDValidator {
 
 		if (configuredProtocol.containsKey("01")) {
 			if(configuredProtocol.get("01").containsPID("00")) {
-				elmFramework.sendOBDRequest(configuredProtocol.get("01").getPID("00").generateRequest());
+				elmFramework.sendOBDRequest(configuredProtocol.get("01").getPID("00").generateOBDRequest());
 			}
 			if(configuredProtocol.get("01").containsPID("00")) {
 
