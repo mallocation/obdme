@@ -15,47 +15,64 @@ public class DataAccessBase {
 		this.connectionPool = cp;
 	}
 	
-	protected ResultSet executeStoredProcedure(String procedureName, ArrayList<SqlProcedureParameter> parameters) {
-		Connection c = this.connectionPool.getConnection();
+	/*
+	 * Retrieves the connection pool object for this
+	 * data access class.
+	 */
+	protected IConnectionPool getConnectionPool() {
+		return this.connectionPool;
+	}
+	
+	/*
+	 * Call this method if you wish to execute a stored procedure and disregard the results.
+	 * JDBC resources will be freed automatically.
+	 */
+	protected void executeNonQueryStoredProcedure(String procedureName, ArrayList<SqlProcedureParameter> parameters) {
+		Connection c = this.getConnectionPool().getConnection();
+		try {
+			this.executeStoredProcedure(c, procedureName, parameters);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		} finally {
+			this.getConnectionPool().freeConnection(c);
+		}
+	}
+	
+	/* 
+	 * Call this method if you wish to call a stored procedure and will use the results.
+	 * JDBC resources will NOT be freed in this method.  Handle at your own convenience.
+	 */
+	protected ResultSet executeStoredProcedure(Connection c, String procedureName, ArrayList<SqlProcedureParameter> parameters) throws SQLException {
 		StringBuffer sb = new StringBuffer("call " + procedureName + "(");
-		CallableStatement cs = null;
-		ResultSet rs = null;		
+		CallableStatement cs = null;	
 		if (parameters != null) {
 			for (int i=0;i<parameters.size();i++){sb.append("?,");}
 			sb.deleteCharAt(sb.length() - 1);
 		}		
 		sb.append(")");
-		try {
-			cs = c.prepareCall(sb.toString());
-			if (parameters != null) {
-				int i=1;
-				for (SqlProcedureParameter param : parameters) {
-					cs.setObject(i, param.getParameterValue(), param.getSqlDataType());
-					i++;
-				}
-			}
-			rs = cs.executeQuery();
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}		
-		this.connectionPool.freeConnection(c);		
-		if (cs != null) {
-			try {cs.close();}
-			catch (SQLException sqle) {
-				sqle.printStackTrace();
-			}
-		}		
-		if (rs != null) {
-			try {rs.close();}
-			catch (SQLException sqle){
-				sqle.printStackTrace();
+		cs = c.prepareCall(sb.toString());
+		if (parameters != null) {
+			int i=1;
+			for (SqlProcedureParameter param : parameters) {
+				cs.setObject(i, param.getParameterValue(), param.getSqlDataType());
+				i++;
 			}
 		}
-		return rs;		
-	}
+		return cs.executeQuery();		 	
+	}	
 	
-	protected boolean executeStoredProcedureReturnBoolean(String procedureName, ArrayList<SqlProcedureParameter> parameters) throws SQLException {
-		return this.executeStoredProcedure(procedureName, parameters).getBoolean(1);
+	protected void closeCallableStatement(CallableStatement cs) {
+		try {
+			cs.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
 	}
-	
+	protected void closeResultSet(ResultSet rs) {
+		try {
+			rs.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
 }
