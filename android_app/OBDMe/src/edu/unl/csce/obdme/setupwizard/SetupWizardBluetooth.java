@@ -1,9 +1,11 @@
 package edu.unl.csce.obdme.setupwizard;
 
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.bluetooth.BluetoothAndroidService;
 import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
-import edu.unl.csce.obdme.hardware.ELMFramework;
+import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -22,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class OBDMeSetupWizardBluetooth.
  */
@@ -73,6 +74,9 @@ public class SetupWizardBluetooth extends Activity {
 		prefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
 
 		setContentView(R.layout.setupwizard_bluetooth);
+		
+		//Intent intent = new Intent(getBaseContext(), BluetoothAndroidService.class);
+		//startService(intent);
 
 		//Setup the button on-click listener
 		Button next = (Button) findViewById(R.id.setupwizard_bluetooth_button);
@@ -112,7 +116,7 @@ public class SetupWizardBluetooth extends Activity {
 
 					//Bluetooth setup is complete.  Proceed.
 				case 5:
-					Intent intent = new Intent(view.getContext(), SetupWizardComplete.class);
+					Intent intent = new Intent(view.getContext(), SetupWizardVehicle.class);
 					startActivity(intent);
 					break;
 
@@ -271,7 +275,8 @@ public class SetupWizardBluetooth extends Activity {
 	public void connectBluetoothDevice() {
 
 		//Start the Bluetooth service for communication with the device
-		bluetoothService = new BluetoothService(this, messageHandler);
+		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
+		bluetoothService.setAppHandler(messageHandler);
 		BluetoothDevice device = bluetoothAdapter.getRemoteDevice(prefs.getString(getResources().getString(R.string.prefs_bluetooth_device), null)); 
 
 		//Request a connection to device
@@ -287,7 +292,6 @@ public class SetupWizardBluetooth extends Activity {
 
 		//Check the hardware version.  If supported, continue
 		elmFramework = new ELMFramework(getBaseContext(), bluetoothService, true);
-		elmFramework.getObdFramework().queryValidPIDS();
 		if (elmFramework.isHardwareVerified()) {
 			SETUP_STATE = 5;
 			updateView();

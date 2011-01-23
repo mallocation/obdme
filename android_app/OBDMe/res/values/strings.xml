@@ -73,6 +73,7 @@
 		vehicle automatically.\n\nIn order to do this, the vehicle must be running. Please
 		start you vehicle and click next to proceed</string>
 	<string name="setupwizard.vehicle.button.identify.text">Identify Vehicle</string>
+	<string name="setupwizard.vehicle.dialog.ignition">Waiting for Ignition...</string>
 
 	<!-- Setup Wizard Complete Activity -->
 	<string name="setupwizard.complete.label">Setup Complete</string>
