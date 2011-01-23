@@ -1,11 +1,12 @@
 package controllers;
 
-import play.mvc.*;
+import edu.unl.csce.obdme.mvc.controllers.BasicController;
+import edu.unl.csce.obdme.mvc.controllers.LoggedController;
 
-public class Users extends Controller {
+public class Users extends LoggedController {
 
     public static void index() {
-        render();
+        renderText("hello world!");
     }
 
 }
