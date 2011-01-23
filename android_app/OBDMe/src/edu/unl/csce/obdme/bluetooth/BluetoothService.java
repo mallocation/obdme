@@ -41,7 +41,7 @@ public class BluetoothService {
 	private final BluetoothAdapter bluetoothAdapter;
 
 	/** The app handler. */
-	private final Handler appHandler;
+	private Handler appHandler;
 
 	/** The comm connect thread. */
 	private CommunicationConnectThread commConnectThread;
@@ -51,6 +51,9 @@ public class BluetoothService {
 
 	/** The m state. */
 	private int messageState;
+	
+	/** The Constant MESSAGE_STATE_CHANGE. */
+	public static final int MESSAGE_STATE_CHANGE = 0;
 
 	/** The Constant STATE_NONE. */
 	public static final int STATE_NONE = 0;
@@ -72,10 +75,13 @@ public class BluetoothService {
 	 * @param context the context
 	 * @param handler the handler
 	 */
-	public BluetoothService(Context context, Handler handler) {
+	public BluetoothService() {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		messageState = STATE_NONE;
-		appHandler = handler;
+	}
+	
+	public void setAppHandler(Handler appHandler) {
+		this.appHandler = appHandler;
 	}
 
 	/**

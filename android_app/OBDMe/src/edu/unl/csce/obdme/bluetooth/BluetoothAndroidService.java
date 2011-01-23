@@ -22,54 +22,113 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import edu.unl.csce.obdme.bluetooth.BluetoothAndroidService.IncomingHandler;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BluetoothAndroidService.
+ */
 public class BluetoothAndroidService extends Service {
 
 
+	/** The Constant ASCII_COMMAND_PROMPT. */
 	private static final char ASCII_COMMAND_PROMPT = '>';
+	
+	/** The UUI d_ rfcom m_ generic. */
 	static UUID UUID_RFCOMM_GENERIC = new UUID(0x0000110100001000L,0x800000805F9B34FBL);
+	
+	/** The bluetooth adapter. */
 	private BluetoothAdapter bluetoothAdapter;
+	
+	/** The bluetooth connect thread. */
 	private BluetoothConnectThread bluetoothConnectThread;
+	
+	/** The bluetooth connected thread. */
 	private BluetoothConnectedThread bluetoothConnectedThread;
 
 	/** The m state. */
 	private int bluetoothState;
+	
+	/** The bluetooth clients. */
 	ArrayList<Messenger> bluetoothClients = new ArrayList<Messenger>();
+	
+	/** The messenger. */
 	final Messenger messenger = new Messenger(new IncomingHandler());
 
+	/** The Constant BLUETOOTH_SERVICE_REGISTER_CLIENT. */
 	public static final int BLUETOOTH_SERVICE_REGISTER_CLIENT = 0;
+	
+	/** The Constant BLUETOOTH_SERVICE_UNREGISTER_CLIENT. */
 	public static final int BLUETOOTH_SERVICE_UNREGISTER_CLIENT = 1;
+	
+	/** The Constant BLUETOOTH_SERVICE_START. */
 	public static final int BLUETOOTH_SERVICE_START = 2;
+	
+	/** The Constant BLUETOOTH_SERVICE_CONNECT. */
 	public static final int BLUETOOTH_SERVICE_CONNECT = 3;
+	
+	/** The Constant BLUETOOTH_SERVICE_STOP. */
 	public static final int BLUETOOTH_SERVICE_STOP = 4;
+	
+	/** The Constant BLUETOOTH_SERVICE_READ. */
 	public static final int BLUETOOTH_SERVICE_READ = 5;
+	
+	/** The Constant BLUETOOTH_SERVICE_WRITE. */
 	public static final int BLUETOOTH_SERVICE_WRITE = 6;
+	
+	/** The Constant BLUETOOTH_SERVICE_READ_RESPONSE. */
 	public static final int BLUETOOTH_SERVICE_READ_RESPONSE = 7;
+	
+	/** The Constant BLUETOOTH_SERVICE_STATE_CHANGE. */
 	public static final int BLUETOOTH_SERVICE_STATE_CHANGE = 8;
 
+	/** The Constant BLUETOOTH_STATE_NONE. */
 	public static final int BLUETOOTH_STATE_NONE = 0;
+	
+	/** The Constant BLUETOOTH_STATE_LISTENING. */
 	public static final int BLUETOOTH_STATE_LISTENING = 1;
+	
+	/** The Constant BLUETOOTH_STATE_CONNECTING. */
 	public static final int BLUETOOTH_STATE_CONNECTING = 2;
+	
+	/** The Constant BLUETOOTH_STATE_CONNECTED. */
 	public static final int BLUETOOTH_STATE_CONNECTED = 3;
+	
+	/** The Constant BLUETOOTH_STATE_FAILED. */
 	public static final int BLUETOOTH_STATE_FAILED = 4;
 
 
+	/* (non-Javadoc)
+	 * @see android.app.Service#onCreate()
+	 */
 	@Override
 	public void onCreate() {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		bluetoothState = BLUETOOTH_STATE_NONE;
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Service#onDestroy()
+	 */
 	@Override
 	public void onDestroy() {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Service#onBind(android.content.Intent)
+	 */
 	@Override
 	public IBinder onBind(Intent intent) {
 		return messenger.getBinder();
 	}
 
+	/**
+	 * The Class IncomingHandler.
+	 */
 	class IncomingHandler extends Handler {
+		
+		/* (non-Javadoc)
+		 * @see android.os.Handler#handleMessage(android.os.Message)
+		 */
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -112,6 +171,11 @@ public class BluetoothAndroidService extends Service {
 		}
 	}
 
+	/**
+	 * Sets the state.
+	 *
+	 * @param state the new state
+	 */
 	private synchronized void setState(int state) {
 		//if (DEBUG) Log.d(DEBUG_TAG, "setState() " + messageState + " -> " + state);
 		bluetoothState = state;
@@ -129,6 +193,9 @@ public class BluetoothAndroidService extends Service {
 		}
 	}
 
+	/**
+	 * Start.
+	 */
 	public synchronized void start() {
 
 		// Cancel any thread attempting to make a connection
@@ -145,6 +212,11 @@ public class BluetoothAndroidService extends Service {
 		setState(BLUETOOTH_STATE_LISTENING);
 	}
 
+	/**
+	 * Connect.
+	 *
+	 * @param device the device
+	 */
 	public synchronized void connect(BluetoothDevice device) {
 		//if (DEBUG) Log.d(DEBUG_TAG, "Connecting to: " + device);
 
@@ -196,6 +268,9 @@ public class BluetoothAndroidService extends Service {
 		setState(BLUETOOTH_STATE_CONNECTED);
 	}
 
+	/**
+	 * Stop.
+	 */
 	public synchronized void stop() {
 		//if (DEBUG) Log.d(DEBUG_TAG, "Stopping");
 		if (bluetoothConnectThread != null) {
@@ -209,6 +284,11 @@ public class BluetoothAndroidService extends Service {
 		setState(BLUETOOTH_STATE_NONE);
 	}
 
+	/**
+	 * Write.
+	 *
+	 * @param command the command
+	 */
 	public void write(String command) {
 		// Create temporary object
 		BluetoothConnectedThread thread;
@@ -221,6 +301,11 @@ public class BluetoothAndroidService extends Service {
 		thread.write(command);
 	}
 
+	/**
+	 * Gets the response from queue.
+	 *
+	 * @return the response from queue
+	 */
 	public String getResponseFromQueue() {
 		// Create temporary object
 		BluetoothConnectedThread thread;
@@ -234,18 +319,36 @@ public class BluetoothAndroidService extends Service {
 
 	}
 
+	/**
+	 * Connection failed.
+	 */
 	private void connectionFailed() {
 		setState(BLUETOOTH_STATE_FAILED);
 	}
 
+	/**
+	 * Connection lost.
+	 */
 	private void connectionLost() {
 		setState(BLUETOOTH_STATE_LISTENING);
 	}
 
+	/**
+	 * The Class BluetoothConnectThread.
+	 */
 	private class BluetoothConnectThread extends Thread {
+		
+		/** The bluetooth socket. */
 		private final BluetoothSocket bluetoothSocket;
+		
+		/** The bluetooth device. */
 		private final BluetoothDevice bluetoothDevice;
 
+		/**
+		 * Instantiates a new bluetooth connect thread.
+		 *
+		 * @param device the device
+		 */
 		public BluetoothConnectThread(BluetoothDevice device) {
 			//if (DEBUG) Log.d(DEBUG_TAG, "Creating communication connect thread");
 			bluetoothDevice = device;
@@ -332,15 +435,34 @@ public class BluetoothAndroidService extends Service {
 
 	}
 
+	/**
+	 * The Class BluetoothConnectedThread.
+	 */
 	private class BluetoothConnectedThread extends Thread {
 
+		/** The bluetooth socket. */
 		private final BluetoothSocket bluetoothSocket;
+		
+		/** The input stream. */
 		private final InputStream inputStream;
+		
+		/** The output stream. */
 		private final OutputStream outputStream;
+		
+		/** The echo command. */
 		private boolean echoCommand = true;
+		
+		/** The last command. */
 		private String lastCommand = "";
+		
+		/** The response queue. */
 		private ConcurrentLinkedQueue<String> responseQueue;
 
+		/**
+		 * Instantiates a new bluetooth connected thread.
+		 *
+		 * @param socket the socket
+		 */
 		public BluetoothConnectedThread(BluetoothSocket socket) {
 			//Log.d(DEBUG_TAG, "Creating connected thread");
 			bluetoothSocket = socket;
@@ -359,6 +481,9 @@ public class BluetoothAndroidService extends Service {
 			responseQueue = new ConcurrentLinkedQueue<String>();
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
 		@Override
 		public void run() {
 			//Log.i(DEBUG_TAG, "BEGIN mConnectedThread");
@@ -394,6 +519,12 @@ public class BluetoothAndroidService extends Service {
 			}
 		}
 
+		/**
+		 * Gets the response from queue.
+		 *
+		 * @param block the block
+		 * @return the response from queue
+		 */
 		public String getResponseFromQueue(boolean block) {
 
 			if (block) {
@@ -406,6 +537,11 @@ public class BluetoothAndroidService extends Service {
 			return responseQueue.poll();
 		}
 
+		/**
+		 * Write.
+		 *
+		 * @param command the command
+		 */
 		public void write(String command) {
 			try {
 
@@ -419,6 +555,9 @@ public class BluetoothAndroidService extends Service {
 			}
 		}
 
+		/**
+		 * Cancel.
+		 */
 		public void cancel() {
 			try {
 				bluetoothSocket.close();

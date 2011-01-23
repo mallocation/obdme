@@ -23,16 +23,33 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BluetoothDiscovery.
+ */
 public class BluetoothDiscovery extends Activity {
+	
+	/** The Constant DEBUG_TAG. */
 	private static final String DEBUG_TAG = "DeviceListActivity";
+	
+	/** The Constant DEBUG. */
 	private static final boolean DEBUG = true;
 
+	/** The EXTR a_ devic e_ address. */
 	public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
+	/** The bluetooth adapter. */
 	private BluetoothAdapter bluetoothAdapter;
+	
+	/** The paired devices array adapter. */
 	private ArrayAdapter<String> pairedDevicesArrayAdapter;
+	
+	/** The new devices array adapter. */
 	private ArrayAdapter<String> newDevicesArrayAdapter;
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -81,6 +98,9 @@ public class BluetoothDiscovery extends Activity {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onDestroy()
+	 */
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -93,7 +113,7 @@ public class BluetoothDiscovery extends Activity {
 	}
 
 	/**
-	 * Start device discover with the BluetoothAdapter
+	 * Start device discover with the BluetoothAdapter.
 	 */
 	private void doDiscovery() {
 		if (DEBUG) Log.d(DEBUG_TAG, "Executing Bluetooth device discovery");
@@ -111,6 +131,7 @@ public class BluetoothDiscovery extends Activity {
 		bluetoothAdapter.startDiscovery();
 	}
 
+	/** The m device click listener. */
 	private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
 		public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
 
@@ -127,6 +148,7 @@ public class BluetoothDiscovery extends Activity {
 		}
 	};
 
+	/** The broadcast receiver. */
 	private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();

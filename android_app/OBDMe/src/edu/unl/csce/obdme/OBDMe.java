@@ -211,7 +211,7 @@ public class OBDMe extends Activity {
         Log.d(DEBUG_TAG, "Setting up OBD Connection");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        bluetoothService = new BluetoothService(this, messageHandler);
+        //bluetoothService = new BluetoothService(this, messageHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
