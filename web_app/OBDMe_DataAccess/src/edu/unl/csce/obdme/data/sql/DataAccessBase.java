@@ -25,7 +25,6 @@ public class DataAccessBase {
 			sb.deleteCharAt(sb.length() - 1);
 		}		
 		sb.append(")");
-		System.out.println("Executing : " + sb.toString());
 		try {
 			cs = c.prepareCall(sb.toString());
 			if (parameters != null) {
