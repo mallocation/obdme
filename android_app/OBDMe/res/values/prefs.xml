@@ -5,4 +5,5 @@
 	<string name="prefs.bluetooth.device">OBDMeBluetoothDevice</string>
 	<string name="prefs.account.username">OBDMeAccountUsername</string>
 	<string name="prefs.account.password">OBDMeAccountPassword</string>
+	<string name="prefs.mode">OBDMeMode</string>
 </resources>
