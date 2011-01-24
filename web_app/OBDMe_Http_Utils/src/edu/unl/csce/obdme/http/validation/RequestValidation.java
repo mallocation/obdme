@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import edu.unl.csce.obdme.http.encryption.EncryptionUtils;
+import edu.unl.csce.obdme.encryption.EncryptionUtils;
 import edu.unl.csce.obdme.http.request.ParamConstants;
 
 public class RequestValidation {	
