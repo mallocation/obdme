@@ -24,6 +24,7 @@ public class OBDFramework {
 	private HashMap<String, OBDMode> configuredProtocol;
 
 	/** The elm framework. */
+	@SuppressWarnings("unused")
 	private ELMFramework elmFramework;
 
 	/**

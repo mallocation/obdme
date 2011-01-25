@@ -449,12 +449,6 @@ public class BluetoothAndroidService extends Service {
 		/** The output stream. */
 		private final OutputStream outputStream;
 		
-		/** The echo command. */
-		private boolean echoCommand = true;
-		
-		/** The last command. */
-		private String lastCommand = "";
-		
 		/** The response queue. */
 		private ConcurrentLinkedQueue<String> responseQueue;
 
@@ -548,7 +542,6 @@ public class BluetoothAndroidService extends Service {
 				byte[] commandByteArray = new String(command + "\r").getBytes("ASCII");
 				outputStream.write(commandByteArray);
 
-				this.lastCommand = command + "\r";
 
 			} catch (IOException e) {
 				//Log.e(DEBUG_TAG, "Exception during write", e);

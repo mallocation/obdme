@@ -3,7 +3,7 @@ package edu.unl.csce.obdme.hardware.elm;
 /**
  * The Class ELMErrors.
  */
-public abstract class ELMErrors {
+public abstract class ELMErrorParser {
 	
 	/** The Constant ELM_DEVICE_BUFFER_FULL. */
 	private static final String ELM_DEVICE_BUFFER_FULL = "BUFFER FULL";
@@ -63,51 +63,57 @@ public abstract class ELMErrors {
 	 *
 	 * @param stringToParse the string to parse
 	 * @return the ELM error
+	 * @throws ELMException 
 	 */
-	public static ELM_ERROR parseStringForError(String stringToParse) {
+	public static void parseStringForError(String stringToParse) throws ELMException {
 		
 		//If the buffer is full
 		if(stringToParse.contains(ELM_DEVICE_BUFFER_FULL)) {
-			return ELM_ERROR.BUFFER_FULL;
+			throw new ELMDeviceBufferFullException("Buffer full exception received from device. " +
+					" Response from device: " + stringToParse);
 		}
 		
 		//If the bus is busy
 		else if(stringToParse.contains(ELM_DEVICE_BUS_BUSY)) {
-			return ELM_ERROR.BUS_BUSY;
+			throw new ELMDeviceBusBusyException("Device bus is busy and cannot process the request.  " +
+					"Response from device: " + stringToParse);
 		}
 		
 		//If there is a bus error
 		else if(stringToParse.contains(ELM_DEVICE_BUS_ERROR)) {
-			return ELM_ERROR.BUS_ERROR;
+			throw new ELMDeviceBusErrorException("There was a device bus error in the device response." +
+					"  Response from device: " + stringToParse);
 		}
 		
 		//If there is a CAN error
 		else if(stringToParse.contains(ELM_DEVICE_CAN_ERROR)) {
-			return ELM_ERROR.CAN_ERROR;
+			throw new ELMDeviceCANErrorException("The device responded with a CAN error.  " +
+					"Response from device: " + stringToParse);
 		}
 		
 		//If there is a data error
 		else if(stringToParse.contains(ELM_DEVICE_DATA_ERROR)) {
-			return ELM_ERROR.DATA_ERROR;
+			throw new ELMDeviceDataErrorException("The device responded with a data error.  " +
+					"Response from device: " + stringToParse);
 		}
 		
 		//If there is no data
 		else if(stringToParse.contains(ELM_DEVICE_NO_DATA)) {
-			return ELM_ERROR.NO_DATA;
+			throw new ELMDeviceNoDataException("There was no data returned from the OBD request." +
+					"  Response from device: " + stringToParse);
 		}
 		
 		//If the device is stopped
 		else if(stringToParse.contains(ELM_DEVICE_STOPPED)) {
-			return ELM_ERROR.STOPPED;
+			throw new ELMDeviceStoppedException("The device is currently stopped and can not respond to the request." +
+					"  Response from device: " + stringToParse);
 		}
 		
 		//If unable to connect
 		else if(stringToParse.contains(ELM_DEVICE_UNABLE_TO_CONNECT)) {
-			return ELM_ERROR.UNABLE_TO_CONNECT;
+			throw new ELMUnableToConnectException("The device was unable to connect to the onbard ECU." +
+					"  Response from device: " + stringToParse);
 		}
-		
-		//Otherwise, there is no error
-		return null;
 		
 	}
 	

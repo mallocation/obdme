@@ -1,9 +1,5 @@
 package edu.unl.csce.obdme.hardware.obd;
 
-import java.util.HashMap;
-
-import edu.unl.csce.obdme.hardware.elm.ELMFramework;
-
 /**
  * The Class OBDValidator.
  */

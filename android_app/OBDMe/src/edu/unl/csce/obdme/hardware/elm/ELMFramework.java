@@ -4,9 +4,10 @@ import android.content.Context;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.obd.OBDFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
-import edu.unl.csce.obdme.hardware.obd.OBDException;
+import edu.unl.csce.obdme.hardware.obd.OBDParserException;
 import edu.unl.csce.obdme.hardware.obd.OBDRequest;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
+import edu.unl.csce.obdme.hardware.obd.OBDResponseLengthException;
 
 /**
  * The Class ELMFramework.
@@ -23,6 +24,7 @@ public class ELMFramework {
 	private static final String ELM_DEVICE_ON = "ON";
 
 	/** The Constant ELM_DEVICE_OFF. */
+	@SuppressWarnings("unused")
 	private static final String ELM_DEVICE_OFF = "OFF";
 
 	/** The connection init. */
@@ -39,9 +41,11 @@ public class ELMFramework {
 
 	/** The bluetooth service. */
 	private BluetoothService bluetoothService;
-	
+
 	/** The obd framework. */
 	private OBDFramework obdFramework;
+
+	private Context context;
 
 	/**
 	 * Instantiates a new ELM Framework.
@@ -52,14 +56,15 @@ public class ELMFramework {
 	 */
 	public ELMFramework(Context context, BluetoothService bluetoothService, boolean autoStart) {
 		this.bluetoothService = bluetoothService;
+		this.context = context;
 		this.setConnectionInit(false);
 		this.setHardwareVerified(false);
 		this.setIgnitionOn(false);
 		this.setProtocolSet(false);
-		
+
 		//Create a new OBD Framework
 		this.obdFramework = new OBDFramework(context, this);
-		
+
 		//Automatically find protocols
 		if(autoStart) {
 			this.autoSearchProtocols();
@@ -73,40 +78,45 @@ public class ELMFramework {
 	 * @return the oBD response
 	 * @throws OBDParserException 
 	 */
-	public OBDResponse sendOBDRequest(OBDRequest request) throws OBDException {
+	public OBDResponse sendOBDRequest(OBDRequest request) throws ELMException {
 
-		//If the protocol is set
-		if(this.isProtocolSet()) {
-			//Send the formatted request to the bluetooth service
-			bluetoothService.write(request.toString());
-			
-			//Parse the response from the bluetooth service
-			OBDResponse response = new OBDResponse(request, bluetoothService.getResponseFromQueue());
-			
-			//Return the response
-			return response;
-		}
+		OBDResponse response = null;
 		
-		//Otherwise, try to auto Search for protocols
-		else {
-			this.autoSearchProtocols();
-				
+		//Try to automatically auto search for protocols if someone else
+		//failed to do so appropriately
+		if(isProtocolSet()) {
+			autoSearchProtocols();
+		}
+
+		try {
 			//If the protocol is set
 			if(this.isProtocolSet()) {
 				//Send the formatted request to the bluetooth service
 				bluetoothService.write(request.toString());
-				
+
 				//Parse the response from the bluetooth service
-				OBDResponse response = new OBDResponse(request, bluetoothService.getResponseFromQueue());
-				
-				//Return the response
-				return response;
+				response = new OBDResponse(context, request, bluetoothService.getResponseFromQueue());
+
 			}
+
+		} catch (ELMDeviceNoDataException dnde) {
+			//This most likely means that the PID is not supported.
+			//For safetey's sake, we are going to disable it.
+			getObdFramework().getConfiguredProtocol().get(request.getMode())
+			.getPID(request.getPid()).setSupported(false);
+
+		} catch (ELMUnableToConnectException utce) {
+			//Whoopsies... The ELM327 is not connected to an ECU.
+			//TODO
+
+		} catch (OBDResponseLengthException orle) {
+			//Hmmm... There seems to be
+			//a) A problem with our connection (bad data transfer)
+			//b) Or we got something we didn't ask for
+
 		}
 		
-		//If not response could be returned, return null
-		//TODO: Throw Exception
-		return null;
+		return response;
 	}
 
 	/**
@@ -292,7 +302,7 @@ public class ELMFramework {
 
 		return this.isProtocolSet();
 	}
-	
+
 	/**
 	 * Gets the configured pid.
 	 *
@@ -303,7 +313,7 @@ public class ELMFramework {
 	public OBDPID getConfiguredPID(String mode, String pid) {
 
 		return getObdFramework().getConfiguredProtocol().get(mode).getPID(pid);	
-		
+
 	}
 
 	/**
