@@ -6,9 +6,14 @@
 GET     /                                       Application.index
 
 GET 	/users									Users.index
+GET		/users/{email}							Users.getUser
+
+GET 	/users/create/{email}/{password}		Users.createUser
+GET 	/users/validation/pw/{email}			Users.isPasswordCorrect
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}
+	
