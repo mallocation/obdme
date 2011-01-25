@@ -1,14 +1,11 @@
 package edu.unl.csce.obdme;
 
-import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
-import edu.unl.csce.obdme.bluetooth.BluetoothService;
-import edu.unl.csce.obdme.settingsmenu.SettingsMenu;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -16,8 +13,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -26,6 +21,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
+import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.settingsmenu.SettingsMenu;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,7 +49,9 @@ public class OBDMe extends Activity {
 	/** The Constant REQUEST_ENABLE_BT. */
 	private static final int REQUEST_ENABLE_BT = 2;
 	
-
+	/** Modes of Operation */
+	public static final int USER_MODE = 0;
+	public static final int MECHANIC_MODE = 1;
 
 	/** The Constant DEVICE_NAME. */
 	public static final String DEVICE_NAME = "device_name";
@@ -81,6 +81,9 @@ public class OBDMe extends Activity {
     
     /** The bluetooth service. */
     private BluetoothService bluetoothService = null;
+    
+    /** Shared Preferences */
+    private SharedPreferences sharedPrefs;
 
 	/**
 	 * Called when the activity is first created.
@@ -106,6 +109,24 @@ public class OBDMe extends Activity {
 			Toast.makeText(this, "Bluetooth is not available.  OBDMe will now exit.", Toast.LENGTH_LONG).show();
 			finish();
 			return;
+		}
+		
+		sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
+		
+		/* Depending on the mode (user or mechanic) display appropriate data
+		 * to the user and also display data according to which orientation
+		 * the screen is in (landscape or portrait).
+		 */
+		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == USER_MODE ){
+			
+		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
+			
+		} else {
+			// First run, so set it to USER_MODE
+			SharedPreferences.Editor prefEditor = sharedPrefs.edit();
+			prefEditor.putInt(getResources().getString(R.string.prefs_mode), USER_MODE);
+    		prefEditor.commit();
+    		
 		}
 	}
 
