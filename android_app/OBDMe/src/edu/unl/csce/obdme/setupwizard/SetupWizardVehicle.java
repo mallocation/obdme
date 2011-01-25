@@ -14,15 +14,37 @@ import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
+import edu.unl.csce.obdme.hardware.obd.OBDException;
+import edu.unl.csce.obdme.hardware.obd.OBDRequest;
+import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 
+/**
+ * The Class SetupWizardVehicle.
+ */
 public class SetupWizardVehicle extends Activity {
 
-	private BluetoothService bluetoothService = null;
-	private ELMFramework elmFramework = null;
-	private ELMIgnitionPoller ignPoller = null;
+	/** The bluetooth service. */
+	private BluetoothService bluetoothService;
+	
+	/** The elm framework. */
+	private ELMFramework elmFramework;
+	
+	/** The ign poller. */
+	private ELMIgnitionPoller ignPoller;
+	
+	/** The ignition dialog. */
 	private ProgressDialog ignitionDialog;
+	
+	/** The prefs. */
 	private SharedPreferences prefs;
+	
+	/** The SETU p_ state. */
+	private int SETUP_STATE = 0;
 
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,18 +57,59 @@ public class SetupWizardVehicle extends Activity {
 
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		bluetoothService.setAppHandler(bluetoothHandler);
-		
+
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		
+
 		//Setup the button on-click listener
 		Button next = (Button) findViewById(R.id.setupwizard_vehicle_button);
 		next.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				ignPoller = new ELMIgnitionPoller(getApplicationContext(), ignitionHandler, elmFramework);
-				ignPoller.startPolling();
+
+				switch(SETUP_STATE) {
+				case 0:
+					startIgnitionPollerThread();
+					break;
+
+				}
 			}
 		});
+
+	}
+
+	/**
+	 * Start ignition poller thread.
+	 */
+	private void startIgnitionPollerThread() {
+		ignPoller = new ELMIgnitionPoller(getApplicationContext(), ignitionHandler, elmFramework);
+		ignPoller.startPolling();
+	}
+
+	/**
+	 * Gets the vIN.
+	 *
+	 * @return the vIN
+	 */
+	private void getVIN() {
+
+		elmFramework.autoSearchProtocols();
+
+		//elmFramework.getObdFramework().queryValidPIDS();
+		//SEARCHING...
+		//		014 
+		//		0: 49 02 01 31 48 47 
+		//		1: 46 41 31 36 35 33 37 
+		//		2: 4C 30 37 37 32 35 39 
+		//if(elmFramework.getObdFramework().isPIDSupported("09", "02")) {
+		OBDRequest request = new OBDRequest("09", "02", 25);
+		OBDResponse response;
+		try {
+			response = elmFramework.sendOBDRequest(request);
+		} catch (OBDException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//}
 
 	}
 
@@ -66,10 +129,11 @@ public class SetupWizardVehicle extends Activity {
 
 				case ELMIgnitionPoller.IGNITION_NONE:
 					break;
-					
+
 				case ELMIgnitionPoller.IGNITION_POLLING:
 					//This is an intermediate step between starting the polling and
 					//actually receiving a result.
+
 					break;
 
 				case ELMIgnitionPoller.IGNITION_OFF:
@@ -80,13 +144,22 @@ public class SetupWizardVehicle extends Activity {
 				case ELMIgnitionPoller.IGNITION_ON:
 
 					//Dismiss connecting dialog.  Update the view and change the state to select a new device
-					ignitionDialog.dismiss();
+					if(ignitionDialog != null){
+						ignitionDialog.dismiss();
+						ignitionDialog = null;
+					}
+					if(ignPoller != null){
+						ignPoller.stop();
+						ignPoller = null;
+						getVIN();
+					}
 					break;
 				}
 			}
 		}
 	};
 
+	/** The bluetooth handler. */
 	private final Handler bluetoothHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -116,4 +189,6 @@ public class SetupWizardVehicle extends Activity {
 			}
 		}
 	};
+
+
 }

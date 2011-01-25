@@ -38,12 +38,6 @@ public class SetupWizardBluetooth extends Activity {
 	/** The Constant MESSAGE_STATE_CHANGE. */
 	public static final int MESSAGE_STATE_CHANGE = 1;
 
-	/** The Constant MESSAGE_READ. */
-	public static final int MESSAGE_READ = 2;
-
-	/** The Constant MESSAGE_WRITE. */
-	public static final int MESSAGE_WRITE = 3;
-
 	/** The setup state. */
 	private int SETUP_STATE = 0;
 
@@ -415,13 +409,6 @@ public class SetupWizardBluetooth extends Activity {
 					updateView();
 					break;
 				}
-				break;
-
-			case MESSAGE_WRITE:
-
-				break;
-			case MESSAGE_READ:
-
 				break;
 			}
 		}
