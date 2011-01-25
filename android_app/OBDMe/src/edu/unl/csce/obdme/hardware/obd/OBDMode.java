@@ -2,7 +2,6 @@ package edu.unl.csce.obdme.hardware.obd;
 
 import java.util.HashMap;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class OBDMode.
  */

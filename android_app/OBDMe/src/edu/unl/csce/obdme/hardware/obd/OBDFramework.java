@@ -37,13 +37,44 @@ public class OBDFramework {
 		this.configuredProtocol = parseOBDCommands(context, readOBDConfig(context));
 	}
 
+//	/**
+//	 * Query valid pids.
+//	 */
+//	public void queryValidPIDS() {
+//
+//		OBDValidator.validate(this.configuredProtocol, this.elmFramework);
+//
+//	}
+	
 	/**
-	 * Query valid pids.
+	 * Checks if is pID supported.
+	 *
+	 * @param mode the mode
+	 * @param pid the pid
+	 * @return true, if is pID supported
 	 */
-	public void queryValidPIDS() {
-
-		OBDValidator.validate(this.configuredProtocol, this.elmFramework);
-
+	public boolean isPIDSupported(String mode, String pid) {
+		
+		//If the configured protocol contains the mode
+		if (configuredProtocol.containsKey(mode)) {
+			
+			//If the configured protocol contains the pid
+			if (configuredProtocol.get(mode).containsPID(pid)) {
+				
+				//Return if the configured protocol supports the pid
+				return configuredProtocol.get(mode).getPID(pid).isSupported();
+			}
+			
+			//If it's not listed, its not supported as far as we're concerned
+			else {
+				return false;
+			}
+		}
+		
+		//If the mode is not listed, the pid is not supported as far as we're concerned.
+		else {
+			return false;
+		}
 	}
 
 	/**
@@ -196,5 +227,20 @@ public class OBDFramework {
 		return protocolStructure;
 
 	}
+	
+	/**
+	 * @return the configuredProtocol
+	 */
+	public HashMap<String, OBDMode> getConfiguredProtocol() {
+		return configuredProtocol;
+	}
+
+	/**
+	 * @param configuredProtocol the configuredProtocol to set
+	 */
+	public void setConfiguredProtocol(HashMap<String, OBDMode> configuredProtocol) {
+		this.configuredProtocol = configuredProtocol;
+	}
+
 }
 

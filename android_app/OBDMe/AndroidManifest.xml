@@ -28,6 +28,7 @@
 <activity android:name=".settingsmenu.SettingsMenuAccountInfo"></activity>
 <activity android:name=".settingsmenu.SettingsMenuDisplayData"></activity>
 <activity android:name=".settingsmenu.SettingsMenuVehicleInfo"></activity>
+<activity android:name=".setupwizard.SetupWizardVehicle" android:label="@string/setupwizard.vehicle.label"></activity>
 </application>
 	<uses-sdk android:minSdkVersion="8" />
 	<uses-permission android:name="android.permission.BLUETOOTH" />

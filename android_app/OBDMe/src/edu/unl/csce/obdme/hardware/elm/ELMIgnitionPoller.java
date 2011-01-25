@@ -84,25 +84,12 @@ public class ELMIgnitionPoller {
 	}
 
 	/**
-	 * Ignition on.
-	 */
-	private synchronized void ignitionOn() {
-		setState(IGNITION_ON);
-	}
-
-	/**
-	 * Ignition off.
-	 */
-	private synchronized void ignitionOff() {
-		setState(IGNITION_OFF);
-	}
-
-	/**
 	 * Stop.
 	 */
 	public synchronized void stop() {
 		if (ignPollerThread != null) {
 			ignPollerThread.cancel();
+			//ignPollerThread.stop();
 			ignPollerThread = null;
 		}
 		setState(IGNITION_NONE);
@@ -115,6 +102,9 @@ public class ELMIgnitionPoller {
 
 		/** The elm framework. */
 		private ELMFramework elmFramework;
+		
+		/** The continue polling. */
+		private boolean continuePolling;
 
 		/**
 		 * Instantiates a new eLM ignition poller thread.
@@ -123,38 +113,35 @@ public class ELMIgnitionPoller {
 		 */
 		public ELMIgnitionPollerThread(ELMFramework elmFramework) {
 			this.elmFramework = elmFramework;
+			continuePolling = true;
 		}
 
 		/* (non-Javadoc)
 		 * @see java.lang.Thread#run()
 		 */
 		public void run() {
-			while(true) {
+			while(continuePolling) {
 
 				if(this.elmFramework.checkVehicleIgnition()) {
-					if (getPollerState() != IGNITION_ON) {
-						ignitionOn();
-					}
+					setState(IGNITION_ON);
 				}
 				else {
-					if (getPollerState() != IGNITION_OFF){
-						ignitionOff();
-					}
+					setState(IGNITION_OFF);
 				}
-				
+
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					//We don't really care...
 				}
 			}
 		}
-
+		
 		/**
 		 * Cancel.
 		 */
-		public void cancel() {
-
+		public void cancel(){
+			continuePolling = false;
 		}
 
 	};

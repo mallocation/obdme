@@ -6,27 +6,36 @@ package edu.unl.csce.obdme.hardware.obd;
 public class OBDRequest {
 	
 	/** The mode. */
-	private String mode;
+	private String modeHex;
 	
 	/** The pid. */
-	private String pid;
+	private String pidHex;
+	
+	/** The return length. */
+	private int returnLength;
 	
 	/**
 	 * Instantiates a new OBD request.
 	 *
-	 * @param modeHex the mode hex
-	 * @param pidHex the pid hex
+	 * @param pid the pid
 	 */
-	public OBDRequest (String modeHex, String pidHex) {
-		this.setMode(modeHex);
-		this.setPid(pidHex);
+	public OBDRequest (OBDPID pid) {
+		this.setMode(pid.getParentMode().getModeHex());
+		this.setPid(pid.getPidHex());
+		this.setReturnLength(pid.getPidReturn());	
+	}
+	
+	public OBDRequest (String mode, String pid, int returnSize) {
+		this.setMode(mode);
+		this.setPid(pid);
+		this.setReturnLength(returnSize);	
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return mode + pid;
+		return modeHex + pidHex;
 	}
 
 	/**
@@ -35,7 +44,7 @@ public class OBDRequest {
 	 * @return the mode
 	 */
 	public String getMode() {
-		return mode;
+		return modeHex;
 	}
 
 	/**
@@ -44,7 +53,7 @@ public class OBDRequest {
 	 * @param mode the mode to set
 	 */
 	public void setMode(String mode) {
-		this.mode = mode;
+		this.modeHex = mode;
 	}
 
 	/**
@@ -53,7 +62,7 @@ public class OBDRequest {
 	 * @return the pid
 	 */
 	public String getPid() {
-		return pid;
+		return pidHex;
 	}
 
 	/**
@@ -62,7 +71,25 @@ public class OBDRequest {
 	 * @param pid the pid to set
 	 */
 	public void setPid(String pid) {
-		this.pid = pid;
+		this.pidHex = pid;
+	}
+
+	/**
+	 * Sets the return length.
+	 *
+	 * @param returnLength the returnLength to set
+	 */
+	public void setReturnLength(int returnLength) {
+		this.returnLength = returnLength;
+	}
+
+	/**
+	 * Gets the return length.
+	 *
+	 * @return the returnLength
+	 */
+	public int getReturnLength() {
+		return returnLength;
 	}
 
 }

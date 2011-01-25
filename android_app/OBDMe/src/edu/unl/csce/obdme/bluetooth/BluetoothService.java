@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import edu.unl.csce.obdme.OBDMe;
+import edu.unl.csce.obdme.R;
 
 /**
  * The Class BluetoothService.
@@ -26,15 +27,7 @@ public class BluetoothService {
 	/** The Constant ASCII_COMMAND_PROMPT. */
 	private static final char ASCII_COMMAND_PROMPT = '>';
 
-	/** The Constant DEBUG_TAG. */
-	private static final String DEBUG_TAG = "BluetoothService";
-
-	/** The Constant DEBUG. */
-	private static final boolean DEBUG = true;
-
-	/** The Constant NAME. */
-	private static final String NAME = "BluetoothService";
-
+	/** The UUI d_ rfcom m_ generic. */
 	static UUID UUID_RFCOMM_GENERIC = new UUID(0x0000110100001000L,0x800000805F9B34FBL);
 
 	/** The bluetooth adapter. */
@@ -44,14 +37,17 @@ public class BluetoothService {
 	private Handler appHandler;
 
 	/** The comm connect thread. */
-	private CommunicationConnectThread commConnectThread;
+	private BluetoothConnectThread bluetoothConnectThread;
 
 	/** The comm connected thread. */
-	private CommunicationConnectedThread commConnectedThread;
+	private BluetoothConnectedThread bluetoothConnectedThread;
 
 	/** The m state. */
 	private int messageState;
-	
+
+	/** The context. */
+	private Context context;
+
 	/** The Constant MESSAGE_STATE_CHANGE. */
 	public static final int MESSAGE_STATE_CHANGE = 0;
 
@@ -67,19 +63,25 @@ public class BluetoothService {
 	/** The Constant STATE_CONNECTED. */
 	public static final int STATE_CONNECTED = 3;
 
+	/** The Constant STATE_FAILED. */
 	public static final int STATE_FAILED = 4;
 
 	/**
 	 * Instantiates a new bluetooth service.
 	 *
 	 * @param context the context
-	 * @param handler the handler
 	 */
-	public BluetoothService() {
-		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		messageState = STATE_NONE;
+	public BluetoothService(Context context) {
+		this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		this.messageState = STATE_NONE;
+		this.context = context;
 	}
-	
+
+	/**
+	 * Sets the app handler.
+	 *
+	 * @param appHandler the new app handler
+	 */
 	public void setAppHandler(Handler appHandler) {
 		this.appHandler = appHandler;
 	}
@@ -90,7 +92,11 @@ public class BluetoothService {
 	 * @param state the new state
 	 */
 	private synchronized void setState(int state) {
-		if (DEBUG) Log.d(DEBUG_TAG, "setState() " + messageState + " -> " + state);
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"New Bluetooth State ->" + state);
+		}
+
 		messageState = state;
 
 		appHandler.obtainMessage(OBDMe.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
@@ -111,18 +117,21 @@ public class BluetoothService {
 	 * Start.
 	 */
 	public synchronized void start() {
-		if (DEBUG) Log.d(DEBUG_TAG, "Starting");
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+			"Starting the bluetooth service");
+		}
 
 		// Cancel any thread attempting to make a connection
-		if (commConnectThread != null) {
-			commConnectThread.cancel();
-			commConnectThread = null;
+		if (bluetoothConnectThread != null) {
+			bluetoothConnectThread.cancel();
+			bluetoothConnectThread = null;
 		}
 
 		// Cancel any thread currently running a connection
-		if (commConnectedThread != null) {
-			commConnectedThread.cancel();
-			commConnectedThread = null;
+		if (bluetoothConnectedThread != null) {
+			bluetoothConnectedThread.cancel();
+			bluetoothConnectedThread = null;
 		}
 		setState(STATE_LISTEN);
 	}
@@ -133,25 +142,28 @@ public class BluetoothService {
 	 * @param device the device
 	 */
 	public synchronized void connect(BluetoothDevice device) {
-		if (DEBUG) Log.d(DEBUG_TAG, "Connecting to: " + device);
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"Connecting to: " + device);
+		}
 
 		// Cancel any thread attempting to make a connection
 		if (messageState == STATE_CONNECTING) {
-			if (commConnectThread != null) {
-				commConnectThread.cancel();
-				commConnectThread = null;
+			if (bluetoothConnectThread != null) {
+				bluetoothConnectThread.cancel();
+				bluetoothConnectThread = null;
 			}
 		}
 
 		// Cancel any thread currently running a connection
-		if (commConnectedThread != null) {
-			commConnectedThread.cancel();
-			commConnectedThread = null;
+		if (bluetoothConnectedThread != null) {
+			bluetoothConnectedThread.cancel();
+			bluetoothConnectedThread = null;
 		}
 
 		// Start the thread to connect with the given device
-		commConnectThread = new CommunicationConnectThread(device);
-		commConnectThread.start();
+		bluetoothConnectThread = new BluetoothConnectThread(device);
+		bluetoothConnectThread.start();
 		setState(STATE_CONNECTING);
 	}
 
@@ -162,23 +174,26 @@ public class BluetoothService {
 	 * @param device the device
 	 */
 	public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
-		if (DEBUG) Log.d(DEBUG_TAG, "Connected");
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+			"Connected");
+		}
 
 		// Cancel the thread that completed the connection
-		if (commConnectThread != null) {
-			commConnectThread.cancel();
-			commConnectThread = null;
+		if (bluetoothConnectThread != null) {
+			bluetoothConnectThread.cancel();
+			bluetoothConnectThread = null;
 		}
 
 		// Cancel any thread currently running a connection
-		if (commConnectedThread != null) {
-			commConnectedThread.cancel();
-			commConnectedThread = null;
+		if (bluetoothConnectedThread != null) {
+			bluetoothConnectedThread.cancel();
+			bluetoothConnectedThread = null;
 		}
 
 		// Start the thread to manage the connection and perform transmissions
-		commConnectedThread = new CommunicationConnectedThread(socket);
-		commConnectedThread.start();
+		bluetoothConnectedThread = new BluetoothConnectedThread(socket);
+		bluetoothConnectedThread.start();
 
 		// Send the name of the connected device back to the UI Activity
 		Message msg = appHandler.obtainMessage(OBDMe.MESSAGE_DEVICE_NAME);
@@ -194,40 +209,69 @@ public class BluetoothService {
 	 * Stop all threads.
 	 */
 	public synchronized void stop() {
-		if (DEBUG) Log.d(DEBUG_TAG, "Stopping");
-		if (commConnectThread != null) {
-			commConnectThread.cancel();
-			commConnectThread = null;
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+			"Stopping the bluetooth service");
 		}
-		if (commConnectThread != null) {
-			commConnectThread.cancel();
-			commConnectThread = null;
+
+		if (bluetoothConnectThread != null) {
+			bluetoothConnectThread.cancel();
+			bluetoothConnectThread = null;
+		}
+		if (bluetoothConnectThread != null) {
+			bluetoothConnectThread.cancel();
+			bluetoothConnectThread = null;
 		}
 		setState(STATE_NONE);
 	}
 
+	/**
+	 * Write.
+	 *
+	 * @param command the command
+	 */
 	public void write(String command) {
 		// Create temporary object
-		CommunicationConnectedThread thread;
+		BluetoothConnectedThread thread;
 		// Synchronize a copy of the ConnectedThread
 		synchronized (this) {
 			if (messageState != STATE_CONNECTED);
-			thread = commConnectedThread;
+			thread = bluetoothConnectedThread;
 		}
 		// Perform the write unsynchronized
 		thread.write(command);
 	}
 
-	public String getResponseFromQueue(boolean block) {
+	/**
+	 * Gets the response from queue.
+	 *
+	 * @return the response from queue
+	 */
+	public String getResponseFromQueue() {
 		// Create temporary object
-		CommunicationConnectedThread thread;
+		BluetoothConnectedThread thread;
 		// Synchronize a copy of the ConnectedThread
 		synchronized (this) {
 			if (messageState != STATE_CONNECTED);
-			thread = commConnectedThread;
+			thread = bluetoothConnectedThread;
 		}
 		// Perform the write unsynchronized
-		return thread.getResponseFromQueue(block);
+		return thread.getResponseFromQueue();
+	}
+	
+	/**
+	 * Clear response queue.
+	 */
+	public void clearResponseQueue() {
+		// Create temporary object
+		BluetoothConnectedThread thread;
+		// Synchronize a copy of the ConnectedThread
+		synchronized (this) {
+			if (messageState != STATE_CONNECTED);
+			thread = bluetoothConnectedThread;
+		}
+
+		thread.clearResponseQueue();
 	}
 
 	/**
@@ -254,7 +298,7 @@ public class BluetoothService {
 	/**
 	 * The Class CommunicationConnectThread.
 	 */
-	private class CommunicationConnectThread extends Thread {
+	private class BluetoothConnectThread extends Thread {
 
 		/** The bluetooth socket. */
 		private final BluetoothSocket bluetoothSocket;
@@ -267,34 +311,52 @@ public class BluetoothService {
 		 *
 		 * @param device the device
 		 */
-		public CommunicationConnectThread(BluetoothDevice device) {
-			if (DEBUG) Log.d(DEBUG_TAG, "Creating communication connect thread");
+		public BluetoothConnectThread(BluetoothDevice device) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+				"Creating communication connect thread");
+			}
+
 			bluetoothDevice = device;
 			BluetoothSocket tmp = null;
+
 			try {
 				tmp = device.createRfcommSocketToServiceRecord(UUID_RFCOMM_GENERIC);
 			} catch (IOException e) {
-				Log.e(DEBUG_TAG, "IOException trying to create RFCOMM socket", e);
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"IOException trying to create RFCOMM socket");
+				}
 			}
 			finally{
 				try {
 					Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
 					tmp = (BluetoothSocket) m.invoke(device, 1);
 				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"Security exception trying to create RFCOMM socket");
+					}
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"Illegal argument exception trying to create RFCOMM socket");
+					}
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"No such method exception trying to create RFCOMM socket");
+					}
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"Illegal access exception trying to create RFCOMM socket");
+					}
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"Invocation target exception trying to create RFCOMM socket");
+					}
 				}
 			}
 			bluetoothSocket = tmp;
@@ -305,26 +367,45 @@ public class BluetoothService {
 		 */
 		@Override
 		public void run() {
-			Log.i(DEBUG_TAG, "Running communication connect thread");
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+				"Running communication connect thread");
+			}
+
 			setName("ConnectThread");
 
-			if (DEBUG) Log.d(DEBUG_TAG, "Canceling device discovery");
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+				"Canceling device discovery");
+			}
+
 			bluetoothAdapter.cancelDiscovery();
 
 			try {
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"Attempting to make connection to device.");
+				}
 
-				if (DEBUG) Log.d(DEBUG_TAG, "Attempting to make connection to device.");
 				bluetoothSocket.connect();
 
 			} catch (IOException ioe) {
-				if (DEBUG) Log.e(DEBUG_TAG, "IOException while trying to connect to the device.", ioe);
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"IOException while trying to connect to the device.");
+				}
+
 				connectionFailed();
 				setState(STATE_FAILED);
 
 				try {
 					bluetoothSocket.close();
 				} catch (IOException e2) {
-					Log.e(DEBUG_TAG, "Unable to close socket during connection failure", e2);
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"Unable to close socket during connection failure");
+					}
+
 					setState(STATE_FAILED);
 				}
 
@@ -333,10 +414,14 @@ public class BluetoothService {
 			}
 
 			synchronized (BluetoothService.this) {
-				commConnectThread = null;
+				bluetoothConnectThread = null;
 			}
 
-			if (DEBUG) Log.d(DEBUG_TAG, "Connection to the device was successful.");
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+				"Connection to the device was successful.");
+			}
+
 			connected(bluetoothSocket, bluetoothDevice);
 		}
 
@@ -347,7 +432,10 @@ public class BluetoothService {
 			try {
 				bluetoothSocket.close();
 			} catch (IOException e) {
-				Log.e(DEBUG_TAG, "close() of connect socket failed", e);
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"close() of connect socket failed.");
+				}
 			}
 		}
 
@@ -357,7 +445,7 @@ public class BluetoothService {
 	/**
 	 * The Class ConnectionConnectedThread.
 	 */
-	private class CommunicationConnectedThread extends Thread {
+	private class BluetoothConnectedThread extends Thread {
 
 		/** The bluetooth socket. */
 		private final BluetoothSocket bluetoothSocket;
@@ -374,6 +462,7 @@ public class BluetoothService {
 		/** The last command. */
 		private String lastCommand = "";
 
+		/** The response queue. */
 		private ConcurrentLinkedQueue<String> responseQueue;
 
 		/**
@@ -381,8 +470,12 @@ public class BluetoothService {
 		 *
 		 * @param socket the socket
 		 */
-		public CommunicationConnectedThread(BluetoothSocket socket) {
-			Log.d(DEBUG_TAG, "Creating connected thread");
+		public BluetoothConnectedThread(BluetoothSocket socket) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+				"Creating connected thread");
+			}
+
 			bluetoothSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -391,7 +484,10 @@ public class BluetoothService {
 				tmpIn = socket.getInputStream();
 				tmpOut = socket.getOutputStream();
 			} catch (IOException ioe) {
-				Log.e(DEBUG_TAG, "Temporary sockets were not created", ioe);
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"Temporary sockets were not created");
+				}
 			}
 
 			inputStream = tmpIn;
@@ -400,9 +496,15 @@ public class BluetoothService {
 			responseQueue = new ConcurrentLinkedQueue<String>();
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
 		@Override
 		public void run() {
-			Log.i(DEBUG_TAG, "BEGIN mConnectedThread");
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+				"Running Connected Thread");
+			}
 
 			// Keep listening to the InputStream while connected
 			while (true) {
@@ -428,28 +530,39 @@ public class BluetoothService {
 					responseQueue.add(recievedString);
 
 				} catch (IOException e) {
-					Log.e(DEBUG_TAG, "disconnected", e);
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"Disconnected");
+					}
 					connectionLost();
 					break;
 				}
 			}
 		}
 
-		public String getResponseFromQueue(boolean block) {
-
-			if (block) {
-				while(responseQueue.isEmpty()) {
-					//Wait
-				}
-				return responseQueue.poll();
+		/**
+		 * Gets the response from queue.
+		 *
+		 * @return the response from queue
+		 */
+		public String getResponseFromQueue() {
+			while(responseQueue.isEmpty()){
+				//Do nothing, we want to block
 			}
-
 			return responseQueue.poll();
+		}
+		
+		/**
+		 * Clear response queue.
+		 */
+		public void clearResponseQueue() {
+			responseQueue.clear();
 		}
 
 		/**
 		 * Write to the connected OutStream.
-		 * @param buffer  The bytes to write
+		 *
+		 * @param command the command
 		 */
 		public void write(String command) {
 			try {
@@ -460,7 +573,10 @@ public class BluetoothService {
 				this.lastCommand = command + "\r";
 
 			} catch (IOException e) {
-				Log.e(DEBUG_TAG, "Exception during write", e);
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"Exception during write");
+				}
 			}
 		}
 
@@ -471,7 +587,10 @@ public class BluetoothService {
 			try {
 				bluetoothSocket.close();
 			} catch (IOException ioe) {
-				Log.e(DEBUG_TAG, "IOException when closing connected socket", ioe);
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"IOException when closing connected socket");
+				}
 			}
 		}
 	}

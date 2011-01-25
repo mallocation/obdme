@@ -37,7 +37,7 @@ public class OBDMeApplication extends Application {
 	public BluetoothService getBluetoothService() {
         if (bluetoothService == null) {
             checkInstance();
-            bluetoothService = new BluetoothService();
+            bluetoothService = new BluetoothService(getApplicationContext());
         }
         return bluetoothService;
     }

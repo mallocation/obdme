@@ -73,18 +73,6 @@ public class OBDPID {
 		this.setParentMode(parent);
 		this.setSupported(supported);
 	}
-	
-	/**
-	 * Generate OBD request string based on this PID
-	 *
-	 * @return the OBD request
-	 */
-	public OBDRequest generateOBDRequest() {
-		
-		//Make the new request object
-		OBDRequest request = new OBDRequest(this.getParentMode().getModeHex(), this.getPidHex());
-		return request;
-	}
 
 	/**
 	 * Gets the pid hex.
