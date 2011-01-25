@@ -94,9 +94,33 @@ public class OBDMe extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(DEBUG) Log.e(DEBUG_TAG, "+++ OBDMe CREATE +++");
-
+		
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-		setContentView(R.layout.main);
+
+		sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
+		
+		/* Depending on the mode (user or mechanic) display appropriate data
+		 * to the user and also display data according to which orientation
+		 * the screen is in (landscape or portrait).
+		 */
+		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == USER_MODE ){
+			setContentView(R.layout.main);
+			
+		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
+			setContentView(R.layout.mechanic_mode);
+			
+			TextView text = (TextView) findViewById(R.id.mechanicmode_realtimedata_titletext);
+			text.setText(R.string.mechanicmode_realtimedata);
+		} else {
+			// First run, so set it to USER_MODE
+			SharedPreferences.Editor prefEditor = sharedPrefs.edit();
+			prefEditor.putInt(getResources().getString(R.string.prefs_mode), USER_MODE);
+    		prefEditor.commit();
+    		setContentView(R.layout.main);
+		}
+		
+		
+		//setContentView(R.layout.main);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
 		titleBar = (TextView) findViewById(R.id.title_left_text);
@@ -111,23 +135,7 @@ public class OBDMe extends Activity {
 			return;
 		}
 		
-		sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
 		
-		/* Depending on the mode (user or mechanic) display appropriate data
-		 * to the user and also display data according to which orientation
-		 * the screen is in (landscape or portrait).
-		 */
-		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == USER_MODE ){
-			
-		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
-			
-		} else {
-			// First run, so set it to USER_MODE
-			SharedPreferences.Editor prefEditor = sharedPrefs.edit();
-			prefEditor.putInt(getResources().getString(R.string.prefs_mode), USER_MODE);
-    		prefEditor.commit();
-    		
-		}
 	}
 
 	/* (non-Javadoc)
@@ -160,6 +168,12 @@ public class OBDMe extends Activity {
         		bluetoothService.start();
             }
         }
+        
+        if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == USER_MODE ){
+			setContentView(R.layout.main);
+		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
+			setContentView(R.layout.mechanic_mode);
+		}
     }
     
     /* (non-Javadoc)

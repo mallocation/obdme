@@ -44,4 +44,12 @@
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:textSize">70sp</item>
 	</style>
+	
+	<!-- Mechanic Mode Style -->
+	<style name="mechanicMode.list" parent="android:Theme">
+		<item name="android:background">#fff</item>
+		<item name="android:paddingLeft">5dip</item>
+		<item name="android:textColor">#666</item>
+		<item name="android:textSize">15dip</item>
+	</style>
 </resources>
