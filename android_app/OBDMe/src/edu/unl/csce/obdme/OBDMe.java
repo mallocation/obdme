@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,7 +52,8 @@ public class OBDMe extends Activity {
 	
 	/** Modes of Operation */
 	public static final int BASIC_USER_MODE = 0;
-	public static final int MECHANIC_MODE = 1;
+	public static final int ENTHUSIAST_USER_MODE = 1;
+	public static final int MECHANIC_MODE = 2;
 
 	/** The Constant DEVICE_NAME. */
 	public static final String DEVICE_NAME = "device_name";
@@ -105,14 +107,12 @@ public class OBDMe extends Activity {
 		 */
 		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
 			setContentView(R.layout.basicuser_mode_portrait);
-			
+		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
+			//setContentView(R.layout.enthusiastuser_mode);	
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
 			setContentView(R.layout.mechanic_mode);
-			
-			//TextView text = (TextView) findViewById(R.id.mechanicmode_realtimedata_titletext);
-			//text.setText(R.string.mechanicmode_realtimedata);
 		} else {
-			// First run, so set it to USER_MODE
+			// First run, so set it to BASIC_USER_MODE
 			SharedPreferences.Editor prefEditor = sharedPrefs.edit();
 			prefEditor.putInt(getResources().getString(R.string.prefs_mode), BASIC_USER_MODE);
     		prefEditor.commit();
@@ -171,6 +171,8 @@ public class OBDMe extends Activity {
         
         if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
 			setContentView(R.layout.basicuser_mode_portrait);
+        } else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
+			//setContentView(R.layout.enthusiastuser_mode);
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
 			setContentView(R.layout.mechanic_mode);
 		}
@@ -352,4 +354,23 @@ public class OBDMe extends Activity {
 
         return false;
     }
+    
+    
+    
+    @Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		
+		// Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        	if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+    			setContentView(R.layout.basicuser_mode_landscape);
+        	}
+    	} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+    		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+    			setContentView(R.layout.basicuser_mode_portrait);
+        	}
+        }
+	}
+
 }
