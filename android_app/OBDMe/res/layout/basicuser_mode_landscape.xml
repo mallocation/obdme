@@ -4,7 +4,7 @@
 	android:layout_height="fill_parent" android:gravity="center_vertical">
 	<TextView 
 		android:text="MPG (average)"
-		android:id="@+id/basicusermode.portrait.upper.titletext"
+		android:id="@+id/basicusermode.landscape.titletext"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:textSize="40sp" 
@@ -13,25 +13,7 @@
 	</TextView>
 	<TextView 
 		android:text="34.5"
-		android:id="@+id/basicusermode.portrait.upper.value"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:textSize="95sp" 
-		android:padding="5dp"
-		android:gravity="center_vertical|center_horizontal">
-	</TextView>
-	<TextView
-		android:text="Engine RPM"
-		android:id="@+id/basicusermode.portrait.lower.titletext"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:textSize="40sp" 
-		android:padding="5dp"
-		android:gravity="center_vertical|center_horizontal">
-	</TextView>
-	<TextView
-		android:text="1234"
-		android:id="@+id/basicusermode.portrait.lower.value"
+		android:id="@+id/basicusermode.landscape.upper.value"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:textSize="95sp" 
