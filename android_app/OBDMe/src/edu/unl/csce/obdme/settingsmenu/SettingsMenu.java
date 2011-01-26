@@ -29,8 +29,9 @@ public class SettingsMenu extends Activity {
 	SharedPreferences sharedPrefs;
 	
 	/** Modes of Operation */
-	public static final int USER_MODE = 0;
-	public static final int MECHANIC_MODE = 1;
+	public static final int BASIC_USER_MODE = 0;
+	public static final int ENTHUSIAST_USER_MODE = 1;
+	public static final int MECHANIC_MODE = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +101,7 @@ public class SettingsMenu extends Activity {
 	}
 	
 	private void selectMode() {
-		final CharSequence[] items = {"User Mode", "Mechanic Mode"};
+		final CharSequence[] items = {"Basic User Mode","Enthusiast User Mode", "Mechanic Mode"};
 
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setTitle("Select a Mode");
@@ -108,8 +109,12 @@ public class SettingsMenu extends Activity {
     	    public void onClick(DialogInterface dialog, int item) {
     	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
     	        switch(item){
-    	        	case USER_MODE:
-    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), USER_MODE);
+    	        	case BASIC_USER_MODE:
+    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), BASIC_USER_MODE);
+    	        		prefEditor.commit();
+    	        		break;
+    	        	case ENTHUSIAST_USER_MODE:
+    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), ENTHUSIAST_USER_MODE);
     	        		prefEditor.commit();
     	        		break;
     	        	case MECHANIC_MODE:
