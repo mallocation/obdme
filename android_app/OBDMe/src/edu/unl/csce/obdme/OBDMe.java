@@ -50,7 +50,7 @@ public class OBDMe extends Activity {
 	private static final int REQUEST_ENABLE_BT = 2;
 	
 	/** Modes of Operation */
-	public static final int USER_MODE = 0;
+	public static final int BASIC_USER_MODE = 0;
 	public static final int MECHANIC_MODE = 1;
 
 	/** The Constant DEVICE_NAME. */
@@ -103,20 +103,20 @@ public class OBDMe extends Activity {
 		 * to the user and also display data according to which orientation
 		 * the screen is in (landscape or portrait).
 		 */
-		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == USER_MODE ){
-			setContentView(R.layout.main);
+		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+			setContentView(R.layout.basicuser_mode_portrait);
 			
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
 			setContentView(R.layout.mechanic_mode);
 			
-			TextView text = (TextView) findViewById(R.id.mechanicmode_realtimedata_titletext);
-			text.setText(R.string.mechanicmode_realtimedata);
+			//TextView text = (TextView) findViewById(R.id.mechanicmode_realtimedata_titletext);
+			//text.setText(R.string.mechanicmode_realtimedata);
 		} else {
 			// First run, so set it to USER_MODE
 			SharedPreferences.Editor prefEditor = sharedPrefs.edit();
-			prefEditor.putInt(getResources().getString(R.string.prefs_mode), USER_MODE);
+			prefEditor.putInt(getResources().getString(R.string.prefs_mode), BASIC_USER_MODE);
     		prefEditor.commit();
-    		setContentView(R.layout.main);
+    		setContentView(R.layout.basicuser_mode_portrait);
 		}
 		
 		
@@ -169,8 +169,8 @@ public class OBDMe extends Activity {
             }
         }
         
-        if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == USER_MODE ){
-			setContentView(R.layout.main);
+        if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+			setContentView(R.layout.basicuser_mode_portrait);
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
 			setContentView(R.layout.mechanic_mode);
 		}
