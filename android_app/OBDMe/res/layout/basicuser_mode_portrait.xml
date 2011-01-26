@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:gravity="center_vertical">
+	<TextView 
+		android:text="MPG (average)"
+		android:id="@+id/usermode.portrait.upper.titletext"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:textSize="40sp" 
+		android:padding="5dp"
+		android:gravity="center_vertical|center_horizontal">
+	</TextView>
+	<TextView 
+		android:text="34.5"
+		android:id="@+id/usermode.portrait.upper.value"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textSize="95sp" 
+		android:padding="5dp"
+		android:gravity="center_vertical|center_horizontal">
+	</TextView>
+	<TextView
+		android:text="Engine RPM"
+		android:id="@+id/usermode.portrait.lower.titletext"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textSize="40sp" 
+		android:padding="5dp"
+		android:gravity="center_vertical|center_horizontal">
+	</TextView>
+	<TextView
+		android:text="1234"
+		android:id="@+id/usermode.portrait.lower.value"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textSize="95sp" 
+		android:padding="5dp"
+		android:gravity="center_vertical|center_horizontal">
+	</TextView>
+</LinearLayout>
