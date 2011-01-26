@@ -5,7 +5,7 @@
 	<TextView android:id="@+id/mechanicmode.realtimedata.titletext"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:text="@string/mechanicmode.realtimedata"
-		android:visibility="gone" style="@style/mechanicMode.list" />
+		style="@style/mechanicMode.list" />
 	<ListView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
@@ -14,7 +14,7 @@
 	<TextView android:id="@+id/mechanicmode.errorcode.titletext"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:text="@string/mechanicmode.errorcodes"
-		android:visibility="gone" style="@style/mechanicMode.list" />
+		style="@style/mechanicMode.list" />
 	<ListView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
