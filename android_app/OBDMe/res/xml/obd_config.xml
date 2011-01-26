@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- OBDMe OBDII Collection Configuration -->
 
+<!-- OBDMe OBDII Collection Configuration -->
 <obd-config>
+
+	<!-- MODE 1 -->
 	<mode hex="00">
-		<pid hex="00" />
-		<pid hex="03" />
-		<pid hex="04" />
-		<pid hex="05" />
-		<pid hex="0A" />
-		<pid hex="0B" />
-		<pid hex="0C" />
-		<pid hex="0D" />
-		<pid hex="0F" />
-		<pid hex="10" />
-		<pid hex="11" />
-		<pid hex="20" />
-		<pid hex="21" />
-		<pid hex="2F" />
-		<pid hex="31" />
-		<pid hex="32" />
-		<pid hex="33" />
-		<pid hex="40" />
-		<pid hex="45" />
-		<pid hex="46" />
-		<pid hex="4D" />
-		<pid hex="4E" />
-		<pid hex="51" />
-		<pid hex="52" />
-		<pid hex="53" />
+		<pid hex="00" supported="true" />
+		<pid hex="03" supported="true" />
+		<pid hex="04" supported="true" />
+		<pid hex="05" supported="true" />
+		<pid hex="0A" supported="true" />
+		<pid hex="0B" supported="true" />
+		<pid hex="0C" supported="true" />
+		<pid hex="0D" supported="true" />
+		<pid hex="0F" supported="true" />
+		<pid hex="10" supported="true" />
+		<pid hex="11" supported="true" />
+		<pid hex="20" supported="true" />
+		<pid hex="21" supported="true" />
+		<pid hex="2F" supported="true" />
+		<pid hex="31" supported="true" />
+		<pid hex="32" supported="true" />
+		<pid hex="33" supported="true" />
+		<pid hex="40" supported="true" />
+		<pid hex="45" supported="true" />
+		<pid hex="46" supported="true" />
+		<pid hex="4D" supported="true" />
+		<pid hex="4E" supported="true" />
+		<pid hex="51" supported="true" />
+		<pid hex="52" supported="true" />
+		<pid hex="53" supported="true" />
 	</mode>
+
+	<!-- MODE 9 -->
 	<mode hex="09">
-		<pid hex="00" />
-		<pid hex="02" />
+		<pid hex="00" supported="true" />
+		<pid hex="02" supported="true" />
 	</mode>
 </obd-config>
