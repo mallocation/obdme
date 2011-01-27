@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:id="@+id/ScrollView01">
+	
+	<TableLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent">
+		
+		<TableRow>
+			<TextView 
+				android:text="@string/vehicle.info.titletext.vin"
+				android:id="@+id/vehicle_info_title_vin"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+			<TextView 
+				android:text="WAUDT48H24K021191"
+				android:id="@+id/vehicle_info_value_vin"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+		</TableRow>
+		
+		<TableRow>
+			<TextView 
+				android:text="@string/vehicle.info.titletext.make"
+				android:id="@+id/vehicle_info_title_make"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+			<TextView 
+				android:text="Audi"
+				android:id="@+id/vehicle_info_value_make"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+		</TableRow>
+		
+		<TableRow>
+			<TextView 
+				android:text="@string/vehicle.info.titletext.model"
+				android:id="@+id/vehicle_info_title_model"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+			<TextView 
+				android:text="A4"
+				android:id="@+id/vehicle_info_value_model"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+		</TableRow>
+		
+		<TableRow>
+			<TextView 
+				android:text="@string/vehicle.info.titletext.serial"
+				android:id="@+id/vehicle_info_title_serial"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+			<TextView 
+				android:text="sample serial..."
+				android:id="@+id/vehicle_info_value_serial"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+		</TableRow>
+		
+	</TableLayout>
+	
+</ScrollView>

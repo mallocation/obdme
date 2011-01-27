@@ -17,7 +17,7 @@ public class SettingsMenuVehicleInfo extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-		setContentView(R.layout.settings);
+		setContentView(R.layout.vehicle_info);
 		
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 

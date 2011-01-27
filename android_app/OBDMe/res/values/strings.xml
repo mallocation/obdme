@@ -98,7 +98,7 @@
 	<string name="sendButtonText">Send</string>
 	<string name="settings_title">OBDMe Settings</string>
 	<string name="account_info_title">Account Information</string>
-	<string name="vehicle_info_title">Vehicle Information</string>
+	<string name="vehicle_info_title">Currently Connected Vehicle Information</string>
 	<string name="display_data_title">Data To Be Displayed</string>
 
 	<!-- Bluetooth Status -->
@@ -139,5 +139,11 @@
 	<string name="mechanicmode.title">Mechanic Mode</string>
 	<string name="mechanicmode.realtimedata">Real Time Data:</string>
 	<string name="mechanicmode.errorcodes">Error Codes:</string>
+	
+	<!-- Vehicle Info -->
+	<string name="vehicle.info.titletext.vin">VIN:</string>
+	<string name="vehicle.info.titletext.model">Model:</string>
+	<string name="vehicle.info.titletext.make">Make:</string>
+	<string name="vehicle.info.titletext.serial">Serial #:</string>
 
 </resources>
