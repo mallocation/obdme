@@ -32,6 +32,10 @@ public class SettingsMenu extends Activity {
 	public static final int BASIC_USER_MODE = 0;
 	public static final int ENTHUSIAST_USER_MODE = 1;
 	public static final int MECHANIC_MODE = 2;
+	
+	public static final int DATAUPLOAD_WIFI_ONLY = 0;
+	public static final int DATAUPLOAD_NETWORK_ONLY = 1;
+	public static final int DATAUPLOAD_BOTH = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +73,6 @@ public class SettingsMenu extends Activity {
                 String strText = textView.getText().toString();
                 
                 if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_modeselect))) {
-                	// Call the select mode method
                 	selectMode();
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_accountinformation))) {
                     // Launch the Account Info Activity
@@ -83,10 +86,7 @@ public class SettingsMenu extends Activity {
                 	//toast is temporary
                 	Toast.makeText(getApplicationContext(), "TEMP: bluetooth settings", Toast.LENGTH_SHORT).show();
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_dataupload))) {
-                    // Launch the Data Upload Activity
-                	
-                	//toast is temporary
-                	Toast.makeText(getApplicationContext(), "TEMP: data upload", Toast.LENGTH_SHORT).show();
+                	dataUpload();
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.settings_datacollection))) {
                     // Launch the Data Collection Activity
                 	
@@ -119,6 +119,37 @@ public class SettingsMenu extends Activity {
     	        		break;
     	        	case MECHANIC_MODE:
     	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), MECHANIC_MODE);
+    	        		prefEditor.commit();
+    	        		break;
+    	        	default:
+    	        		break;
+    	        }
+    	    }
+    	});
+    	AlertDialog alert = builder.create();
+    	
+    	alert.show();
+	}
+	
+	private void dataUpload() {
+		final CharSequence[] items = {"Wifi Only","Phone Network Only", "Phone Network Until Wifi Is Available"};
+
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setTitle("Select a Mode");
+    	builder.setSingleChoiceItems(items, sharedPrefs.getInt(getResources().getString(R.string.prefs_dataupload), 0), new DialogInterface.OnClickListener() {
+    	    public void onClick(DialogInterface dialog, int item) {
+    	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
+    	        switch(item){
+    	        	case DATAUPLOAD_WIFI_ONLY:
+    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_WIFI_ONLY);
+    	        		prefEditor.commit();
+    	        		break;
+    	        	case DATAUPLOAD_NETWORK_ONLY:
+    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_NETWORK_ONLY);
+    	        		prefEditor.commit();
+    	        		break;
+    	        	case DATAUPLOAD_BOTH:
+    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_BOTH);
     	        		prefEditor.commit();
     	        		break;
     	        	default:
