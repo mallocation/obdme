@@ -74,6 +74,27 @@
 		
 		<TableRow>
 			<TextView 
+				android:text="@string/vehicle.info.titletext.year"
+				android:id="@+id/vehicle_info_title_year"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+			<TextView 
+				android:text="2004"
+				android:id="@+id/vehicle_info_value_year"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textSize="22sp" 
+				android:padding="3dp"
+				android:gravity="left">
+			</TextView>
+		</TableRow>
+		
+		<TableRow>
+			<TextView 
 				android:text="@string/vehicle.info.titletext.serial"
 				android:id="@+id/vehicle_info_title_serial"
 				android:layout_width="fill_parent" 

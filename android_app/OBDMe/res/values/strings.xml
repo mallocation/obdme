@@ -144,6 +144,7 @@
 	<string name="vehicle.info.titletext.vin">VIN:</string>
 	<string name="vehicle.info.titletext.model">Model:</string>
 	<string name="vehicle.info.titletext.make">Make:</string>
+	<string name="vehicle.info.titletext.year">Year:</string>
 	<string name="vehicle.info.titletext.serial">Serial #:</string>
 
 </resources>
