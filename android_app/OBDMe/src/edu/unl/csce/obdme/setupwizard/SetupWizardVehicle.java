@@ -2,6 +2,7 @@ package edu.unl.csce.obdme.setupwizard;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,7 +10,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
@@ -18,8 +18,6 @@ import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
-import edu.unl.csce.obdme.hardware.obd.OBDException;
-import edu.unl.csce.obdme.hardware.obd.OBDRequest;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 
 /**
@@ -50,6 +48,9 @@ public class SetupWizardVehicle extends Activity {
 
 	/** The SETU p_ state. */
 	private int SETUP_STATE = 0;
+	
+	/** The Constant SETUP_VEHICLE_RESULT_OK. */
+	public static final int SETUP_VEHICLE_RESULT_OK = 10;
 
 
 	/* (non-Javadoc)
@@ -82,7 +83,8 @@ public class SetupWizardVehicle extends Activity {
 					break;
 
 				case 1:
-
+					Intent intent = new Intent(view.getContext(), SetupWizardComplete.class);
+					startActivityForResult(intent, SetupWizardComplete.SETUP_COMPLETE_RESULT_OK);
 					break;
 
 				}
@@ -90,7 +92,30 @@ public class SetupWizardVehicle extends Activity {
 		});
 
 	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		
+		//The user acknowledged the complete screen
+		case SetupWizardComplete.SETUP_COMPLETE_RESULT_OK:
+			if (resultCode == Activity.RESULT_OK) {
+				
+				//Backprop result ok
+				setResult(Activity.RESULT_OK);
+				
+				//Finish
+				finish();
+			}
+			break;
+		}
+    }
 
+	/**
+	 * Update view.
+	 */
 	public void updateView() {
 
 		Button button = (Button) findViewById(R.id.setupwizard_vehicle_button);
@@ -120,6 +145,9 @@ public class SetupWizardVehicle extends Activity {
 		ignPoller.startPolling();
 	}
 
+	/**
+	 * Start auto connect poller thread.
+	 */
 	private void startAutoConnectPollerThread() {
 		acPoller = new ELMAutoConnectPoller(getApplicationContext(), acHandler, elmFramework);
 		acPoller.startPolling();
@@ -138,7 +166,11 @@ public class SetupWizardVehicle extends Activity {
 			try {
 				OBDResponse response = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("09", "02"));
 				if (response != null) {
-					vinText.setText((String)response.getProcessedResponse());
+					String vinResult = (String)response.getProcessedResponse();
+					vinText.setText(vinResult);
+					SharedPreferences.Editor editor = prefs.edit();
+					editor.putString(getResources().getString(R.string.prefs_account_vin), vinResult);
+					editor.commit();
 					SETUP_STATE = 1;
 					updateView();
 				}
@@ -200,6 +232,7 @@ public class SetupWizardVehicle extends Activity {
 		}
 	};
 
+	/** The ac handler. */
 	private final Handler acHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {

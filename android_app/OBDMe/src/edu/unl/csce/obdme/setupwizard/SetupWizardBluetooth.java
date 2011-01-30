@@ -1,14 +1,5 @@
 package edu.unl.csce.obdme.setupwizard;
 
-import edu.unl.csce.obdme.OBDMeApplication;
-import edu.unl.csce.obdme.R;
-import edu.unl.csce.obdme.bluetooth.BluetoothAndroidService;
-import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
-import edu.unl.csce.obdme.bluetooth.BluetoothService;
-import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
-import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
-import edu.unl.csce.obdme.hardware.elm.ELMFramework;
-import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -26,6 +17,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.unl.csce.obdme.OBDMeApplication;
+import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
+import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
+import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 
 /**
  * The Class OBDMeSetupWizardBluetooth.
@@ -40,6 +38,9 @@ public class SetupWizardBluetooth extends Activity {
 
 	/** The Constant MESSAGE_STATE_CHANGE. */
 	public static final int MESSAGE_STATE_CHANGE = 1;
+	
+	/** The Constant SETUP_BLUETOOTH_RESULT_OK. */
+	public static final int SETUP_BLUETOOTH_RESULT_OK = 10;
 
 	/** The setup state. */
 	private int SETUP_STATE = 0;
@@ -55,11 +56,14 @@ public class SetupWizardBluetooth extends Activity {
 
 	/** The connect dialog. */
 	private ProgressDialog connectDialog;
-	
+
+	/** The ch poller. */
 	private ELMCheckHardwarePoller chPoller;
-	
+
+	/** The ch dialog. */
 	private ProgressDialog chDialog;
-	
+
+	/** The elm framework. */
 	private ELMFramework elmFramework;
 
 	/* (non-Javadoc)
@@ -75,7 +79,7 @@ public class SetupWizardBluetooth extends Activity {
 		prefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
 
 		setContentView(R.layout.setupwizard_bluetooth);
-		
+
 		//Intent intent = new Intent(getBaseContext(), BluetoothAndroidService.class);
 		//startService(intent);
 
@@ -118,14 +122,14 @@ public class SetupWizardBluetooth extends Activity {
 					//Bluetooth setup is complete.  Proceed.
 				case 5:
 					Intent intent = new Intent(view.getContext(), SetupWizardVehicle.class);
-					startActivity(intent);
+					startActivityForResult(intent, SetupWizardVehicle.SETUP_VEHICLE_RESULT_OK);
 					break;
 
 					//Prompt the user to select the device from the list of devices
 				case 6:
 					selectBluetoothDevice();
 					break;
-					
+
 					//Prompt the user to select the device from the list of devices
 				case 7:
 					selectBluetoothDevice();
@@ -138,6 +142,11 @@ public class SetupWizardBluetooth extends Activity {
 
 	}
 
+
+
+	/**
+	 * Update view.
+	 */
 	public void updateView() {
 
 		Button button = (Button) findViewById(R.id.setupwizard_bluetooth_button);
@@ -192,7 +201,7 @@ public class SetupWizardBluetooth extends Activity {
 			text.setText(R.string.setupwizard_bluetooth_text_connect_error);
 			button.setText(R.string.setupwizard_bluetooth_button_select_text);
 			break;
-			
+
 		case 7:
 			ImageView selectedImage3 = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_paired_image);
 			selectedImage3.setImageDrawable(getResources().getDrawable(R.drawable.blue_r_arrow));
@@ -284,6 +293,9 @@ public class SetupWizardBluetooth extends Activity {
 		bluetoothService.connect(device);
 	}
 
+	/**
+	 * Check hardware version.
+	 */
 	protected void checkHardwareVersion() {
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
 		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), chHandler, elmFramework);
@@ -340,10 +352,23 @@ public class SetupWizardBluetooth extends Activity {
 						getResources().getString(R.string.setupwizard_bluetooth_error_notenabled));
 				Toast.makeText(this, R.string.setupwizard_bluetooth_error_notenabled, getResources().getInteger(R.integer.setupwizard_toast_time)).show();
 			}
+			break;
 
+			//Backprop
+		case SetupWizardVehicle.SETUP_VEHICLE_RESULT_OK:
+			if (resultCode == Activity.RESULT_OK) {
+				
+				//Backprop
+				setResult(Activity.RESULT_OK);
+				
+				//finish
+				finish();
+			}
+			break;
 		}
 	}
-	
+
+	/** The ch handler. */
 	private final Handler chHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -372,10 +397,10 @@ public class SetupWizardBluetooth extends Activity {
 						chPoller.stop();
 						chPoller = null;
 					}
-					
+
 					SETUP_STATE = 5;
 					updateView();
-					
+
 					//Dismiss connecting dialog.  Update the view and change the state to select a new device
 					if(chDialog != null){
 						chDialog.dismiss();
@@ -388,14 +413,14 @@ public class SetupWizardBluetooth extends Activity {
 						chPoller.stop();
 						chPoller = null;
 					}
-					
+
 					ImageView verifyImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_verify_image);
 					ImageView connectedImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_connected_image);
 					verifyImage.setImageDrawable(getResources().getDrawable(R.drawable.red_x));
 					connectedImage.setImageDrawable(getResources().getDrawable(R.drawable.grey_tick));
 					SETUP_STATE = 7;
 					updateView();
-					
+
 					//Dismiss connecting dialog.  Update the view and change the state to select a new device
 					if(chDialog != null){
 						chDialog.dismiss();
