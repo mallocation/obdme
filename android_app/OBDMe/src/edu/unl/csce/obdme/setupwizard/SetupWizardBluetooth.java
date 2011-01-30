@@ -5,7 +5,10 @@ import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothAndroidService;
 import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
+import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -52,6 +55,10 @@ public class SetupWizardBluetooth extends Activity {
 
 	/** The connect dialog. */
 	private ProgressDialog connectDialog;
+	
+	private ELMCheckHardwarePoller chPoller;
+	
+	private ProgressDialog chDialog;
 	
 	private ELMFramework elmFramework;
 
@@ -278,29 +285,9 @@ public class SetupWizardBluetooth extends Activity {
 	}
 
 	protected void checkHardwareVersion() {
-		// Check that we're actually connected before trying anything
-		if (bluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-			Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-			return;
-		}
-
-		//Check the hardware version.  If supported, continue
-		elmFramework = new ELMFramework(getBaseContext(), bluetoothService, true);
-		if (elmFramework.isHardwareVerified()) {
-			SETUP_STATE = 5;
-			updateView();
-		}
-		
-		//Otherwise, prompt the user to select a new device
-		else {
-			ImageView verifyImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_verify_image);
-			ImageView connectedImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_connected_image);
-			verifyImage.setImageDrawable(getResources().getDrawable(R.drawable.red_x));
-			connectedImage.setImageDrawable(getResources().getDrawable(R.drawable.grey_tick));
-			SETUP_STATE = 7;
-			updateView();
-		}
-
+		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
+		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), chHandler, elmFramework);
+		chPoller.startPolling();
 	}
 
 	/* (non-Javadoc)
@@ -356,6 +343,69 @@ public class SetupWizardBluetooth extends Activity {
 
 		}
 	}
+	
+	private final Handler chHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+
+			//Messsage from BT service indicating a connection state change
+			case ELMIgnitionPoller.MESSAGE_STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
+						"Check Harware State Change: " + msg.arg1);
+
+				//Get the new state of the BT service
+				switch (msg.arg1) {
+
+				case ELMCheckHardwarePoller.CHECK_HARDWARE_NONE:
+					break;
+
+				case ELMCheckHardwarePoller.CHECK_HARDWARE_POLLING:
+					//Show the connecting dialog box
+					if(chDialog == null){
+						chDialog = ProgressDialog.show(SetupWizardBluetooth.this, "", getResources().getString(R.string.setupwizard_bluetooth_dialog_hardware), true);
+					}
+					break;
+
+				case ELMCheckHardwarePoller.CHECK_HARDWARE_VERIFIED:
+					if(chPoller != null){
+						chPoller.stop();
+						chPoller = null;
+					}
+					
+					SETUP_STATE = 5;
+					updateView();
+					
+					//Dismiss connecting dialog.  Update the view and change the state to select a new device
+					if(chDialog != null){
+						chDialog.dismiss();
+						chDialog = null;
+					}
+					break;
+
+				case ELMCheckHardwarePoller.CHECK_HARDWARE_FAILED:
+					if(chPoller != null){
+						chPoller.stop();
+						chPoller = null;
+					}
+					
+					ImageView verifyImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_verify_image);
+					ImageView connectedImage = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_connected_image);
+					verifyImage.setImageDrawable(getResources().getDrawable(R.drawable.red_x));
+					connectedImage.setImageDrawable(getResources().getDrawable(R.drawable.grey_tick));
+					SETUP_STATE = 7;
+					updateView();
+					
+					//Dismiss connecting dialog.  Update the view and change the state to select a new device
+					if(chDialog != null){
+						chDialog.dismiss();
+						chDialog = null;
+					}
+					break;
+				}
+			}
+		}
+	};
 
 	/** The message handler. */
 	private final Handler messageHandler = new Handler() {
@@ -366,7 +416,7 @@ public class SetupWizardBluetooth extends Activity {
 			//Messsage from BT service indicating a connection state change
 			case MESSAGE_STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+						"Bluetooth State Change: " + msg.arg1);
 
 				ImageView image = (ImageView) findViewById(R.id.setupwizard_bluetooth_list_connected_image);
 

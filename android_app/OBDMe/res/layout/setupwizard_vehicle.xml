@@ -12,10 +12,23 @@
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
 			android:orientation="vertical">
-			<TextView android:id="@+id/setupwizard.vehicle"
+			<TextView android:id="@+id/setupwizard.vehicle.text"
 				android:text="@string/setupwizard.vehicle.body.text.identify" style="@style/setupwizard.body"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:layout_weight="0"></TextView>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				style="@style/setupwizard.body" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:orientation="vertical"
+				android:layout_weight="0">
+				<TextView android:id="@+id/setupwizard.vehicle.vin.title"
+					android:text="@string/setupwizard.vehicle.vin.title.text" style="@style/setupwizard.vehicle"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_weight="0" android:visibility="gone"></TextView>
+				<TextView android:id="@+id/setupwizard.vehicle.vin"
+					android:text="NO DATA" style="@style/setupwizard.vehicle.vin"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_weight="0" android:visibility="gone"></TextView>
+			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
 	<Button android:text="@string/setupwizard.vehicle.button.identify.text"

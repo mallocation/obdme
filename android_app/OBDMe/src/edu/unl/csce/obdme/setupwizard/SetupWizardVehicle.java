@@ -9,9 +9,13 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
+import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 import edu.unl.csce.obdme.hardware.obd.OBDException;
@@ -25,19 +29,25 @@ public class SetupWizardVehicle extends Activity {
 
 	/** The bluetooth service. */
 	private BluetoothService bluetoothService;
-	
+
 	/** The elm framework. */
 	private ELMFramework elmFramework;
-	
+
 	/** The ign poller. */
 	private ELMIgnitionPoller ignPoller;
-	
+
 	/** The ignition dialog. */
 	private ProgressDialog ignitionDialog;
-	
+
+	/** The ign poller. */
+	private ELMAutoConnectPoller acPoller;
+
+	/** The ignition dialog. */
+	private ProgressDialog acDialog;
+
 	/** The prefs. */
 	private SharedPreferences prefs;
-	
+
 	/** The SETU p_ state. */
 	private int SETUP_STATE = 0;
 
@@ -71,12 +81,37 @@ public class SetupWizardVehicle extends Activity {
 					startIgnitionPollerThread();
 					break;
 
+				case 1:
+
+					break;
+
 				}
 			}
 		});
 
 	}
 
+	public void updateView() {
+
+		Button button = (Button) findViewById(R.id.setupwizard_vehicle_button);
+		TextView text = (TextView) findViewById(R.id.setupwizard_vehicle_text);
+
+		//Switch on the current state of the setup
+		switch(SETUP_STATE) {
+
+		//Post Bluetooth is supported
+		case 1:
+			text.setText(R.string.setupwizard_vehicle_body_text_confirm);
+			button.setText(R.string.setupwizard_vehicle_button_confirm_text);
+			TextView vinTitleText = (TextView) findViewById(R.id.setupwizard_vehicle_vin_title);
+			vinTitleText.setVisibility(View.VISIBLE);
+			TextView vinText = (TextView) findViewById(R.id.setupwizard_vehicle_vin);
+			vinText.setVisibility(View.VISIBLE);
+			break;
+
+
+		}
+	}
 	/**
 	 * Start ignition poller thread.
 	 */
@@ -85,31 +120,35 @@ public class SetupWizardVehicle extends Activity {
 		ignPoller.startPolling();
 	}
 
+	private void startAutoConnectPollerThread() {
+		acPoller = new ELMAutoConnectPoller(getApplicationContext(), acHandler, elmFramework);
+		acPoller.startPolling();
+	}
+
 	/**
-	 * Gets the vIN.
+	 * Gets the VIN.
 	 *
-	 * @return the vIN
+	 * @return the VIN
 	 */
 	private void getVIN() {
 
-		elmFramework.autoSearchProtocols();
+		TextView vinText = (TextView) findViewById(R.id.setupwizard_vehicle_vin);
 
-		//elmFramework.getObdFramework().queryValidPIDS();
-		//SEARCHING...
-		//		014 
-		//		0: 49 02 01 31 48 47 
-		//		1: 46 41 31 36 35 33 37 
-		//		2: 4C 30 37 37 32 35 39 
-		//if(elmFramework.getObdFramework().isPIDSupported("09", "02")) {
-		OBDRequest request = new OBDRequest("09", "02", 25);
-		OBDResponse response;
-		try {
-			response = elmFramework.sendOBDRequest(request);
-		} catch (OBDException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(elmFramework.getObdFramework().isPIDSupported("09", "02")) {
+			try {
+				OBDResponse response = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("09", "02"));
+				if (response != null) {
+					vinText.setText((String)response.getProcessedResponse());
+					SETUP_STATE = 1;
+					updateView();
+				}
+			} catch (ELMException elme) {
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+							elme.getMessage());
+				}
+			}
 		}
-		//}
 
 	}
 
@@ -138,21 +177,69 @@ public class SetupWizardVehicle extends Activity {
 
 				case ELMIgnitionPoller.IGNITION_OFF:
 					//Show the connecting dialog box
-					ignitionDialog = ProgressDialog.show(SetupWizardVehicle.this, "", getResources().getString(R.string.setupwizard_vehicle_dialog_ignition), true);
+					if(ignitionDialog == null){
+						ignitionDialog = ProgressDialog.show(SetupWizardVehicle.this, "", getResources().getString(R.string.setupwizard_vehicle_dialog_ignition), true);
+					}
 					break;
 
 				case ELMIgnitionPoller.IGNITION_ON:
+					if(ignPoller != null){
+						ignPoller.stop();
+						ignPoller = null;
+					}
 
 					//Dismiss connecting dialog.  Update the view and change the state to select a new device
 					if(ignitionDialog != null){
 						ignitionDialog.dismiss();
 						ignitionDialog = null;
 					}
-					if(ignPoller != null){
-						ignPoller.stop();
-						ignPoller = null;
-						getVIN();
+					startAutoConnectPollerThread();
+					break;
+				}
+			}
+		}
+	};
+
+	private final Handler acHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+
+			//Messsage from BT service indicating a connection state change
+			case ELMIgnitionPoller.MESSAGE_STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+
+				//Get the new state of the BT service
+				switch (msg.arg1) {
+
+				case ELMAutoConnectPoller.AUTO_CONNECT_NONE:
+					break;
+
+				case ELMAutoConnectPoller.AUTO_CONNECT_POLLING:
+					//Show the connecting dialog box
+					if(acDialog == null){
+						acDialog = ProgressDialog.show(SetupWizardVehicle.this, "", getResources().getString(R.string.setupwizard_vehicle_dialog_autoconnect), true);
 					}
+					break;
+
+				case ELMAutoConnectPoller.AUTO_CONNECT_FAILED:
+					break;
+
+				case ELMAutoConnectPoller.AUTO_CONNECT_COMPLETE:
+
+					if(acPoller != null){
+						acPoller.stop();
+						acPoller = null;
+					}
+
+					//Dismiss connecting dialog.  Update the view and change the state to select a new device
+					if(acDialog != null){
+						acDialog.dismiss();
+						acDialog = null;
+					}
+
+					getVIN();
 					break;
 				}
 			}
