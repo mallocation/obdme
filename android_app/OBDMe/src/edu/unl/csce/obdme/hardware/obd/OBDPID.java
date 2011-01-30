@@ -1,11 +1,11 @@
 package edu.unl.csce.obdme.hardware.obd;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Class OBDPID.
@@ -15,7 +15,7 @@ public class OBDPID {
 	/**
 	 * The Enum for evaluation methods.
 	 */
-	private static enum EVALS {
+	public static enum EVALS {
 		
 		/** The FORMULA evaluation */
 		FORMULA,
@@ -41,6 +41,8 @@ public class OBDPID {
 
 	/** The pid return length. */
 	private int pidReturn;
+	
+	private String pidReturnObject;
 
 	/** The pid unit. */
 	private String pidUnit;
@@ -55,16 +57,16 @@ public class OBDPID {
 	private String pidName;
 
 	/** The bit encoded map. */
-	private HashMap<Integer, String> bitEncodedMap;
+	private ConcurrentHashMap<Integer, String> bitEncodedMap;
 
 	/** The byte encoded map. */
-	private HashMap<Integer, String> byteEncodedMap;
+	private ConcurrentHashMap<Integer, String> byteEncodedMap;
 
 	/** The supported. */
 	private boolean supported;
 
 	/** The parent mode. */
-	private OBDMode parentMode;
+	private String parentMode;
 
 	/**
 	 * Instantiates a new OBDPID.
@@ -78,27 +80,44 @@ public class OBDPID {
 	 * @param parent the parent
 	 */
 	public OBDPID(String pidHex, int pidReturn, String pidUnit, String pidEval, String pidName, 
-			OBDMode parent) {
-		this.setPidHex(pidHex);
-		this.setPidValue(Integer.parseInt(pidHex,16));
-		this.setPidReturn(pidReturn);
-		this.setPidUnit(pidUnit);
+			String parent) {
+		this.pidHex = pidHex;
+		this.pidValue = Integer.parseInt(pidHex,16);
+		this.pidReturn = pidReturn;
+		this.pidUnit = pidUnit;
 		this.setPidEval(pidEval);
-		this.setPidName(pidName);
-		this.setParentMode(parent);
-		this.setSupported(false);
+		this.pidName = pidName;
+		this.parentMode = parent;
+		this.supported = false;
 
 		//Switch on the eval method to initialize variables 
-		switch(this.getPidEval()) {
+		switch(this.pidEval) {
+		
+		//Character String
+		case CHAR_STRING:
+			this.pidReturnObject = "java.lang.String";
+			break;
+			
+		//Formula
+		case FORMULA:
+			this.pidReturnObject = "java.lang.Double";
+			break;
+		
+		//Raw
+		case RAW:
+			this.pidReturnObject = "java.lang.Double";
+			break;
 
 		//Bit Encoded
 		case BIT_ENCODED:
-			this.setBitEncodedMap(new HashMap<Integer, String>());
+			this.bitEncodedMap = new ConcurrentHashMap<Integer, String>();
+			this.pidReturnObject = "java.util.ArrayList";
 			break;
 
 			//Byte Encoded
 		case BYTE_ENCODED:
-			this.setByteEncodedMap(new HashMap<Integer, String>());
+			this.byteEncodedMap = new ConcurrentHashMap<Integer, String>();
+			this.pidReturnObject = "java.util.ArrayList";
 			break;
 		}
 	}
@@ -115,27 +134,45 @@ public class OBDPID {
 	 * @param supported the supported
 	 */
 	public OBDPID(String pidHex, int pidReturn, String pidUnit, String pidEval, String pidName, 
-			OBDMode parent, boolean supported) {
-		this.setPidHex(pidHex);
-		this.setPidValue(Integer.parseInt(pidHex,16));
-		this.setPidReturn(pidReturn);
-		this.setPidUnit(pidUnit);
+			String parent, boolean supported) {
+		this.pidHex = pidHex;
+		this.pidValue = Integer.parseInt(pidHex,16);
+		this.pidReturn = pidReturn;
+		this.pidUnit = pidUnit;
 		this.setPidEval(pidEval);
-		this.setPidName(pidName);
-		this.setParentMode(parent);
-		this.setSupported(supported);
+		this.pidName = pidName;
+		this.parentMode = parent;
+		this.supported = supported;
+
 
 		//Switch on the eval method to initialize variables 
-		switch(this.getPidEval()) {
+		switch(this.pidEval) {
+		
+		//Character String
+		case CHAR_STRING:
+			this.pidReturnObject = "java.lang.String";
+			break;
+			
+		//Formula
+		case FORMULA:
+			this.pidReturnObject = "java.lang.Double";
+			break;
+		
+		//Raw
+		case RAW:
+			this.pidReturnObject = "java.lang.Double";
+			break;
 
 		//Bit Encoded
 		case BIT_ENCODED:
-			this.setBitEncodedMap(new HashMap<Integer, String>());
+			this.bitEncodedMap = new ConcurrentHashMap<Integer, String>();
+			this.pidReturnObject = "java.util.ArrayList";
 			break;
 
 			//Byte Encoded
 		case BYTE_ENCODED:
-			this.setByteEncodedMap(new HashMap<Integer, String>());
+			this.byteEncodedMap = new ConcurrentHashMap<Integer, String>();
+			this.pidReturnObject = "java.util.ArrayList";
 			break;
 		}
 	}
@@ -335,7 +372,7 @@ public class OBDPID {
 			while (responseValueItr.hasNext()) {
 
 				//Get the bitstring for the fist byte
-				String bitString = Integer.toBinaryString(Integer.parseInt(responseValueItr.next()));
+				String bitString = Integer.toBinaryString(Integer.parseInt(responseValueItr.next(),16));
 
 				//If it's less that 8, add the preceeding 0's
 				if (bitString.length() < 8) {
@@ -362,7 +399,7 @@ public class OBDPID {
 
 			//For each bit, starting at index 0 (MSB), append the bit value to the decoded values list
 			for (int index = 0; index < bitString.length(); index++) {
-				if (bitString.charAt(index) == 1) {
+				if (bitString.charAt(index) == '1') {
 					if (this.getBitEncodedMap().containsKey(index)) {
 						decodedValues.add(this.getBitEncoding(index));
 					}
@@ -526,6 +563,7 @@ public class OBDPID {
 	 *
 	 * @param pidName the pidName to set
 	 */
+	@SuppressWarnings("unused")
 	private void setPidName(String pidName) {
 		this.pidName = pidName;
 	}
@@ -535,6 +573,7 @@ public class OBDPID {
 	 *
 	 * @param pidReturn the pidReturn to set
 	 */
+	@SuppressWarnings("unused")
 	private void setPidReturn(int pidReturn) {
 		this.pidReturn = pidReturn;
 	}
@@ -571,6 +610,7 @@ public class OBDPID {
 	 *
 	 * @param pidValue the pidValue to set
 	 */
+	@SuppressWarnings("unused")
 	private void setPidValue(int pidValue) {
 		this.pidValue = pidValue;
 	}
@@ -589,7 +629,8 @@ public class OBDPID {
 	 *
 	 * @param parentMode the parentMode to set
 	 */
-	private void setParentMode(OBDMode parentMode) {
+	@SuppressWarnings("unused")
+	private void setParentMode(String parentMode) {
 		this.parentMode = parentMode;
 	}
 
@@ -598,7 +639,7 @@ public class OBDPID {
 	 *
 	 * @return the parentMode
 	 */
-	public OBDMode getParentMode() {
+	public String getParentMode() {
 		return parentMode;
 	}
 
@@ -633,7 +674,7 @@ public class OBDPID {
 	 *
 	 * @return the bitEncodedMap
 	 */
-	public HashMap<Integer, String> getBitEncodedMap() {
+	public ConcurrentHashMap<Integer, String> getBitEncodedMap() {
 		return bitEncodedMap;
 	}
 
@@ -642,7 +683,7 @@ public class OBDPID {
 	 *
 	 * @param bitEncodedMap the bitEncodedMap to set
 	 */
-	public void setBitEncodedMap(HashMap<Integer, String> bitEncodedMap) {
+	public void setBitEncodedMap(ConcurrentHashMap<Integer, String> bitEncodedMap) {
 		this.bitEncodedMap = bitEncodedMap;
 	}
 
@@ -678,7 +719,7 @@ public class OBDPID {
 	 *
 	 * @return the byteEncodedMap
 	 */
-	public HashMap<Integer, String> getByteEncodedMap() {
+	public ConcurrentHashMap<Integer, String> getByteEncodedMap() {
 		return byteEncodedMap;
 	}
 
@@ -687,7 +728,7 @@ public class OBDPID {
 	 *
 	 * @param byteEncodedMap the byteEncodedMap to set
 	 */
-	public void setByteEncodedMap(HashMap<Integer, String> byteEncodedMap) {
+	public void setByteEncodedMap(ConcurrentHashMap<Integer, String> byteEncodedMap) {
 		this.byteEncodedMap = byteEncodedMap;
 	}
 
@@ -716,6 +757,13 @@ public class OBDPID {
 		else {
 			return null;
 		}
+	}
+
+	/**
+	 * @return the pidReturnObject
+	 */
+	public String getPidReturnObject() {
+		return pidReturnObject;
 	}
 
 }

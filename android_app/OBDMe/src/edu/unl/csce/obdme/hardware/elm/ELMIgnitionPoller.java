@@ -1,7 +1,9 @@
 package edu.unl.csce.obdme.hardware.elm;
 
+import edu.unl.csce.obdme.R;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 /**
  * The Class ELMIgnitionPoller.
@@ -19,6 +21,9 @@ public class ELMIgnitionPoller {
 
 	/** The message state. */
 	private int messageState;
+
+	/** The context. */
+	private Context context;
 
 	/** The Constant MESSAGE_STATE_CHANGE. */
 	public static final int MESSAGE_STATE_CHANGE = 0;
@@ -46,6 +51,7 @@ public class ELMIgnitionPoller {
 		messageState = IGNITION_NONE;
 		appHandler = handler;
 		this.elmFramework = elmFramework;
+		this.context = context;
 	}
 
 	/**
@@ -89,7 +95,9 @@ public class ELMIgnitionPoller {
 	public synchronized void stop() {
 		if (ignPollerThread != null) {
 			ignPollerThread.cancel();
-			//ignPollerThread.stop();
+			while(ignPollerThread.isAlive()){
+				//Wait
+			}
 			ignPollerThread = null;
 		}
 		setState(IGNITION_NONE);
@@ -121,14 +129,34 @@ public class ELMIgnitionPoller {
 		 */
 		public void run() {
 			while(continuePolling) {
-
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.d(context.getResources().getString(R.string.debug_tag_elmframework_ignpoller),
+					"Started polling ignition status");
+				}
+				
+				//If the ignition indicates on
 				if(this.elmFramework.checkVehicleIgnition()) {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_elmframework_ignpoller),
+						"Vehicle Ignition Indicated On");
+					}
+					
+					//Set the ignition state to on
 					setState(IGNITION_ON);
 				}
+				
+				//Otherwise
 				else {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_elmframework_ignpoller),
+						"Vehicle Ignition Indicated Off");
+					}
+					
+					//Set the ignition state to off
 					setState(IGNITION_OFF);
 				}
 
+				//Sleep for two seconds
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -141,6 +169,10 @@ public class ELMIgnitionPoller {
 		 * Cancel.
 		 */
 		public void cancel(){
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_elmframework_ignpoller),
+				"Canceling ignition poller");
+			}
 			continuePolling = false;
 		}
 

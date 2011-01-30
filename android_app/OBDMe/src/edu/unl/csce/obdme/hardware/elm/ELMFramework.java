@@ -4,7 +4,6 @@ import android.content.Context;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.obd.OBDFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
-import edu.unl.csce.obdme.hardware.obd.OBDParserException;
 import edu.unl.csce.obdme.hardware.obd.OBDRequest;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 import edu.unl.csce.obdme.hardware.obd.OBDResponseLengthException;
@@ -45,6 +44,7 @@ public class ELMFramework {
 	/** The obd framework. */
 	private OBDFramework obdFramework;
 
+	/** The context. */
 	private Context context;
 
 	/**
@@ -52,9 +52,8 @@ public class ELMFramework {
 	 *
 	 * @param context the context
 	 * @param bluetoothService the bluetooth service
-	 * @param autoStart the auto start
 	 */
-	public ELMFramework(Context context, BluetoothService bluetoothService, boolean autoStart) {
+	public ELMFramework(Context context, BluetoothService bluetoothService) {
 		this.bluetoothService = bluetoothService;
 		this.context = context;
 		this.setConnectionInit(false);
@@ -64,11 +63,6 @@ public class ELMFramework {
 
 		//Create a new OBD Framework
 		this.obdFramework = new OBDFramework(context, this);
-
-		//Automatically find protocols
-		if(autoStart) {
-			this.autoSearchProtocols();
-		}
 	}
 
 	/**
@@ -76,17 +70,11 @@ public class ELMFramework {
 	 *
 	 * @param request the request
 	 * @return the oBD response
-	 * @throws OBDParserException 
+	 * @throws ELMException the eLM exception
 	 */
-	public OBDResponse sendOBDRequest(OBDRequest request) throws ELMException {
+	public synchronized OBDResponse sendOBDRequest(OBDRequest request) throws ELMException {
 
 		OBDResponse response = null;
-		
-		//Try to automatically auto search for protocols if someone else
-		//failed to do so appropriately
-		if(isProtocolSet()) {
-			autoSearchProtocols();
-		}
 
 		try {
 			//If the protocol is set
@@ -115,7 +103,27 @@ public class ELMFramework {
 			//b) Or we got something we didn't ask for
 
 		}
-		
+
+		return response;
+	}
+
+	/**
+	 * Send obd request.
+	 *
+	 * @param pid the pid
+	 * @return the oBD response
+	 * @throws ELMException the eLM exception
+	 */
+	public synchronized OBDResponse sendOBDRequest(OBDPID pid) throws ELMException {
+
+		OBDRequest request = new OBDRequest(pid);
+		OBDResponse response = null;
+
+		bluetoothService.write(request.toString());
+
+		//Parse the response from the bluetooth service
+		response = new OBDResponse(context, request, bluetoothService.getResponseFromQueue());
+
 		return response;
 	}
 
@@ -124,7 +132,7 @@ public class ELMFramework {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean initConnection() {
+	public synchronized boolean initConnection() {
 
 		//If the connection is not already initialized
 		if (!this.isConnectionInit()) {
@@ -134,21 +142,26 @@ public class ELMFramework {
 			int connectionInitIncr = 0;
 
 			//Reset the ELM to defaults
-			bluetoothService.clearResponseQueue();
 			bluetoothService.write("ATD");
 			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
 				connectionInitIncr++;
 			}
 
 			//Turn off echo to eliminate useless data transfer
-			bluetoothService.clearResponseQueue();
 			bluetoothService.write("ATE0");
 			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
 				connectionInitIncr++;
 			}
 
+			//Turn off echo to eliminate useless data transfer
+			bluetoothService.write("ATS0");
+			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
+				connectionInitIncr++;
+			}
+
+
 			//If all the steps completed successfully
-			if (connectionInitIncr == 2) {
+			if (connectionInitIncr == 3) {
 				this.setConnectionInit(true);
 			}
 			else {
@@ -165,11 +178,9 @@ public class ELMFramework {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean verifyHardwareVersion() {
+	public synchronized boolean verifyHardwareVersion() {
 
-		//If the connection has been initialized
-		if(this.isConnectionInit()) {
-
+		if (!this.isConnectionInit()) {
 			//Request the hardware version
 			bluetoothService.clearResponseQueue();
 			bluetoothService.write("ATI");
@@ -181,32 +192,14 @@ public class ELMFramework {
 			else {
 				this.setHardwareVerified(false);
 			}
-		}
 
-		//Otherwise, try to initialize the connection
+			//Return isHardwareVerified
+			return this.isHardwareVerified();
+		}
 		else {
-
 			this.initConnection();
-
-			//If the connection has been initialized
-			if(this.isConnectionInit()) {
-
-				//Request the hardware version
-				bluetoothService.clearResponseQueue();
-				bluetoothService.write("ATI");
-
-				//If it matches our device identifier, the hardware is verified
-				if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_IDENTIFIER)) {
-					this.setHardwareVerified(true);
-				}
-				else {
-					this.setHardwareVerified(false);
-				}
-			}
+			return this.verifyHardwareVersion();
 		}
-
-		//Return isHardwareVerified
-		return this.isHardwareVerified();
 	}
 
 	/**
@@ -214,41 +207,14 @@ public class ELMFramework {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean checkVehicleIgnition() {
+	public synchronized boolean checkVehicleIgnition() {
 
-		//If the device hardware has been verified
-		if(this.isHardwareVerified()) {
-			bluetoothService.clearResponseQueue();
-			bluetoothService.write("ATIGN");
-			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_ON)) {
-				this.setIgnitionOn(true);
-			}
-			else {
-				this.setIgnitionOn(false);
-			}
+		bluetoothService.write("ATIGN");
+		if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_ON)) {
+			this.setIgnitionOn(true);
 		}
-
-		//If the device hardware is not verified, try to verify it
 		else {
-
-			//Run the verify routine
-			this.verifyHardwareVersion();
-
-			//If the device hardware has been verified
-			if(this.isHardwareVerified()) {
-
-				//Request the ignition status
-				bluetoothService.clearResponseQueue();
-				bluetoothService.write("ATIGN");
-
-				//If the ignition is on
-				if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_ON)) {
-					this.setIgnitionOn(true);
-				}
-				else {
-					this.setIgnitionOn(false);
-				}
-			}
+			this.setIgnitionOn(false);
 		}
 
 		//Return isIgnitionOn
@@ -261,13 +227,10 @@ public class ELMFramework {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean autoSearchProtocols() {
+	public synchronized boolean autoSearchProtocols() {
 
-		//If the vehicle ignition is on
-		if(this.isIgnitionOn()) {
-
+		if(!this.isProtocolSet()) {
 			//Send the autosearch protocol to the ELM device
-			bluetoothService.clearResponseQueue();
 			bluetoothService.write("ATSP0");
 
 			//If the response was OK, then success
@@ -278,28 +241,6 @@ public class ELMFramework {
 				this.setProtocolSet(false);
 			}
 		}
-
-		//Otherwise, try to check if the vehicle ignition is on
-		else {
-			this.checkVehicleIgnition();
-
-			//If the vehicle ignoition is on
-			if(this.isIgnitionOn()) {
-
-				//Send the autosearch protocol to the ELM device
-				bluetoothService.clearResponseQueue();
-				bluetoothService.write("ATSP0");
-
-				//If the response was OK, then success
-				if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
-					this.setProtocolSet(true);
-				}
-				else {
-					this.setProtocolSet(false);
-				}
-			}
-		}
-
 		return this.isProtocolSet();
 	}
 
@@ -313,6 +254,25 @@ public class ELMFramework {
 	public OBDPID getConfiguredPID(String mode, String pid) {
 
 		return getObdFramework().getConfiguredProtocol().get(mode).getPID(pid);	
+
+	}
+
+	/**
+	 * Query configured pid.
+	 *
+	 * @param mode the mode
+	 * @param pid the pid
+	 * @return true, if successful
+	 */
+	public boolean queryConfiguredPID(String mode, String pid) {
+
+		if (obdFramework.getConfiguredProtocol().containsKey(mode)) {
+			if(obdFramework.getConfiguredProtocol().get(mode).containsPID(pid)) {
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 

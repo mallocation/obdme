@@ -230,10 +230,10 @@ Convert the entire byte response string to an integer value
 			<code byte-value="7" value="EOBD and OBD-II" />
 			<code byte-value="8" value="EOBD and OBD" />
 			<code byte-value="9" value="EOBD, OBD and OBD II" />
-			<code byte-value="A" value="JOBD (Japan)" />
-			<code byte-value="B" value="JOBD and OBD II" />
-			<code byte-value="C" value="JOBD and EOBD" />
-			<code byte-value="D" value="JOBD, EOBD, and OBD II" />
+			<code byte-value="10" value="JOBD (Japan)" />
+			<code byte-value="11" value="JOBD and OBD II" />
+			<code byte-value="12" value="JOBD and EOBD" />
+			<code byte-value="13" value="JOBD, EOBD, and OBD II" />
 		</pid>
 
 		<pid hex="1D" return="1" unit="" eval="RAW" name="Oxygen sensors present" />
@@ -246,7 +246,7 @@ Convert the entire byte response string to an integer value
 		</pid>
 
 		<!-- MODE 1 PIDS 0x21-0x40 -->
-		<suported-pid hex="20" return="4" unit="" eval="BIT_ENCODED"
+		<pid hex="20" return="4" unit="" eval="BIT_ENCODED"
 			name="PIDs supported 21-40">
 			<code bit="0" value="21" />
 			<code bit="1" value="22" />
@@ -280,7 +280,7 @@ Convert the entire byte response string to an integer value
 			<code bit="29" value="3E" />
 			<code bit="30" value="3F" />
 			<code bit="31" value="40" />
-		</suported-pid>
+		</pid>
 
 		<pid hex="21" return="2" unit="km" eval="FORMULA"
 			name="Distance traveled with malfunction indicator lamp (MIL) on">
@@ -402,7 +402,7 @@ Convert the entire byte response string to an integer value
 		</pid>
 
 		<!-- MODE 1 PIDS 0x41-0x60 -->
-		<suported-pid hex="40" return="2" unit="" eval="BIT_ENCODED"
+		<pid hex="40" return="4" unit="" eval="BIT_ENCODED"
 			name="PIDs supported 41-60">
 			<code bit="0" value="41" />
 			<code bit="1" value="42" />
@@ -436,7 +436,7 @@ Convert the entire byte response string to an integer value
 			<code bit="29" value="5E" />
 			<code bit="30" value="5F" />
 			<code bit="31" value="60" />
-		</suported-pid>
+		</pid>
 
 		<pid hex="41" return="4" unit="" eval="BIT_ENCODED"
 			name="Monitor status this drive cycle">
@@ -527,29 +527,29 @@ Convert the entire byte response string to an integer value
 			<formula value="( A * 256 ) + B" />
 		</pid>
 
-		<pid hex="51" return="1" unit="" eval="BIT_ENCODED" name="Fuel Type">
-			<code byte-value="01" value="Gasoline" />
-			<code byte-value="02" value="Methanol" />
-			<code byte-value="03" value="Ethanol" />
-			<code byte-value="04" value="Diesel" />
-			<code byte-value="05" value="LPG" />
-			<code byte-value="06" value="CNG" />
-			<code byte-value="07" value="Propane" />
-			<code byte-value="08" value="Electric" />
-			<code byte-value="09" value="Bifuel running Gasoline" />
-			<code byte-value="0A" value="Bifuel running Methanol" />
-			<code byte-value="0B" value="Bifuel running Ethanol" />
-			<code byte-value="0C" value="Bifuel running LPG" />
-			<code byte-value="0D" value="Bifuel running CNG" />
-			<code byte-value="0E" value="Bifuel running Prop" />
-			<code byte-value="0F" value="Bifuel running Electricity" />
-			<code byte-value="10" value="Bifuel mixed gas/electric" />
-			<code byte-value="11" value="Hybrid Gasoline" />
-			<code byte-value="12" value="Hybrid Ethanol" />
-			<code byte-value="13" value="Hybrid Diesel" />
-			<code byte-value="14" value="Hybrid Electric" />
-			<code byte-value="15" value="Hybrid Mixed fuel" />
-			<code byte-value="16" value="Hybrid Regenerative" />
+		<pid hex="51" return="1" unit="" eval="BYTE_ENCODED" name="Fuel Type">
+			<code byte-value="1" value="Gasoline" />
+			<code byte-value="2" value="Methanol" />
+			<code byte-value="3" value="Ethanol" />
+			<code byte-value="4" value="Diesel" />
+			<code byte-value="5" value="LPG" />
+			<code byte-value="6" value="CNG" />
+			<code byte-value="7" value="Propane" />
+			<code byte-value="8" value="Electric" />
+			<code byte-value="9" value="Bifuel running Gasoline" />
+			<code byte-value="10" value="Bifuel running Methanol" />
+			<code byte-value="11" value="Bifuel running Ethanol" />
+			<code byte-value="12" value="Bifuel running LPG" />
+			<code byte-value="13" value="Bifuel running CNG" />
+			<code byte-value="14" value="Bifuel running Prop" />
+			<code byte-value="15" value="Bifuel running Electricity" />
+			<code byte-value="16" value="Bifuel mixed gas/electric" />
+			<code byte-value="17" value="Hybrid Gasoline" />
+			<code byte-value="18" value="Hybrid Ethanol" />
+			<code byte-value="19" value="Hybrid Diesel" />
+			<code byte-value="20" value="Hybrid Electric" />
+			<code byte-value="21" value="Hybrid Mixed fuel" />
+			<code byte-value="22" value="Hybrid Regenerative" />
 		</pid>
 
 		<pid hex="52" return="1" unit="%" eval="FORMULA" name="Ethanol fuel %">

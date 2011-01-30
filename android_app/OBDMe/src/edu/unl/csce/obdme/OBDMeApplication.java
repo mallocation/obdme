@@ -1,9 +1,8 @@
 package edu.unl.csce.obdme;
 
+import android.app.Application;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
-import edu.unl.csce.obdme.hardware.obd.OBDFramework;
-import android.app.Application;
 
 /**
  * The Class OBDMeApplication.
@@ -50,7 +49,7 @@ public class OBDMeApplication extends Application {
 	public ELMFramework getELMFramework() {
         if (elmFramework == null) {
             checkInstance();
-            elmFramework = new ELMFramework(getApplicationContext(), getBluetoothService(), false);
+            elmFramework = new ELMFramework(getApplicationContext(), getBluetoothService());
         }
         return elmFramework;
     }
@@ -70,6 +69,7 @@ public class OBDMeApplication extends Application {
         super.onCreate();
         //provide an instance for our static accessors
         instance = this;
+        getELMFramework();
     }
 
 }

@@ -23,7 +23,9 @@ public class Splash extends Activity {
 				try {
 					int waited = 0;
 					while (waited < getResources().getInteger(R.integer.splash_wait_milliseconds)) {
+						//((OBDMeApplication)getApplication()).getBluetoothService();
 						sleep(500);
+						//((OBDMeApplication)getApplication()).getELMFramework();
 						waited += 500;
 					}
 				} catch (InterruptedException e) {
@@ -34,6 +36,7 @@ public class Splash extends Activity {
 					
 					SharedPreferences sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
 					
+					@SuppressWarnings("rawtypes")
 					Class intentTarget = null;
 					
 					if (sharedPrefs.contains(getResources().getString(R.string.prefs_firstrun))) {						

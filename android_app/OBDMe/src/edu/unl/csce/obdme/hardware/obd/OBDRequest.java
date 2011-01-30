@@ -14,21 +14,24 @@ public class OBDRequest {
 	/** The return length. */
 	private int returnLength;
 	
+	private OBDPID requestPID;
+	
 	/**
 	 * Instantiates a new OBD request.
 	 *
 	 * @param pid the pid
 	 */
 	public OBDRequest (OBDPID pid) {
-		this.setMode(pid.getParentMode().getModeHex());
+		this.setMode(pid.getParentMode());
 		this.setPid(pid.getPidHex());
 		this.setReturnLength(pid.getPidReturn());	
+		this.setRequestPID(pid);
 	}
 	
 	public OBDRequest (String mode, String pid, int returnSize) {
 		this.setMode(mode);
 		this.setPid(pid);
-		this.setReturnLength(returnSize);	
+		this.setReturnLength(returnSize);
 	}
 	
 	/* (non-Javadoc)
@@ -90,6 +93,20 @@ public class OBDRequest {
 	 */
 	public int getReturnLength() {
 		return returnLength;
+	}
+
+	/**
+	 * @param requestPID the requestPID to set
+	 */
+	public void setRequestPID(OBDPID requestPID) {
+		this.requestPID = requestPID;
+	}
+
+	/**
+	 * @return the requestPID
+	 */
+	public OBDPID getRequestPID() {
+		return requestPID;
 	}
 
 }

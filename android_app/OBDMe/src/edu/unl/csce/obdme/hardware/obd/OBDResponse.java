@@ -24,6 +24,8 @@ public class OBDResponse {
 	/** The original request. */
 	private OBDRequest originalRequest;
 
+	private Object processedResponse;
+
 	/** The Constant ELM_DEVICE_SEARCHING. */
 	private static final String ELM_DEVICE_SEARCHING = "SEARCHING...";
 
@@ -42,6 +44,7 @@ public class OBDResponse {
 		setRawResponse(response);
 		responseBytes = new ArrayList<String>();
 		parseResponse(tokenizeResponse());
+		processResponse(originalRequest);
 	}
 
 	/**
@@ -109,7 +112,7 @@ public class OBDResponse {
 				parseNormalResponseLine(responseArrayList.poll());
 
 				//If the size is not correct, throw an error
-				if(originalRequest.getReturnLength() == responseBytes.size()) {
+				if(originalRequest.getReturnLength() == responseBytes.size() - 2) {
 					verifyResponse();
 				}
 				else {
@@ -131,18 +134,14 @@ public class OBDResponse {
 	 */
 	private void parseNormalResponseLine(String responseLine) {
 
-		StringTokenizer tokenizedString = new StringTokenizer(responseLine, " ", false);
-
-		//While there are bytes to be parsed
-		while(tokenizedString.hasMoreTokens()){
-
-			String currentToken = tokenizedString.nextToken();
-
-			//Else if it's length is 2, its a byte
-			//EX: "49"
-			if (currentToken.length() == 2){
-				responseBytes.add(currentToken);
-			}
+		//While there is still data left in the response line
+		while(responseLine.length() > 0){
+			
+			//Take the first two characters
+			responseBytes.add(responseLine.substring(0, 2));
+			
+			//remove the first two characters from the string
+			responseLine = responseLine.substring(2);
 		}
 
 	}
@@ -154,22 +153,22 @@ public class OBDResponse {
 	 */
 	private void parseLongResponseLine(String responseLine) {
 
-		StringTokenizer tokenizedString = new StringTokenizer(responseLine, " ", false);
-
-		//While there are bytes to be parsed
-		while(tokenizedString.hasMoreTokens()){
-
-			String currentToken = tokenizedString.nextToken();
-
+		//While there is still data left in the response line
+		while(responseLine.length() > 0){
 			//If it is the line header
 			//EX: "0:"
-			if(currentToken.length() == 2 && currentToken.contains(":")) {
+			if(responseLine.substring(0, 2).contains(":")) {
 				//throw it away
+				responseLine = responseLine.substring(2);
 			}
 			//Else if it's length is 2, its a byte
 			//EX: "49"
-			else if (currentToken.length() == 2){
-				responseBytes.add(currentToken);
+			else {
+				//Take the first two characters
+				responseBytes.add(responseLine.substring(0, 2));
+				
+				//remove the first two characters from the string
+				responseLine = responseLine.substring(2);
 			}
 		}
 	}
@@ -212,6 +211,10 @@ public class OBDResponse {
 					" did not match the expected response pid " + Integer.toString(expectedPIDValue));
 		}
 
+	}
+
+	private void processResponse(OBDRequest originalRequest) {
+		this.processedResponse=originalRequest.getRequestPID().evaluateResponse(this.responseBytes);
 	}
 
 	/**
@@ -280,6 +283,13 @@ public class OBDResponse {
 	 */
 	public Context getContext() {
 		return context;
+	}
+
+	/**
+	 * @return the processedResponse
+	 */
+	public Object getProcessedResponse() {
+		return processedResponse;
 	}
 
 }

@@ -6,8 +6,10 @@
 	<string name="setupwizard.main.heading.text">Welcome to OBDMe!</string>
 	<string name="setupwizard.main.text">It appears that this is the first time that you are
 		starting OBDMe.\n\n
-		This setup wizard will guide you through the processes of creating an
-		OBDMe account and configuring your OBD dongle.</string>
+		This setup wizard will guide you through the
+		processes of creating an
+		OBDMe account and configuring your OBD dongle.
+	</string>
 	<string name="setupwizard.main.button.next.text">Next</string>
 
 	<!-- Setup Wizard Account Activity -->
@@ -15,7 +17,8 @@
 	<string name="setupwizard.account.heading.text">Account Setup</string>
 	<string name="setupwizard.account.text">Please enter your existing OBDMe account
 		information below.
-		If you do not have an account, you may create one here by filling in
+		If you do not have an account, you may create one
+		here by filling in
 		your information.</string>
 	<string name="setupwizard.account.email.text">Username (Email Address)</string>
 	<string name="setupwizard.account.password.text">Password</string>
@@ -65,23 +68,32 @@
 		Application</string>
 	<string name="setupwizard.bluetooth.error.notsupported">Your phone does not support Bluetooth.</string>
 	<string name="setupwizard.bluetooth.dialog.connecting">Connecting...</string>
+	<string name="setupwizard.bluetooth.dialog.hardware">Verifying hardware...</string>
 
 	<!-- Setup Wizard Vehicle Activity -->
 	<string name="setupwizard.vehicle.label">Vehicle Setup</string>
 	<string name="setupwizard.vehicle.heading.text">Vehicle Setup</string>
 	<string name="setupwizard.vehicle.body.text.identify">The setup wizard will now try to identify your
-		vehicle automatically.\n\nIn order to do this, the vehicle must be running. Please
+		vehicle automatically.\n\nIn order to do this, the vehicle must be
+		running. Please
 		start you vehicle and click next to proceed</string>
+	<string name="setupwizard.vehicle.body.text.confirm">Your vehicle was successfully identified. Please
+		confirm the information below.</string>
 	<string name="setupwizard.vehicle.button.identify.text">Identify Vehicle</string>
-	<string name="setupwizard.vehicle.dialog.ignition">Waiting for Ignition...</string>
+	<string name="setupwizard.vehicle.button.confirm.text">Confirm</string>
+	<string name="setupwizard.vehicle.vin.title.text">VIN (Vehicle Identification Number)</string>
+	<string name="setupwizard.vehicle.dialog.ignition">Waiting for ignition...</string>
+	<string name="setupwizard.vehicle.dialog.autoconnect">Waiting for device...</string>
 
 	<!-- Setup Wizard Complete Activity -->
 	<string name="setupwizard.complete.label">Setup Complete</string>
 	<string name="setupwizard.complete.heading.text">Setup Complete</string>
 	<string name="setupwizard.complete.body.text">That\'s it! You are now ready to start using OBDMe.
 		Hit the next button below to continue to the main screen.
-		If you created your account here, please finish the setup process
-		online.</string>
+		If you
+		created your account here, please finish the setup process
+		online.
+	</string>
 	<string name="setupwizard.complete.button.next.text">Next</string>
 
 	<!-- Bluetooth Discovery Activity -->
@@ -125,7 +137,7 @@
 	<!-- Options Menu -->
 	<string name="connect">Connect a device</string>
 	<string name="settings">Settings</string>
-	
+
 	<!-- Settings Menu Selections -->
 	<string name="settings.modeselect">Mode Selection</string>
 	<string name="settings.accountinformation">Account Information</string>
@@ -134,7 +146,7 @@
 	<string name="settings.dataupload">Data Upload Options</string>
 	<string name="settings.datacollection">Data Collection Rate</string>
 	<string name="settings.displaydata">Data To Display</string>
-	
+
 	<!-- Mechanic Mode -->
 	<string name="mechanicmode.title">Mechanic Mode</string>
 	<string name="mechanicmode.realtimedata">Real Time Data:</string>

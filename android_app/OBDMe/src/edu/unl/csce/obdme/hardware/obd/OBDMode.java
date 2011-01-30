@@ -1,6 +1,7 @@
 package edu.unl.csce.obdme.hardware.obd;
 
-import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Class OBDMode.
@@ -9,17 +10,17 @@ public class OBDMode {
 
 	/** The mode hex. */
 	private String modeHex;
-	
+
 	/** The mode value. */
 	private int modeValue;
-	
+
 	/** The mode description. */
 	private String modeDescription;
-	
+
 	/** The pid list. */
-	private HashMap<String, OBDPID> pidList;
-	
-	
+	private ConcurrentHashMap<String, OBDPID> pidList;
+
+
 	/**
 	 * Instantiates a new OBD mode.
 	 *
@@ -30,9 +31,9 @@ public class OBDMode {
 		this.setModeHex(modeHex);
 		this.setModeValue(Integer.parseInt(modeHex,16));
 		this.setModeDescription(modeDescription);
-		
+
 		//Create a new hash map that contains the PIDS
-		pidList = new HashMap<String, OBDPID>();
+		pidList = new ConcurrentHashMap<String, OBDPID>();
 	}
 
 
@@ -73,7 +74,7 @@ public class OBDMode {
 	public String getModeDescription() {
 		return modeDescription;
 	}
-	
+
 	/**
 	 * Put pid.
 	 *
@@ -83,7 +84,7 @@ public class OBDMode {
 	public void putPID(String hex, OBDPID pidObj) {
 		this.pidList.put(hex, pidObj);
 	}
-	
+
 	/**
 	 * Gets the pID.
 	 *
@@ -93,7 +94,7 @@ public class OBDMode {
 	public OBDPID getPID(String pidHex) {
 		return this.pidList.get(pidHex);
 	}
-	
+
 	/**
 	 * Contains pid.
 	 *
@@ -126,6 +127,21 @@ public class OBDMode {
 	 */
 	public int getModeValue() {
 		return modeValue;
+	}
+
+	/**
+	 * Key set.
+	 *
+	 * @return the sets the
+	 */
+	public Set<String> pidKeySet() {
+		return pidList.keySet();
+	}
+
+	public void removePID(String pidHex) {
+		if (this.pidList.contains(pidHex)) {
+			this.pidList.remove(pidHex);
+		}
 	}
 
 }

@@ -10,4 +10,7 @@
 	<string name="debug.tag.setupwizard.complete">OBDMeSetupWizardComplete</string>
 	<string name="debug.tag.obdframework.parseconfig">OBDFrameworkParseConfig</string>
 	<string name="debug.tag.obdframework.parseprotocol">OBDFrameworkParseProtocol</string>
+	<string name="debug.tag.elmframework.ignpoller">ELMIgnitionPoller</string>
+	<string name="debug.tag.elmframework.acpoller">ELMAutoConnectPoller</string>
+	<string name="debug.tag.elmframework.chpoller">ELMCheckHardwarePoller</string>
 </resources>

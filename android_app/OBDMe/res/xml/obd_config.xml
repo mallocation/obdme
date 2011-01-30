@@ -4,7 +4,7 @@
 <obd-config>
 
 	<!-- MODE 1 -->
-	<mode hex="00">
+	<mode hex="01">
 		<pid hex="00" supported="true" />
 		<pid hex="03" supported="true" />
 		<pid hex="04" supported="true" />

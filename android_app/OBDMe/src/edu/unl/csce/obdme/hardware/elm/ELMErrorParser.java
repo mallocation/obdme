@@ -34,6 +34,8 @@ public abstract class ELMErrorParser {
 	 */
 	public enum ELM_ERROR{
 		
+		SEARCHING,
+		
 		/** Buffer full. */
 		BUFFER_FULL, 
 		
