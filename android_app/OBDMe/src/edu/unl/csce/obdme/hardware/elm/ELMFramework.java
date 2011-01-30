@@ -135,38 +135,36 @@ public class ELMFramework {
 	public synchronized boolean initConnection() {
 
 		//If the connection is not already initialized
-		if (!this.isConnectionInit()) {
 
-			//Establish an incrementer so that we know whether or not all
-			//the initialization steps completed successfully
-			int connectionInitIncr = 0;
+		//Establish an incrementer so that we know whether or not all
+		//the initialization steps completed successfully
+		int connectionInitIncr = 0;
 
-			//Reset the ELM to defaults
-			bluetoothService.write("ATD");
-			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
-				connectionInitIncr++;
-			}
+		//Reset the ELM to defaults
+		bluetoothService.write("ATD");
+		if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
+			connectionInitIncr++;
+		}
 
-			//Turn off echo to eliminate useless data transfer
-			bluetoothService.write("ATE0");
-			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
-				connectionInitIncr++;
-			}
+		//Turn off echo to eliminate useless data transfer
+		bluetoothService.write("ATE0");
+		if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
+			connectionInitIncr++;
+		}
 
-			//Turn off echo to eliminate useless data transfer
-			bluetoothService.write("ATS0");
-			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
-				connectionInitIncr++;
-			}
+		//Turn off echo to eliminate useless data transfer
+		bluetoothService.write("ATS0");
+		if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
+			connectionInitIncr++;
+		}
 
 
-			//If all the steps completed successfully
-			if (connectionInitIncr == 3) {
-				this.setConnectionInit(true);
-			}
-			else {
-				this.setConnectionInit(false);
-			}
+		//If all the steps completed successfully
+		if (connectionInitIncr == 3) {
+			this.setConnectionInit(true);
+		}
+		else {
+			this.setConnectionInit(false);
 		}
 
 		//Return isConnectionInit
@@ -180,26 +178,23 @@ public class ELMFramework {
 	 */
 	public synchronized boolean verifyHardwareVersion() {
 
-		if (!this.isConnectionInit()) {
-			//Request the hardware version
-			bluetoothService.clearResponseQueue();
-			bluetoothService.write("ATI");
+		while(!this.isConnectionInit()) {
+			this.initConnection();
+		}
+		//Request the hardware version
+		bluetoothService.clearResponseQueue();
+		bluetoothService.write("ATI");
 
-			//If it matches our device identifier, the hardware is verified
-			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_IDENTIFIER)) {
-				this.setHardwareVerified(true);
-			}
-			else {
-				this.setHardwareVerified(false);
-			}
-
-			//Return isHardwareVerified
-			return this.isHardwareVerified();
+		//If it matches our device identifier, the hardware is verified
+		if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_IDENTIFIER)) {
+			this.setHardwareVerified(true);
 		}
 		else {
-			this.initConnection();
-			return this.verifyHardwareVersion();
+			this.setHardwareVerified(false);
 		}
+
+		//Return isHardwareVerified
+		return this.isHardwareVerified();
 	}
 
 	/**

@@ -9,14 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import edu.unl.csce.obdme.R;
-import edu.unl.csce.obdme.hardware.elm.ELMException;
-import edu.unl.csce.obdme.hardware.elm.ELMFramework;
-import edu.unl.csce.obdme.hardware.obd.OBDPID.EVALS;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import android.content.res.XmlResourceParser;
 import android.util.Log;
+import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.hardware.elm.ELMException;
+import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.hardware.obd.OBDPID.EVALS;
 
 /**
  * The Class OBDFramework.
@@ -38,11 +38,101 @@ public class OBDFramework {
 	public OBDFramework(Context context, ELMFramework parentELMFramework) {
 		this.elmFramework = parentELMFramework;
 		this.configuredProtocol = parseOBDCommands(context, readOBDConfig(context));
+
 	}
 
 	/**
+	 * Gets the enabled pid list.
+	 *
+	 * @return the enabled pid list
+	 */
+	public List<String> getEnabledPIDList() {
+
+		List<String> enabledPIDS = new ArrayList<String>();
+
+		//For all the modes that exist in the configured protocol
+		for ( String currentMode : configuredProtocol.keySet() ) {
+
+			//For all the pids that exist in the configured protocol
+			for ( String currentPID : configuredProtocol.get(currentMode).pidKeySet()) {
+
+				//If the PID is enabled
+				if (configuredProtocol.get(currentMode).getPID(currentPID).isSupported() && 
+						configuredProtocol.get(currentMode).getPID(currentPID).isEnabled()) {
+
+					//Add the PID hex to the list
+					enabledPIDS.add(configuredProtocol.get(currentMode).getPID(currentPID).getPidHex());
+				}
+			}
+		}
+
+		return enabledPIDS;
+	}
+
+	/**
+	 * Gets the pollable pid list.
+	 *
+	 * @return the pollable pid list
+	 */
+	public List<String> getPollablePIDList() {
+
+		List<String> pollablePIDS = new ArrayList<String>();
+
+		//For all the modes that exist in the configured protocol
+		for ( String currentMode : configuredProtocol.keySet() ) {
+
+			//For all the pids that exist in the configured protocol
+			for ( String currentPID : configuredProtocol.get(currentMode).pidKeySet()) {
+
+				//If the PID is enabled
+				if (configuredProtocol.get(currentMode).getPID(currentPID).isSupported() && 
+						configuredProtocol.get(currentMode).getPID(currentPID).isPollable()) {
+
+					//Add the PID hex to the list
+					pollablePIDS.add(configuredProtocol.get(currentMode).getPID(currentPID).getPidHex());
+				}
+			}
+		}
+
+		return pollablePIDS;
+	}
+
+	/**
+	 * Gets the enabled pollable pid list.
+	 *
+	 * @return the enabled pollable pid list
+	 */
+	public List<String> getEnabledPollablePIDList() {
+
+		List<String> enabledPollablePIDS = new ArrayList<String>();
+
+		//For all the modes that exist in the configured protocol
+		for ( String currentMode : configuredProtocol.keySet() ) {
+
+			//For all the pids that exist in the configured protocol
+			for ( String currentPID : configuredProtocol.get(currentMode).pidKeySet()) {
+
+				//If the PID is enabled
+				if (configuredProtocol.get(currentMode).getPID(currentPID).isSupported() && 
+						configuredProtocol.get(currentMode).getPID(currentPID).isEnabled() &&
+						configuredProtocol.get(currentMode).getPID(currentPID).isPollable()) {
+
+					//Add the PID hex to the list
+					enabledPollablePIDS.add(configuredProtocol.get(currentMode).getPID(currentPID).getPidHex());
+				}
+			}
+		}
+
+		return enabledPollablePIDS;
+	}
+
+
+
+	/**
 	 * Query valid pids.
-	 * @throws ELMException 
+	 *
+	 * @return true, if successful
+	 * @throws ELMException the eLM exception
 	 */
 	public boolean queryValidPIDS() throws ELMException {
 
@@ -50,6 +140,11 @@ public class OBDFramework {
 
 	}
 
+	/**
+	 * Removes the mode.
+	 *
+	 * @param modeHex the mode hex
+	 */
 	public void removeMode(String modeHex) {
 		if(this.configuredProtocol.contains(modeHex)) {
 			this.configuredProtocol.remove(modeHex);
@@ -198,11 +293,12 @@ public class OBDFramework {
 											xrp.getAttributeValue(null, "unit"),
 											xrp.getAttributeValue(null, "eval"),
 											xrp.getAttributeValue(null, "name"),
-											parentMode));
+											parentMode,
+											xrp.getAttributeValue(null, "pollable")));
 						}
 						currentPID = xrp.getAttributeValue(null, "hex");
 					}
-				
+
 					//If a supported PID node, add it to the hashmap in a supported mode
 					else if (startTagName.equals("suported-pid")) {
 						if (config.get(parentMode).contains(xrp.getAttributeValue(null, "hex"))){
@@ -212,7 +308,9 @@ public class OBDFramework {
 											xrp.getAttributeValue(null, "unit"),
 											xrp.getAttributeValue(null, "eval"),
 											xrp.getAttributeValue(null, "name"),
-											parentMode, true));
+											parentMode, 
+											xrp.getAttributeValue(null, "pollable"),
+											true));
 						}
 						currentPID = xrp.getAttributeValue(null, "hex");
 					}
@@ -220,14 +318,14 @@ public class OBDFramework {
 					//If a code node (for a PID).  Add the code to the PID's code list.
 					else if(startTagName.equals("code")){
 						if(config.get(parentMode).contains(currentPID)){
-							
+
 							//If the code is bit encoded
 							if (protocolStructure.get(parentMode).getPID(currentPID).getPidEval() == EVALS.BIT_ENCODED) {
 								protocolStructure.get(parentMode).getPID(currentPID).addBitEncoding(
 										xrp.getAttributeValue(null, "bit"),
 										xrp.getAttributeValue(null, "value"));
 							}
-							
+
 							//If the code is byte encoded
 							else if (protocolStructure.get(parentMode).getPID(currentPID).getPidEval() == EVALS.BYTE_ENCODED) {
 								protocolStructure.get(parentMode).getPID(currentPID).addByteEncoding(
@@ -245,7 +343,7 @@ public class OBDFramework {
 						}
 					}
 				}
-				
+
 				//Get the next node
 				eventType = xrp.next();
 			}
@@ -276,6 +374,100 @@ public class OBDFramework {
 	}
 
 	/**
+	 * Parses the obd commands.
+	 *
+	 * @param context the context
+	 * @return the hash map
+	 */
+	public HashMap<String, OBDMode> parseOBDCommands(Context context) {
+
+		//Make the PID HashMap
+		HashMap<String, OBDMode> protocolStructure = new HashMap<String, OBDMode>();
+
+		try {
+			//Setup the XML Pull Parser
+			XmlResourceParser xrp = context.getResources().getXml(edu.unl.csce.obdme.R.xml.obd_protocol);
+			int eventType = xrp.getEventType();
+
+			//Local Vars
+			String parentMode = null;
+
+			//While we haven't reached the end of the document
+			while (eventType != XmlPullParser.END_DOCUMENT) {
+				if(eventType == XmlPullParser.START_TAG) {
+					String startTagName = xrp.getName();
+
+					//If the start of the protocol
+					if (startTagName.equals("obd-protocol")) {
+						protocolStructure = new HashMap<String, OBDMode>();
+					}
+
+					//If a mode node, add it to the hashmap
+					else if (startTagName.equals("mode")) {
+						parentMode = xrp.getAttributeValue(null, "hex");
+						protocolStructure.put(new String(xrp.getAttributeValue(null, "hex")), 
+								new OBDMode(xrp.getAttributeValue(null, "hex"), 
+										xrp.getAttributeValue(null, "name")));
+					}
+
+					//If a PID node, add it to the hashmap
+					else if (startTagName.equals("pid")) {
+						protocolStructure.get(parentMode).putPID(xrp.getAttributeValue(null, "hex"),
+								new OBDPID(xrp.getAttributeValue(null, "hex"),
+										Integer.parseInt(xrp.getAttributeValue(null, "return")),
+										xrp.getAttributeValue(null, "unit"),
+										xrp.getAttributeValue(null, "eval"),
+										xrp.getAttributeValue(null, "name"),
+										parentMode, 
+										xrp.getAttributeValue(null, "pollable")));
+					}
+
+					//If a supported PID node, add it to the hashmap in a supported mode
+					else if (startTagName.equals("suported-pid")) {
+						protocolStructure.get(parentMode).putPID(xrp.getAttributeValue(null, "hex"),
+								new OBDPID(xrp.getAttributeValue(null, "hex"),
+										Integer.parseInt(xrp.getAttributeValue(null, "return")),
+										xrp.getAttributeValue(null, "unit"),
+										xrp.getAttributeValue(null, "eval"),
+										xrp.getAttributeValue(null, "name"),
+										parentMode, 
+										xrp.getAttributeValue(null, "pollable"), 
+										true));
+					}
+				}
+
+				//Get the next node
+				eventType = xrp.next();
+			}
+		} catch (NumberFormatException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
+				"Error parsing OBD Protocol: Numer format exception");
+			}
+		} catch (NotFoundException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
+				"Error parsing OBD Protocol: Not Found Exception");
+			}
+		} catch (XmlPullParserException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
+				"Error parsing OBD Protocol: XML Pull Parser Exception");
+			}
+		} catch (IOException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+				"Error parsing obd configuration: A general IO exception occured.");
+			}
+		}
+
+		return protocolStructure;
+
+	}
+
+	/**
+	 * Gets the configured protocol.
+	 *
 	 * @return the configuredProtocol
 	 */
 	public ConcurrentHashMap<String, OBDMode> getConfiguredProtocol() {
@@ -283,6 +475,8 @@ public class OBDFramework {
 	}
 
 	/**
+	 * Sets the configured protocol.
+	 *
 	 * @param configuredProtocol the configuredProtocol to set
 	 */
 	public void setConfiguredProtocol(ConcurrentHashMap<String, OBDMode> configuredProtocol) {

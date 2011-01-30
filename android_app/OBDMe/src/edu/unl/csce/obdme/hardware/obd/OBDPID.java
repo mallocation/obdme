@@ -17,7 +17,7 @@ public class OBDPID {
 	 */
 	public static enum EVALS {
 		
-		/** The FORMULA evaluation */
+		/** The FORMULA evaluation. */
 		FORMULA,
 		
 		/** The RAW evaluation. */
@@ -42,6 +42,7 @@ public class OBDPID {
 	/** The pid return length. */
 	private int pidReturn;
 	
+	/** The pid return object. */
 	private String pidReturnObject;
 
 	/** The pid unit. */
@@ -64,6 +65,12 @@ public class OBDPID {
 
 	/** The supported. */
 	private boolean supported;
+	
+	/** The enabled. */
+	private boolean enabled;
+	
+	/** The pollable. */
+	private boolean pollable;
 
 	/** The parent mode. */
 	private String parentMode;
@@ -75,12 +82,12 @@ public class OBDPID {
 	 * @param pidReturn the pid return
 	 * @param pidUnit the pid unit
 	 * @param pidEval the pid eval
-	 * @param pidFormula the pid formula
 	 * @param pidName the pid name
 	 * @param parent the parent
+	 * @param pollable the pollable
 	 */
 	public OBDPID(String pidHex, int pidReturn, String pidUnit, String pidEval, String pidName, 
-			String parent) {
+			String parent, String pollable) {
 		this.pidHex = pidHex;
 		this.pidValue = Integer.parseInt(pidHex,16);
 		this.pidReturn = pidReturn;
@@ -88,6 +95,16 @@ public class OBDPID {
 		this.setPidEval(pidEval);
 		this.pidName = pidName;
 		this.parentMode = parent;
+		
+		if (pollable.toString().equals("true")) {
+			this.pollable = true;
+		}
+		
+		else {
+			this.pollable = false;
+		}
+		
+		this.enabled = false;
 		this.supported = false;
 
 		//Switch on the eval method to initialize variables 
@@ -131,10 +148,11 @@ public class OBDPID {
 	 * @param pidEval the pid eval
 	 * @param pidName the pid name
 	 * @param parent the parent
+	 * @param pollable the pollable
 	 * @param supported the supported
 	 */
 	public OBDPID(String pidHex, int pidReturn, String pidUnit, String pidEval, String pidName, 
-			String parent, boolean supported) {
+			String parent,  String pollable, boolean supported) {
 		this.pidHex = pidHex;
 		this.pidValue = Integer.parseInt(pidHex,16);
 		this.pidReturn = pidReturn;
@@ -142,6 +160,16 @@ public class OBDPID {
 		this.setPidEval(pidEval);
 		this.pidName = pidName;
 		this.parentMode = parent;
+		
+		if (pollable.toString().equals("true")) {
+			this.pollable = true;
+		}
+		
+		else {
+			this.pollable = false;
+		}
+		
+		this.enabled = true;
 		this.supported = supported;
 
 
@@ -760,10 +788,39 @@ public class OBDPID {
 	}
 
 	/**
+	 * Gets the pid return object.
+	 *
 	 * @return the pidReturnObject
 	 */
 	public String getPidReturnObject() {
 		return pidReturnObject;
+	}
+
+	/**
+	 * Sets the enabled.
+	 *
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	/**
+	 * Checks if is enabled.
+	 *
+	 * @return the enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Checks if is pollable.
+	 *
+	 * @return the pollable
+	 */
+	public boolean isPollable() {
+		return pollable;
 	}
 
 }

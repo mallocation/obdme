@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<bool name="debug">true</bool>
+	<bool name="debug.setupwizard">false</bool>
 	<string name="debug.tag.launcher">OBDMeLauncher</string>
 	<string name="debug.tag.service.bluetooth">OBDMeBluetoothService</string>
 	<string name="debug.tag.setupwizard.main">OBDMeSetupWizardMain</string>
