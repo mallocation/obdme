@@ -7,7 +7,7 @@ public class EncryptionUtils {
 	
 	private static final String OBDME_ENCRYPTION_SALT = "[!@#$%]doYOUrememberWHENtwentyONEyearsWASold[^&*()]";
 	private static final byte[] OBDME_ENCRYPTION_SALT_BYTES = OBDME_ENCRYPTION_SALT.getBytes();
-	private static final String HEX_CHARS = "0123456789ABCDEF";
+	private static final String HEX_CHARS = "0123456789abcdef";
 	
 	public static final String MD5 = "MD5";
 	public static final String SHA = "SHA";
@@ -19,16 +19,21 @@ public class EncryptionUtils {
 		return OBDME_ENCRYPTION_SALT_BYTES;
 	}	
 	
-	public static String encryptString(String valueToEncrypt, String algorithm) throws NoSuchAlgorithmException {
+	public static String encryptString(String valueToEncrypt, String algorithm) {
 		MessageDigest md = null;
-		md = MessageDigest.getInstance(algorithm);		
-		md.update(valueToEncrypt.getBytes());
-		md.update(OBDME_ENCRYPTION_SALT_BYTES);
-		return byteArrayToHexString(md.digest());
+		try {
+			md = MessageDigest.getInstance(algorithm);
+			md.update(valueToEncrypt.getBytes());
+			md.update(OBDME_ENCRYPTION_SALT_BYTES);
+			return byteArrayToHexString(md.digest());
+		} catch (NoSuchAlgorithmException nsae) {
+			nsae.printStackTrace();
+			return null;
+		}
 	}	
 	
-	public static String encryptPassword(String password) throws NoSuchAlgorithmException {
-		return encryptString(password, SHA_256);		
+	public static String encryptPassword(String password) {
+		return encryptString(password, SHA_256);
 	}
 	
 	public static String byteArrayToHexString(byte[] bytes) {

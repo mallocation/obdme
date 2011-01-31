@@ -1,47 +1,28 @@
 package edu.unl.csce.obdme.http.validation;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import edu.unl.csce.obdme.encryption.EncryptionUtils;
 import edu.unl.csce.obdme.http.request.ParamConstants;
+import edu.unl.csce.obdme.http.request.RequestBuilder;
 
 public class RequestValidation {	
 	
-	public static boolean isValidHttpRequest(Map<String, String> requestParams) {
-		
-		//Need to have an api key
-		if (!requestParams.containsKey(ParamConstants.OBDME_REQUEST_APIKEY_PARAM)) {
-			return false;
+	public static boolean isValidHttpRequest(String domain, String path, Map<String, String> requestParams, List<String> excludeParams) {
+		/* Build an exclude list, always want to exclude the signature parameter */
+		if (excludeParams == null) {
+			excludeParams = new ArrayList<String>();
 		}
+		excludeParams.add(ParamConstants.OBDME_REQUEST_SIGNATURE_PARAM);
 		
-		//Need to have a signature		
-		if (!requestParams.containsKey(ParamConstants.OBDME_REQUEST_SIGNATURE_PARAM)) {
-			return false;
-		}		
+		/* Compute the signature */
+		String computedSignature = RequestBuilder.computeRequestSignature(domain, path, requestParams, excludeParams);
 		
-		MessageDigest md;
+		/* Get the sent signature */
+		String sentSignature = requestParams.get(ParamConstants.OBDME_REQUEST_SIGNATURE_PARAM);
 		
-		try {
-			md = MessageDigest.getInstance(EncryptionUtils.SHA);
-		} catch (NoSuchAlgorithmException nsae) {
-			nsae.printStackTrace();
-			return false;
-		}
-		
-		for (String param : requestParams.keySet()) {
-			if (!param.equals(ParamConstants.OBDME_REQUEST_SIGNATURE_PARAM)) {
-				md.update(param.getBytes());
-				md.update(requestParams.get(param).getBytes());
-			}			
-		}
-		
-		md.update(EncryptionUtils.getOBDMeSaltBytes());
-		
-		String computedSignature = EncryptionUtils.byteArrayToHexString(md.digest());
-		String sentSignature = requestParams.get(ParamConstants.OBDME_REQUEST_SIGNATURE_PARAM);	
-		
+		/* Return the two signatures equal */
 		return computedSignature.equals(sentSignature);
 	}
 }
