@@ -1,12 +1,12 @@
 package edu.unl.csce.obdme.database;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-import edu.unl.csce.obdme.hardware.elm.ELMFramework;
-import edu.unl.csce.obdme.hardware.obd.OBDMode;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import edu.unl.csce.obdme.hardware.obd.OBDConfigurationManager;
+import edu.unl.csce.obdme.hardware.obd.OBDMode;
 
 /**
  * The Class OBDMeDatabaseHelper.
@@ -20,14 +20,11 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     
     /** The Constant TABLE_NAME. */
-    private static final String TABLE_NAME = "loggeddata";
+    public static final String TABLE_NAME = "loggeddata";
     
     /** The Constant TABLE_KEY. */
-    private static final String TABLE_KEY = "dataset";
-	
-	/** The elm framework. */
-	private ELMFramework elmFramework;
-	
+    public static final String TABLE_KEY = "dataset";
+		
 	/** The context. */
 	private Context context;
 
@@ -35,12 +32,10 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
      * Instantiates a new oBD me database helper.
      *
      * @param context the context
-     * @param elmFramework the elm framework
      */
-    public OBDMeDatabaseHelper(Context context, ELMFramework elmFramework) {
+    public OBDMeDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
-        this.elmFramework = elmFramework;
     }
 
     /* (non-Javadoc)
@@ -50,7 +45,7 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
     	
     	StringBuffer sb = new StringBuffer();
-    	HashMap<String, OBDMode> protocol = elmFramework.getObdFramework().parseOBDCommands(context);
+    	ConcurrentHashMap<String, OBDMode> protocol = OBDConfigurationManager.parseOBDCommands(context);
     	
     	sb.append("CREATE TABLE " + TABLE_NAME + " ( " + TABLE_KEY + " INTEGER PRIMARY KEY");
     	

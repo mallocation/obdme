@@ -195,13 +195,6 @@ public class BluetoothService {
 		bluetoothConnectedThread = new BluetoothConnectedThread(socket);
 		bluetoothConnectedThread.start();
 
-		// Send the name of the connected device back to the UI Activity
-		Message msg = appHandler.obtainMessage(OBDMe.MESSAGE_DEVICE_NAME);
-		Bundle bundle = new Bundle();
-		bundle.putString(OBDMe.DEVICE_NAME, device.getName());
-		msg.setData(bundle);
-		appHandler.sendMessage(msg);
-
 		setState(STATE_CONNECTED);
 	}
 
@@ -287,12 +280,6 @@ public class BluetoothService {
 	 */
 	private void connectionLost() {
 		setState(STATE_LISTEN);
-
-		Message msg = appHandler.obtainMessage(OBDMe.MESSAGE_TOAST);
-		Bundle bundle = new Bundle();
-		bundle.putString(OBDMe.TOAST, "Connection to the OBD device was lost");
-		msg.setData(bundle);
-		appHandler.sendMessage(msg);
 	}
 
 	/**

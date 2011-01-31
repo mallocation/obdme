@@ -106,13 +106,6 @@
 	<string name="btdiscovery.title.otherdevices.text">Other Available Devices</string>
 	<string name="btdiscovery.button.scan.text">Scan for new devices</string>
 
-	<string name="app_name">OBDMe</string>
-	<string name="sendButtonText">Send</string>
-	<string name="settings_title">OBDMe Settings</string>
-	<string name="account_info_title">Account Information</string>
-	<string name="vehicle_info_title">Currently Connected Vehicle Information</string>
-	<string name="display_data_title">Data To Be Displayed</string>
-
 	<!-- Bluetooth Status -->
 	<string name="send">Send</string>
 	<string name="not_connected">You are not connected to a OBD device</string>
@@ -121,8 +114,15 @@
 	<string name="title_connected_to">connected: </string>
 	<string name="title_not_connected">not connected</string>
 
-	<!-- No Device Connected Screen -->
-	<string name="noDeviceConnected">No OBD Device Connected</string>
+	<!-- OBDMe Main Application -->
+	<string name="obdme.main.bluetooth.notenabled.error">Bluetooth Must be enabled to use this application.</string>
+	<string name="app_name">OBDMe</string>
+	<string name="sendButtonText">Send</string>
+	<string name="settings_title">OBDMe Settings</string>
+	<string name="account_info_title">Account Information</string>
+	<string name="vehicle_info_title">Currently Connected Vehicle Information</string>
+	<string name="display_data_title">Data To Be Displayed</string>
+	
 
 	<!-- Basic Data Display -->
 	<string name="speed">Vehicle Speed</string>

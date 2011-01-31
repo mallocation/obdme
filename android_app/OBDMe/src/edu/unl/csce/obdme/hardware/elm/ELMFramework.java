@@ -182,7 +182,6 @@ public class ELMFramework {
 			this.initConnection();
 		}
 		//Request the hardware version
-		bluetoothService.clearResponseQueue();
 		bluetoothService.write("ATI");
 
 		//If it matches our device identifier, the hardware is verified

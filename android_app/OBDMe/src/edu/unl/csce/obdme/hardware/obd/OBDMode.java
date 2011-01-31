@@ -138,10 +138,13 @@ public class OBDMode {
 		return pidList.keySet();
 	}
 
+	/**
+	 * Removes the pid.
+	 *
+	 * @param pidHex the pid hex
+	 */
 	public void removePID(String pidHex) {
-		if (this.pidList.contains(pidHex)) {
-			this.pidList.remove(pidHex);
-		}
+		this.pidList.remove(pidHex);
 	}
 
 }

@@ -24,6 +24,9 @@ public class ELMIgnitionPoller {
 
 	/** The context. */
 	private Context context;
+	
+	/** The polling interval. */
+	private int pollingInterval;
 
 	/** The Constant MESSAGE_STATE_CHANGE. */
 	public static final int MESSAGE_STATE_CHANGE = 0;
@@ -52,6 +55,23 @@ public class ELMIgnitionPoller {
 		appHandler = handler;
 		this.elmFramework = elmFramework;
 		this.context = context;
+		this.pollingInterval = 1000;
+	}
+	
+	/**
+	 * Instantiates a new eLM ignition poller.
+	 *
+	 * @param context the context
+	 * @param handler the handler
+	 * @param elmFramework the elm framework
+	 * @param pollingInterval the polling interval
+	 */
+	public ELMIgnitionPoller(Context context, Handler handler, ELMFramework elmFramework, int pollingInterval) {
+		messageState = IGNITION_NONE;
+		appHandler = handler;
+		this.elmFramework = elmFramework;
+		this.context = context;
+		this.pollingInterval = pollingInterval;
 	}
 
 	/**
@@ -101,6 +121,24 @@ public class ELMIgnitionPoller {
 			ignPollerThread = null;
 		}
 		setState(IGNITION_NONE);
+	}
+
+	/**
+	 * Sets the polling interval.
+	 *
+	 * @param pollingInterval the pollingInterval to set
+	 */
+	public synchronized void setPollingInterval(int pollingInterval) {
+		this.pollingInterval = pollingInterval;
+	}
+
+	/**
+	 * Gets the polling interval.
+	 *
+	 * @return the pollingInterval
+	 */
+	public synchronized int getPollingInterval() {
+		return pollingInterval;
 	}
 
 	/**
@@ -158,7 +196,7 @@ public class ELMIgnitionPoller {
 
 				//Sleep for two seconds
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(pollingInterval);
 				} catch (InterruptedException e) {
 					//We don't really care...
 				}

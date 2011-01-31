@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<bool name="debug">true</bool>
-	<bool name="debug.setupwizard">false</bool>
+	<bool name="debug.setupwizard">true</bool>
 	<string name="debug.tag.launcher">OBDMeLauncher</string>
+	<string name="debug.tag.obdme">OBDMeMain</string>
 	<string name="debug.tag.service.bluetooth">OBDMeBluetoothService</string>
 	<string name="debug.tag.setupwizard.main">OBDMeSetupWizardMain</string>
 	<string name="debug.tag.setupwizard.account">OBDMeSetupWizardAccount</string>
@@ -14,4 +15,5 @@
 	<string name="debug.tag.elmframework.ignpoller">ELMIgnitionPoller</string>
 	<string name="debug.tag.elmframework.acpoller">ELMAutoConnectPoller</string>
 	<string name="debug.tag.elmframework.chpoller">ELMCheckHardwarePoller</string>
+	<string name="debug.tag.datacollector">DataCollector</string>
 </resources>
