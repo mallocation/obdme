@@ -21,12 +21,46 @@ public class UserService extends ProtectedServiceWrapper {
 		super(apiKey);
 	}
 	
+	/*
+	 * Creates a user within the OBDMe system.
+	 * @param email email for the new user
+	 * @param password user's password (unencrypted)
+	 * @param handler handler for the completion of the call.
+	 */
+	public void createUser(String email, String password, Handler handler) {		
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("email", email));
+		parameters.add(new BasicNameValuePair("pw", EncryptionUtils.encryptPassword(password)));		
+		this.performPost(USERS_SERVICE_BASE_PATH, parameters, new CreateUserListener(handler));
+	}
+	
+	/*
+	 * Returns a boolean representing if the email is already registered
+	 * in the OBDMe system.	 * 
+	 */
 	public void isUserRegistered(String email, Handler handler) {
 		this.getUserByEmailMethod(email, new IsUserRegisteredListener(handler));
 	}	
 	
+	/*
+	 * Returns a user from the OBDMe system based on the email.
+	 * If a user is not found, a null value is returned.
+	 */
 	public void getUserByEmail(String email, Handler handler) {
 		this.getUserByEmailMethod(email, new GetUserByEmailListener(handler));
+	}
+	
+	/*
+	 * Validates a user's credentials with the OBDMe System (Single sign on).
+	 * Returns a user object if the credentials are correct, otherwise a
+	 * null value is returned.
+	 * @param email email of the user
+	 * @param password user's password (unencrypted)	 *  
+	 */
+	public void validateUserCredentials(String email, String password, Handler handler) {
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("pw", EncryptionUtils.encryptPassword(password)));
+		this.performGet(USERS_SERVICE_BASE_PATH + "/" + email + "/login", parameters, new GetUserByEmailListener(handler)); 
 	}
 	
 	private void getUserByEmailMethod(String email, RequestListener listener) {
@@ -57,12 +91,7 @@ public class UserService extends ProtectedServiceWrapper {
 		}		
 	}
 	
-	public void createUser(String email, String password, Handler handler) {		
-		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-		parameters.add(new BasicNameValuePair("email", email));
-		parameters.add(new BasicNameValuePair("pw", EncryptionUtils.encryptPassword(password)));		
-		this.performPost(USERS_SERVICE_BASE_PATH, parameters, new CreateUserListener(handler));
-	}
+	
 	
 	private class CreateUserListener implements RequestListener {
 		private final Handler handler;
