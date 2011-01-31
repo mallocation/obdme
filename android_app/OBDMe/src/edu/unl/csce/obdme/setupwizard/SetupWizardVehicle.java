@@ -18,6 +18,7 @@ import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
+import edu.unl.csce.obdme.hardware.obd.OBDConfigurationManager;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 
 /**
@@ -141,7 +142,7 @@ public class SetupWizardVehicle extends Activity {
 	 * Start ignition poller thread.
 	 */
 	private void startIgnitionPollerThread() {
-		ignPoller = new ELMIgnitionPoller(getApplicationContext(), ignitionHandler, elmFramework);
+		ignPoller = new ELMIgnitionPoller(getApplicationContext(), ignitionHandler, elmFramework, 2000);
 		ignPoller.startPolling();
 	}
 
@@ -149,7 +150,7 @@ public class SetupWizardVehicle extends Activity {
 	 * Start auto connect poller thread.
 	 */
 	private void startAutoConnectPollerThread() {
-		acPoller = new ELMAutoConnectPoller(getApplicationContext(), acHandler, elmFramework);
+		acPoller = new ELMAutoConnectPoller(getApplicationContext(), acHandler, elmFramework, 2000);
 		acPoller.startPolling();
 	}
 
@@ -168,6 +169,8 @@ public class SetupWizardVehicle extends Activity {
 				if (response != null) {
 					String vinResult = (String)response.getProcessedResponse();
 					vinText.setText(vinResult);
+					elmFramework.getObdFramework().enableAllPIDS();
+					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), elmFramework.getObdFramework().getConfiguredProtocol(), vinResult);
 					SharedPreferences.Editor editor = prefs.edit();
 					editor.putString(getResources().getString(R.string.prefs_account_vin), vinResult);
 					editor.commit();
@@ -239,7 +242,7 @@ public class SetupWizardVehicle extends Activity {
 			switch (msg.what) {
 
 			//Messsage from BT service indicating a connection state change
-			case ELMIgnitionPoller.MESSAGE_STATE_CHANGE:
+			case ELMAutoConnectPoller.MESSAGE_STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
 						"MESSAGE_STATE_CHANGE: " + msg.arg1);
 

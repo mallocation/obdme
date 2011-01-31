@@ -17,13 +17,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
-import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 
 /**
  * The Class OBDMeSetupWizardBluetooth.
@@ -298,7 +298,7 @@ public class SetupWizardBluetooth extends Activity {
 	 */
 	protected void checkHardwareVersion() {
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), chHandler, elmFramework);
+		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), chHandler, elmFramework, 2000);
 		chPoller.startPolling();
 	}
 
@@ -375,7 +375,7 @@ public class SetupWizardBluetooth extends Activity {
 			switch (msg.what) {
 
 			//Messsage from BT service indicating a connection state change
-			case ELMIgnitionPoller.MESSAGE_STATE_CHANGE:
+			case ELMCheckHardwarePoller.MESSAGE_STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
 						"Check Harware State Change: " + msg.arg1);
 
@@ -439,7 +439,7 @@ public class SetupWizardBluetooth extends Activity {
 			switch (msg.what) {
 
 			//Messsage from BT service indicating a connection state change
-			case MESSAGE_STATE_CHANGE:
+			case OBDMe.MESSAGE_STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
 						"Bluetooth State Change: " + msg.arg1);
 
