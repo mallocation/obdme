@@ -15,15 +15,17 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
+import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
-import edu.unl.csce.obdme.setupwizard.SetupWizardBluetooth;
+import edu.unl.csce.obdme.settingsmenu.SettingsMenu;
 
 /**
  * The Class OBDMe.
@@ -126,7 +128,13 @@ public class OBDMe extends Activity {
 	 */
 	public synchronized void onResume() {
 		super.onResume();
-
+		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+			setContentView(R.layout.basicuser_mode_portrait);
+        } else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
+			//setContentView(R.layout.enthusiastuser_mode);
+		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
+			setContentView(R.layout.mechanic_mode);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -161,6 +169,22 @@ public class OBDMe extends Activity {
 		inflater.inflate(R.menu.option_menu, menu);
 		return true;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.scan:
+            return true;
+		case R.id.settings:
+        	startActivity(new Intent(this, SettingsMenu.class));
+            return true;
+        }
+
+        return false;
+    }
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onConfigurationChanged(android.content.res.Configuration)
