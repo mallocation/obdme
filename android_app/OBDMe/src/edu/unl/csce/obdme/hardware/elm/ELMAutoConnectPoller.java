@@ -25,7 +25,7 @@ public class ELMAutoConnectPoller {
 
 	/** The context. */
 	private Context context;
-	
+
 	/** The polling interval. */
 	private int pollingInterval;
 
@@ -58,7 +58,7 @@ public class ELMAutoConnectPoller {
 		this.context = context;
 		this.pollingInterval = 1000;
 	}
-	
+
 	/**
 	 * Instantiates a new eLM auto connect poller.
 	 *
@@ -189,15 +189,27 @@ public class ELMAutoConnectPoller {
 
 					//If the result is not null
 					if(result != null) {
-						if(context.getResources().getBoolean(R.bool.debug)) {
-							Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
-							"Querying Valid PIDS");
-						}
 
-						//Query the Valid PIDS
-						if (elmFramework.getObdFramework().queryValidPIDS()){
-							setState(AUTO_CONNECT_COMPLETE);
-							continuePolling = false;
+						//If this protocol was not loaded from a saved configuration
+						if(!elmFramework.getObdFramework().isSavedConfiguration()) {
+							if(context.getResources().getBoolean(R.bool.debug)) {
+								Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
+										"Querying Valid PIDS");
+							}
+
+							//Query the Valid PIDS
+							if (elmFramework.getObdFramework().queryValidPIDS()){
+								setState(AUTO_CONNECT_COMPLETE);
+								continuePolling = false;
+							}
+						}
+						
+						//Otherwise
+						else {
+							if(context.getResources().getBoolean(R.bool.debug)) {
+								Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
+										"Saved protocol was loaded, not validating PIDS.");
+							}
 						}
 					}
 

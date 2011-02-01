@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+	<!-- Global Parameters -->
 	<integer name="splash.wait.milliseconds">3000</integer>
 	<integer name="setupwizard.toast.time">3000</integer>
+	<integer name="bluetooth.response.timeout">50</integer>
+	<integer name="bluetooth.response.maxretries">5</integer>
+	<string name="webservice.apikey">abcd</string>
+	
 </resources>

@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 
 /**
  * The Class OBDFramework.
@@ -20,6 +23,8 @@ public class OBDFramework {
 	/** The elm framework. */
 	private ELMFramework elmFramework;
 
+	private boolean savedConfiguration = false;
+
 	/**
 	 * Instantiates a new OBD framework.
 	 *
@@ -27,11 +32,40 @@ public class OBDFramework {
 	 * @param parentELMFramework the parent elm framework
 	 */
 	public OBDFramework(Context context, ELMFramework parentELMFramework) {
+		
+		//Save a refference to the ELMFramework
 		this.elmFramework = parentELMFramework;
-		this.configuredProtocol = OBDConfigurationManager.parseOBDFullProtocol(context);
+
+		//Initalize a temporary shared preferences object
+		SharedPreferences prefs = context.getSharedPreferences(context.getResources().getString(R.string.prefs_tag), 0);
+		
+		//If the VIN preference is saved (from some previous setup) and we are not debugging the setup wizard...
+		if (prefs.contains(context.getString(R.string.prefs_account_vin)) && 
+				!context.getResources().getBoolean(R.bool.debug_setupwizard)) {
+			
+			//Check if the configuration file still exists
+			if (OBDConfigurationManager.checkForSavedProtocol(context, prefs.getString(
+					context.getString(R.string.prefs_account_vin), null))){
+				
+				//Load the protocol constructed from the saved configuration
+				this.configuredProtocol = OBDConfigurationManager.parseSavedOBDProtocol(context, OBDConfigurationManager.
+						parseSavedConfiguration(context, context.getString(R.string.prefs_account_vin)));
+				
+				//Set that this is a saved configuration
+				this.savedConfiguration = true;
+			}
+		}
+		
+		//There is no VIN saved
+		else {
+			
+			//Set the configuration as false and load the whole protocol
+			this.savedConfiguration = false;
+			this.configuredProtocol = OBDConfigurationManager.parseFullOBDProtocol(context);
+		}
 
 	}
-	
+
 	/**
 	 * Enable all pids.
 	 */
@@ -39,7 +73,7 @@ public class OBDFramework {
 		for (String modeHex : configuredProtocol.keySet()) {
 			for(String pidHex : configuredProtocol.get(modeHex).pidKeySet()) {
 				configuredProtocol.get(modeHex).getPID(pidHex).setEnabled(true);
-				
+
 			}
 		}
 	}
@@ -55,7 +89,7 @@ public class OBDFramework {
 
 		//For all the modes that exist in the configured protocol
 		for ( String currentMode : configuredProtocol.keySet() ) {
-			
+
 			enabledPIDS.put(currentMode, new ArrayList<String>());
 
 			//For all the pids that exist in the configured protocol
@@ -85,7 +119,7 @@ public class OBDFramework {
 
 		//For all the modes that exist in the configured protocol
 		for ( String currentMode : configuredProtocol.keySet() ) {
-			
+
 			pollablePIDS.put(currentMode, new ArrayList<String>());
 
 			//For all the pids that exist in the configured protocol
@@ -114,7 +148,7 @@ public class OBDFramework {
 
 		//For all the modes that exist in the configured protocol
 		for ( String currentMode : configuredProtocol.keySet() ) {
-			
+
 			enabledPollablePIDS.put(currentMode, new ArrayList<String>());
 
 			//For all the pids that exist in the configured protocol
@@ -206,6 +240,20 @@ public class OBDFramework {
 	 */
 	public void setConfiguredProtocol(ConcurrentHashMap<String, OBDMode> configuredProtocol) {
 		this.configuredProtocol = configuredProtocol;
+	}
+
+	/**
+	 * @param savedConfiguration the savedConfiguration to set
+	 */
+	public void setSavedConfiguration(boolean savedConfiguration) {
+		this.savedConfiguration = savedConfiguration;
+	}
+
+	/**
+	 * @return the savedConfiguration
+	 */
+	public boolean isSavedConfiguration() {
+		return savedConfiguration;
 	}
 
 }

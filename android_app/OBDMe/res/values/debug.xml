@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+	<!-- Global Debugging Settings -->
 	<bool name="debug">true</bool>
 	<bool name="debug.setupwizard">true</bool>
+	
+	
+	<!-- Debug Tags for the Main Application-->
 	<string name="debug.tag.launcher">OBDMeLauncher</string>
 	<string name="debug.tag.obdme">OBDMeMain</string>
+
+	<!-- Debug tags for the Bluetooth Service -->
 	<string name="debug.tag.service.bluetooth">OBDMeBluetoothService</string>
+
+	<!-- Debug tags for the Setup Wizard -->
 	<string name="debug.tag.setupwizard.main">OBDMeSetupWizardMain</string>
 	<string name="debug.tag.setupwizard.account">OBDMeSetupWizardAccount</string>
 	<string name="debug.tag.setupwizard.bluetooth">OBDMeSetupWizardBluetooth</string>
 	<string name="debug.tag.setupwizard.vehicle">OBDMeSetupWizardVehicle</string>
 	<string name="debug.tag.setupwizard.complete">OBDMeSetupWizardComplete</string>
+
+	<!-- debug tags for the OBD Framework -->
 	<string name="debug.tag.obdframework.parseconfig">OBDFrameworkParseConfig</string>
 	<string name="debug.tag.obdframework.parseprotocol">OBDFrameworkParseProtocol</string>
+
+	<!-- Debug tags for the ELM Framework -->
+	<string name="debug.tag.elmframework">ELMFramework</string>
 	<string name="debug.tag.elmframework.ignpoller">ELMIgnitionPoller</string>
 	<string name="debug.tag.elmframework.acpoller">ELMAutoConnectPoller</string>
 	<string name="debug.tag.elmframework.chpoller">ELMCheckHardwarePoller</string>
+
+	<!-- Debug tags for the Data Collector -->
 	<string name="debug.tag.datacollector">DataCollector</string>
 </resources>
