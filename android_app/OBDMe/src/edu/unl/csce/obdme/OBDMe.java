@@ -1,5 +1,9 @@
 package edu.unl.csce.obdme;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -587,8 +591,21 @@ public class OBDMe extends Activity {
 	public void mechanicMode(){
 		// Set up real-time data list view
 		ListView dataList = (ListView) findViewById(R.id.mechanicmode_realtimedata_list);
-		String[] dataItems = { "test 1", "test 2", "test 3" };
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.device_name, dataItems);
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
+		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getPollablePIDList();
+		
+		for (String currentMode : pollablePIDList.keySet()) {
+			for (Iterator<String> pidIrt = pollablePIDList.get(currentMode).iterator(); pidIrt.hasNext(); ) {
+			String currentPID = pidIrt.next();
+
+			//Indicated if Enabled 
+			elmFramework.getConfiguredPID(currentMode, currentPID).isEnabled();
+
+			//Build the list to display using the pid name
+			dataAdapter.add(elmFramework.getConfiguredPID(currentMode, currentPID).getPidName());
+			}
+		}
+		
 		dataList.setAdapter(dataAdapter);
 		
 		// Set up error codes list view
