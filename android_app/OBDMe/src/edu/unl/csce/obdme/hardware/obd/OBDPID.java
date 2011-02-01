@@ -249,7 +249,7 @@ public class OBDPID {
 		Stack<Double> values = new Stack<Double>();
 
 		//Tokenize the formula
-		StringTokenizer tokenizedFormula = new StringTokenizer(this.getPidFormula(), " ", false);
+		StringTokenizer tokenizedFormula = new StringTokenizer(this.pidFormula, " ", false);
 
 		//While there are still elements to process
 		while (tokenizedFormula.hasMoreElements()) {
@@ -390,7 +390,7 @@ public class OBDPID {
 	 */
 	public List<String> bitEncodedEvaluator(List<String> byteResponse) {
 
-		if (this.getBitEncodedMap() != null) {
+		if (this.bitEncodedMap != null) {
 			//Make an iterator for the reponse string 
 			Iterator<String> responseValueItr = byteResponse.iterator();
 
@@ -428,8 +428,8 @@ public class OBDPID {
 			//For each bit, starting at index 0 (MSB), append the bit value to the decoded values list
 			for (int index = 0; index < bitString.length(); index++) {
 				if (bitString.charAt(index) == '1') {
-					if (this.getBitEncodedMap().containsKey(index)) {
-						decodedValues.add(this.getBitEncoding(index));
+					if (this.bitEncodedMap.containsKey(index)) {
+						decodedValues.add(this.bitEncodedMap.get(index));
 					}
 				} 
 			}
@@ -455,13 +455,13 @@ public class OBDPID {
 		Integer byteValue = Integer.parseInt(byteResponse.get(0).toString(), 16);
 
 		//If there is a byte encoded map
-		if (this.getByteEncodedMap() != null) {
+		if (this.byteEncodedMap != null) {
 
 			//And there is a value for our decoded byte
-			if (this.getByteEncodedMap().containsKey(byteValue)) {
+			if (this.byteEncodedMap.containsKey(byteValue)) {
 
 				//Return it
-				return this.getByteEncoding(byteValue);
+				return this.byteEncodedMap.get(byteValue);
 			}
 		}
 		

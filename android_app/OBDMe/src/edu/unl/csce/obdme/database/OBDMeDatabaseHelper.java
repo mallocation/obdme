@@ -5,8 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import edu.unl.csce.obdme.hardware.obd.OBDConfigurationManager;
 import edu.unl.csce.obdme.hardware.obd.OBDMode;
+import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 
 /**
  * The Class OBDMeDatabaseHelper.
@@ -45,7 +45,7 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
     	
     	StringBuffer sb = new StringBuffer();
-    	ConcurrentHashMap<String, OBDMode> protocol = OBDConfigurationManager.parseOBDCommands(context);
+    	ConcurrentHashMap<String, OBDMode> protocol = OBDConfigurationManager.readModeAndPIDOBDProtocol(context);
     	
     	sb.append("CREATE TABLE " + TABLE_NAME + " ( " + TABLE_KEY + " INTEGER PRIMARY KEY");
     	

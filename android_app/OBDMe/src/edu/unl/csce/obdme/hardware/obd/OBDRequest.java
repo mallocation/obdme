@@ -22,16 +22,16 @@ public class OBDRequest {
 	 * @param pid the pid
 	 */
 	public OBDRequest (OBDPID pid) {
-		this.setMode(pid.getParentMode());
-		this.setPid(pid.getPidHex());
-		this.setReturnLength(pid.getPidReturn());	
-		this.setRequestPID(pid);
+		this.modeHex = pid.getParentMode();
+		this.pidHex = pid.getPidHex();
+		this.returnLength = pid.getPidReturn();	
+		this.requestPID = pid;
 	}
 	
 	public OBDRequest (String mode, String pid, int returnSize) {
-		this.setMode(mode);
-		this.setPid(pid);
-		this.setReturnLength(returnSize);
+		this.modeHex = mode;
+		this.pidHex = pid;
+		this.returnLength = returnSize;	
 	}
 	
 	/* (non-Javadoc)

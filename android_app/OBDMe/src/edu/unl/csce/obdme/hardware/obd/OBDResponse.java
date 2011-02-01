@@ -39,10 +39,14 @@ public class OBDResponse {
 	 * @throws OBDParserException 
 	 */
 	public OBDResponse(Context context, OBDRequest originalRequest, String response) throws ELMException {
-		setContext(context);
-		setOriginalRequest(originalRequest);
-		setRawResponse(response);
-		responseBytes = new ArrayList<String>();
+		
+		//Initialize the variables
+		this.context = context;
+		this.originalRequest = originalRequest;
+		this.rawResponse = response;
+		this.responseBytes = new ArrayList<String>();
+		
+		//Perform the response
 		parseResponse(tokenizeResponse());
 		processResponse(originalRequest);
 	}

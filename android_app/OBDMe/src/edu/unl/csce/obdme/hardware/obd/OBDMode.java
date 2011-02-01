@@ -28,9 +28,9 @@ public class OBDMode {
 	 * @param modeDescription the mode description
 	 */
 	public OBDMode(String modeHex, String modeDescription) {
-		this.setModeHex(modeHex);
-		this.setModeValue(Integer.parseInt(modeHex,16));
-		this.setModeDescription(modeDescription);
+		this.modeHex = modeHex;
+		this.modeValue = Integer.parseInt(modeHex,16);
+		this.modeDescription = modeDescription;
 
 		//Create a new hash map that contains the PIDS
 		pidList = new ConcurrentHashMap<String, OBDPID>();

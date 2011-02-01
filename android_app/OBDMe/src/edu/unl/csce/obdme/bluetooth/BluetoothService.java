@@ -12,9 +12,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.R;
@@ -239,8 +237,9 @@ public class BluetoothService {
 	 * Gets the response from queue.
 	 *
 	 * @return the response from queue
+	 * @throws BluetoothServiceRequestTimeoutException the bluetooth service request timeout exception
 	 */
-	public String getResponseFromQueue() {
+	public String getResponseFromQueue() throws BluetoothServiceRequestTimeoutException {
 		// Create temporary object
 		BluetoothConnectedThread thread;
 		// Synchronize a copy of the ConnectedThread
@@ -446,6 +445,9 @@ public class BluetoothService {
 		/** The response queue. */
 		private ConcurrentLinkedQueue<String> responseQueue;
 
+		/** The timeout. */
+		private int timeout;
+
 		/**
 		 * Instantiates a new connection connected thread.
 		 *
@@ -456,7 +458,8 @@ public class BluetoothService {
 				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 				"Creating connected thread");
 			}
-
+			
+			timeout = context.getResources().getInteger(R.integer.bluetooth_response_timeout);
 			bluetoothSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -525,11 +528,36 @@ public class BluetoothService {
 		 * Gets the response from queue.
 		 *
 		 * @return the response from queue
+		 * @throws BluetoothServiceRequestTimeoutException the bluetooth service request timeout exception
 		 */
-		public String getResponseFromQueue() {
+		public String getResponseFromQueue() throws BluetoothServiceRequestTimeoutException {
+			
+			int timeWaiting = 0; 
+			
+			//While the response queue is empty
 			while(responseQueue.isEmpty()){
-				//Do nothing, we want to block
+				
+				//Sleep for 5 milliseconds
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+						"Interrupted exception waiting for response");
+					}
+				}
+				
+				//Increase the amount of time we've spent waiting
+				timeWaiting += 5;
+				
+				//If the time waiting exceeds the request timeout limit, throw a BluetoothServiceRequestTimeoutException
+				if (timeWaiting >= timeout) {
+					throw new BluetoothServiceRequestTimeoutException("The device took too long to respond.");
+				}
+				
 			}
+			
+			//Otherwise, we have a response.  Return it.
 			return responseQueue.poll();
 		}
 		
