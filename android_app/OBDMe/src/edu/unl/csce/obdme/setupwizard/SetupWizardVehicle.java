@@ -13,13 +13,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
-import edu.unl.csce.obdme.hardware.obd.OBDConfigurationManager;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
+import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 
 /**
  * The Class SetupWizardVehicle.
@@ -31,6 +32,8 @@ public class SetupWizardVehicle extends Activity {
 
 	/** The elm framework. */
 	private ELMFramework elmFramework;
+	
+	private ObdMeService webFramework;
 
 	/** The ign poller. */
 	private ELMIgnitionPoller ignPoller;
@@ -67,6 +70,7 @@ public class SetupWizardVehicle extends Activity {
 
 		setContentView(R.layout.setupwizard_vehicle);
 
+		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		bluetoothService.setAppHandler(bluetoothHandler);
 
