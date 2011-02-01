@@ -1,6 +1,7 @@
 package edu.unl.csce.obdme;
 
 import android.app.Application;
+import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 
@@ -17,6 +18,9 @@ public class OBDMeApplication extends Application {
 	
 	/** The elm framework. */
 	private ELMFramework elmFramework = null;
+	
+	/** The web framework. */
+	private ObdMeService webFramework = null;
 	
 	/**
 	 * Gets the single instance of OBDMeApplication.
@@ -52,6 +56,19 @@ public class OBDMeApplication extends Application {
             elmFramework = new ELMFramework(getApplicationContext(), getBluetoothService());
         }
         return elmFramework;
+    }
+	
+	/**
+	 * Gets the framework.
+	 *
+	 * @return the framework
+	 */
+	public ObdMeService getWebFramework() {
+        if (webFramework == null) {
+            checkInstance();
+            webFramework = new ObdMeService(getString(R.string.webservice_apikey));
+        }
+        return webFramework;
     }
 	
 	/**

@@ -20,7 +20,6 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
@@ -536,6 +535,8 @@ public class OBDMe extends Activity {
 				switch (msg.arg1) {
 
 				case DataCollector.COLLECTOR_NEW_DATA:
+					
+					//TODO: TESTING
 					TextView lowerText = (TextView) findViewById(R.id.basicusermode_portrait_lower_value);
 					lowerText.setText(collectorThread.getCurrentData("01", "0C"));
 					break;

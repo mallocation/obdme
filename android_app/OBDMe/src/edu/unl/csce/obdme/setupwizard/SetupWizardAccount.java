@@ -2,12 +2,16 @@ package edu.unl.csce.obdme.setupwizard;
 
 import java.util.regex.Pattern;
 
-import edu.unl.csce.obdme.R;
-import edu.unl.csce.obdme.utils.OBDMeSecurity;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,6 +20,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.unl.csce.obdme.OBDMeApplication;
+import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.api.ObdMeService;
+import edu.unl.csce.obdme.api.entities.User;
 
 /**
  * The Class OBDMeSetupWizardAccount.
@@ -37,6 +45,12 @@ public class SetupWizardAccount extends Activity {
 	/** The Constant SETUP_ACCOUNT_RESULT_OK. */
 	public static final int SETUP_ACCOUNT_RESULT_OK = 10;
 
+	/** The busy dialog. */
+	private Dialog busyDialog;
+
+	/** The web framework. */
+	private ObdMeService webFramework;
+
 	/** The preferences. */
 	private SharedPreferences prefs;
 
@@ -54,6 +68,8 @@ public class SetupWizardAccount extends Activity {
 
 		prefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
 		emailRegEx = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
+		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
 
 		setContentView(R.layout.setupwizard_account);
 
@@ -184,26 +200,67 @@ public class SetupWizardAccount extends Activity {
 				}
 
 				//If the ready count indicated all the verification steps have passed
-				if(ready == 3) {
+				if(ready == 3 && NEW_ACCOUNT == true) {
 
-					//Update the local preference file
-					SharedPreferences.Editor editor = prefs.edit();
-					editor.putString(getResources().getString(R.string.prefs_account_username), emailText.getText().toString());
-					try {
-						editor.putString(getResources().getString(R.string.prefs_account_password), OBDMeSecurity.encrypt(emailText.getText().toString()));
-					} catch (Exception e) {
+					//Check the existing users password
+					EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
+					EditText confirmPasswordText = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
 
-					}
-					editor.commit();
+					busyDialog = ProgressDialog.show(SetupWizardAccount.this, "", getResources().getString(R.string.setupwizard_account_dialog_creating), true);
 
-					//Start the bluetooth setup wizzard
-					Intent intent = new Intent(view.getContext(), SetupWizardBluetooth.class);
-					startActivityForResult(intent, SetupWizardBluetooth.SETUP_BLUETOOTH_RESULT_OK);
+					//Send the request to the webservice to create this user
+					webFramework.getUsersService().createUser(emailText.getText().toString(), confirmPasswordText.getText().toString(), createAccountHander);
+
+				}
+
+				else if (ready == 3 && NEW_ACCOUNT == false) {
+					//Check the existing users password
+					EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
+					EditText confirmPasswordText = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
+
+					busyDialog = ProgressDialog.show(SetupWizardAccount.this, "", getResources().getString(R.string.setupwizard_account_dialog_creating), true);
+
+					//Send the request to the webservice to get this users credentials
+					webFramework.getUsersService().validateUserCredentials(emailText.getText().toString(), confirmPasswordText.getText().toString(), getAccountCredentialsHandler);
 				}
 			}
 
 		});
 
+	}
+
+	/**
+	 * Account creation successful.
+	 *
+	 * @param newUserObject the new user object
+	 */
+	public void accountCreationSuccessful(User newUserObject) {
+		//Update the local preference file
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
+		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
+		editor.commit();
+
+		//Start the bluetooth setup wizzard
+		Intent intent = new Intent(getApplicationContext(), SetupWizardBluetooth.class);
+		startActivityForResult(intent, SetupWizardBluetooth.SETUP_BLUETOOTH_RESULT_OK);
+	}
+
+	/**
+	 * Account validation successful.
+	 *
+	 * @param newUserObject the new user object
+	 */
+	public void accountValidationSuccessful(User newUserObject) {
+		//Update the local preference file
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
+		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
+		editor.commit();
+
+		//Start the bluetooth setup wizzard
+		Intent intent = new Intent(getApplicationContext(), SetupWizardBluetooth.class);
+		startActivityForResult(intent, SetupWizardBluetooth.SETUP_BLUETOOTH_RESULT_OK);
 	}
 
 	/* (non-Javadoc)
@@ -213,10 +270,10 @@ public class SetupWizardAccount extends Activity {
 		switch (requestCode) {
 		case SetupWizardBluetooth.SETUP_BLUETOOTH_RESULT_OK:
 			if (resultCode == Activity.RESULT_OK) {
-				
+
 				//Backprop
 				setResult(Activity.RESULT_OK);
-				
+
 				//Finish the activity
 				finish();
 			}
@@ -249,10 +306,9 @@ public class SetupWizardAccount extends Activity {
 	/**
 	 * Verify password.
 	 */
-	@SuppressWarnings("unused")
 	protected void verifyPassword() {
 		EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
-
+		EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
 		//Choose between satisfying minimum password length or verifying password
 		if (passwordText.getText().length() >= 6) {
 			if(NEW_ACCOUNT) {
@@ -262,16 +318,9 @@ public class SetupWizardAccount extends Activity {
 				checkConfirmPassword();
 				VERIFIED_PASSWORD = 1;
 			} else {
-				// TODO Account password validation
-				if(true) {
-					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
-					//Check the confirm password again in case user goes back to fix original password to match the confirm password
-					checkConfirmPassword();
-					VERIFIED_PASSWORD = 1;
-				} else {
-					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red_x, 0);
-					VERIFIED_PASSWORD = 0;
-				}
+
+				//Check the existing users password
+				webFramework.getUsersService().validateUserCredentials(emailText.getText().toString(), passwordText.getText().toString(), confirmRegisteredPasswordHandler);
 			}
 		} else { //Password does not meet the minimum length requirement so it can't be correct
 			//Show the red x in the password box
@@ -293,29 +342,8 @@ public class SetupWizardAccount extends Activity {
 
 		//Format checking to make sure that the email address is valid (syntax wise)
 		if (emailRegEx.matcher(emailText.getText()).matches()) {
-
-			// TODO Check is the address entered is an existing account
-			if(false) {
-				//Show the green tick for valid email
-				emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
-				comfirmPasswordTitle.setVisibility(View.GONE);
-				comfirmPasswordInput.setVisibility(View.GONE);
-				button.setText(R.string.setupwizard_account_button_signin_text);
-				NEW_ACCOUNT = false;
-				VERIFIED_CONFIRM_PASSWORD = true;
-				VERIFIED_EMAIL = true;
-			}
-
-			//If the email doesn't exist on the server then the user wants to create a new account
-			else {
-				//Show the green plus for adding an account
-				emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_plus, 0);
-				comfirmPasswordTitle.setVisibility(View.VISIBLE);
-				comfirmPasswordInput.setVisibility(View.VISIBLE);
-				button.setText(R.string.setupwizard_account_button_createaccount_text);
-				NEW_ACCOUNT = true;	
-				VERIFIED_EMAIL = true;
-			}
+			//Verify if the user is registered
+			webFramework.getUsersService().isUserRegistered(emailText.getText().toString(), userIsRegistered);
 		}
 
 		//Email address is not formatted correctly, show the red x in the email box
@@ -328,4 +356,155 @@ public class SetupWizardAccount extends Activity {
 
 	}
 
+	/** The user is registered. */
+	private final Handler userIsRegistered = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+
+			EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
+			TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
+			EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
+			Button button = (Button) findViewById(R.id.setupwizard_account_button);
+
+			switch (msg.what) {
+
+			//Messsage from BT service indicating a connection state change
+			case 0:
+
+				if ((Boolean)msg.obj) {
+					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
+					comfirmPasswordTitle.setVisibility(View.GONE);
+					comfirmPasswordInput.setVisibility(View.GONE);
+					button.setText(R.string.setupwizard_account_button_signin_text);
+					NEW_ACCOUNT = false;
+					VERIFIED_CONFIRM_PASSWORD = true;
+					VERIFIED_EMAIL = true;
+				}
+				else {
+					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_plus, 0);
+					comfirmPasswordTitle.setVisibility(View.VISIBLE);
+					comfirmPasswordInput.setVisibility(View.VISIBLE);
+					button.setText(R.string.setupwizard_account_button_createaccount_text);
+					NEW_ACCOUNT = true;	
+					VERIFIED_EMAIL = true;
+				}
+				break;
+
+
+
+			}
+		}
+	};
+
+	/** The confirm registered password handler. */
+	private final Handler confirmRegisteredPasswordHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+
+			EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
+			switch (msg.what) {
+
+			//Messsage from BT service indicating a connection state change
+			case 0:
+				if(msg.obj != null) {
+					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
+					//Check the confirm password again in case user goes back to fix original password to match the confirm password
+					checkConfirmPassword();
+					VERIFIED_PASSWORD = 1;
+				} else {
+					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red_x, 0);
+					VERIFIED_PASSWORD = 0;
+				}
+				break;
+
+
+
+			}
+		}
+	};
+
+	/** The create account hander. */
+	private final Handler createAccountHander = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+
+			switch (msg.what) {
+
+			//Messsage from BT service indicating a connection state change
+			case 0:
+				if(msg.obj != null) {
+					
+					if (busyDialog != null) {
+						busyDialog.dismiss();
+					}
+					
+					accountCreationSuccessful((User)msg.obj);
+
+				} 
+				else {
+
+					if (busyDialog != null) {
+						busyDialog.dismiss();
+					}
+
+					//Show alert dialog, the app must exit.  This is not recoverable
+					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
+					.setCancelable(false)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							SetupWizardAccount.this.finish();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
+				}
+				break;
+
+
+
+			}
+		}
+	};
+
+	/** The get account credentials handler. */
+	private final Handler getAccountCredentialsHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+
+			switch (msg.what) {
+
+			//Messsage from BT service indicating a connection state change
+			case 0:
+				if(msg.obj != null) {
+					if (busyDialog != null) {
+						busyDialog.dismiss();
+					}
+					accountValidationSuccessful((User)msg.obj);
+				} else {
+					if (busyDialog != null) {
+						busyDialog.dismiss();
+					}
+
+					//Show alert dialog, the app must exit.  This is not recoverable
+					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
+					.setCancelable(false)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							SetupWizardAccount.this.finish();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
+				}
+				break;
+
+
+
+			}
+		}
+	};
 }

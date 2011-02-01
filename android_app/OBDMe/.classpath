@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="webservice"/>
+	<classpathentry kind="src" path="utils"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="lib" path="/CSCE_488_489_WebApp/OBDMe_API_Client_Library/lib/gson-1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
