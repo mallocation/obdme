@@ -32,6 +32,7 @@
 	<string name="setupwizard.account.password.error.match">Your passwords do not match</string>
 	<string name="setupwizard.account.email.error.bad">Your email address is not valid</string>
 	<string name="setupwizard.account.dialog.creating">Creating your account...</string>
+	<string name="setupwizard.account.dialog.loggingin">Logging In...</string>
 	<string name="setupwizard.account.dialog.account.create.failure">We were unable to create your account.  Please try again later.</string>
 	<string name="setupwizard.account.dialog.account.validate.failure">We were unable to validate your account.  Please try again later.</string>
 

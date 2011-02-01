@@ -216,12 +216,12 @@ public class SetupWizardAccount extends Activity {
 				else if (ready == 3 && NEW_ACCOUNT == false) {
 					//Check the existing users password
 					EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
-					EditText confirmPasswordText = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
+					EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
 
-					busyDialog = ProgressDialog.show(SetupWizardAccount.this, "", getResources().getString(R.string.setupwizard_account_dialog_creating), true);
+					busyDialog = ProgressDialog.show(SetupWizardAccount.this, "", getResources().getString(R.string.setupwizard_account_dialog_loggingin), true);
 
 					//Send the request to the webservice to get this users credentials
-					webFramework.getUsersService().validateUserCredentials(emailText.getText().toString(), confirmPasswordText.getText().toString(), getAccountCredentialsHandler);
+					webFramework.getUsersService().validateUserCredentials(emailText.getText().toString(), passwordText.getText().toString(), getAccountCredentialsHandler);
 				}
 			}
 
@@ -240,6 +240,10 @@ public class SetupWizardAccount extends Activity {
 		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
 		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
 		editor.commit();
+		
+		if (busyDialog != null) {
+			busyDialog.dismiss();
+		}
 
 		//Start the bluetooth setup wizzard
 		Intent intent = new Intent(getApplicationContext(), SetupWizardBluetooth.class);
@@ -257,10 +261,15 @@ public class SetupWizardAccount extends Activity {
 		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
 		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
 		editor.commit();
+		
+		if (busyDialog != null) {
+			busyDialog.dismiss();
+		}
 
 		//Start the bluetooth setup wizzard
 		Intent intent = new Intent(getApplicationContext(), SetupWizardBluetooth.class);
 		startActivityForResult(intent, SetupWizardBluetooth.SETUP_BLUETOOTH_RESULT_OK);
+
 	}
 
 	/* (non-Javadoc)
@@ -289,7 +298,7 @@ public class SetupWizardAccount extends Activity {
 		EditText confirmPasswordText = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
 
 		//Make sure that the passwords match
-		if(passwordText.getText().toString().equals(confirmPasswordText.getText().toString())) {
+		if(passwordText.getText().toString().equals(confirmPasswordText.getText().toString())  && NEW_ACCOUNT) {
 
 			//Show the green check in the confirmation box
 			confirmPasswordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
@@ -297,7 +306,7 @@ public class SetupWizardAccount extends Activity {
 		}
 
 		//Otherwise, show the red check in the confirmation box
-		else {
+		else if (NEW_ACCOUNT){
 			confirmPasswordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red_x, 0);
 			VERIFIED_CONFIRM_PASSWORD = false;
 		}
@@ -433,11 +442,6 @@ public class SetupWizardAccount extends Activity {
 			//Messsage from BT service indicating a connection state change
 			case 0:
 				if(msg.obj != null) {
-					
-					if (busyDialog != null) {
-						busyDialog.dismiss();
-					}
-					
 					accountCreationSuccessful((User)msg.obj);
 
 				} 
@@ -478,9 +482,6 @@ public class SetupWizardAccount extends Activity {
 			//Messsage from BT service indicating a connection state change
 			case 0:
 				if(msg.obj != null) {
-					if (busyDialog != null) {
-						busyDialog.dismiss();
-					}
 					accountValidationSuccessful((User)msg.obj);
 				} else {
 					if (busyDialog != null) {
