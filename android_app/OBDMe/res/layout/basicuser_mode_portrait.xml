@@ -3,7 +3,7 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:gravity="center_vertical">
 	<TextView 
-		android:text="MPG (average)"
+		android:text="Engine Temp (C)"
 		android:id="@+id/basicusermode.portrait.upper.titletext"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
 		android:gravity="center_vertical|center_horizontal">
 	</TextView>
 	<TextView 
-		android:text="34.5"
+		android:text="--"
 		android:id="@+id/basicusermode.portrait.upper.value"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
 		android:gravity="center_vertical|center_horizontal">
 	</TextView>
 	<TextView
-		android:text="1234"
+		android:text="----"
 		android:id="@+id/basicusermode.portrait.lower.value"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"

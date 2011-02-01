@@ -134,71 +134,73 @@ public abstract class OBDConfigurationManager {
 		//If the config file exists,
 		if (configFile.exists()) {
 
-		}
+			//Make the configuration HashMap
+			OBDConfiguration configurationStructure = new OBDConfiguration(VIN);
 
-		//Make the configuration HashMap
-		OBDConfiguration configurationStructure = new OBDConfiguration("");
+			try {
 
-		try {
+				//Open the file for reading
+				FileInputStream inputStream = new FileInputStream(configFile);
 
-			//Open the file for reading
-			FileInputStream inputStream = new FileInputStream(configFile);
+				//Setup the XML Pull parser
+				XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+				factory.setValidating(false);
+				XmlPullParser xpp = factory.newPullParser();
+				xpp.setInput(inputStream, null);
 
-			//Setup the XML Pull parser
-			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-			factory.setValidating(false);
-			XmlPullParser xpp = factory.newPullParser();
-			xpp.setInput(inputStream, null);
+				//Setup the XML Pull Parser
+				int eventType = xpp.getEventType();
 
-			//Setup the XML Pull Parser
-			int eventType = xpp.getEventType();
+				//Local Vars
+				String parentMode = null;
 
-			//Local Vars
-			String parentMode = null;
+				//While we haven't reached the end of the document
+				while (eventType != XmlPullParser.END_DOCUMENT) {
+					if(eventType == XmlPullParser.START_TAG) {
+						String startTagName = xpp.getName();
 
-			//While we haven't reached the end of the document
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				if(eventType == XmlPullParser.START_TAG) {
-					String startTagName = xpp.getName();
+						//If the start of the config
+						if (startTagName.equals("obd-config")) {
+							configurationStructure.setVIN(xpp.getAttributeValue(null, "vin"));
+						}
 
-					//If the start of the config
-					if (startTagName.equals("obd-config")) {
-						configurationStructure.setVIN(xpp.getAttributeValue(null, "vin"));
+						//If a mode node, add it to the hashmap
+						else if(startTagName.equals("mode")) {
+							parentMode = xpp.getAttributeValue(null, "hex");
+							configurationStructure.putMode(xpp.getAttributeValue(null, "hex"));
+						}
+
+						//If a pid node, add it to the hashmap
+						else if (startTagName.equals("pid")) {
+							configurationStructure.getMode(parentMode).putPID(
+									new OBDConfigurationPID(xpp.getAttributeValue(null, "hex"), 
+											xpp.getAttributeValue(null, "enabled")));
+						}
 					}
-
-					//If a mode node, add it to the hashmap
-					if(startTagName.equals("mode")) {
-						parentMode = xpp.getAttributeValue(null, "hex");
-						configurationStructure.putMode(xpp.getAttributeValue(null, "hex"));
-					}
-
-					//If a pid node, add it to the hashmap
-					if (startTagName.equals("pid")) {
-						configurationStructure.getMode(parentMode).putPID(
-								new OBDConfigurationPID(xpp.getAttributeValue(null, "hex"), 
-										xpp.getAttributeValue(null, "enabled")));
-					}
+					eventType = xpp.next();
 				}
-				eventType = xpp.next();
+			} catch (NotFoundException e) {
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+					"Error parsing obd configuration: Config file not found");
+				}
+			} catch (XmlPullParserException e) {
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+					"Error parsing obd configuration: An XML Pull Parser error occured");
+				}
+			} catch (IOException e) {
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+					"Error parsing obd configuration: A general IO exception occured.");
+				}
 			}
-		} catch (NotFoundException e) {
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: Config file not found");
-			}
-		} catch (XmlPullParserException e) {
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: An XML Pull Parser error occured");
-			}
-		} catch (IOException e) {
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: A general IO exception occured.");
-			}
-		}
 
-		return configurationStructure;
+			return configurationStructure;
+		}
+		else {
+			return null;
+		}
 	}
 
 	/**
@@ -305,22 +307,22 @@ public abstract class OBDConfigurationManager {
 		} catch (NumberFormatException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: Numer format exception");
+						"Error parsing OBD Protocol: Numer format exception");
 			}
 		} catch (NotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: Not Found Exception");
+						"Error parsing OBD Protocol: Not Found Exception");
 			}
 		} catch (XmlPullParserException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: XML Pull Parser Exception");
+						"Error parsing OBD Protocol: XML Pull Parser Exception");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: A general IO exception occured.");
+						"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 
@@ -389,7 +391,7 @@ public abstract class OBDConfigurationManager {
 											xrp.getAttributeValue(null, "eval"),
 											xrp.getAttributeValue(null, "name"),
 											parentMode,
-											xrp.getAttributeValue(null, "pollable")));
+											xrp.getAttributeValue(null, "pollable"), true));
 
 							//Set the enabled status for the newly created PID
 							protocolStructure.get(parentMode).getPID(pidHex).setEnabled(
@@ -467,22 +469,22 @@ public abstract class OBDConfigurationManager {
 		} catch (NumberFormatException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: Numer format exception");
+						"Error parsing OBD Protocol: Numer format exception");
 			}
 		} catch (NotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: Not Found Exception");
+						"Error parsing OBD Protocol: Not Found Exception");
 			}
 		} catch (XmlPullParserException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: XML Pull Parser Exception");
+						"Error parsing OBD Protocol: XML Pull Parser Exception");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: A general IO exception occured.");
+						"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 
@@ -567,22 +569,22 @@ public abstract class OBDConfigurationManager {
 		} catch (NumberFormatException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: Numer format exception");
+						"Error parsing OBD Protocol: Numer format exception");
 			}
 		} catch (NotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: Not Found Exception");
+						"Error parsing OBD Protocol: Not Found Exception");
 			}
 		} catch (XmlPullParserException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-				"Error parsing OBD Protocol: XML Pull Parser Exception");
+						"Error parsing OBD Protocol: XML Pull Parser Exception");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: A general IO exception occured.");
+						"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 
@@ -665,22 +667,22 @@ public abstract class OBDConfigurationManager {
 		} catch (FileNotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error writing current obd configuration: File not found exception occured.");
+						"Error writing current obd configuration: File not found exception occured.");
 			}
 		} catch (IllegalArgumentException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: Illegal argument exception occured.");
+						"Error parsing obd configuration: Illegal argument exception occured.");
 			}
 		} catch (IllegalStateException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: Illegal state exception occured.");
+						"Error parsing obd configuration: Illegal state exception occured.");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: A general IO exception occured.");
+						"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 

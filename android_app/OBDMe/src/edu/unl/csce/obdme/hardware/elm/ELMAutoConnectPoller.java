@@ -210,6 +210,8 @@ public class ELMAutoConnectPoller {
 								Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
 										"Saved protocol was loaded, not validating PIDS.");
 							}
+							setState(AUTO_CONNECT_COMPLETE);
+							continuePolling = false;
 						}
 					}
 

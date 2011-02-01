@@ -111,10 +111,10 @@ public class ELMFramework {
 					retries++;
 				}
 
-			} while (response != null && retries <= MAXIMUM_REQUEST_RETRIES);
+			} while (response == null && retries <= MAXIMUM_REQUEST_RETRIES);
 
 			//If we reached our maximum number of retries... 
-			if(retries <= MAXIMUM_REQUEST_RETRIES) {
+			if(retries >= MAXIMUM_REQUEST_RETRIES) {
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 							"Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid() 
@@ -191,10 +191,10 @@ public class ELMFramework {
 					retries++;
 				}
 
-			} while (response != null && retries <= MAXIMUM_REQUEST_RETRIES);
+			} while (response == null && retries <= MAXIMUM_REQUEST_RETRIES);
 
 			//If we reached our maximum number of retries... 
-			if(retries <= MAXIMUM_REQUEST_RETRIES) {
+			if(retries >= MAXIMUM_REQUEST_RETRIES) {
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 							"Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid() 

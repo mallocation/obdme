@@ -542,6 +542,8 @@ public class OBDMe extends Activity {
 					
 					//TODO: TESTING
 					TextView lowerText = (TextView) findViewById(R.id.basicusermode_portrait_lower_value);
+					TextView upperText = (TextView) findViewById(R.id.basicusermode_portrait_upper_value);
+					upperText.setText(collectorThread.getCurrentData("01", "05"));
 					lowerText.setText(collectorThread.getCurrentData("01", "0C"));
 					break;
 

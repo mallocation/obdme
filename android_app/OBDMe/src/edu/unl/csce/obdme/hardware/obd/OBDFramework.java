@@ -49,7 +49,7 @@ public class OBDFramework {
 				
 				//Load the protocol constructed from the saved configuration
 				this.configuredProtocol = OBDConfigurationManager.parseSavedOBDProtocol(context, OBDConfigurationManager.
-						parseSavedConfiguration(context, context.getString(R.string.prefs_account_vin)));
+						parseSavedConfiguration(context,  prefs.getString(context.getString(R.string.prefs_account_vin), null)));
 				
 				//Set that this is a saved configuration
 				this.savedConfiguration = true;
@@ -113,7 +113,7 @@ public class OBDFramework {
 	 *
 	 * @return the pollable pid list
 	 */
-	public HashMap<String, List<String>> getPollablePIDList() {
+	public synchronized HashMap<String, List<String>> getPollablePIDList() {
 
 		HashMap<String, List<String>> pollablePIDS = new HashMap<String, List<String>>();
 
@@ -142,7 +142,7 @@ public class OBDFramework {
 	 *
 	 * @return the enabled pollable pid list
 	 */
-	public HashMap<String, List<String>> getEnabledPollablePIDList() {
+	public synchronized HashMap<String, List<String>> getEnabledPollablePIDList() {
 
 		HashMap<String, List<String>> enabledPollablePIDS = new HashMap<String, List<String>>();
 

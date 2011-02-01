@@ -320,7 +320,7 @@ public class DataCollector {
 				}
 
 				//Add the current collection to the queue
-				putCurrentDataSet(currentDataForQueue);
+				//putCurrentDataSet(currentDataForQueue);
 
 				//Tell the GUI app that we have new data to update the screen with
 				setDataChange(COLLECTOR_NEW_DATA);
