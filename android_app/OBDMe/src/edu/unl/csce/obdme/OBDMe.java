@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
@@ -101,6 +103,7 @@ public class OBDMe extends Activity {
 			//setContentView(R.layout.enthusiastuser_mode);	
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
 			setContentView(R.layout.mechanic_mode);
+			mechanicMode();
 		} else {
 			// First run, so set it to BASIC_USER_MODE
 			SharedPreferences.Editor prefEditor = sharedPrefs.edit();
@@ -134,6 +137,7 @@ public class OBDMe extends Activity {
 			//setContentView(R.layout.enthusiastuser_mode);
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
 			setContentView(R.layout.mechanic_mode);
+			mechanicMode();
 		}
 	}
 
@@ -577,5 +581,19 @@ public class OBDMe extends Activity {
 			break;
 
 		}
+	}
+	
+	public void mechanicMode(){
+		// Set up real-time data list view
+		ListView dataList = (ListView) findViewById(R.id.mechanicmode_realtimedata_list);
+		String[] dataItems = { "test 1", "test 2", "test 3" };
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.device_name, dataItems);
+		dataList.setAdapter(dataAdapter);
+		
+		// Set up error codes list view
+		ListView errorList = (ListView) findViewById(R.id.mechanicmode_errorcodes_list);
+		String[] errorItems = { "error code 1", "error code 2" };
+		ArrayAdapter<String> errorAdapter = new ArrayAdapter<String>(this, R.layout.device_name, errorItems);
+		errorList.setAdapter(errorAdapter);
 	}
 }
