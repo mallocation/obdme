@@ -1,11 +1,13 @@
 package edu.unl.csce.obdme.collector;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -187,8 +189,15 @@ public class DataCollector {
 	protected synchronized void putCurrentDataSet(HashMap<String, String> currentDataSet) {
 		this.currentDataQueue.add(currentDataSet);
 
-		if (this.currentDataQueue.size() > 10) {
-			batchDatabaseWrite();
+		if (currentDataQueue.size() > 10) {
+			if (writerThread == null) {
+				batchDatabaseWrite();
+			}
+			if (writerThread != null) {
+				if (!writerThread.isAlive()) {
+					batchDatabaseWrite();
+				}
+			}
 		}
 	}
 
@@ -280,7 +289,7 @@ public class DataCollector {
 							if (response != null) {
 								try {
 									//If the result was a double, round it and convert it to a string
-									if (elmFramework.getConfiguredPID(modeHex, currentPID).getPidReturnObject().equals("java.lang.Double")) {
+									if (response.getProcessedResponse() instanceof Double) {
 										Double responseDouble = (Double)response.getProcessedResponse();
 										responseDouble = (double) Math.round(responseDouble);
 										putCurrentData((modeHex+currentPID).toString(), Double.toString(responseDouble));
@@ -288,13 +297,13 @@ public class DataCollector {
 									}
 
 									//If the result was a string
-									else if (elmFramework.getConfiguredPID(modeHex, currentPID).getPidReturnObject().equals("java.lang.String")) {
+									else if (response.getProcessedResponse() instanceof String) {
 										putCurrentData((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
 										currentDataForQueue.put((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
 									}
 
 									//If the result was an array list of strings
-									else if (elmFramework.getConfiguredPID(modeHex, currentPID).getPidReturnObject().equals("java.util.ArrayList")) {
+									else if (response.getProcessedResponse() instanceof List) {
 										@SuppressWarnings("unchecked")
 										List<String> resultsList = (List<String>) response.getProcessedResponse();
 										putCurrentData((modeHex+currentPID).toString(), resultsList.toString());
@@ -320,7 +329,7 @@ public class DataCollector {
 				}
 
 				//Add the current collection to the queue
-				//putCurrentDataSet(currentDataForQueue);
+				putCurrentDataSet(currentDataForQueue);
 
 				//Tell the GUI app that we have new data to update the screen with
 				setDataChange(COLLECTOR_NEW_DATA);
@@ -345,7 +354,7 @@ public class DataCollector {
 		 * Pause.
 		 */
 		public synchronized void pause(){
-			collectionPaused = false;
+			collectionPaused = true;
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
 				"Pausing Polling");
@@ -436,63 +445,28 @@ public class DataCollector {
 				"Executing batch database write");
 			}
 
-			//Create the new SQL statement string buffer, this will hold the batch inserts
-			StringBuffer sbSQLStatement = new StringBuffer();
-
 			//For all the items in the current data queue
 			for (int i = 0 ; i < currentDataQueue.size(); i++ ) {
 
 				//Create new string buffers for both the insert statement, columns, and values
-				StringBuffer sbInsert = new StringBuffer();
-				StringBuffer sbColumns = new StringBuffer();
-				StringBuffer sbValues = new StringBuffer();
 
-				//Start the initial insert statement
-				sbInsert.append("INSERT INTO " + OBDMeDatabaseHelper.TABLE_NAME + " ");
-
-				//Start the initial column declaration
-				sbColumns.append("(" + OBDMeDatabaseHelper.TABLE_KEY);
-
-				//Start the initial values declaration
-				sbValues.append("(NULL");
+				
+				ContentValues cv = new ContentValues();
 
 				//Get the current set from the dataQueue
 				HashMap<String, String> currentSet = currentDataQueue.poll();
 
 				//For all the mode and pid values that were recorded
 				for (String currentKey : currentSet.keySet()) {
-
-					//Add the column and value
-					sbColumns.append(",data_" + currentKey);
-					sbValues.append(",'" +currentSet.get(currentKey) + "'");
+					cv.put("data_" + currentKey, currentSet.get(currentKey));
 				}
-
-				//End the column and values section
-				sbColumns.append(") VALUES ");
-				sbValues.append(");");
-
-				//FOR DEBUG!
+				
+				long tableRow = sqldb.insert(OBDMeDatabaseHelper.TABLE_NAME, null, cv);
 				if(context.getResources().getBoolean(R.bool.debug)) {
-					String sqlInsert = sbInsert.toString()+sbColumns.toString()+sbValues.toString();
 					Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-							"SQL INSERT: " + sqlInsert.toString());
+							"Inserted data into table row: " + tableRow);
 				}
 
-				//Add this statement to the group of statements
-				sbSQLStatement.append(sbInsert.toString()+sbColumns.toString()+sbValues.toString());
-
-			}
-
-			//Execute the sql
-			try {
-
-				sqldb.execSQL(sbSQLStatement.toString());
-
-			} catch (SQLException sqle) {
-				if(context.getResources().getBoolean(R.bool.debug)) {
-					Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-							"Error executing database query: " + sqle.getMessage());
-				}
 			}
 
 			//Close the connection, we're done.

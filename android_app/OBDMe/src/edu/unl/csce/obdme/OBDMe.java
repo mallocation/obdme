@@ -269,6 +269,7 @@ public class OBDMe extends Activity {
 				break;
 
 			case BluetoothService.STATE_FAILED:
+				collectorThread.pausePolling();
 				bluetoothService.connect(bluetoothDevice);
 				break;
 			}
@@ -324,7 +325,11 @@ public class OBDMe extends Activity {
 					break;
 
 				case BluetoothService.STATE_FAILED:
-					//TODO Make this nice for the user
+					collectorThread.pausePolling();
+					BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+					String device = sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
+					BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
+					bluetoothService.connect(bluetoothDevice);
 					break;
 
 				case BluetoothService.STATE_CONNECTING:
