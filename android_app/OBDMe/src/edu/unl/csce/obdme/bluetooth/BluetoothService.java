@@ -89,7 +89,7 @@ public class BluetoothService {
 	 *
 	 * @param state the new state
 	 */
-	private synchronized void setState(int state) {
+	public synchronized void setState(int state) {
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 					"New Bluetooth State ->" + state);
@@ -508,10 +508,7 @@ public class BluetoothService {
 						}
 					} while (currentChar != ASCII_COMMAND_PROMPT); //Continue until we reach a prompt character
 
-					String recievedString = recievedData.toString();
-					recievedString = recievedString.trim();
-
-					responseQueue.add(recievedString);
+					responseQueue.add(recievedData.toString());
 
 				} catch (IOException e) {
 					if(context.getResources().getBoolean(R.bool.debug)) {
@@ -582,8 +579,9 @@ public class BluetoothService {
 			} catch (IOException e) {
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
-					"Exception during write");
+					"Exception during write", e);
 				}
+				setState(BluetoothService.STATE_FAILED);
 			}
 		}
 

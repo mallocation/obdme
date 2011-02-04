@@ -79,7 +79,7 @@ public class OBDResponse {
 			ELMErrorParser.parseStringForError(responseArrayList.peek());
 
 			//Check if the first list is indicating a protocol search
-			if(responseArrayList.get(0).contains(ELM_DEVICE_SEARCHING)) {
+			if(responseArrayList.get(0).equals(ELM_DEVICE_SEARCHING)) {
 
 				//Throw it away
 				responseArrayList.remove();
@@ -89,11 +89,11 @@ public class OBDResponse {
 			if(responseArrayList.peek().length() <= 4) {
 
 				//Save it so that we can verify our decoded data later
-				int responseLength = Integer.parseInt(responseArrayList.poll().trim(), 16);  
+				int responseLength = Integer.parseInt(responseArrayList.poll(), 16);  
 
 				//If it is a response line 
 				//EX: "0: 49 02 01 31 48 47"
-				while(!responseArrayList.peek().toString().equals(">")) {
+				while(!responseArrayList.peek().equals(">")) {
 					parseLongResponseLine(responseArrayList.poll());
 				}
 
@@ -137,15 +137,17 @@ public class OBDResponse {
 	 * @param responseLine the response line
 	 */
 	private void parseNormalResponseLine(String responseLine) {
+		
+		int index = 0;
 
 		//While there is still data left in the response line
-		while(responseLine.length() > 0){
+		while(index+2 <= responseLine.length()){
 			
 			//Take the first two characters
-			responseBytes.add(responseLine.substring(0, 2));
+			responseBytes.add(responseLine.substring(index, index+2));
 			
-			//remove the first two characters from the string
-			responseLine = responseLine.substring(2);
+			//Increment by two characters
+			index += 2;
 		}
 
 	}
@@ -157,22 +159,22 @@ public class OBDResponse {
 	 */
 	private void parseLongResponseLine(String responseLine) {
 
+		int index = 0;
+		
 		//While there is still data left in the response line
-		while(responseLine.length() > 0){
+		while(index+2 <= responseLine.length()){
 			//If it is the line header
 			//EX: "0:"
-			if(responseLine.substring(0, 2).contains(":")) {
+			if(responseLine.substring(index, index+2).contains(":")) {
 				//throw it away
-				responseLine = responseLine.substring(2);
+				index += 2;
 			}
 			//Else if it's length is 2, its a byte
 			//EX: "49"
 			else {
 				//Take the first two characters
-				responseBytes.add(responseLine.substring(0, 2));
+				responseBytes.add(responseLine.substring(index, index+2));
 				
-				//remove the first two characters from the string
-				responseLine = responseLine.substring(2);
 			}
 		}
 	}
@@ -182,37 +184,41 @@ public class OBDResponse {
 	 *
 	 * @throws OBDUnexpectedResponseException the oBD unexpected response exception
 	 */
-	private void verifyResponse() throws OBDUnexpectedResponseException {
+	private void verifyResponse() throws OBDUnexpectedResponseException, NumberFormatException {
 
-		//Parse the integer values for the expected and received mode ID's
-		int receivedModeValue = Integer.parseInt(responseBytes.get(0), 16);
-		int expectedModeValue = Integer.parseInt(Integer.toString(
-				Integer.parseInt(originalRequest.getMode()) + 40),16);
+		try {
+			//Parse the integer values for the expected and received mode ID's
+			int receivedModeValue = Integer.parseInt(responseBytes.get(0), 16);
+			int expectedModeValue = Integer.parseInt(Integer.toString(
+					Integer.parseInt(originalRequest.getMode()) + 40),16);
 
-		//If it's what we expected, remove it from the list
-		if(expectedModeValue == receivedModeValue) {
-			responseBytes.remove(0);
-		}
+			//If it's what we expected, remove it from the list
+			if(expectedModeValue == receivedModeValue) {
+				responseBytes.remove(0);
+			}
 
-		//Otherwise throw an exception
-		else {
-			throw new OBDUnexpectedResponseException("The response mode " + Integer.toString(receivedModeValue) + 
-					" did not match the expected response mode " + Integer.toString(expectedModeValue));
-		}
+			//Otherwise throw an exception
+			else {
+				throw new OBDUnexpectedResponseException("The response mode " + Integer.toString(receivedModeValue) + 
+						" did not match the expected response mode " + Integer.toString(expectedModeValue));
+			}
 
-		//Parse the integer values for the expected and received PID's
-		int receivedPIDValue = Integer.parseInt(responseBytes.get(0), 16);
-		int expectedPIDValue = Integer.parseInt(originalRequest.getPid(), 16);
+			//Parse the integer values for the expected and received PID's
+			int receivedPIDValue = Integer.parseInt(responseBytes.get(0), 16);
+			int expectedPIDValue = originalRequest.getRequestPID().getPidValue();
 
-		//If it's what we expected, remove it from the list
-		if(expectedPIDValue == receivedPIDValue) {
-			responseBytes.remove(0);
-		}
+			//If it's what we expected, remove it from the list
+			if(expectedPIDValue == receivedPIDValue) {
+				responseBytes.remove(0);
+			}
 
-		//Otherwise throw an exception
-		else {
-			throw new OBDUnexpectedResponseException("The response pid " + Integer.toString(receivedPIDValue) + 
-					" did not match the expected response pid " + Integer.toString(expectedPIDValue));
+			//Otherwise throw an exception
+			else {
+				throw new OBDUnexpectedResponseException("The response pid " + Integer.toString(receivedPIDValue) + 
+						" did not match the expected response pid " + Integer.toString(expectedPIDValue));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}

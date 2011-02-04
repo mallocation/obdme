@@ -1,5 +1,6 @@
 package edu.unl.csce.obdme.hardware.obd;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.unl.csce.obdme.hardware.elm.ELMException;
@@ -23,8 +24,7 @@ public abstract class OBDValidator {
 		//See if the valid PID query for Mode 1 PID 00 is supported
 		if (elmFramework.queryConfiguredPID("01", "00")) {
 			OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "00"));
-			if(result.getProcessedResponse().getClass().getName()
-					.equals(result.getOriginalRequest().getRequestPID().getPidReturnObject())){
+			if(result.getProcessedResponse().getClass().isInstance(ArrayList.class)){
 
 				//For the bit string response, change the supported status
 				for (String supportedPID : (List<String>) result.getProcessedResponse()) {
@@ -39,8 +39,7 @@ public abstract class OBDValidator {
 		//See if the valid PID query for Mode 1 PID 20 is supported
 		if (elmFramework.queryConfiguredPID("01", "20")) {
 			OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "20"));
-			if(result.getProcessedResponse().getClass().getName()
-					.equals(result.getOriginalRequest().getRequestPID().getPidReturnObject())){
+			if(result.getProcessedResponse().getClass().isInstance(ArrayList.class)){
 				//For the bit string response, change the supported status
 				for (String supportedPID : (List<String>) result.getProcessedResponse()) {
 					if (elmFramework.queryConfiguredPID("01", supportedPID)) {
@@ -54,9 +53,7 @@ public abstract class OBDValidator {
 		//See if the valid PID query for Mode 1 PID 40 is supported
 		if (elmFramework.queryConfiguredPID("01", "40")) {
 			OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "40"));
-			if(result.getProcessedResponse().getClass().getName()
-					.equals(result.getOriginalRequest().getRequestPID().getPidReturnObject())){
-
+			if(result.getProcessedResponse().getClass().isInstance(ArrayList.class)){
 				//For the bit string response, change the supported status
 				for (String supportedPID : (List<String>) result.getProcessedResponse()) {
 					if (elmFramework.queryConfiguredPID("01", supportedPID)) {
@@ -70,9 +67,7 @@ public abstract class OBDValidator {
 		//See if the valid PID query for Mode 9 PID 00 is supported
 		if (elmFramework.queryConfiguredPID("09", "00")) {
 			OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("09", "00"));
-			if(result.getProcessedResponse().getClass().getName()
-					.equals(result.getOriginalRequest().getRequestPID().getPidReturnObject())){
-
+			if(result.getProcessedResponse().getClass().isInstance(ArrayList.class)){
 				//For the bit string response, change the supported status
 				for (String supportedPID : (List<String>) result.getProcessedResponse()) {
 					if (elmFramework.queryConfiguredPID("09", supportedPID)) {

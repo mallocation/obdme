@@ -41,9 +41,6 @@ public class OBDPID {
 
 	/** The pid return length. */
 	private int pidReturn;
-	
-	/** The pid return object. */
-	private String pidReturnObject;
 
 	/** The pid unit. */
 	private String pidUnit;
@@ -75,6 +72,8 @@ public class OBDPID {
 	/** The parent mode. */
 	private String parentMode;
 
+	private int parentModeValue;
+
 	/**
 	 * Instantiates a new OBDPID.
 	 *
@@ -95,6 +94,7 @@ public class OBDPID {
 		this.setPidEval(pidEval);
 		this.pidName = pidName;
 		this.parentMode = parent;
+		this.parentModeValue = Integer.parseInt(parent,16);
 		
 		if (pollable.toString().equals("true")) {
 			this.pollable = true;
@@ -109,32 +109,15 @@ public class OBDPID {
 
 		//Switch on the eval method to initialize variables 
 		switch(this.pidEval) {
-		
-		//Character String
-		case CHAR_STRING:
-			this.pidReturnObject = "java.lang.String";
-			break;
-			
-		//Formula
-		case FORMULA:
-			this.pidReturnObject = "java.lang.Double";
-			break;
-		
-		//Raw
-		case RAW:
-			this.pidReturnObject = "java.lang.Double";
-			break;
 
 		//Bit Encoded
 		case BIT_ENCODED:
 			this.bitEncodedMap = new ConcurrentHashMap<Integer, String>();
-			this.pidReturnObject = "java.util.ArrayList";
 			break;
 
 			//Byte Encoded
 		case BYTE_ENCODED:
 			this.byteEncodedMap = new ConcurrentHashMap<Integer, String>();
-			this.pidReturnObject = "java.util.ArrayList";
 			break;
 		}
 	}
@@ -175,32 +158,15 @@ public class OBDPID {
 
 		//Switch on the eval method to initialize variables 
 		switch(this.pidEval) {
-		
-		//Character String
-		case CHAR_STRING:
-			this.pidReturnObject = "java.lang.String";
-			break;
-			
-		//Formula
-		case FORMULA:
-			this.pidReturnObject = "java.lang.Double";
-			break;
-		
-		//Raw
-		case RAW:
-			this.pidReturnObject = "java.lang.Double";
-			break;
 
 		//Bit Encoded
 		case BIT_ENCODED:
 			this.bitEncodedMap = new ConcurrentHashMap<Integer, String>();
-			this.pidReturnObject = "java.util.ArrayList";
 			break;
 
 			//Byte Encoded
 		case BYTE_ENCODED:
 			this.byteEncodedMap = new ConcurrentHashMap<Integer, String>();
-			this.pidReturnObject = "java.util.ArrayList";
 			break;
 		}
 	}
@@ -282,37 +248,6 @@ public class OBDPID {
 				operations.push(currentToken);
 			}
 
-			//Push square root operation to the operations stack
-			else if (currentToken.equals("sqrt")) {
-				operations.push(currentToken);
-			}
-
-			//Process the nested operations
-			else if (currentToken.equals(")")) {
-
-				String op = operations.pop();
-				double currentValue = values.pop();
-
-				//Pop the previous value from the stack and 
-				//add it to the most recently popped value
-				if (op.equals("+")) {
-					currentValue = values.pop() + currentValue;
-				}
-				else if (op.equals("-")) {
-					currentValue = values.pop() - currentValue;
-				}
-				else if (op.equals("*")) {
-					currentValue = values.pop() * currentValue;
-				}
-				else if (op.equals("/")) {
-					currentValue = values.pop() / currentValue;
-				}
-				else if (op.equals("sqrt")) {
-					currentValue = Math.sqrt(currentValue);
-				}
-				values.push(currentValue);
-			}
-
 			//If the formula indicates the first byte from the response
 			else if (currentToken.equals("A")){
 
@@ -339,6 +274,29 @@ public class OBDPID {
 
 				//Parse the double value of the hex byte
 				values.push((double)Integer.parseInt(byteResponse.get(3), 16));
+			}
+			
+			//Process the nested operations
+			else if (currentToken.equals(")")) {
+
+				String op = operations.pop();
+				double currentValue = values.pop();
+
+				//Pop the previous value from the stack and 
+				//add it to the most recently popped value
+				if (op.equals("+")) {
+					currentValue = values.pop() + currentValue;
+				}
+				else if (op.equals("-")) {
+					currentValue = values.pop() - currentValue;
+				}
+				else if (op.equals("*")) {
+					currentValue = values.pop() * currentValue;
+				}
+				else if (op.equals("/")) {
+					currentValue = values.pop() / currentValue;
+				}
+				values.push(currentValue);
 			}
 
 			//Otherwise, it is a formula value...
@@ -788,15 +746,6 @@ public class OBDPID {
 	}
 
 	/**
-	 * Gets the pid return object.
-	 *
-	 * @return the pidReturnObject
-	 */
-	public String getPidReturnObject() {
-		return pidReturnObject;
-	}
-
-	/**
 	 * Sets the enabled.
 	 *
 	 * @param enabled the enabled to set
@@ -821,6 +770,20 @@ public class OBDPID {
 	 */
 	public boolean isPollable() {
 		return pollable;
+	}
+
+	/**
+	 * @param parentModeValue the parentModeValue to set
+	 */
+	public void setParentModeValue(int parentModeValue) {
+		this.parentModeValue = parentModeValue;
+	}
+
+	/**
+	 * @return the parentModeValue
+	 */
+	public int getParentModeValue() {
+		return parentModeValue;
 	}
 
 }

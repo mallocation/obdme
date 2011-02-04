@@ -200,6 +200,7 @@ public class ELMFramework {
 							"Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid() 
 							+ ".  There is most likely something wrong with the bluetooth connection.");
 				}
+				//bluetoothService.setState(BluetoothService.STATE_FAILED);
 			}
 
 		} catch (ELMDeviceNoDataException dnde) {
@@ -208,10 +209,9 @@ public class ELMFramework {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 						"ELM Device is indicating no data for Mode " + request.getMode() + " PID " + request.getPid() 
-						+ ".  Disabling this PID for now");
+						+ " .  Most likely because the remote ECU is off or the car has been turned off");
 			}
-			getObdFramework().getConfiguredProtocol().get(request.getMode())
-			.getPID(request.getPid()).setEnabled(false);
+			//bluetoothService.setState(BluetoothService.STATE_FAILED);
 
 		} catch (ELMUnableToConnectException utce) {
 
@@ -270,7 +270,7 @@ public class ELMFramework {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 						"Bluetooth Timeout Exception waiting for response from the device for" +
-						" Connection initialization." );
+				" Connection initialization." );
 			}
 		}
 
@@ -312,7 +312,7 @@ public class ELMFramework {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 						"Bluetooth Timeout Exception waiting for response from the device during" +
-						"hardware verification." );
+				"hardware verification." );
 			}
 		}
 
@@ -330,27 +330,27 @@ public class ELMFramework {
 		//Write the ignition command
 		bluetoothService.write("ATIGN");
 		try {
-			
+
 			//If the response was ok
 			if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_ON)) {
-				
+
 				//Set the ignition to on
 				this.ignitionOn = true;
 			}
-			
+
 			//Otherwise
 			else {
-				
+
 				//Set the ignition to off
 				this.ignitionOn = false;
 			}
 		} catch (BluetoothServiceRequestTimeoutException e) {
-			
+
 			//If our request timed out
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 						"Bluetooth Timeout Exception waiting for response from the device during" +
-						"vehicle ignition check." );
+				"vehicle ignition check." );
 			}
 		}
 
@@ -375,24 +375,24 @@ public class ELMFramework {
 				if(bluetoothService.getResponseFromQueue().contains(ELM_DEVICE_OK)) {
 					this.protocolSet = true;
 				}
-				
+
 				//Otherwise
 				else {
-					
+
 					//Assume the protocol was not set
 					this.protocolSet = false;
 				}
 			} catch (BluetoothServiceRequestTimeoutException e) {
-				
+
 				//If there was a connection timeout during our request
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 							"Bluetooth Timeout Exception waiting for response from the device during" +
-							"protocol auto search." );
+					"protocol auto search." );
 				}
 			}
 		}
-		
+
 		return this.protocolSet;
 	}
 
