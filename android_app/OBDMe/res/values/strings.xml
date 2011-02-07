@@ -33,8 +33,10 @@
 	<string name="setupwizard.account.email.error.bad">Your email address is not valid</string>
 	<string name="setupwizard.account.dialog.creating">Creating your account...</string>
 	<string name="setupwizard.account.dialog.loggingin">Logging In...</string>
-	<string name="setupwizard.account.dialog.account.create.failure">We were unable to create your account.  Please try again later.</string>
-	<string name="setupwizard.account.dialog.account.validate.failure">We were unable to validate your account.  Please try again later.</string>
+	<string name="setupwizard.account.dialog.account.create.failure">We were unable to create your account. Please try
+		again later.</string>
+	<string name="setupwizard.account.dialog.account.validate.failure">We were unable to validate your account. Please try
+		again later.</string>
 
 	<!-- Setup Wizard Bluetooth Activity -->
 	<string name="setupwizard.bluetooth.label">Bluetooth Setup</string>
@@ -83,8 +85,12 @@
 		start you vehicle and click next to proceed</string>
 	<string name="setupwizard.vehicle.body.text.confirm">Your vehicle was successfully identified. Please
 		confirm the information below.</string>
+	<string name="setupwizard.vehicle.body.text.failure">Your vehicle does not support the ability to
+		retrieve the VIN. OBDMe requires this option to operate.\nThe setup
+		wizard cannot continue.</string>
 	<string name="setupwizard.vehicle.button.identify.text">Identify Vehicle</string>
 	<string name="setupwizard.vehicle.button.confirm.text">Confirm</string>
+	<string name="setupwizard.vehicle.button.exit.text">Quit OBDMe</string>
 	<string name="setupwizard.vehicle.vin.title.text">VIN (Vehicle Identification Number)</string>
 	<string name="setupwizard.vehicle.dialog.ignition">Waiting for ignition...</string>
 	<string name="setupwizard.vehicle.dialog.autoconnect">Waiting for device...</string>
@@ -119,14 +125,15 @@
 	<string name="title_not_connected">not connected</string>
 
 	<!-- OBDMe Main Application -->
-	<string name="obdme.main.bluetooth.notenabled.error">Bluetooth Must be enabled to use this application.</string>
+	<string name="obdme.main.bluetooth.notenabled.error">Bluetooth Must be enabled to use this application.
+	</string>
 	<string name="app_name">OBDMe</string>
 	<string name="sendButtonText">Send</string>
 	<string name="settings_title">OBDMe Settings</string>
 	<string name="account_info_title">Account Information</string>
 	<string name="vehicle_info_title">Currently Connected Vehicle Information</string>
 	<string name="display_data_title">Data To Be Displayed</string>
-	
+
 
 	<!-- Basic Data Display -->
 	<string name="speed">Vehicle Speed</string>
@@ -155,7 +162,7 @@
 	<string name="mechanicmode.title">Mechanic Mode</string>
 	<string name="mechanicmode.realtimedata">Real Time Data:</string>
 	<string name="mechanicmode.errorcodes">Error Codes:</string>
-	
+
 	<!-- Vehicle Info -->
 	<string name="vehicle.info.titletext.vin">VIN:</string>
 	<string name="vehicle.info.titletext.model">Model:</string>

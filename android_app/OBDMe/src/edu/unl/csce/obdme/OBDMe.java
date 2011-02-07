@@ -17,13 +17,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
@@ -76,6 +82,15 @@ public class OBDMe extends Activity {
 	/** Shared Preferences. */
 	private SharedPreferences sharedPrefs;
 
+	/** The basic user ui. */
+	private BasicUserMode basicUserUI;
+
+	/** The gesture detector. */
+	private GestureDetector gestureDetector;
+
+	/** The gesture listener. */
+	View.OnTouchListener gestureListener;
+
 	/**
 	 * Called when the activity is first created.
 	 *
@@ -89,19 +104,20 @@ public class OBDMe extends Activity {
 
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		
+
 		sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
 
-		checkBluetoothEnabled();
+		basicUserUI = new BasicUserMode(getApplicationContext());
 
-		
+		checkBluetoothEnabled();
 
 		/* Depending on the mode (user or mechanic) display appropriate data
 		 * to the user and also display data according to which orientation
 		 * the screen is in (landscape or portrait).
 		 */
 		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-			setContentView(R.layout.basicuser_mode_portrait);
+			//Build a new Basic User UI
+			setContentView(basicUserUI.getFlipper());
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
 			//setContentView(R.layout.enthusiastuser_mode);	
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
@@ -117,10 +133,64 @@ public class OBDMe extends Activity {
 
 
 		//setContentView(R.layout.main);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
+		//getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
+
+
+		//Set up a new gesture detector for swipes
+		gestureDetector = new GestureDetector(new FlingGestureDetector());
+
 
 	}
 
+	/**
+	 * The Class FlingGestureDetector.
+	 */
+	class FlingGestureDetector extends SimpleOnGestureListener {
+
+		/* (non-Javadoc)
+		 * @see android.view.GestureDetector.SimpleOnGestureListener#onFling(android.view.MotionEvent, android.view.MotionEvent, float, float)
+		 */
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			try {
+				if (Math.abs(e1.getY() - e2.getY()) > 250)
+					return false;
+
+				//If the User flinged the screen right
+				if(e1.getX() - e2.getX() > 120 && Math.abs(velocityX) > 200) {
+
+					//And we're in basic user interface mode:
+					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+
+						//Fling the view flipper right
+						basicUserUI.flingRight();
+					}
+
+				}  else if (e2.getX() - e1.getX() > 120 && Math.abs(velocityX) > 200) {
+					//And we're in basic user interface mode:
+					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+						//Fling the view flipper left
+						basicUserUI.flingLeft();
+					}
+				}
+			} catch (Exception e) {
+				// nothing
+			}
+			return false;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onTouchEvent(android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if (gestureDetector.onTouchEvent(event))
+			return true;
+		else
+			return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onStart()
 	 */
@@ -135,8 +205,9 @@ public class OBDMe extends Activity {
 	public synchronized void onResume() {
 		super.onResume();
 		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-			setContentView(R.layout.basicuser_mode_portrait);
-        } else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
+			//Set the basic user interface UI
+			setContentView(basicUserUI.getFlipper());
+		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
 			//setContentView(R.layout.enthusiastuser_mode);
 		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
 			setContentView(R.layout.mechanic_mode);
@@ -176,22 +247,22 @@ public class OBDMe extends Activity {
 		inflater.inflate(R.menu.option_menu, menu);
 		return true;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
 	 */
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.scan:
-            return true;
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.scan:
+			return true;
 		case R.id.settings:
-        	startActivity(new Intent(this, SettingsMenu.class));
-            return true;
-        }
+			startActivity(new Intent(this, SettingsMenu.class));
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onConfigurationChanged(android.content.res.Configuration)
@@ -534,7 +605,9 @@ public class OBDMe extends Activity {
 					break;
 
 				case DataCollector.COLLECTOR_POLLING:
-
+					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+						basicUserUI.startFlipping();
+					} 
 					break;
 
 				}
@@ -544,12 +617,16 @@ public class OBDMe extends Activity {
 				switch (msg.arg1) {
 
 				case DataCollector.COLLECTOR_NEW_DATA:
-					
-					//TODO: TESTING
-					TextView lowerText = (TextView) findViewById(R.id.basicusermode_portrait_lower_value);
-					TextView upperText = (TextView) findViewById(R.id.basicusermode_portrait_upper_value);
-					upperText.setText(collectorThread.getCurrentData("01", "05"));
-					lowerText.setText(collectorThread.getCurrentData("01", "0C"));
+
+					if (sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ) {
+						basicUserUI.updateValues(collectorThread);
+					} else if (sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
+
+
+					} else if (sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
+
+
+					}
 					break;
 
 				}
@@ -594,27 +671,30 @@ public class OBDMe extends Activity {
 
 		}
 	}
-	
+
+	/**
+	 * Mechanic mode.
+	 */
 	public void mechanicMode(){
 		// Set up real-time data list view
 		ListView dataList = (ListView) findViewById(R.id.mechanicmode_realtimedata_list);
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getPollablePIDList();
-		
+		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getEnabledPollablePIDList();
+
 		for (String currentMode : pollablePIDList.keySet()) {
 			for (Iterator<String> pidIrt = pollablePIDList.get(currentMode).iterator(); pidIrt.hasNext(); ) {
-			String currentPID = pidIrt.next();
+				String currentPID = pidIrt.next();
 
-			//Indicated if Enabled 
-			elmFramework.getConfiguredPID(currentMode, currentPID).isEnabled();
+				//Indicated if Enabled 
+				elmFramework.getConfiguredPID(currentMode, currentPID).isEnabled();
 
-			//Build the list to display using the pid name
-			dataAdapter.add(elmFramework.getConfiguredPID(currentMode, currentPID).getPidName());
+				//Build the list to display using the pid name
+				dataAdapter.add(elmFramework.getConfiguredPID(currentMode, currentPID).getPidName());
 			}
 		}
-		
+
 		dataList.setAdapter(dataAdapter);
-		
+
 		// Set up error codes list view
 		ListView errorList = (ListView) findViewById(R.id.mechanicmode_errorcodes_list);
 		String[] errorItems = { "error code 1", "error code 2" };

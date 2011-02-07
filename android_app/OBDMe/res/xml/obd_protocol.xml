@@ -116,7 +116,7 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="04" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Calculated engine load value">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format=""/>
 		</pid>
 
 		<pid hex="05" return="1" unit="C" eval="FORMULA" pollable="true"

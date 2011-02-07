@@ -6,6 +6,7 @@
 	<integer name="setupwizard.toast.time">3000</integer>
 	<integer name="bluetooth.response.timeout">500</integer>
 	<integer name="bluetooth.response.maxretries">5</integer>
+	<integer name="collector.system.memory.threshold">25</integer>
 	<string name="webservice.apikey">abcd</string>
 	
 </resources>

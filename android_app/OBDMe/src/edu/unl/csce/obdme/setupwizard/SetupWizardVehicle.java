@@ -83,6 +83,10 @@ public class SetupWizardVehicle extends Activity {
 			public void onClick(View view) {
 
 				switch(SETUP_STATE) {
+				case -1:
+					setResult(Activity.RESULT_CANCELED);
+					finish();
+					break;
 				case 0:
 					startIgnitionPollerThread();
 					break;
@@ -125,17 +129,25 @@ public class SetupWizardVehicle extends Activity {
 
 		Button button = (Button) findViewById(R.id.setupwizard_vehicle_button);
 		TextView text = (TextView) findViewById(R.id.setupwizard_vehicle_text);
+		TextView vinTitleText = (TextView) findViewById(R.id.setupwizard_vehicle_vin_title);
+		TextView vinText = (TextView) findViewById(R.id.setupwizard_vehicle_vin);
+
 
 		//Switch on the current state of the setup
 		switch(SETUP_STATE) {
+		
+		case -1:
+			text.setText(R.string.setupwizard_vehicle_body_text_failure);
+			button.setText(R.string.setupwizard_vehicle_button_exit_text);
+			vinTitleText.setVisibility(View.GONE);
+			vinText.setVisibility(View.GONE);
+			break;
 
 		//Post Bluetooth is supported
 		case 1:
 			text.setText(R.string.setupwizard_vehicle_body_text_confirm);
 			button.setText(R.string.setupwizard_vehicle_button_confirm_text);
-			TextView vinTitleText = (TextView) findViewById(R.id.setupwizard_vehicle_vin_title);
 			vinTitleText.setVisibility(View.VISIBLE);
-			TextView vinText = (TextView) findViewById(R.id.setupwizard_vehicle_vin);
 			vinText.setVisibility(View.VISIBLE);
 			break;
 
@@ -167,26 +179,47 @@ public class SetupWizardVehicle extends Activity {
 
 		TextView vinText = (TextView) findViewById(R.id.setupwizard_vehicle_vin);
 
+		//If the VIN PID is supported
 		if(elmFramework.getObdFramework().isPIDSupported("09", "02")) {
+			
+			//Try to get the VIN
 			try {
+				
+				//Send the request
 				OBDResponse response = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("09", "02"));
+				
+				//If we got something back
 				if (response != null) {
+					
+					//Update the GUI
 					String vinResult = (String)response.getProcessedResponse();
 					vinText.setText(vinResult);
+					
+					//Enabled all the PID's for the new protocol
 					elmFramework.getObdFramework().enableAllPIDS();
+					
+					//Save the configuration
 					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), elmFramework.getObdFramework().getConfiguredProtocol(), vinResult);
+					
+					//Save the VIN in the preferences
 					SharedPreferences.Editor editor = prefs.edit();
 					editor.putString(getResources().getString(R.string.prefs_account_vin), vinResult);
 					editor.commit();
+					
+					//Update the GUI to reflect the new status
 					SETUP_STATE = 1;
 					updateView();
 				}
-			} catch (ELMException elme) {
+			} catch (ELMException elme) { //Fucking hell it didn't work...
 				if(getResources().getBoolean(R.bool.debug)) {
 					Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
 							elme.getMessage());
 				}
 			}
+		}
+		else {
+			SETUP_STATE = -1;
+			updateView();
 		}
 
 	}
