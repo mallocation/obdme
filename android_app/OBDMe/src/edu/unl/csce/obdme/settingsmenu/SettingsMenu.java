@@ -2,7 +2,6 @@ package edu.unl.csce.obdme.settingsmenu;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -68,7 +67,6 @@ public class SettingsMenu extends Activity {
 		
 		menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
-                Context context = getApplicationContext();
             	TextView textView = (TextView) itemClicked;
                 String strText = textView.getText().toString();
                 

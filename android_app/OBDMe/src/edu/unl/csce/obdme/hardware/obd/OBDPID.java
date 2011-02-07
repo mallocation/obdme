@@ -1,5 +1,6 @@
 package edu.unl.csce.obdme.hardware.obd;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,6 +74,8 @@ public class OBDPID {
 	private String parentMode;
 
 	private int parentModeValue;
+	
+	private DecimalFormat decimalFormat;
 
 	/**
 	 * Instantiates a new OBDPID.
@@ -109,6 +112,10 @@ public class OBDPID {
 
 		//Switch on the eval method to initialize variables 
 		switch(this.pidEval) {
+		
+		//Formula
+		case FORMULA:
+			this.decimalFormat = new DecimalFormat();
 
 		//Bit Encoded
 		case BIT_ENCODED:
@@ -158,6 +165,10 @@ public class OBDPID {
 
 		//Switch on the eval method to initialize variables 
 		switch(this.pidEval) {
+		
+		//Formula
+		case FORMULA:
+			this.decimalFormat = new DecimalFormat();
 
 		//Bit Encoded
 		case BIT_ENCODED:
@@ -784,6 +795,20 @@ public class OBDPID {
 	 */
 	public int getParentModeValue() {
 		return parentModeValue;
+	}
+
+	/**
+	 * @param decimalFormat the decimalFormat to set
+	 */
+	public void setDecimalFormat(DecimalFormat decimalFormat) {
+		this.decimalFormat = decimalFormat;
+	}
+
+	/**
+	 * @return the decimalFormat
+	 */
+	public DecimalFormat getDecimalFormat() {
+		return decimalFormat;
 	}
 
 }

@@ -307,22 +307,22 @@ public abstract class OBDConfigurationManager {
 		} catch (NumberFormatException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: Numer format exception");
+				"Error parsing OBD Protocol: Numer format exception");
 			}
 		} catch (NotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: Not Found Exception");
+				"Error parsing OBD Protocol: Not Found Exception");
 			}
 		} catch (XmlPullParserException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: XML Pull Parser Exception");
+				"Error parsing OBD Protocol: XML Pull Parser Exception");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-						"Error parsing obd configuration: A general IO exception occured.");
+				"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 
@@ -366,11 +366,8 @@ public abstract class OBDConfigurationManager {
 
 						String currentMode = xrp.getAttributeValue(null, "hex");
 
-						//If the currentPID is supported in the saved configuration
-						if (config.containsMode(currentMode)) {
-							protocolStructure.put(new String(currentMode), new OBDMode(currentMode, 
-									xrp.getAttributeValue(null, "name")));
-						}
+						protocolStructure.put(new String(currentMode), new OBDMode(currentMode, 
+								xrp.getAttributeValue(null, "name")));
 
 						parentMode = currentMode;
 					}
@@ -381,19 +378,18 @@ public abstract class OBDConfigurationManager {
 						//Get the PID Hex value since we read it multiple times
 						String pidHex = xrp.getAttributeValue(null, "hex");
 
-						//If the currentPID is supported in the saved configuration
-						if(config.querySupportedPID(parentMode, pidHex)) {
+						//Create a new PID with the parameters specified in the XML
+						protocolStructure.get(parentMode).putPID(pidHex,
+								new OBDPID(pidHex, Integer.parseInt(xrp.getAttributeValue(null, "return")),
+										xrp.getAttributeValue(null, "unit"),
+										xrp.getAttributeValue(null, "eval"),
+										xrp.getAttributeValue(null, "name"),
+										parentMode,
+										xrp.getAttributeValue(null, "pollable"),
+										config.querySupportedPID(parentMode, pidHex)));
 
-							//Create a new PID with the parameters specified in the XML
-							protocolStructure.get(parentMode).putPID(pidHex,
-									new OBDPID(pidHex, Integer.parseInt(xrp.getAttributeValue(null, "return")),
-											xrp.getAttributeValue(null, "unit"),
-											xrp.getAttributeValue(null, "eval"),
-											xrp.getAttributeValue(null, "name"),
-											parentMode,
-											xrp.getAttributeValue(null, "pollable"), true));
-
-							//Set the enabled status for the newly created PID
+						//Set the enabled status for the newly created PID
+						if (config.querySupportedPID(parentMode, pidHex)) {
 							protocolStructure.get(parentMode).getPID(pidHex).setEnabled(
 									config.getMode(parentMode).getPID(pidHex).isEnabled());
 						}
@@ -407,19 +403,17 @@ public abstract class OBDConfigurationManager {
 						//Get the PID Hex value since we read it multiple times
 						String pidHex = xrp.getAttributeValue(null, "hex");
 
-						//If the currentPID is supported in the saved configuration
-						if(config.querySupportedPID(parentMode, pidHex)) {
+						//Create a new PID with the parameters specified in the XML
+						protocolStructure.get(parentMode).putPID(pidHex,
+								new OBDPID(pidHex, Integer.parseInt(xrp.getAttributeValue(null, "return")),
+										xrp.getAttributeValue(null, "unit"),
+										xrp.getAttributeValue(null, "eval"),
+										xrp.getAttributeValue(null, "name"),
+										parentMode,
+										xrp.getAttributeValue(null, "pollable"), true));
 
-							//Create a new PID with the parameters specified in the XML
-							protocolStructure.get(parentMode).putPID(pidHex,
-									new OBDPID(pidHex, Integer.parseInt(xrp.getAttributeValue(null, "return")),
-											xrp.getAttributeValue(null, "unit"),
-											xrp.getAttributeValue(null, "eval"),
-											xrp.getAttributeValue(null, "name"),
-											parentMode,
-											xrp.getAttributeValue(null, "pollable"), true));
-
-							//Set the enabled status for the newly created PID
+						//Set the enabled status for the newly created PID
+						if (config.querySupportedPID(parentMode, pidHex)) {
 							protocolStructure.get(parentMode).getPID(pidHex).setEnabled(
 									config.getMode(parentMode).getPID(pidHex).isEnabled());
 						}
@@ -431,35 +425,27 @@ public abstract class OBDConfigurationManager {
 					//If a code node (for a PID).  Add the code to the PID's code list.
 					else if(startTagName.equals("code")){
 
-						//If the currentPID is supported in the saved configuration
-						if(config.querySupportedPID(parentMode, currentPID)) {
+						//If the code is bit encoded
+						if (protocolStructure.get(parentMode).getPID(currentPID).getPidEval() == EVALS.BIT_ENCODED) {
+							protocolStructure.get(parentMode).getPID(currentPID).addBitEncoding(
+									xrp.getAttributeValue(null, "bit"),
+									xrp.getAttributeValue(null, "value"));
+						}
 
-							//If the code is bit encoded
-							if (protocolStructure.get(parentMode).getPID(currentPID).getPidEval() == EVALS.BIT_ENCODED) {
-								protocolStructure.get(parentMode).getPID(currentPID).addBitEncoding(
-										xrp.getAttributeValue(null, "bit"),
-										xrp.getAttributeValue(null, "value"));
-							}
-
-							//If the code is byte encoded
-							else if (protocolStructure.get(parentMode).getPID(currentPID).getPidEval() == EVALS.BYTE_ENCODED) {
-								protocolStructure.get(parentMode).getPID(currentPID).addByteEncoding(
-										xrp.getAttributeValue(null, "byte-value"),
-										xrp.getAttributeValue(null, "value"));
-							}
+						//If the code is byte encoded
+						else if (protocolStructure.get(parentMode).getPID(currentPID).getPidEval() == EVALS.BYTE_ENCODED) {
+							protocolStructure.get(parentMode).getPID(currentPID).addByteEncoding(
+									xrp.getAttributeValue(null, "byte-value"),
+									xrp.getAttributeValue(null, "value"));
 						}
 					}
 
 					//If a formula node (for a PID).  set the current PID's formula 
 					else if(startTagName.equals("formula")){
 
-						//If the currentPID is supported in the saved configuration
-						if(config.querySupportedPID(parentMode, currentPID)) {
-
-							//Add the formula to the current PID
-							protocolStructure.get(parentMode).getPID(currentPID).setPidFormula(
-									xrp.getAttributeValue(null, "value"));
-						}
+						//Add the formula to the current PID
+						protocolStructure.get(parentMode).getPID(currentPID).setPidFormula(
+								xrp.getAttributeValue(null, "value"));
 					}
 				}
 
@@ -469,22 +455,22 @@ public abstract class OBDConfigurationManager {
 		} catch (NumberFormatException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: Numer format exception");
+				"Error parsing OBD Protocol: Numer format exception");
 			}
 		} catch (NotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: Not Found Exception");
+				"Error parsing OBD Protocol: Not Found Exception");
 			}
 		} catch (XmlPullParserException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: XML Pull Parser Exception");
+				"Error parsing OBD Protocol: XML Pull Parser Exception");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-						"Error parsing obd configuration: A general IO exception occured.");
+				"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 
@@ -569,22 +555,22 @@ public abstract class OBDConfigurationManager {
 		} catch (NumberFormatException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: Numer format exception");
+				"Error parsing OBD Protocol: Numer format exception");
 			}
 		} catch (NotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: Not Found Exception");
+				"Error parsing OBD Protocol: Not Found Exception");
 			}
 		} catch (XmlPullParserException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseprotocol),
-						"Error parsing OBD Protocol: XML Pull Parser Exception");
+				"Error parsing OBD Protocol: XML Pull Parser Exception");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-						"Error parsing obd configuration: A general IO exception occured.");
+				"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 
@@ -667,22 +653,22 @@ public abstract class OBDConfigurationManager {
 		} catch (FileNotFoundException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-						"Error writing current obd configuration: File not found exception occured.");
+				"Error writing current obd configuration: File not found exception occured.");
 			}
 		} catch (IllegalArgumentException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-						"Error parsing obd configuration: Illegal argument exception occured.");
+				"Error parsing obd configuration: Illegal argument exception occured.");
 			}
 		} catch (IllegalStateException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-						"Error parsing obd configuration: Illegal state exception occured.");
+				"Error parsing obd configuration: Illegal state exception occured.");
 			}
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-						"Error parsing obd configuration: A general IO exception occured.");
+				"Error parsing obd configuration: A general IO exception occured.");
 			}
 		}
 

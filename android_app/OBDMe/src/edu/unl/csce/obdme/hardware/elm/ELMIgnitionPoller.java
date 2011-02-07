@@ -158,6 +158,10 @@ public class ELMIgnitionPoller {
 		 * @param elmFramework the elm framework
 		 */
 		public ELMIgnitionPollerThread(ELMFramework elmFramework) {
+			
+			//Set the thread name
+			setName("Ignition Poller");
+			
 			this.elmFramework = elmFramework;
 			continuePolling = true;
 		}

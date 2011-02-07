@@ -1,19 +1,14 @@
 package edu.unl.csce.obdme.settingsmenu;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;

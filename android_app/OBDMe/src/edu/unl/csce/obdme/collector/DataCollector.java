@@ -1,6 +1,5 @@
 package edu.unl.csce.obdme.collector;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.util.Log;
@@ -138,10 +136,8 @@ public class DataCollector {
 	 */
 	public synchronized void batchDatabaseWrite() {
 		if (writerThread != null) {
-			writerThread.cancel();
 			writerThread = null;
 		}
-
 		writerThread = new DatabaseWriterThread();
 		writerThread.start();
 	}
@@ -180,6 +176,20 @@ public class DataCollector {
 			return "";
 		}
 	}
+	
+	/**
+	 * Gets the current data.
+	 *
+	 * @param modeHexPidHex the mode hex pid hex
+	 * @return the current data
+	 */
+	public synchronized String getCurrentData(String modeHexPidHex) {
+		try {
+			return currentData.get(modeHexPidHex);
+		} catch (Exception e) {
+			return "";
+		}
+	}
 
 	/**
 	 * Put current data set.
@@ -189,12 +199,23 @@ public class DataCollector {
 	protected synchronized void putCurrentDataSet(HashMap<String, String> currentDataSet) {
 		this.currentDataQueue.add(currentDataSet);
 
-		if (currentDataQueue.size() > 10) {
+		//The the amount of collected data we have exceeds the threshold
+		if (currentDataQueue.size() > context.getResources()
+				.getInteger(R.integer.collector_system_memory_threshold)) {
+			
+			//If there isn't a database writing thread
 			if (writerThread == null) {
+				
+				//Batch DB write
 				batchDatabaseWrite();
 			}
+			
+			//If there is a database writer thread and
+			//it's not currently running
 			if (writerThread != null) {
 				if (!writerThread.isAlive()) {
+					
+					//Batch DB write
 					batchDatabaseWrite();
 				}
 			}
@@ -233,6 +254,11 @@ public class DataCollector {
 		 * Instantiates a new data collector thread.
 		 */
 		public DataCollectorThread() {
+			
+			//Set the thread name
+			setName("Data Collector");
+			
+			//We are assuming that we want to start polling immediately
 			this.continuePolling = true;
 			this.collectionPaused = false;
 
@@ -241,6 +267,7 @@ public class DataCollector {
 				"Getting a list of enabled pollable PIDS.");
 			}
 
+			//Save the list of pollable and enabled PIDS.
 			this.pollableEnabledPIDS = elmFramework.getObdFramework().getEnabledPollablePIDList();
 
 			if(context.getResources().getBoolean(R.bool.debug)) {
@@ -255,16 +282,19 @@ public class DataCollector {
 		 */
 		public void run() {
 
-
+			//If logging is enabled, proint a nice message to the user
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 				"Started Polling");
 			}
 
+			//If we want to continue polling
 			while(continuePolling) {
 
+				//Create a hash map to store the polling data in (this is for one complete data set
 				HashMap<String, String> currentDataForQueue = new HashMap<String, String>();
 
+				//For all the pollable and enabled PIDS
 				for (String modeHex : pollableEnabledPIDS.keySet()) {
 					for (Iterator<String> pidIrt = pollableEnabledPIDS.get(modeHex).iterator(); pidIrt.hasNext(); ) {
 						String currentPID = pidIrt.next();
@@ -286,9 +316,11 @@ public class DataCollector {
 							//Make the request for the current pollable and enabled mode and PID
 							OBDResponse response = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID(modeHex, currentPID));
 
+							//If the response isn't null
 							if (response != null) {
 								try {
-									//If the result was a double, round it and convert it to a string
+									
+									//If the return value is a double
 									if (response.getProcessedResponse() instanceof Double) {
 										Double responseDouble = (Double)response.getProcessedResponse();
 										responseDouble = (double) Math.round(responseDouble);
@@ -296,15 +328,16 @@ public class DataCollector {
 										currentDataForQueue.put((modeHex+currentPID).toString(), Double.toString(responseDouble));
 									}
 
-									//If the result was a string
+									//If the return value is a string
 									else if (response.getProcessedResponse() instanceof String) {
 										putCurrentData((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
 										currentDataForQueue.put((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
 									}
 
-									//If the result was an array list of strings
+									//If the return value is a List
 									else if (response.getProcessedResponse() instanceof List) {
 										@SuppressWarnings("unchecked")
+										//Not nice but we ALWAYS return a list of strings...
 										List<String> resultsList = (List<String>) response.getProcessedResponse();
 										putCurrentData((modeHex+currentPID).toString(), resultsList.toString());
 										currentDataForQueue.put((modeHex+currentPID).toString(), resultsList.toString());
@@ -415,6 +448,9 @@ public class DataCollector {
 		 * Instantiates a new database writer thread.
 		 */
 		public DatabaseWriterThread() {
+			
+			//Set the thread name
+			setName("Database Writer");
 
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
@@ -440,6 +476,7 @@ public class DataCollector {
 		 */
 		public void run() {
 
+			//If logging is enabled, print a nice message that we are starting a local DB push
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 				"Executing batch database write");
@@ -448,20 +485,23 @@ public class DataCollector {
 			//For all the items in the current data queue
 			for (int i = 0 ; i < currentDataQueue.size(); i++ ) {
 
-				//Create new string buffers for both the insert statement, columns, and values
-
-				
+				//Instanciate a new content values object to store the table row data into
 				ContentValues cv = new ContentValues();
 
-				//Get the current set from the dataQueue
+				//Get the oldest set from the collector queue
 				HashMap<String, String> currentSet = currentDataQueue.poll();
 
-				//For all the mode and pid values that were recorded
+				//For all the values that were recorded
 				for (String currentKey : currentSet.keySet()) {
+					
+					//add them to the table
 					cv.put("data_" + currentKey, currentSet.get(currentKey));
 				}
 				
+				//Load the content values into a new table row
 				long tableRow = sqldb.insert(OBDMeDatabaseHelper.TABLE_NAME, null, cv);
+				
+				//If debugging is enabled, print row number to the developer
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 							"Inserted data into table row: " + tableRow);
@@ -472,16 +512,6 @@ public class DataCollector {
 			//Close the connection, we're done.
 			sqldb.close();
 
-		}
-
-		/**
-		 * Cancel.
-		 */
-		public void cancel(){
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
-				"Cancel Polling");
-			}
 		}
 
 	};

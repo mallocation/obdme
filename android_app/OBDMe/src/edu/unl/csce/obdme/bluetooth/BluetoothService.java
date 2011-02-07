@@ -298,6 +298,10 @@ public class BluetoothService {
 		 * @param device the device
 		 */
 		public BluetoothConnectThread(BluetoothDevice device) {
+			
+			//Set the thread name
+			setName("Bluetooth Connect");
+			
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 				"Creating communication connect thread");
@@ -454,6 +458,10 @@ public class BluetoothService {
 		 * @param socket the socket
 		 */
 		public BluetoothConnectedThread(BluetoothSocket socket) {
+			
+			//Set the thread name
+			setName("Bluetooth Connected");
+			
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 				"Creating connected thread");

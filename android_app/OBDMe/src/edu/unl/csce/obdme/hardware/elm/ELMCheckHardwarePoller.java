@@ -158,6 +158,10 @@ public class ELMCheckHardwarePoller {
 		 * @param elmFramework the elm framework
 		 */
 		public ELMCheckHardwarePollerThread(ELMFramework elmFramework) {
+			
+			//Set the thread name
+			setName("Check Hardware Poller");
+			
 			this.elmFramework = elmFramework;
 			continuePolling = true;
 		}

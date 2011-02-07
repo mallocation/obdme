@@ -159,6 +159,10 @@ public class ELMAutoConnectPoller {
 		 * @param elmFramework the elm framework
 		 */
 		public ELMAutoConnectPollerThread(ELMFramework elmFramework) {
+			
+			//Set the thread name
+			setName("Auto Connect Poller");
+			
 			this.elmFramework = elmFramework;
 			continuePolling = true;
 		}

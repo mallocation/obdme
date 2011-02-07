@@ -174,7 +174,7 @@ public class OBDResponse {
 			else {
 				//Take the first two characters
 				responseBytes.add(responseLine.substring(index, index+2));
-				
+				index += 2;
 			}
 		}
 	}
