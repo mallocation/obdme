@@ -36,9 +36,10 @@ public class OBDResponse {
 	 *
 	 * @param originalRequest the original request
 	 * @param response the response
+	 * @throws Exception 
 	 * @throws OBDParserException 
 	 */
-	public OBDResponse(Context context, OBDRequest originalRequest, String response) throws ELMException {
+	public OBDResponse(Context context, OBDRequest originalRequest, String response) throws Exception {
 		
 		//Initialize the variables
 		this.context = context;
@@ -223,7 +224,7 @@ public class OBDResponse {
 
 	}
 
-	private void processResponse(OBDRequest originalRequest) {
+	private void processResponse(OBDRequest originalRequest) throws Exception {
 		this.processedResponse=originalRequest.getRequestPID().evaluateResponse(this.responseBytes);
 	}
 

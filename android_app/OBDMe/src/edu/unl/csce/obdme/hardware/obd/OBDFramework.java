@@ -174,9 +174,9 @@ public class OBDFramework {
 	 * Query valid pids.
 	 *
 	 * @return true, if successful
-	 * @throws ELMException the eLM exception
+	 * @throws Exception 
 	 */
-	public boolean queryValidPIDS() throws ELMException {
+	public boolean queryValidPIDS() throws Exception {
 
 		return OBDValidator.validate(this.elmFramework);
 

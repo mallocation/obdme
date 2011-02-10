@@ -51,6 +51,9 @@ public class OBDPID {
 
 	/** The pid formula. */
 	private String pidFormula;
+	
+	/** The pid compiled formula. */
+	private OBDFormulas pidCompiledFormula;
 
 	/** The pid name. */
 	private String pidName;
@@ -73,8 +76,10 @@ public class OBDPID {
 	/** The parent mode. */
 	private String parentMode;
 
+	/** The parent mode value. */
 	private int parentModeValue;
 	
+	/** The decimal format. */
 	private DecimalFormat decimalFormat;
 
 	/**
@@ -116,7 +121,8 @@ public class OBDPID {
 		//Formula
 		case FORMULA:
 			this.decimalFormat = new DecimalFormat();
-
+			this.pidCompiledFormula = null;
+		
 		//Bit Encoded
 		case BIT_ENCODED:
 			this.bitEncodedMap = new ConcurrentHashMap<Integer, String>();
@@ -169,6 +175,7 @@ public class OBDPID {
 		//Formula
 		case FORMULA:
 			this.decimalFormat = new DecimalFormat();
+			this.pidCompiledFormula = null;
 
 		//Bit Encoded
 		case BIT_ENCODED:
@@ -187,8 +194,9 @@ public class OBDPID {
 	 *
 	 * @param byteResponse the byte response
 	 * @return the object
+	 * @throws Exception 
 	 */
-	public Object evaluateResponse(List<String> byteResponse) {
+	public Object evaluateResponse(List<String> byteResponse) throws Exception {
 
 		//Switch on the PID calculation type
 		switch(this.pidEval) {
@@ -202,7 +210,12 @@ public class OBDPID {
 			return charStringEvaluator(byteResponse);
 
 		case FORMULA:
-			return formulaEvaluator(byteResponse);
+			if (this.pidCompiledFormula != null) {
+				return decimalFormat.format(this.pidCompiledFormula.formulaEval(byteResponse));
+			}
+			else{
+				return decimalFormat.format(formulaEvaluator(byteResponse));
+			}
 
 		case RAW:
 			return rawEvaluator(byteResponse);
@@ -784,6 +797,8 @@ public class OBDPID {
 	}
 
 	/**
+	 * Sets the parent mode value.
+	 *
 	 * @param parentModeValue the parentModeValue to set
 	 */
 	public void setParentModeValue(int parentModeValue) {
@@ -791,6 +806,8 @@ public class OBDPID {
 	}
 
 	/**
+	 * Gets the parent mode value.
+	 *
 	 * @return the parentModeValue
 	 */
 	public int getParentModeValue() {
@@ -798,17 +815,115 @@ public class OBDPID {
 	}
 
 	/**
-	 * @param decimalFormat the decimalFormat to set
+	 * Sets the decimal format.
+	 *
+	 * @param patternFormat the new decimal format
 	 */
-	public void setDecimalFormat(DecimalFormat decimalFormat) {
-		this.decimalFormat = decimalFormat;
+	public void setDecimalFormat(String patternFormat) {
+		this.decimalFormat.applyPattern(patternFormat);
 	}
 
 	/**
+	 * Gets the decimal format.
+	 *
 	 * @return the decimalFormat
 	 */
 	public DecimalFormat getDecimalFormat() {
 		return decimalFormat;
+	}
+
+	/**
+	 * Sets the pid compiled formula.
+	 *
+	 * @param pidCompiledFormula the pidCompiledFormula to set
+	 */
+	public void setPidCompiledFormula(OBDFormulas pidCompiledFormula) {
+		this.pidCompiledFormula = pidCompiledFormula;
+	}
+	
+	/**
+	 * Sets the pid compiled formula.
+	 *
+	 * @param pidCompiledFormula the new pid compiled formula
+	 */
+	public void setPidCompiledFormula(String pidCompiledFormula) {
+		
+		if(pidCompiledFormula.equals("FORMULA_1")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_1;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_2")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_2;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_3")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_3;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_4")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_4;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_5")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_5;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_6")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_6;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_7")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_7;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_8")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_8;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_9")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_9;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_10")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_10;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_11")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_11;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_12")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_12;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_13")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_13;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_14")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_14;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_15")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_15;
+		}
+		
+		else if(pidCompiledFormula.equals("FORMULA_16")) {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_16;
+		}
+		else {
+			this.pidCompiledFormula = OBDFormulas.FORMULA_1;
+		}
+
+	}
+
+	/**
+	 * Gets the pid compiled formula.
+	 *
+	 * @return the pidCompiledFormula
+	 */
+	public OBDFormulas getPidCompiledFormula() {
+		return pidCompiledFormula;
 	}
 
 }

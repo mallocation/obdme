@@ -299,6 +299,12 @@ public abstract class OBDConfigurationManager {
 						protocolStructure.get(parentMode).getPID(currentPID).setPidFormula(
 								xrp.getAttributeValue(null, "value"));
 					}
+					
+					//If a compiled formula node (for a PID).  Set the PID's compiled formula
+					else if(startTagName.equals("compiled-formula")){
+						protocolStructure.get(parentMode).getPID(currentPID).setPidCompiledFormula(
+								xrp.getAttributeValue(null, "value"));
+					}
 				}
 
 				//Get the next node
@@ -445,6 +451,12 @@ public abstract class OBDConfigurationManager {
 
 						//Add the formula to the current PID
 						protocolStructure.get(parentMode).getPID(currentPID).setPidFormula(
+								xrp.getAttributeValue(null, "value"));
+					}
+					
+					//If a compiled formula node (for a PID).  Set the PID's compiled formula
+					else if(startTagName.equals("compiled-formula")){
+						protocolStructure.get(parentMode).getPID(currentPID).setPidCompiledFormula(
 								xrp.getAttributeValue(null, "value"));
 					}
 				}

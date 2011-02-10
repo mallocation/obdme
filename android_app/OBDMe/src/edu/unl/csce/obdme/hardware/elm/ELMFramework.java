@@ -82,9 +82,9 @@ public class ELMFramework {
 	 *
 	 * @param request the request
 	 * @return the oBD response
-	 * @throws ELMException the eLM exception
+	 * @throws Exception 
 	 */
-	public synchronized OBDResponse sendOBDRequest(OBDRequest request) throws ELMException {
+	public synchronized OBDResponse sendOBDRequest(OBDRequest request) throws Exception {
 
 
 		//Initalize the response
@@ -159,9 +159,9 @@ public class ELMFramework {
 	 *
 	 * @param pid the pid
 	 * @return the oBD response
-	 * @throws ELMException the eLM exception
+	 * @throws Exception 
 	 */
-	public synchronized OBDResponse sendOBDRequest(OBDPID pid) throws ELMException {
+	public synchronized OBDResponse sendOBDRequest(OBDPID pid) throws Exception {
 
 		//Build the OBD REquest from the supplied PID object
 		OBDRequest request = new OBDRequest(pid);

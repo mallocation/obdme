@@ -15,10 +15,10 @@ public abstract class OBDValidator {
 	 *
 	 * @param elmFramework the elm framework
 	 * @return true, if successful
-	 * @throws ELMException the eLM exception
+	 * @throws Exception 
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static boolean validate(ELMFramework elmFramework) throws ELMException {
+	public static boolean validate(ELMFramework elmFramework) throws Exception {
 
 		//See if the valid PID query for Mode 1 PID 00 is supported
 		if (elmFramework.queryConfiguredPID("01", "00")) {

@@ -215,6 +215,9 @@ public class SetupWizardVehicle extends Activity {
 					Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
 							elme.getMessage());
 				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		else {

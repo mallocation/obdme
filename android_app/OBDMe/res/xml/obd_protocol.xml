@@ -116,72 +116,86 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="04" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Calculated engine load value">
-			<formula value="( ( A * 100 ) / 255 )" format=""/>
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="05" return="1" unit="C" eval="FORMULA" pollable="true"
 			name="Engine coolant temperature">
-			<formula value="( A - 40 )" />
+			<formula value="( A - 40 )" format="\###" />
+			<compiled-formula value="FORMULA_2" />
 		</pid>
 
 		<pid hex="06" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Short term fuel % trim—Bank 1">
-			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" />
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" />
 		</pid>
 
 		<pid hex="07" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Long term fuel % trim—Bank 1">
-			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" />
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" />
 		</pid>
 
 		<pid hex="08" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Short term fuel % trim—Bank 2">
-			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" />
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" />
 		</pid>
 
 		<pid hex="09" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Long term fuel % trim—Bank 2">
-			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" />
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" />
 		</pid>
 
 		<pid hex="0A" return="1" unit="kPa" eval="FORMULA" name="Fuel pressure"
 			pollable="true">
 			<formula value="( A * 3 )" />
+			<compiled-formula value="FORMULA_4" />
 		</pid>
 
 		<pid hex="0B" return="1" unit="kPa" eval="FORMULA" pollable="true"
 			name="Intake manifold absolute pressure">
-			<formula value="A" />
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" />
 		</pid>
 
 		<pid hex="0C" return="2" unit="RPM" eval="FORMULA" name="Engine RPM"
 			pollable="true">
-			<formula value="( ( ( A * 256 ) + B ) / 4 )" />
+			<formula value="( ( ( A * 256 ) + B ) / 4 )" format="\##,###.##" />
+			<compiled-formula value="FORMULA_6" />
 		</pid>
 
 		<pid hex="0D" return="1" unit="km/h" eval="FORMULA" name="Vehicle speed"
 			pollable="true">
-			<formula value="A" />
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" />
 		</pid>
 
 		<pid hex="0E" return="1" unit="" eval="FORMULA" name="Timing advance"
 			pollable="true">
-			<formula value="( ( A / 2 ) - 64 )" />
+			<formula value="( ( A / 2 ) - 64 )" format="\##.#" />
+			<compiled-formula value="FORMULA_7" />
 		</pid>
 
 		<pid hex="0F" return="1" unit="C" eval="FORMULA" name="Intake air temperature"
 			pollable="true">
-			<formula value="( A - 40 )" />
+			<formula value="( A - 40 )" format="\###" />
+			<compiled-formula value="FORMULA_2" />
 		</pid>
 
 		<pid hex="10" return="2" unit="g/s" eval="FORMULA" name="MAF air flow rate"
 			pollable="true">
-			<formula value="( ( ( A * 256 ) + B ) / 100 )" />
+			<formula value="( ( ( A * 256 ) + B ) / 100 )" format="\###.##" />
+			<compiled-formula value="FORMULA_8" />
 		</pid>
 
 		<pid hex="11" return="1" unit="%" eval="FORMULA" name="Throttle position"
 			pollable="true">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="12" return="1" unit="" eval="BIT_ENCODED" pollable="true"
@@ -243,7 +257,8 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="1F" return="2" unit="seconds" eval="FORMULA" pollable="true"
 			name="Run time since engine start">
-			<formula value="( ( A * 256 ) + B )" />
+			<formula value="( ( A * 256 ) + B )" format="\##,###"/>
+			<compiled-formula value="FORMULA_9" />
 		</pid>
 
 		<!-- MODE 1 PIDS 0x21-0x40 -->
@@ -285,17 +300,20 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="21" return="2" unit="km" eval="FORMULA" pollable="true"
 			name="Distance traveled with malfunction indicator lamp (MIL) on">
-			<formula value="( ( A * 256 ) + B )" />
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" />
 		</pid>
 
 		<pid hex="22" return="2" unit="kPa" eval="FORMULA" pollable="true"
 			name="Fuel Rail Pressure (relative to manifold vacuum)">
-			<formula value="( ( ( ( A * 256 ) + B ) * 10 ) / 128 )" />
+			<formula value="( ( ( ( A * 256 ) + B ) * 10 ) / 128 )" format="\#,###.###" />
+			<compiled-formula value="FORMULA_10" />
 		</pid>
 
 		<pid hex="23" return="2" unit="kPa" eval="FORMULA" pollable="true"
 			name="Fuel Rail Pressure (diesel)">
-			<formula value="( ( ( A * 256 ) + B ) * 10 )" />
+			<formula value="( ( ( A * 256 ) + B ) * 10 )" format="\###,###" />
+			<compiled-formula value="FORMULA_11" />
 		</pid>
 
 		<pid hex="24" return="4" unit="V" eval="RAW" pollable="false"
@@ -324,42 +342,50 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="2C" return="1" unit="%" eval="FORMULA" name="Commanded EGR"
 			pollable="true">
-			<formula value="( ( 100 * A ) / 255 )" />
+			<formula value="( ( 100 * A ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="2D" return="1" unit="%" eval="FORMULA" name="EGR Error"
 			pollable="true">
-			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" />
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" />
 		</pid>
 
 		<pid hex="2E" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Commanded evaporative purge">
-			<formula value="( ( 100 * A ) / 255 )" />
+			<formula value="( ( 100 * A ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="2F" return="1" unit="%" eval="FORMULA" name="Fuel Level Input"
 			pollable="true">
-			<formula value="( ( 100 * A ) / 255 )" />
+			<formula value="( ( 100 * A ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="30" return="1" unit="" eval="FORMULA" pollable="false"
 			name="Number of warm-ups since codes cleared">
-			<formula value="A" />
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" />
 		</pid>
 
 		<pid hex="31" return="2" unit="km" eval="FORMULA" pollable="false"
 			name="Distance traveled since codes cleared">
-			<formula value="( ( A * 256 ) + B )" />
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" />
 		</pid>
 
 		<pid hex="32" return="2" unit="Pa" eval="FORMULA" pollable="true"
 			name="Evap. System Vapor Pressure">
-			<formula value="( ( ( A * 256 ) + B ) / 4 )" />
+			<formula value="( ( ( A * 256 ) + B ) / 4 )" format="\#,###" />
+			<compiled-formula value="FORMULA_6" />
 		</pid>
 
 		<pid hex="33" return="1" unit="kPa" eval="FORMULA" name="Barometric pressure"
 			pollable="true">
-			<formula value="A" />
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" />
 		</pid>
 
 		<pid hex="34" return="4" unit="" eval="RAW" pollable="false"
@@ -388,22 +414,26 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="3C" return="2" unit="C" eval="FORMULA" pollable="true"
 			name="Catalyst Temperature Bank 1, Sensor 1">
-			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" />
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" />
 		</pid>
 
 		<pid hex="3D" return="2" unit="C" eval="FORMULA" pollable="true"
 			name="Catalyst Temperature Bank 2, Sensor 1">
-			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" />
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" />
 		</pid>
 
 		<pid hex="3E" return="2" unit="C" eval="FORMULA" pollable="true"
 			name="Catalyst Temperature Bank 1, Sensor 2">
-			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" />
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" />
 		</pid>
 
 		<pid hex="3F" return="2" unit="C" eval="FORMULA" pollable="true"
 			name="Catalyst Temperature Bank 2, Sensor 2">
-			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" />
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )" format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" />
 		</pid>
 
 		<!-- MODE 1 PIDS 0x41-0x60 -->
@@ -473,67 +503,80 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="42" return="2" unit="V" eval="FORMULA" name="Control module voltage"
 			pollable="true">
-			<formula value="( ( ( A * 256 ) + B ) / 1000 )" />
+			<formula value="( ( ( A * 256 ) + B ) / 1000 )" format="\##.###"/>
+			<compiled-formula value="FORMULA_14" />
 		</pid>
 
 		<pid hex="43" return="2" unit="%" eval="FORMULA" name="Absolute load value"
 			pollable="true">
-			<formula value="( ( ( A * 256 ) + B ) * ( 100 / 255 ) )" />
+			<formula value="( ( ( A * 256 ) + B ) * ( 100 / 255 ) )" format="\##,###" />
+			<compiled-formula value="FORMULA_15" />
 		</pid>
 
 		<pid hex="44" return="2" unit="" eval="FORMULA" name="Command equivalence ratio"
 			pollable="true">
-			<formula value="( ( ( A * 256 ) + B ) / 32768 )" />
+			<formula value="( ( ( A * 256 ) + B ) / 32768 )" format="\#" />
+			<compiled-formula value="FORMULA_16" />
 		</pid>
 
 		<pid hex="45" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Relative throttle position">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="46" return="1" unit="C" eval="FORMULA" name="Ambient air temperature"
 			pollable="true">
-			<formula value="( A - 40 )" />
+			<formula value="( A - 40 )" format="\###" />
+			<compiled-formula value="FORMULA_2" />
 		</pid>
 
 		<pid hex="47" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Absolute throttle position B">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="48" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Absolute throttle position C">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="49" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Accelerator pedal position D">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="4A" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Accelerator pedal position E">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="4B" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Accelerator pedal position F">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="4C" return="1" unit="%" eval="FORMULA" pollable="true"
 			name="Commanded throttle actuator">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="4D" return="2" unit="minutes" eval="FORMULA" pollable="true"
 			name="Time run with MIL on">
-			<formula value="( ( A * 256 ) + B )" />
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" />
 		</pid>
 
 		<pid hex="4E" return="2" unit="minutes" eval="FORMULA" pollable="true"
 			name="Time since trouble codes cleared">
-			<formula value="( ( A * 256 ) + B )" />
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" />
 		</pid>
 
 		<pid hex="51" return="1" unit="" eval="BYTE_ENCODED" name="Fuel Type"
@@ -564,7 +607,8 @@ PID Methods of evaluation (eval attribute)
 
 		<pid hex="52" return="1" unit="%" eval="FORMULA" name="Ethanol fuel %"
 			pollable="true">
-			<formula value="( ( A * 100 ) / 255 )" />
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" />
 		</pid>
 
 		<pid hex="53" return="2" unit="kPa" eval="RAW" pollable="true"

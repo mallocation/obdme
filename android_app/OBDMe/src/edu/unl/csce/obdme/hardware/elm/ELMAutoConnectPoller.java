@@ -241,6 +241,9 @@ public class ELMAutoConnectPoller {
 
 					//Change the status to connection failed.
 					setState(AUTO_CONNECT_FAILED);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}

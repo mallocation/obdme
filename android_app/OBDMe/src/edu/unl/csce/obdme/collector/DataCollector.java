@@ -323,7 +323,6 @@ public class DataCollector {
 									//If the return value is a double
 									if (response.getProcessedResponse() instanceof Double) {
 										Double responseDouble = (Double)response.getProcessedResponse();
-										responseDouble = (double) Math.round(responseDouble);
 										putCurrentData((modeHex+currentPID).toString(), Double.toString(responseDouble));
 										currentDataForQueue.put((modeHex+currentPID).toString(), Double.toString(responseDouble));
 									}
@@ -355,6 +354,9 @@ public class DataCollector {
 								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
 										"General ELM Exception: " + elme.getMessage());
 							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 
 
