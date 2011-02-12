@@ -1,0 +1,15 @@
+# you describe your data using the YAML notation here
+# and then load them using Fixtures.load("data.yml")
+
+# User(bob):
+#   email: bob@gmail.com
+#   password: secret
+#   fullname: Bob
+
+ExternalApp(abcd)
+	name: abcd
+	apikey: abcd
+	
+User(farmboy30@gmail.com)
+	email: farmboy30@gmail.com
+	passwordhash: farmboy30@gmail.com
