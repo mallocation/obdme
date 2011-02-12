@@ -2,14 +2,33 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Import CRUD routes
+*      /admin              						module:crud
+
 # Home page
-GET     /                                       Application.index
+#GET     /                                       Application.index
 
-GET 	/users									Users.index
-GET		/users/{email}							Users.getUser
 
-GET 	/users/create/{email}/{password}		Users.createUser
-GET 	/users/validation/pw/{email}			Users.isPasswordCorrect
+
+
+#/----------------------BEGIN OBDME API------------------------------------/
+
+#Users
+POST	/api/users								controllers.obdme.rest.Users.createUser
+GET		/api/users/{email}/login				controllers.obdme.rest.Users.validateUserCredentials
+GET		/api/users/{email}						controllers.obdme.rest.Users.getUser
+
+
+
+#Vehicles
+GET		/api/vehicles/{VIN}						controllers.obdme.rest.Vehicles.getVehicleByVIN
+PUT		/api/vehicles							controllers.obdme.rest.Vehicles.addVehicle
+
+
+
+
+#/-----------------------END OBDME API-------------------------------------/
+
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
