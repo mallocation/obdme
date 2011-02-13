@@ -7,8 +7,7 @@ import play.data.validation.Required;
 public class Users extends SecureController {
     
     public static void getUser(String email) {
-    	models.obdme.User user = models.obdme.User.findByEmail(email);
-    	renderJSON(user);
+    	renderJSON(User.findByEmail(email));
     }
     
     public static void createUser(@Required String email, @Required String pw) {
@@ -18,6 +17,4 @@ public class Users extends SecureController {
     public static void validateUserCredentials(String email, String pw) {
     	renderJSON(User.validateUserLogin(email, pw));
     }
-    
-
 }

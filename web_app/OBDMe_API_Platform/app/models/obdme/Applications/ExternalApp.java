@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.eclipse.jdt.core.dom.ThisExpression;
 import org.joda.time.DateTime;
 
 import edu.unl.csce.obdme.encryption.EncryptionUtils;
@@ -15,19 +16,33 @@ import play.data.validation.Required;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name="ExternalApp")
+@Table(name="externalapp")
 public class ExternalApp extends Model {
 	
+	/* Persisted Fields */
+	
 	@Required
-	@Column(unique=true)
+	@Column(name="apikey", unique=true)
 	public String apikey;
 
 	@Required
+	@Column(name="name")
 	public String name;
 	
-	public ExternalApp(String name, String apikey) {
+	/* End Persisted Fields */
+	
+	/* Default Constructor */
+	public ExternalApp(){}
+	
+	private ExternalApp(String name, String apikey) {
 		this.name = name;
-		this.apikey = apikey != null ? apikey : createApiKeyForApplication(name);
+		this.apikey = apikey == null ? createApiKeyForApplication(name) : apikey;
+	}
+	
+	public static ExternalApp createExternalAppForApplication(String applicationName) {
+		ExternalApp newApp = new ExternalApp(applicationName, null);
+		newApp.validateAndSave();
+		return newApp;
 	}
 	
 	public static boolean hasAccess(String apikey) {

@@ -1,28 +1,49 @@
 package models.obdme.Vehicles;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import models.obdme.User;
+import models.obdme.statistics.VehicleDataset;
 
 import play.data.validation.Required;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name="Vehicle")
+@Table(name="vehicles")
 public class Vehicle extends Model {
 	
+	/* Persisted Fields */
+	
 	@Required
-	@Column(unique=true, nullable=false)
+	@Column(name="vin", unique=true, nullable=false)
 	public String VIN;
 	
-	public Vehicle(String VIN) {
-		this.VIN = VIN;
-	}
+	/* End Persisted Fields */
 	
+	/* Persisted Relations */
+	
+	@ManyToMany(mappedBy="vehicles")
+	Set<User> owners;
+	
+	@OneToMany
+	@JoinColumn(name="vehicle_id", nullable=false)
+	Set<VehicleDataset> datasets;
+	
+	/* End Persisted Relations */
+	
+	/* Default Constructor */
+	public Vehicle(){}
+	
+	private Vehicle(String VIN) {
+		this.VIN = VIN;
+	}	
 	
 	public static Vehicle addVehicle(String vin) {
 		Vehicle vehicle = findByVIN(vin);

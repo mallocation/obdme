@@ -6,10 +6,6 @@
 #   password: secret
 #   fullname: Bob
 
-ExternalApp(abcd)
-	name: abcd
-	apikey: abcd
-	
-User(farmboy30@gmail.com)
-	email: farmboy30@gmail.com
-	passwordhash: farmboy30@gmail.com
+ExternalApp(android):
+name: OBDMe API Android Library
+apikey: c48ecc86348652a5037574b6f93d20172a25ae0ff13132ccf4aa753f0544cf45

@@ -7,22 +7,19 @@ import play.mvc.Controller;
 
 public class Vehicles extends Controller {
 
-    public static void getVehicleByVIN(String VIN) {
-    	Vehicle vehicle = Vehicle.findByVIN(VIN);    	
-    	renderJSON(vehicle);
+    public static void getVehicleByVIN(String VIN) { 	
+    	renderJSON(Vehicle.findByVIN(VIN));
     }
     
     public static void addVehicle(@Required String VIN, long userid) {
     	Vehicle vehicle = Vehicle.addVehicle(VIN);
     	if (userid > 0) {
-    		User.findByUserId(userid).attachVehicle(vehicle);    		
-    	}   	
+    		User user = User.findByUserId(userid);
+    		if (user != null) {
+    			user.vehicles.add(vehicle);
+    			user.save();
+    		}
+    	}
     	renderJSON(vehicle);
-    }
-    
-    public static void attachVehicleToUser(String VIN, long userId) {
-    	User user = User.findById(userId);
-    	user.attachVehicle(Vehicle.addVehicle(VIN));
-    }
-    
+    }    
 }

@@ -3,15 +3,18 @@ package models.obdme;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import models.obdme.Vehicles.Vehicle;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.eclipse.jdt.core.dom.ThisExpression;
 
 import play.data.validation.Email;
@@ -20,50 +23,44 @@ import play.data.validation.Required;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name="UserBase")
+@Table(name="userbase")
 public class User extends Model {
+	
+	/* Persisted Fields */
 	
 	@Email
 	@Required
-	@Column(unique=true)
+	@Column(name="email", unique=true, nullable=false)
 	public String email;
 	
-	@Password
 	@Required
-	@Column(length=64)
+	@Column(name="passwordhash", nullable=false, length=64)
 	public String passwordhash;
 	
-	public String firstname;
-	
-	public String lastname;
-	
 	@Required
+	@Column(name="regdate", nullable=false)
 	public Date regdate;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
-	public List<Vehicle> vehicles;
+	/* End Persisted Fields */
 	
-	public User(String email, String passwordhash) {
+	/* Persisted Relations */
+	
+	@ManyToMany
+	@JoinTable(name="uservehicle")
+	public Set<Vehicle> vehicles;
+	
+	/* End Persisted Relations */
+	
+	
+	/* Default Constructor */
+	public User(){}
+	
+	private User(String email, String passwordhash) {
 		this.email = email;
 		this.passwordhash = passwordhash;
 		this.regdate = new Date();
-		this.vehicles = new ArrayList<Vehicle>();
 	}
-	
 
-	/**
-	 * Attach a vehicle to a user.
-	 * This will ensure that a specific range of statistics
-	 * are tied to a user.
-	 *
-	 * @param vehicle the vehicle to attach
-	 */
-	public void attachVehicle(Vehicle vehicle) {
-		this.vehicles.add(vehicle);
-		this.save();
-	}
-	
-	
 	/**
 	 * Creates a user in the UserBase table. 
 	 * @param email E-mail address of the user.

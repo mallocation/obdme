@@ -1,5 +1,6 @@
 package controllers.obdme.rest.basic;
 
+import models.obdme.Applications.ExternalApp;
 import play.Logger;
 import play.mvc.Before;
 import play.mvc.Controller;
@@ -12,7 +13,7 @@ import play.mvc.Controller;
  * to your REST controller.
  */
 public abstract class SecureController extends Controller {
-	private static final String[] EXCLUDE_PARAMS = {"body"};
+	//private static final String[] EXCLUDE_PARAMS = {"body"};
 	
 	/**
 	 * Validate access and http request.
@@ -29,12 +30,12 @@ public abstract class SecureController extends Controller {
 
 		if(validation.hasErrors()) {
 			/* api key or signature were not present; access forbidden! */
-			Logger.info("API Key and/or Signature are not present.");
+			Logger.info("API Key is not present.");
 			forbidden();
 		}
 
 		/* validate that the api key has access to the obdme system */
-//		validation.isTrue(ExternalApp.hasAccess(apikey));
+		validation.isTrue(ExternalApp.hasAccess(apikey));
 		if (validation.hasErrors()) {
 			/* api key does not have access to the system */
 			Logger.info("API Key '" + apikey + "' does not have access to the OBDMe system.");
