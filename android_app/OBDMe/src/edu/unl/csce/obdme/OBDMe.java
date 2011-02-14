@@ -17,8 +17,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
@@ -27,7 +25,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
@@ -36,7 +33,6 @@ import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
-import edu.unl.csce.obdme.settingsmenu.SettingsMenu;
 
 /**
  * The Class OBDMe.
@@ -67,10 +63,7 @@ public class OBDMe extends Activity {
 	/** The Constant REQUEST_ENABLE_BT. */
 	private static final int REQUEST_ENABLE_BT = 0;
 
-	/** The Constant MESSAGE_STATE_CHANGE. */
-	public static final int MESSAGE_STATE_CHANGE = 0;
-
-	/** Modes of Operation. */
+	/** The Constant BASIC_USER_MODE. */
 	public static final int BASIC_USER_MODE = 0;
 
 	/** The Constant ENTHUSIAST_USER_MODE. */
@@ -79,11 +72,11 @@ public class OBDMe extends Activity {
 	/** The Constant MECHANIC_MODE. */
 	public static final int MECHANIC_MODE = 2;
 
-	/** Shared Preferences. */
+	/** The shared prefs. */
 	private SharedPreferences sharedPrefs;
 
-	/** The basic user ui. */
-	private BasicUserMode basicUserUI;
+	/** The ui. */
+	private Object theUI;
 
 	/** The gesture detector. */
 	private GestureDetector gestureDetector;
@@ -91,10 +84,8 @@ public class OBDMe extends Activity {
 	/** The gesture listener. */
 	View.OnTouchListener gestureListener;
 
-	/**
-	 * Called when the activity is first created.
-	 *
-	 * @param savedInstanceState the saved instance state
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -104,41 +95,154 @@ public class OBDMe extends Activity {
 
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-
 		sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
 
-		basicUserUI = new BasicUserMode(getApplicationContext());
-
 		checkBluetoothEnabled();
-
-		/* Depending on the mode (user or mechanic) display appropriate data
-		 * to the user and also display data according to which orientation
-		 * the screen is in (landscape or portrait).
-		 */
-		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-			//Build a new Basic User UI
-			setContentView(basicUserUI.getFlipper());
-		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
-			//setContentView(R.layout.enthusiastuser_mode);	
-		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
-			setContentView(R.layout.mechanic_mode);
-			mechanicMode();
-		} else {
-			// First run, so set it to BASIC_USER_MODE
-			SharedPreferences.Editor prefEditor = sharedPrefs.edit();
-			prefEditor.putInt(getResources().getString(R.string.prefs_mode), BASIC_USER_MODE);
-			prefEditor.commit();
-			setContentView(R.layout.basicuser_mode_portrait);
-		}
-
-
-		//setContentView(R.layout.main);
-		//getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
-
 
 		//Set up a new gesture detector for swipes
 		gestureDetector = new GestureDetector(new FlingGestureDetector());
 
+
+	}
+
+	/**
+	 * Sets the configured view.
+	 */
+	private void setConfiguredView() {
+
+		//Switch on the screen orientation
+		switch(getResources().getConfiguration().orientation) {
+
+		//If the orientation is portrait mode:
+		case Configuration.ORIENTATION_PORTRAIT:
+
+			//Switch on the user preferred mode
+			switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+
+			case OBDMe.BASIC_USER_MODE:
+				this.theUI = new BasicUserModePortrait(this);
+				setContentView(((BasicUserModePortrait) this.theUI).getFlipper());
+				break;
+
+			case OBDMe.ENTHUSIAST_USER_MODE:
+				break;
+
+			case OBDMe.MECHANIC_MODE:
+				break;
+
+				//If it doesn't exist or is invalid, reset
+			default:
+				SharedPreferences.Editor prefEditor = this.sharedPrefs.edit();
+				prefEditor.putInt(getResources().getString(R.string.prefs_mode), OBDMe.BASIC_USER_MODE);
+				prefEditor.commit();
+				this.theUI = new BasicUserModePortrait(this);
+				setContentView(((BasicUserModePortrait) this.theUI).getFlipper());
+				break;
+
+			}
+			break;
+
+			//If the orientation is landscape mode:
+		case Configuration.ORIENTATION_LANDSCAPE:
+
+			//Switch on the user preferred mode
+			switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+
+			case OBDMe.BASIC_USER_MODE:
+				this.theUI = new BasicUserModeLandscape(this);
+				setContentView(((BasicUserModeLandscape) this.theUI).getFlipper());
+				break;
+
+			case OBDMe.ENTHUSIAST_USER_MODE:
+				break;
+
+			case OBDMe.MECHANIC_MODE:
+				break;
+
+				//If it doesn't exist or is invalid, reset
+			default:
+				SharedPreferences.Editor prefEditor = this.sharedPrefs.edit();
+				prefEditor.putInt(getResources().getString(R.string.prefs_mode), OBDMe.BASIC_USER_MODE);
+				prefEditor.commit();
+				this.theUI = new BasicUserModeLandscape(this);
+				setContentView(((BasicUserModeLandscape) this.theUI).getFlipper());
+				break;
+
+			}
+			break;
+		}
+
+	}
+
+	/**
+	 * Sets the connection status view.
+	 */
+	private void setConnectionStatusView() {
+		//Switch on the screen orientation
+		switch(getResources().getConfiguration().orientation) {
+
+		//If the orientation is portrait mode:
+		case Configuration.ORIENTATION_PORTRAIT:
+			this.theUI = new ConnectionStatusPortrait(getApplicationContext());
+			setContentView(((ConnectionStatusPortrait) this.theUI).getRoot());
+			break;
+
+			//If the orientation is landscape mode:
+		case Configuration.ORIENTATION_LANDSCAPE:
+
+			this.theUI = new ConnectionStatusLandscape(getApplicationContext());
+			setContentView(((ConnectionStatusLandscape) this.theUI).getRoot());
+			break;
+		}
+	}
+
+
+	/**
+	 * Update configured view data.
+	 */
+	private void updateConfiguredViewData() {
+
+		//Switch on the screen orientation
+		switch(getResources().getConfiguration().orientation) {
+
+		//If the orientation is portrait mode:
+		case Configuration.ORIENTATION_PORTRAIT:
+
+			//Switch on the user preferred mode
+			switch(sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+
+			case BASIC_USER_MODE:
+				((BasicUserModePortrait) theUI).updateValues(collectorThread);
+				break;
+
+			case ENTHUSIAST_USER_MODE:
+				break;
+
+			case MECHANIC_MODE:
+				break;
+
+			}
+			break;
+
+			//If the orientation is landscape mode:
+		case Configuration.ORIENTATION_LANDSCAPE:
+
+			//Switch on the user preferred mode
+			switch(sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+
+			case BASIC_USER_MODE:
+				((BasicUserModeLandscape) theUI).updateValues(collectorThread);
+				break;
+
+			case ENTHUSIAST_USER_MODE:
+				break;
+
+			case MECHANIC_MODE:
+				break;
+
+			}
+			break;
+		}
 
 	}
 
@@ -162,15 +266,24 @@ public class OBDMe extends Activity {
 					//And we're in basic user interface mode:
 					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
 
-						//Fling the view flipper right
-						basicUserUI.flingRight();
+						if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+							((BasicUserModePortrait) theUI).flingRight();
+						}
+						else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+							((BasicUserModeLandscape) theUI).flingRight();
+						}
 					}
 
 				}  else if (e2.getX() - e1.getX() > 120 && Math.abs(velocityX) > 200) {
 					//And we're in basic user interface mode:
 					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-						//Fling the view flipper left
-						basicUserUI.flingLeft();
+
+						if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+							((BasicUserModePortrait) theUI).flingLeft();
+						}
+						else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+							((BasicUserModeLandscape) theUI).flingLeft();
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -190,7 +303,7 @@ public class OBDMe extends Activity {
 		else
 			return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onStart()
 	 */
@@ -204,15 +317,7 @@ public class OBDMe extends Activity {
 	 */
 	public synchronized void onResume() {
 		super.onResume();
-		if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-			//Set the basic user interface UI
-			setContentView(basicUserUI.getFlipper());
-		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
-			//setContentView(R.layout.enthusiastuser_mode);
-		} else if ( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
-			setContentView(R.layout.mechanic_mode);
-			mechanicMode();
-		}
+		//setConfiguredView();
 	}
 
 	/* (non-Javadoc)
@@ -254,10 +359,15 @@ public class OBDMe extends Activity {
 	 */
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.scan:
+		case R.id.menu_options_start:
 			return true;
-		case R.id.settings:
-			startActivity(new Intent(this, SettingsMenu.class));
+		case R.id.menu_options_pause:
+			return true;
+		case R.id.menu_options_quit:
+			this.finish();
+			return true;
+		case R.id.menu_options_prefs:
+			startActivity(new Intent(this, edu.unl.csce.obdme.settingsmenu.RootPreferences.class));
 			return true;
 		}
 
@@ -270,17 +380,7 @@ public class OBDMe extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-
-		// Checks the orientation of the screen
-		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-				setContentView(R.layout.basicuser_mode_landscape);
-			}
-		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-			if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-				setContentView(R.layout.basicuser_mode_portrait);
-			}
-		}
+		setConfiguredView();
 	}
 
 	/**
@@ -308,42 +408,30 @@ public class OBDMe extends Activity {
 	 * Start bluetooth connection thread.
 	 */
 	private void startBluetoothConnectionThread() {
-		if (bluetoothService == null) {
-			bluetoothService = new BluetoothService(getApplicationContext());
-			autoConnectPoller.startPolling();
-		}
-		else if(bluetoothService != null) {
-			bluetoothService.setAppHandler(bluetoothHandler);
-			BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-			String device = sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
-			BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
 
-			switch (bluetoothService.getState()) {
-			case BluetoothService.STATE_NONE:
-				bluetoothService.connect(bluetoothDevice);
-				break;
+		setConnectionStatusView();
+		
+		bluetoothService.setAppHandler(eventHandler);
+		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		String device = sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
+		BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
 
-			case BluetoothService.STATE_CONNECTED:
-				startHardwareVerifierThread();
-				break;
+		switch (bluetoothService.getState()) {
+		case BluetoothService.STATE_NONE:
+			bluetoothService.connect(bluetoothDevice);
+			break;
 
-			case BluetoothService.STATE_CONNECTING:
-				if(busyDialog == null){
-					busyDialog = ProgressDialog.show(OBDMe.this, "", getResources().getString(R.string.setupwizard_bluetooth_dialog_hardware), true);
-				}
-				else if (busyDialog != null) {
-					busyDialog.setMessage(getResources().getString(R.string.setupwizard_bluetooth_dialog_connecting));
-					if (!busyDialog.isShowing()) {
-						busyDialog.show();
-					}
-				}
-				break;
+		case BluetoothService.STATE_CONNECTED:
+			startHardwareVerifierThread();
+			break;
 
-			case BluetoothService.STATE_FAILED:
-				collectorThread.pausePolling();
-				bluetoothService.connect(bluetoothDevice);
-				break;
-			}
+		case BluetoothService.STATE_CONNECTING:
+			break;
+
+		case BluetoothService.STATE_FAILED:
+			collectorThread.pausePolling();
+			bluetoothService.connect(bluetoothDevice);
+			break;
 		}
 	}
 
@@ -351,7 +439,7 @@ public class OBDMe extends Activity {
 	 * Start hardware verifier thread.
 	 */
 	private void startHardwareVerifierThread() {
-		hardwarePoller = new ELMCheckHardwarePoller(getApplicationContext(), hardwareHandler, elmFramework, 500);
+		hardwarePoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, elmFramework, 500);
 		hardwarePoller.startPolling();
 	}
 
@@ -359,7 +447,7 @@ public class OBDMe extends Activity {
 	 * Start ignition poller thread.
 	 */
 	private void startIgnitionPollerThread() {
-		ignitionPoller = new ELMIgnitionPoller(getApplicationContext(), ignitionHandler, elmFramework, 500);
+		ignitionPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, elmFramework, 500);
 		ignitionPoller.startPolling();
 	}
 
@@ -367,7 +455,7 @@ public class OBDMe extends Activity {
 	 * Start auto connect poller thread.
 	 */
 	private void startAutoConnectPollerThread() {
-		autoConnectPoller = new ELMAutoConnectPoller(getApplicationContext(), autoConnectHandler, elmFramework, 500);
+		autoConnectPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, elmFramework, 500);
 		autoConnectPoller.startPolling();
 	}
 
@@ -375,43 +463,47 @@ public class OBDMe extends Activity {
 	 * Start data collector thread.
 	 */
 	private void startDataCollectorThread() {
-		collectorThread = new DataCollector(getApplicationContext(), collectorHandler, elmFramework);
+		collectorThread = new DataCollector(getApplicationContext(), eventHandler, elmFramework);
 		collectorThread.startCollecting();
 	}
 
-	/** The bluetooth handler. */
-	private final Handler bluetoothHandler = new Handler() {
+	/** The event handler. */
+	private final Handler eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
+			case BluetoothService.STATE_CHANGE:
 
-			case BluetoothService.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_obdme),
+					"Bluetooth State Change");
+				}
 
 				switch (msg.arg1) {
-
 				case BluetoothService.STATE_CONNECTED:
+					if(theUI instanceof ConnectionStatusPortrait) {
+						((ConnectionStatusPortrait) theUI).finishWirelessAnimation();
+					}
 					startHardwareVerifierThread();
 					break;
 
 				case BluetoothService.STATE_FAILED:
-					collectorThread.pausePolling();
+					if(theUI instanceof ConnectionStatusPortrait) {
+						((ConnectionStatusPortrait) theUI).setConnectionFailed();
+						((ConnectionStatusPortrait) theUI).finishWirelessAnimation();
+					}
+					if(collectorThread != null) {
+						collectorThread.pausePolling();
+					}
 					BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 					String device = sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
 					BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
-					bluetoothService.connect(bluetoothDevice);
+					bluetoothService.connect(bluetoothDevice, 10000);
 					break;
 
 				case BluetoothService.STATE_CONNECTING:
-					if(busyDialog == null){
-						busyDialog = ProgressDialog.show(OBDMe.this, "", getResources().getString(R.string.setupwizard_bluetooth_dialog_connecting), true);
-					}
-					else if (busyDialog != null) {
-						busyDialog.setMessage(getResources().getString(R.string.setupwizard_bluetooth_dialog_connecting));
-						if (!busyDialog.isShowing()) {
-							busyDialog.show();
-						}
+					if(theUI instanceof ConnectionStatusPortrait) {
+						((ConnectionStatusPortrait) theUI).startWirelessAnimation();
 					}
 					break;
 
@@ -419,19 +511,12 @@ public class OBDMe extends Activity {
 					break;
 				}
 				break;
-			}
-		}
-	};
 
-	/** The hardware handler. */
-	private final Handler hardwareHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-
-			case ELMCheckHardwarePoller.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
-						"Check Harware State Change: " + msg.arg1);
+			case ELMCheckHardwarePoller.STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_obdme),
+					"Check Hardware Poller State Change");
+				}
 
 				switch (msg.arg1) {
 
@@ -439,15 +524,8 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMCheckHardwarePoller.CHECK_HARDWARE_POLLING:
-					//Show the connecting dialog box
-					if(busyDialog == null){
-						busyDialog = ProgressDialog.show(OBDMe.this, "", getResources().getString(R.string.setupwizard_bluetooth_dialog_hardware), true);
-					}
-					else if (busyDialog != null) {
-						busyDialog.setMessage(getResources().getString(R.string.setupwizard_bluetooth_dialog_hardware));
-						if (!busyDialog.isShowing()) {
-							busyDialog.show();
-						}
+					if(theUI instanceof ConnectionStatusPortrait) {
+						((ConnectionStatusPortrait) theUI).startDongleAnimation();
 					}
 					break;
 
@@ -461,33 +539,16 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMCheckHardwarePoller.CHECK_HARDWARE_FAILED:
-					if(hardwarePoller != null){
-						hardwarePoller.stop();
-						hardwarePoller = null;
-					}
-
-					if (busyDialog != null) {
-						busyDialog.dismiss();
-						busyDialog = null;
-					}
-
-					//TODO Make this nice...
 
 					break;
 				}
-			}
-		}
-	};
+				break;
 
-	/** The ignition handler. */
-	private final Handler ignitionHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-
-			case ELMIgnitionPoller.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_obdme),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+			case ELMIgnitionPoller.STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_obdme),
+					"Ignition Poller State Change");
+				}
 
 				switch (msg.arg1) {
 
@@ -505,15 +566,6 @@ public class OBDMe extends Activity {
 						ignitionPoller.setPollingInterval(2000);
 					}
 
-					if(busyDialog == null){
-						busyDialog = ProgressDialog.show(OBDMe.this, "", getResources().getString(R.string.setupwizard_vehicle_dialog_ignition), true);
-					}
-					else if (busyDialog != null) {
-						busyDialog.setMessage(getResources().getString(R.string.setupwizard_vehicle_dialog_ignition));
-						if (!busyDialog.isShowing()) {
-							busyDialog.show();
-						}
-					}
 					break;
 
 				case ELMIgnitionPoller.IGNITION_ON:
@@ -525,19 +577,13 @@ public class OBDMe extends Activity {
 					startAutoConnectPollerThread();
 					break;
 				}
-			}
-		}
-	};
+				break;
 
-	/** The auto connect handler. */
-	private final Handler autoConnectHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-
-			case ELMAutoConnectPoller.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_obdme),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+			case ELMAutoConnectPoller.STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_obdme),
+					"Auto Connect Poller State Change");
+				}
 
 				switch (msg.arg1) {
 
@@ -545,16 +591,7 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMAutoConnectPoller.AUTO_CONNECT_POLLING:
-					//Show the connecting dialog box
-					if(busyDialog == null){
-						busyDialog = ProgressDialog.show(OBDMe.this, "", getResources().getString(R.string.setupwizard_vehicle_dialog_autoconnect), true);
-					}
-					else if (busyDialog != null) {
-						busyDialog.setMessage(getResources().getString(R.string.setupwizard_vehicle_dialog_autoconnect));
-						if (!busyDialog.isShowing()) {
-							busyDialog.show();
-						}
-					}
+
 					break;
 
 				case ELMAutoConnectPoller.AUTO_CONNECT_FAILED:
@@ -564,35 +601,21 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMAutoConnectPoller.AUTO_CONNECT_COMPLETE:
-
-					if(autoConnectPoller != null){
-						autoConnectPoller.stop();
-						autoConnectPoller = null;
+					if(theUI instanceof ConnectionStatusPortrait) {
+						((ConnectionStatusPortrait) theUI).finishDongleAnimation();
 					}
-
-					//Dismiss connecting dialog.  Update the view and change the state to select a new device
-					if(busyDialog != null){
-						busyDialog.dismiss();
-						busyDialog = null;
-					}
-
+					setConfiguredView();
 					startDataCollectorThread();
 
 					break;
 				}
-			}
-		}
-	};
+				break;
 
-	/** The collector handler. */
-	private final Handler collectorHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-
-			case DataCollector.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_obdme),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+			case DataCollector.STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_obdme),
+					"Data Collector State Change");
+				}
 
 				switch (msg.arg1) {
 
@@ -605,32 +628,22 @@ public class OBDMe extends Activity {
 					break;
 
 				case DataCollector.COLLECTOR_POLLING:
-					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
-						basicUserUI.startFlipping();
-					} 
+
 					break;
 
 				}
+				break;
 
-			case DataCollector.MESSAGE_DATA_CHANGE:
+			case DataCollector.DATA_CHANGE:
 
 				switch (msg.arg1) {
 
 				case DataCollector.COLLECTOR_NEW_DATA:
-
-					if (sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ) {
-						basicUserUI.updateValues(collectorThread);
-					} else if (sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == ENTHUSIAST_USER_MODE ) {
-
-
-					} else if (sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == MECHANIC_MODE ) {
-
-
-					}
+					updateConfiguredViewData();
 					break;
 
 				}
-
+				break;
 
 			}
 		}

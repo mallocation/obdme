@@ -41,7 +41,7 @@ public class BluetoothAndroidService extends Service {
 	/** The bluetooth connected thread. */
 	private BluetoothConnectedThread bluetoothConnectedThread;
 
-	/** The m state. */
+	/** The bluetooth state. */
 	private int bluetoothState;
 	
 	/** The bluetooth clients. */

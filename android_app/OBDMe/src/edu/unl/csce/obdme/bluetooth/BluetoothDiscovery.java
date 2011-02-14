@@ -113,7 +113,7 @@ public class BluetoothDiscovery extends Activity {
 	}
 
 	/**
-	 * Start device discover with the BluetoothAdapter.
+	 * Do discovery.
 	 */
 	private void doDiscovery() {
 		if (DEBUG) Log.d(DEBUG_TAG, "Executing Bluetooth device discovery");

@@ -13,8 +13,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
-import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.R;
 
 /**
@@ -34,35 +34,32 @@ public class BluetoothService {
 	/** The app handler. */
 	private Handler appHandler;
 
-	/** The comm connect thread. */
+	/** The bluetooth connect thread. */
 	private BluetoothConnectThread bluetoothConnectThread;
 
-	/** The comm connected thread. */
+	/** The bluetooth connected thread. */
 	private BluetoothConnectedThread bluetoothConnectedThread;
 
-	/** The m state. */
+	/** The message state. */
 	private int messageState;
 
 	/** The context. */
 	private Context context;
 
-	/** The Constant MESSAGE_STATE_CHANGE. */
-	public static final int MESSAGE_STATE_CHANGE = 0;
+	/** The Constant STATE_CHANGE. */
+	public static final int STATE_CHANGE = 1536616135;
 
 	/** The Constant STATE_NONE. */
 	public static final int STATE_NONE = 0;
 
-	/** The Constant STATE_LISTEN. */
-	public static final int STATE_LISTEN = 1;
-
 	/** The Constant STATE_CONNECTING. */
-	public static final int STATE_CONNECTING = 2;
+	public static final int STATE_CONNECTING = 1;
 
 	/** The Constant STATE_CONNECTED. */
-	public static final int STATE_CONNECTED = 3;
+	public static final int STATE_CONNECTED = 2;
 
 	/** The Constant STATE_FAILED. */
-	public static final int STATE_FAILED = 4;
+	public static final int STATE_FAILED = 3;
 
 	/**
 	 * Instantiates a new bluetooth service.
@@ -95,9 +92,10 @@ public class BluetoothService {
 					"New Bluetooth State ->" + state);
 		}
 
-		messageState = state;
-
-		appHandler.obtainMessage(OBDMe.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+		if (this.messageState != state) {
+			messageState = state;
+			appHandler.obtainMessage(STATE_CHANGE, state, -1).sendToTarget();
+		}
 	}
 
 
@@ -131,7 +129,7 @@ public class BluetoothService {
 			bluetoothConnectedThread.cancel();
 			bluetoothConnectedThread = null;
 		}
-		setState(STATE_LISTEN);
+		setState(STATE_NONE);
 	}
 
 	/**
@@ -160,9 +158,40 @@ public class BluetoothService {
 		}
 
 		// Start the thread to connect with the given device
-		bluetoothConnectThread = new BluetoothConnectThread(device);
+		bluetoothConnectThread = new BluetoothConnectThread(device, 0);
 		bluetoothConnectThread.start();
-		setState(STATE_CONNECTING);
+	}
+
+	/**
+	 * Connect.
+	 *
+	 * @param device the device
+	 * @param sleepTime the sleep time
+	 */
+	public synchronized void connect(BluetoothDevice device, int sleepTime) {
+
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
+					"Connecting to: " + device);
+		}
+
+		// Cancel any thread attempting to make a connection
+		if (messageState == STATE_CONNECTING) {
+			if (bluetoothConnectThread != null) {
+				bluetoothConnectThread.cancel();
+				bluetoothConnectThread = null;
+			}
+		}
+
+		// Cancel any thread currently running a connection
+		if (bluetoothConnectedThread != null) {
+			bluetoothConnectedThread.cancel();
+			bluetoothConnectedThread = null;
+		}
+
+		// Start the thread to connect with the given device
+		bluetoothConnectThread = new BluetoothConnectThread(device, sleepTime);
+		bluetoothConnectThread.start();
 	}
 
 	/**
@@ -197,7 +226,7 @@ public class BluetoothService {
 	}
 
 	/**
-	 * Stop all threads.
+	 * Stop.
 	 */
 	public synchronized void stop() {
 		if(context.getResources().getBoolean(R.bool.debug)) {
@@ -250,7 +279,7 @@ public class BluetoothService {
 		// Perform the write unsynchronized
 		return thread.getResponseFromQueue();
 	}
-	
+
 	/**
 	 * Clear response queue.
 	 */
@@ -267,22 +296,7 @@ public class BluetoothService {
 	}
 
 	/**
-	 * Connection failed.
-	 */
-	private void connectionFailed() {
-		setState(STATE_FAILED);
-	}
-
-
-	/**
-	 * Connection lost.
-	 */
-	private void connectionLost() {
-		setState(STATE_LISTEN);
-	}
-
-	/**
-	 * The Class CommunicationConnectThread.
+	 * The Class BluetoothConnectThread.
 	 */
 	private class BluetoothConnectThread extends Thread {
 
@@ -291,17 +305,23 @@ public class BluetoothService {
 
 		/** The bluetooth device. */
 		private final BluetoothDevice bluetoothDevice;
+		
+		/** The sleep time. */
+		private int sleepTime = 0;
 
 		/**
-		 * Instantiates a new communication connect thread.
+		 * Instantiates a new bluetooth connect thread.
 		 *
 		 * @param device the device
+		 * @param sleepTime the sleep time
 		 */
-		public BluetoothConnectThread(BluetoothDevice device) {
+		public BluetoothConnectThread(BluetoothDevice device, int sleepTime) {
+
+			this.sleepTime = sleepTime;
 			
 			//Set the thread name
 			setName("Bluetooth Connect");
-			
+
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 				"Creating communication connect thread");
@@ -357,13 +377,17 @@ public class BluetoothService {
 		 */
 		@Override
 		public void run() {
+			
+			if (sleepTime != 0) {
+				SystemClock.sleep(sleepTime);
+			}
+			
+			setState(STATE_CONNECTING);
+			
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 				"Running communication connect thread");
 			}
-
-			setName("ConnectThread");
-
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 				"Canceling device discovery");
@@ -385,7 +409,6 @@ public class BluetoothService {
 					"IOException while trying to connect to the device.");
 				}
 
-				connectionFailed();
 				setState(STATE_FAILED);
 
 				try {
@@ -433,7 +456,7 @@ public class BluetoothService {
 
 
 	/**
-	 * The Class ConnectionConnectedThread.
+	 * The Class BluetoothConnectedThread.
 	 */
 	private class BluetoothConnectedThread extends Thread {
 
@@ -445,7 +468,7 @@ public class BluetoothService {
 
 		/** The output stream. */
 		private final OutputStream outputStream;
-		
+
 		/** The response queue. */
 		private ConcurrentLinkedQueue<String> responseQueue;
 
@@ -453,20 +476,20 @@ public class BluetoothService {
 		private int timeout;
 
 		/**
-		 * Instantiates a new connection connected thread.
+		 * Instantiates a new bluetooth connected thread.
 		 *
 		 * @param socket the socket
 		 */
 		public BluetoothConnectedThread(BluetoothSocket socket) {
-			
+
 			//Set the thread name
 			setName("Bluetooth Connected");
-			
+
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 				"Creating connected thread");
 			}
-			
+
 			timeout = context.getResources().getInteger(R.integer.bluetooth_response_timeout);
 			bluetoothSocket = socket;
 			InputStream tmpIn = null;
@@ -523,7 +546,7 @@ public class BluetoothService {
 						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
 						"Disconnected");
 					}
-					connectionLost();
+					setState(STATE_FAILED);
 					break;
 				}
 			}
@@ -536,12 +559,12 @@ public class BluetoothService {
 		 * @throws BluetoothServiceRequestTimeoutException the bluetooth service request timeout exception
 		 */
 		public String getResponseFromQueue() throws BluetoothServiceRequestTimeoutException {
-			
+
 			int timeWaiting = 0; 
-			
+
 			//While the response queue is empty
 			while(responseQueue.isEmpty()){
-				
+
 				//Sleep for 5 milliseconds
 				try {
 					Thread.sleep(5);
@@ -551,21 +574,21 @@ public class BluetoothService {
 						"Interrupted exception waiting for response");
 					}
 				}
-				
+
 				//Increase the amount of time we've spent waiting
 				timeWaiting += 5;
-				
+
 				//If the time waiting exceeds the request timeout limit, throw a BluetoothServiceRequestTimeoutException
 				if (timeWaiting >= timeout) {
 					throw new BluetoothServiceRequestTimeoutException("The device took too long to respond.");
 				}
-				
+
 			}
-			
+
 			//Otherwise, we have a response.  Return it.
 			return responseQueue.poll();
 		}
-		
+
 		/**
 		 * Clear response queue.
 		 */
@@ -574,7 +597,7 @@ public class BluetoothService {
 		}
 
 		/**
-		 * Write to the connected OutStream.
+		 * Write.
 		 *
 		 * @param command the command
 		 */
@@ -587,7 +610,7 @@ public class BluetoothService {
 			} catch (IOException e) {
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
-					"Exception during write", e);
+							"Exception during write", e);
 				}
 				setState(BluetoothService.STATE_FAILED);
 			}
