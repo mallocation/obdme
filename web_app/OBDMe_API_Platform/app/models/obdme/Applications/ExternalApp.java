@@ -1,19 +1,20 @@
 package models.obdme.Applications;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.eclipse.jdt.core.dom.ThisExpression;
-import org.joda.time.DateTime;
-
-import edu.unl.csce.obdme.encryption.EncryptionUtils;
 
 import play.data.validation.Required;
 import play.db.jpa.Model;
+import edu.unl.csce.obdme.encryption.EncryptionUtils;
 
 @Entity
 @Table(name="externalapp")
@@ -22,11 +23,11 @@ public class ExternalApp extends Model {
 	/* Persisted Fields */
 	
 	@Required
-	@Column(name="apikey", unique=true)
+	@Column(name="apikey", unique=true, nullable=false)
 	public String apikey;
 
 	@Required
-	@Column(name="name")
+	@Column(name="name", nullable=false)
 	public String name;
 	
 	/* End Persisted Fields */

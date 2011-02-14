@@ -1,50 +1,59 @@
-//package models.obdme.Applications;
-//
-//import play.*;
-//import play.data.validation.Required;
-//import play.db.jpa.*;
-//
-//import javax.persistence.*;
-//import java.util.*;
-//
-//@Entity
-//@Table(name="ApiUsageLog")
-//public class ApiUsageLog extends Model {
-//	
-//	@Required
-//	@ManyToOne
-//	public ExternalApp externalapp;
-//	
-//	@Required
-//	public String requestpath;
-//	
-//	@Required
-//	public String httpmethod;
-//	
-//	@Required
-//	public int responsestatus;
-//	
-//	@Required
-//	public String ipaddress;
-//	
-//	@Required
-//	public Date time;
-//	
-//	public ApiUsageLog(ExternalApp externalApp, String requestPath, String httpMethod, int responseStatus, String ipAddress) {
-//		this.externalapp = externalApp;
-//		this.requestpath = requestPath;
-//		this.httpmethod = httpMethod;
-//		this.responsestatus = responseStatus;
-//		this.ipaddress = ipAddress;
-//		this.time = new Date();
-//	}
-//	
-//	public ApiUsageLog(String apiKey, String requestPath, String httpMethod, int responseStatus, String ipAddress) {
-//		this.externalapp = ExternalApp.findByApiKey(apiKey);
-//		this.requestpath = requestPath;
-//		this.httpmethod = httpMethod;
-//		this.responsestatus = responseStatus;
-//		this.ipaddress = ipAddress;
-//		this.time = new Date();
-//	}
-//}
+package models.obdme.Applications;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import play.data.validation.Required;
+import play.db.jpa.Model;
+
+@Entity
+@Table(name="apiusagelog")
+public class ApiUsageLog extends Model {
+	
+	/* Persisted Fields */
+	
+	@Required
+	@Column(name="requestpath")
+	public String requestpath;
+	
+	@Required
+	@Column(name="httpmethod")
+	public String httpmethod;
+	
+	@Required
+	@Column(name="responsestatus")
+	public int responsestatus;
+	
+	@Required
+	@Column(name="ipaddress")
+	public String ipaddress;
+	
+	@Required
+	@Column(name="time")
+	public Date time;
+	
+	/* End Persisted Fields */
+	
+	/* Persisted Relations */
+	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="externalapp_id", nullable=false, updatable=false)
+	public ExternalApp externalApp;	
+	
+	/* End Persisted Relations */
+	
+	public ApiUsageLog(ExternalApp externalApp, String requestPath, String httpMethod, int responseStatus, String ipAddress) {
+		this.externalApp = externalApp;
+		this.requestpath = requestPath;
+		this.httpmethod = httpMethod;
+		this.responsestatus = responseStatus;
+		this.ipaddress = ipAddress;
+		this.time = new Date();
+	}
+	
+}

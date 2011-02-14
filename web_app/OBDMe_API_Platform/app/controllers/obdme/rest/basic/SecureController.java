@@ -1,5 +1,7 @@
 package controllers.obdme.rest.basic;
 
+import org.eclipse.jdt.core.dom.ThisExpression;
+
 import models.obdme.Applications.ExternalApp;
 import play.Logger;
 import play.mvc.Before;
@@ -14,6 +16,8 @@ import play.mvc.Controller;
  */
 public abstract class SecureController extends Controller {
 	//private static final String[] EXCLUDE_PARAMS = {"body"};
+	
+	
 	
 	/**
 	 * Validate access and http request.

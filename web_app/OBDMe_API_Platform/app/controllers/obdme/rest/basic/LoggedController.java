@@ -1,5 +1,7 @@
 package controllers.obdme.rest.basic;
 
+import models.obdme.Applications.ApiUsageLog;
+import models.obdme.Applications.ExternalApp;
 import play.mvc.Finally;
 
 /**
@@ -19,9 +21,11 @@ public class LoggedController extends SecureController {
     private static void logApiUsage(String apikey) {
 		validation.clear();
 		validation.required(apikey);
-		if (!validation.hasErrors()) {
+		ExternalApp externalApp = ExternalApp.findByApiKey(apikey);
+		validation.required(externalApp);
+		if (!validation.hasErrors()) {			
 			/* Log the api usage */
-//			new ApiUsageLog(apikey, request.path, request.method, response.status, request.remoteAddress).validateAndSave();
+			new ApiUsageLog(externalApp, request.path, request.method, response.status, request.remoteAddress).validateAndSave();
 		}		
     }
 }
