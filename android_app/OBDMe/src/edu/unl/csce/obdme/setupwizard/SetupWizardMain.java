@@ -9,7 +9,7 @@ import android.widget.Button;
 import edu.unl.csce.obdme.R;
 
 /**
- * The Class OBDMeSetupWizardMain.
+ * The Class SetupWizardMain.
  */
 public class SetupWizardMain extends Activity {
 	

@@ -144,10 +144,35 @@
 	<string name="instMPGValue">00.0</string>
 	<string name="avgMPG">Average MPG</string>
 	<string name="avgMPGValue">00.0</string>
+	
+	<!-- Basic Data Display -->
+	<string name="menu.prefs.category.account">Account Preferences</string>
+	<string name="menu.prefs.accountinfo.title">Account Information</string>
+	<string name="menu.prefs.accountinfo.summary">View or change your OBDMe account and user information.</string>
+	<string name="menu.prefs.vehicles.title">Vehicle Information</string>
+	<string name="menu.prefs.vehicles.summary">Add, remove, view, or change vehicle information on your account</string>
+	
+	<string name="menu.prefs.category.application">Application Preferences</string>
+	<string name="menu.prefs.usermode.title">User Mode</string>
+	<string name="menu.prefs.usermode.summary">Change the format in which information is displayed.</string>
+	<string name="menu.prefs.collectionopts.title">Collected Information</string>
+	<string name="menu.prefs.collectionopts.summary">Designate what kind of data gets collected from your vehicle</string>
+	<string name="menu.prefs.displayopts.title">Display Options</string>
+	<string name="menu.prefs.displayopts.summary">Change the order and presence that collected data is displayed</string>
+	<string name="menu.prefs.units.title">English Units</string>
+	<string name="menu.prefs.units.summary">The default option is to display metric units.  Check this box to display English units.</string>
+	<string name="menu.prefs.datausage.title">Data Usage</string>
+	<string name="menu.prefs.datausage.summary">Designate how collected information is uploaded to OBDMe</string>
 
+	
+	<string name="menu.prefs.category.device">Device Preferences</string>
+	<string name="menu.prefs.device.title">Account Preferences</string>
+	
 	<!-- Options Menu -->
-	<string name="connect">Connect a device</string>
-	<string name="settings">Settings</string>
+	<string name="menu.options.start">Start Collecting</string>
+	<string name="menu.options.pause">Pause Collection</string>
+	<string name="menu.options.quit">Quit</string>
+	<string name="menu.options.prefs">Preferences</string>
 
 	<!-- Settings Menu Selections -->
 	<string name="settings.modeselect">Mode Selection</string>

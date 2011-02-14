@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
@@ -26,7 +25,7 @@ import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 
 /**
- * The Class OBDMeSetupWizardBluetooth.
+ * The Class SetupWizardBluetooth.
  */
 public class SetupWizardBluetooth extends Activity {
 
@@ -42,7 +41,7 @@ public class SetupWizardBluetooth extends Activity {
 	/** The Constant SETUP_BLUETOOTH_RESULT_OK. */
 	public static final int SETUP_BLUETOOTH_RESULT_OK = 10;
 
-	/** The setup state. */
+	/** The SETU p_ state. */
 	private int SETUP_STATE = 0;
 
 	/** The bluetooth adapter. */
@@ -51,7 +50,7 @@ public class SetupWizardBluetooth extends Activity {
 	/** The bluetooth service. */
 	private BluetoothService bluetoothService = null;
 
-	/** The preferences. */
+	/** The prefs. */
 	private SharedPreferences prefs;
 
 	/** The connect dialog. */
@@ -213,9 +212,7 @@ public class SetupWizardBluetooth extends Activity {
 	}
 
 	/**
-	 * Check Bluetooth availability.
-	 *
-	 * @return true, if successful
+	 * Check bluetooth availability.
 	 */
 	public void checkBluetoothAvailability() {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -250,7 +247,7 @@ public class SetupWizardBluetooth extends Activity {
 
 
 	/**
-	 * Check Bluetooth enabled.
+	 * Check bluetooth enabled.
 	 */
 	public void checkBluetoothEnabled() {
 
@@ -270,7 +267,7 @@ public class SetupWizardBluetooth extends Activity {
 	}
 
 	/**
-	 * Pair Bluetooth device.
+	 * Select bluetooth device.
 	 */
 	public void selectBluetoothDevice() {
 
@@ -280,13 +277,13 @@ public class SetupWizardBluetooth extends Activity {
 	}
 
 	/**
-	 * Connect Bluetooth device.
+	 * Connect bluetooth device.
 	 */
 	public void connectBluetoothDevice() {
 
 		//Start the Bluetooth service for communication with the device
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
-		bluetoothService.setAppHandler(messageHandler);
+		bluetoothService.setAppHandler(eventHandler);
 		BluetoothDevice device = bluetoothAdapter.getRemoteDevice(prefs.getString(getResources().getString(R.string.prefs_bluetooth_device), null)); 
 
 		//Request a connection to device
@@ -298,7 +295,7 @@ public class SetupWizardBluetooth extends Activity {
 	 */
 	protected void checkHardwareVersion() {
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), chHandler, elmFramework, 2000);
+		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, elmFramework, 2000);
 		chPoller.startPolling();
 	}
 
@@ -368,14 +365,14 @@ public class SetupWizardBluetooth extends Activity {
 		}
 	}
 
-	/** The ch handler. */
-	private final Handler chHandler = new Handler() {
+	/** The event handler. */
+	private final Handler eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 
 			//Messsage from BT service indicating a connection state change
-			case ELMCheckHardwarePoller.MESSAGE_STATE_CHANGE:
+			case ELMCheckHardwarePoller.STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
 						"Check Harware State Change: " + msg.arg1);
 
@@ -428,18 +425,10 @@ public class SetupWizardBluetooth extends Activity {
 					}
 					break;
 				}
-			}
-		}
-	};
-
-	/** The message handler. */
-	private final Handler messageHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-
+				break;
+			
 			//Messsage from BT service indicating a connection state change
-			case OBDMe.MESSAGE_STATE_CHANGE:
+			case BluetoothService.STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
 						"Bluetooth State Change: " + msg.arg1);
 

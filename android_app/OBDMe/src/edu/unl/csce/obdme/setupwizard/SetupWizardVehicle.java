@@ -32,7 +32,8 @@ public class SetupWizardVehicle extends Activity {
 
 	/** The elm framework. */
 	private ELMFramework elmFramework;
-	
+
+	/** The web framework. */
 	private ObdMeService webFramework;
 
 	/** The ign poller. */
@@ -41,10 +42,10 @@ public class SetupWizardVehicle extends Activity {
 	/** The ignition dialog. */
 	private ProgressDialog ignitionDialog;
 
-	/** The ign poller. */
+	/** The ac poller. */
 	private ELMAutoConnectPoller acPoller;
 
-	/** The ignition dialog. */
+	/** The ac dialog. */
 	private ProgressDialog acDialog;
 
 	/** The prefs. */
@@ -52,7 +53,7 @@ public class SetupWizardVehicle extends Activity {
 
 	/** The SETU p_ state. */
 	private int SETUP_STATE = 0;
-	
+
 	/** The Constant SETUP_VEHICLE_RESULT_OK. */
 	public static final int SETUP_VEHICLE_RESULT_OK = 10;
 
@@ -72,7 +73,7 @@ public class SetupWizardVehicle extends Activity {
 
 		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
-		bluetoothService.setAppHandler(bluetoothHandler);
+		bluetoothService.setAppHandler(eventHandler);
 
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
 
@@ -101,26 +102,26 @@ public class SetupWizardVehicle extends Activity {
 		});
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
 	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		
+
 		//The user acknowledged the complete screen
 		case SetupWizardComplete.SETUP_COMPLETE_RESULT_OK:
 			if (resultCode == Activity.RESULT_OK) {
-				
+
 				//Backprop result ok
 				setResult(Activity.RESULT_OK);
-				
+
 				//Finish
 				finish();
 			}
 			break;
 		}
-    }
+	}
 
 	/**
 	 * Update view.
@@ -135,7 +136,7 @@ public class SetupWizardVehicle extends Activity {
 
 		//Switch on the current state of the setup
 		switch(SETUP_STATE) {
-		
+
 		case -1:
 			text.setText(R.string.setupwizard_vehicle_body_text_failure);
 			button.setText(R.string.setupwizard_vehicle_button_exit_text);
@@ -143,7 +144,7 @@ public class SetupWizardVehicle extends Activity {
 			vinText.setVisibility(View.GONE);
 			break;
 
-		//Post Bluetooth is supported
+			//Post Bluetooth is supported
 		case 1:
 			text.setText(R.string.setupwizard_vehicle_body_text_confirm);
 			button.setText(R.string.setupwizard_vehicle_button_confirm_text);
@@ -154,11 +155,12 @@ public class SetupWizardVehicle extends Activity {
 
 		}
 	}
+	
 	/**
 	 * Start ignition poller thread.
 	 */
 	private void startIgnitionPollerThread() {
-		ignPoller = new ELMIgnitionPoller(getApplicationContext(), ignitionHandler, elmFramework, 2000);
+		ignPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, elmFramework, 2000);
 		ignPoller.startPolling();
 	}
 
@@ -166,14 +168,14 @@ public class SetupWizardVehicle extends Activity {
 	 * Start auto connect poller thread.
 	 */
 	private void startAutoConnectPollerThread() {
-		acPoller = new ELMAutoConnectPoller(getApplicationContext(), acHandler, elmFramework, 2000);
+		acPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, elmFramework, 2000);
 		acPoller.startPolling();
 	}
 
 	/**
-	 * Gets the VIN.
+	 * Gets the vIN.
 	 *
-	 * @return the VIN
+	 * @return the vIN
 	 */
 	private void getVIN() {
 
@@ -181,31 +183,31 @@ public class SetupWizardVehicle extends Activity {
 
 		//If the VIN PID is supported
 		if(elmFramework.getObdFramework().isPIDSupported("09", "02")) {
-			
+
 			//Try to get the VIN
 			try {
-				
+
 				//Send the request
 				OBDResponse response = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("09", "02"));
-				
+
 				//If we got something back
 				if (response != null) {
-					
+
 					//Update the GUI
 					String vinResult = (String)response.getProcessedResponse();
 					vinText.setText(vinResult);
-					
+
 					//Enabled all the PID's for the new protocol
 					elmFramework.getObdFramework().enableAllPIDS();
-					
+
 					//Save the configuration
 					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), elmFramework.getObdFramework().getConfiguredProtocol(), vinResult);
-					
+
 					//Save the VIN in the preferences
 					SharedPreferences.Editor editor = prefs.edit();
 					editor.putString(getResources().getString(R.string.prefs_account_vin), vinResult);
 					editor.commit();
-					
+
 					//Update the GUI to reflect the new status
 					SETUP_STATE = 1;
 					updateView();
@@ -227,16 +229,18 @@ public class SetupWizardVehicle extends Activity {
 
 	}
 
-	/** The ignition handler. */
-	private final Handler ignitionHandler = new Handler() {
+	/** The event handler. */
+	private final Handler eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 
 			//Messsage from BT service indicating a connection state change
-			case ELMIgnitionPoller.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+			case ELMIgnitionPoller.STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+					"Ignition Poller State Change");
+				}
 
 				//Get the new state of the BT service
 				switch (msg.arg1) {
@@ -271,20 +275,14 @@ public class SetupWizardVehicle extends Activity {
 					startAutoConnectPollerThread();
 					break;
 				}
-			}
-		}
-	};
+				break;
 
-	/** The ac handler. */
-	private final Handler acHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-
-			//Messsage from BT service indicating a connection state change
-			case ELMAutoConnectPoller.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+				//Messsage from BT service indicating a connection state change
+			case ELMAutoConnectPoller.STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+					"Auto Connect Poller State Change");
+				}
 
 				//Get the new state of the BT service
 				switch (msg.arg1) {
@@ -318,20 +316,15 @@ public class SetupWizardVehicle extends Activity {
 					getVIN();
 					break;
 				}
-			}
-		}
-	};
+				break;
 
-	/** The bluetooth handler. */
-	private final Handler bluetoothHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
 
-			//Messsage from BT service indicating a connection state change
-			case BluetoothService.MESSAGE_STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
-						"MESSAGE_STATE_CHANGE: " + msg.arg1);
+				//Messsage from BT service indicating a connection state change
+			case BluetoothService.STATE_CHANGE:
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+					"Bluetooth State Change");
+				}
 
 				//Get the new state of the BT service
 				switch (msg.arg1) {
@@ -352,6 +345,4 @@ public class SetupWizardVehicle extends Activity {
 			}
 		}
 	};
-
-
 }

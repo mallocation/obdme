@@ -26,20 +26,20 @@ import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.api.entities.User;
 
 /**
- * The Class OBDMeSetupWizardAccount.
+ * The Class SetupWizardAccount.
  */
 public class SetupWizardAccount extends Activity {
 
-	/** New account. */
+	/** The NE w_ account. */
 	private static boolean NEW_ACCOUNT = false;
 
-	/** Verified email. */
+	/** The VERIFIE d_ email. */
 	private static boolean VERIFIED_EMAIL = false;
 
-	/** Verified password. */
+	/** The VERIFIE d_ password. */
 	private static int VERIFIED_PASSWORD = 0;
 
-	/** Verified confirm password. */
+	/** The VERIFIE d_ confir m_ password. */
 	private static boolean VERIFIED_CONFIRM_PASSWORD = false;
 
 	/** The Constant SETUP_ACCOUNT_RESULT_OK. */
@@ -51,10 +51,10 @@ public class SetupWizardAccount extends Activity {
 	/** The web framework. */
 	private ObdMeService webFramework;
 
-	/** The preferences. */
+	/** The prefs. */
 	private SharedPreferences prefs;
 
-	/** Email regex. */
+	/** The email reg ex. */
 	private Pattern emailRegEx;
 
 	/* (non-Javadoc)

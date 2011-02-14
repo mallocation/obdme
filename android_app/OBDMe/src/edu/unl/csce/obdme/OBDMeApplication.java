@@ -59,9 +59,9 @@ public class OBDMeApplication extends Application {
     }
 	
 	/**
-	 * Gets the framework.
+	 * Gets the web framework.
 	 *
-	 * @return the framework
+	 * @return the web framework
 	 */
 	public ObdMeService getWebFramework() {
         if (webFramework == null) {
