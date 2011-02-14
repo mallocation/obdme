@@ -25,7 +25,7 @@ public class DataCollector {
 	/** The app handler. */
 	private final Handler appHandler;
 
-	/** The dc thread. */
+	/** The collector thread. */
 	private DataCollectorThread collectorThread;
 
 	/** The writer thread. */
@@ -46,8 +46,8 @@ public class DataCollector {
 	/** The current data queue. */
 	private ConcurrentLinkedQueue<HashMap<String, String>> currentDataQueue;
 
-	/** The Constant MESSAGE_STATE_CHANGE. */
-	public static final int MESSAGE_STATE_CHANGE = 0;
+	/** The Constant STATE_CHANGE. */
+	public static final int STATE_CHANGE = 738264738;
 
 	/** The Constant COLLECTOR_NONE. */
 	public static final int COLLECTOR_NONE = 0;
@@ -58,8 +58,8 @@ public class DataCollector {
 	/** The Constant COLLECTOR_PAUSED. */
 	public static final int COLLECTOR_PAUSED = 2;
 
-	/** The Constant MESSAGE_DATA_CHANGE. */
-	public static final int MESSAGE_DATA_CHANGE = 1;
+	/** The Constant DATA_CHANGE. */
+	public static final int DATA_CHANGE = 113513131;
 
 	/** The Constant COLLECTOR_NEW_DATA. */
 	public static final int COLLECTOR_NEW_DATA = 0;
@@ -95,7 +95,7 @@ public class DataCollector {
 	private synchronized void setState(int state) {
 		if(messageState != state) {
 			messageState = state;
-			appHandler.obtainMessage(MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+			appHandler.obtainMessage(STATE_CHANGE, state, -1).sendToTarget();
 		}
 	}
 
@@ -105,13 +105,13 @@ public class DataCollector {
 	 * @param state the new data change
 	 */
 	private synchronized void setDataChange(int state) {
-		appHandler.obtainMessage(MESSAGE_DATA_CHANGE, state, -1).sendToTarget();
+		appHandler.obtainMessage(DATA_CHANGE, state, -1).sendToTarget();
 	}
 
 	/**
-	 * Gets the state.
+	 * Gets the poller state.
 	 *
-	 * @return the state
+	 * @return the poller state
 	 */
 	public synchronized int getPollerState() {
 		return messageState;
@@ -399,7 +399,7 @@ public class DataCollector {
 		/**
 		 * Checks if is continue polling.
 		 *
-		 * @return the continuePolling
+		 * @return true, if is continue polling
 		 */
 		@SuppressWarnings("unused")
 		public synchronized boolean isContinuePolling() {
@@ -409,7 +409,7 @@ public class DataCollector {
 		/**
 		 * Sets the continue polling.
 		 *
-		 * @param continuePolling the continuePolling to set
+		 * @param continuePolling the new continue polling
 		 */
 		@SuppressWarnings("unused")
 		public synchronized void setContinuePolling(boolean continuePolling) {
@@ -419,7 +419,7 @@ public class DataCollector {
 		/**
 		 * Checks if is collection paused.
 		 *
-		 * @return the collectionPaused
+		 * @return true, if is collection paused
 		 */
 		@SuppressWarnings("unused")
 		public synchronized boolean isCollectionPaused() {
@@ -429,7 +429,7 @@ public class DataCollector {
 		/**
 		 * Sets the collection paused.
 		 *
-		 * @param collectionPaused the collectionPaused to set
+		 * @param collectionPaused the new collection paused
 		 */
 		@SuppressWarnings("unused")
 		public synchronized void setCollectionPaused(boolean collectionPaused) {

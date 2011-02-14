@@ -5,19 +5,20 @@ package edu.unl.csce.obdme.hardware.obd;
  */
 public class OBDRequest {
 	
-	/** The mode. */
+	/** The mode hex. */
 	private String modeHex;
 	
-	/** The pid. */
+	/** The pid hex. */
 	private String pidHex;
 	
 	/** The return length. */
 	private int returnLength;
 	
+	/** The request pid. */
 	private OBDPID requestPID;
 	
 	/**
-	 * Instantiates a new OBD request.
+	 * Instantiates a new oBD request.
 	 *
 	 * @param pid the pid
 	 */
@@ -28,6 +29,13 @@ public class OBDRequest {
 		this.requestPID = pid;
 	}
 	
+	/**
+	 * Instantiates a new oBD request.
+	 *
+	 * @param mode the mode
+	 * @param pid the pid
+	 * @param returnSize the return size
+	 */
 	public OBDRequest (String mode, String pid, int returnSize) {
 		this.modeHex = mode;
 		this.pidHex = pid;
@@ -53,7 +61,7 @@ public class OBDRequest {
 	/**
 	 * Sets the mode.
 	 *
-	 * @param mode the mode to set
+	 * @param mode the new mode
 	 */
 	public void setMode(String mode) {
 		this.modeHex = mode;
@@ -71,7 +79,7 @@ public class OBDRequest {
 	/**
 	 * Sets the pid.
 	 *
-	 * @param pid the pid to set
+	 * @param pid the new pid
 	 */
 	public void setPid(String pid) {
 		this.pidHex = pid;
@@ -80,7 +88,7 @@ public class OBDRequest {
 	/**
 	 * Sets the return length.
 	 *
-	 * @param returnLength the returnLength to set
+	 * @param returnLength the new return length
 	 */
 	public void setReturnLength(int returnLength) {
 		this.returnLength = returnLength;
@@ -89,21 +97,25 @@ public class OBDRequest {
 	/**
 	 * Gets the return length.
 	 *
-	 * @return the returnLength
+	 * @return the return length
 	 */
 	public int getReturnLength() {
 		return returnLength;
 	}
 
 	/**
-	 * @param requestPID the requestPID to set
+	 * Sets the request pid.
+	 *
+	 * @param requestPID the new request pid
 	 */
 	public void setRequestPID(OBDPID requestPID) {
 		this.requestPID = requestPID;
 	}
 
 	/**
-	 * @return the requestPID
+	 * Gets the request pid.
+	 *
+	 * @return the request pid
 	 */
 	public OBDPID getRequestPID() {
 		return requestPID;

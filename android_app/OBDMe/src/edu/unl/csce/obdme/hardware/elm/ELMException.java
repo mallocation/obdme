@@ -10,7 +10,7 @@ public class ELMException extends Exception {
 	private static final long serialVersionUID = -4791317205099601784L;
 
 	/**
-	 * Instantiates a new oBD exception.
+	 * Instantiates a new eLM exception.
 	 *
 	 * @param msg the msg
 	 */

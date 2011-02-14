@@ -24,20 +24,22 @@ public class OBDResponse {
 	/** The original request. */
 	private OBDRequest originalRequest;
 
+	/** The processed response. */
 	private Object processedResponse;
 
 	/** The Constant ELM_DEVICE_SEARCHING. */
 	private static final String ELM_DEVICE_SEARCHING = "SEARCHING...";
 
+	/** The context. */
 	private Context context;
 
 	/**
 	 * Instantiates a new oBD response.
 	 *
+	 * @param context the context
 	 * @param originalRequest the original request
 	 * @param response the response
-	 * @throws Exception 
-	 * @throws OBDParserException 
+	 * @throws Exception the exception
 	 */
 	public OBDResponse(Context context, OBDRequest originalRequest, String response) throws Exception {
 		
@@ -70,7 +72,7 @@ public class OBDResponse {
 	 * Parses the response.
 	 *
 	 * @param responseArrayList the response array list
-	 * @throws OBDParserException the oBD parser exception
+	 * @throws ELMException the eLM exception
 	 */
 	private void parseResponse(LinkedList<String> responseArrayList) throws ELMException {
 
@@ -184,6 +186,7 @@ public class OBDResponse {
 	 * Verify response.
 	 *
 	 * @throws OBDUnexpectedResponseException the oBD unexpected response exception
+	 * @throws NumberFormatException the number format exception
 	 */
 	private void verifyResponse() throws OBDUnexpectedResponseException, NumberFormatException {
 
@@ -224,6 +227,12 @@ public class OBDResponse {
 
 	}
 
+	/**
+	 * Process response.
+	 *
+	 * @param originalRequest the original request
+	 * @throws Exception the exception
+	 */
 	private void processResponse(OBDRequest originalRequest) throws Exception {
 		this.processedResponse=originalRequest.getRequestPID().evaluateResponse(this.responseBytes);
 	}
@@ -231,7 +240,7 @@ public class OBDResponse {
 	/**
 	 * Sets the response bytes.
 	 *
-	 * @param responseBytes the responseBytes to set
+	 * @param responseBytes the new response bytes
 	 */
 	public void setResponseBytes(List<String> responseBytes) {
 		this.responseBytes = responseBytes;
@@ -240,7 +249,7 @@ public class OBDResponse {
 	/**
 	 * Gets the response bytes.
 	 *
-	 * @return the responseBytes
+	 * @return the response bytes
 	 */
 	public List<String> getResponseBytes() {
 		return responseBytes;
@@ -249,7 +258,7 @@ public class OBDResponse {
 	/**
 	 * Sets the raw response.
 	 *
-	 * @param rawResponse the rawResponse to set
+	 * @param rawResponse the new raw response
 	 */
 	public void setRawResponse(String rawResponse) {
 		this.rawResponse = rawResponse;
@@ -258,7 +267,7 @@ public class OBDResponse {
 	/**
 	 * Gets the raw response.
 	 *
-	 * @return the rawResponse
+	 * @return the raw response
 	 */
 	public String getRawResponse() {
 		return rawResponse;
@@ -267,7 +276,7 @@ public class OBDResponse {
 	/**
 	 * Sets the original request.
 	 *
-	 * @param originalRequest the originalRequest to set
+	 * @param originalRequest the new original request
 	 */
 	public void setOriginalRequest(OBDRequest originalRequest) {
 		this.originalRequest = originalRequest;
@@ -276,20 +285,24 @@ public class OBDResponse {
 	/**
 	 * Gets the original request.
 	 *
-	 * @return the originalRequest
+	 * @return the original request
 	 */
 	public OBDRequest getOriginalRequest() {
 		return originalRequest;
 	}
 
 	/**
-	 * @param context the context to set
+	 * Sets the context.
+	 *
+	 * @param context the new context
 	 */
 	public void setContext(Context context) {
 		this.context = context;
 	}
 
 	/**
+	 * Gets the context.
+	 *
 	 * @return the context
 	 */
 	public Context getContext() {
@@ -297,7 +310,9 @@ public class OBDResponse {
 	}
 
 	/**
-	 * @return the processedResponse
+	 * Gets the processed response.
+	 *
+	 * @return the processed response
 	 */
 	public Object getProcessedResponse() {
 		return processedResponse;

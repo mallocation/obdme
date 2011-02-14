@@ -31,7 +31,7 @@ import edu.unl.csce.obdme.hardware.obd.OBDPID.EVALS;
 public abstract class OBDConfigurationManager {
 
 	/**
-	 * Read obd config.
+	 * Read default obd config.
 	 *
 	 * @param context the context
 	 * @return the hash map
@@ -120,7 +120,7 @@ public abstract class OBDConfigurationManager {
 	}
 
 	/**
-	 * Parses the saved protocol.
+	 * Parses the saved configuration.
 	 *
 	 * @param context the context
 	 * @param VIN the vIN
@@ -298,12 +298,16 @@ public abstract class OBDConfigurationManager {
 					else if(startTagName.equals("formula")){
 						protocolStructure.get(parentMode).getPID(currentPID).setPidFormula(
 								xrp.getAttributeValue(null, "value"));
+						protocolStructure.get(parentMode).getPID(currentPID).setDecimalFormat(
+								xrp.getAttributeValue(null, "format"));
 					}
 					
 					//If a compiled formula node (for a PID).  Set the PID's compiled formula
 					else if(startTagName.equals("compiled-formula")){
 						protocolStructure.get(parentMode).getPID(currentPID).setPidCompiledFormula(
 								xrp.getAttributeValue(null, "value"));
+						protocolStructure.get(parentMode).getPID(currentPID).setDecimalFormat(
+								xrp.getAttributeValue(null, "format"));
 					}
 				}
 
@@ -452,12 +456,16 @@ public abstract class OBDConfigurationManager {
 						//Add the formula to the current PID
 						protocolStructure.get(parentMode).getPID(currentPID).setPidFormula(
 								xrp.getAttributeValue(null, "value"));
+						protocolStructure.get(parentMode).getPID(currentPID).setDecimalFormat(
+								xrp.getAttributeValue(null, "format"));
 					}
 					
 					//If a compiled formula node (for a PID).  Set the PID's compiled formula
 					else if(startTagName.equals("compiled-formula")){
 						protocolStructure.get(parentMode).getPID(currentPID).setPidCompiledFormula(
 								xrp.getAttributeValue(null, "value"));
+						protocolStructure.get(parentMode).getPID(currentPID).setDecimalFormat(
+								xrp.getAttributeValue(null, "format"));
 					}
 				}
 
@@ -491,7 +499,7 @@ public abstract class OBDConfigurationManager {
 	}
 
 	/**
-	 * Parses the obd commands.
+	 * Read mode and pidobd protocol.
 	 *
 	 * @param context the context
 	 * @return the concurrent hash map

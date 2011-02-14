@@ -15,7 +15,7 @@ public abstract class OBDValidator {
 	 *
 	 * @param elmFramework the elm framework
 	 * @return true, if successful
-	 * @throws Exception 
+	 * @throws Exception the exception
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public static boolean validate(ELMFramework elmFramework) throws Exception {

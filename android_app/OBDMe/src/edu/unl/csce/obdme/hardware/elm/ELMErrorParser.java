@@ -1,7 +1,7 @@
 package edu.unl.csce.obdme.hardware.elm;
 
 /**
- * The Class ELMErrors.
+ * The Class ELMErrorParser.
  */
 public abstract class ELMErrorParser {
 	
@@ -34,38 +34,38 @@ public abstract class ELMErrorParser {
 	 */
 	public enum ELM_ERROR{
 		
+		/** The SEARCHING. */
 		SEARCHING,
 		
-		/** Buffer full. */
+		/** The BUFFE r_ full. */
 		BUFFER_FULL, 
 		
-		/** Bus busy. */
+		/** The BU s_ busy. */
 		BUS_BUSY, 
 		
-		/** Bus busy error. */
+		/** The BU s_ error. */
 		BUS_ERROR, 
 		
-		/** CAN error. */
+		/** The CA n_ error. */
 		CAN_ERROR, 
 		
-		/** Data error. */
+		/** The DAT a_ error. */
 		DATA_ERROR,
 		
-		/** No data. */
+		/** The N o_ data. */
 		NO_DATA,
 		
-		/** Stopped. */
+		/** The STOPPED. */
 		STOPPED,
 		
-		/** Unable to connect. */
+		/** The UNABL e_ t o_ connect. */
 		UNABLE_TO_CONNECT};
 
 	/**
 	 * Parses the string for error.
 	 *
 	 * @param stringToParse the string to parse
-	 * @return the ELM error
-	 * @throws ELMException 
+	 * @throws ELMException the eLM exception
 	 */
 	public static void parseStringForError(String stringToParse) throws ELMException {
 		
@@ -120,10 +120,10 @@ public abstract class ELMErrorParser {
 	}
 	
 	/**
-	 * Gets the string for ELM error.
+	 * Gets the string for elm error.
 	 *
-	 * @param elmError the ELM error
-	 * @return the string for ELM error
+	 * @param elmError the elm error
+	 * @return the string for elm error
 	 */
 	public static String getStringForELMError(ELM_ERROR elmError) {
 		

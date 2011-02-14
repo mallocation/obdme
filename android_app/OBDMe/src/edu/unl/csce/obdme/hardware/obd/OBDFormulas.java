@@ -3,7 +3,7 @@ package edu.unl.csce.obdme.hardware.obd;
 import java.util.List;
 
 /**
- * The Enumerator MODES.
+ * The Enum OBDFormulas.
  */
 public enum OBDFormulas {
 	

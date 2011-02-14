@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 
 /**
- * The Class ELMIgnitionPoller.
+ * The Class ELMAutoConnectPoller.
  */
 public class ELMAutoConnectPoller {
 
@@ -29,8 +29,8 @@ public class ELMAutoConnectPoller {
 	/** The polling interval. */
 	private int pollingInterval;
 
-	/** The Constant MESSAGE_STATE_CHANGE. */
-	public static final int MESSAGE_STATE_CHANGE = 0;
+	/** The Constant STATE_CHANGE. */
+	public static final int STATE_CHANGE = 135478392;
 
 	/** The Constant AUTO_CONNECT_NONE. */
 	public static final int AUTO_CONNECT_NONE = 0;
@@ -38,7 +38,7 @@ public class ELMAutoConnectPoller {
 	/** The Constant AUTO_CONNECT_POLLING. */
 	public static final int AUTO_CONNECT_POLLING = 1;
 
-	/** The Constant AUTO_CONNECT_ON. */
+	/** The Constant AUTO_CONNECT_COMPLETE. */
 	public static final int AUTO_CONNECT_COMPLETE = 2;
 
 	/** The Constant AUTO_CONNECT_FAILED. */
@@ -83,14 +83,14 @@ public class ELMAutoConnectPoller {
 	private synchronized void setState(int state) {
 		if(messageState != state) {
 			messageState = state;
-			appHandler.obtainMessage(MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+			appHandler.obtainMessage(STATE_CHANGE, state, -1).sendToTarget();
 		}
 	}
 
 	/**
-	 * Gets the state.
+	 * Gets the poller state.
 	 *
-	 * @return the state
+	 * @return the poller state
 	 */
 	public synchronized int getPollerState() {
 		return messageState;
@@ -127,7 +127,7 @@ public class ELMAutoConnectPoller {
 	/**
 	 * Sets the polling interval.
 	 *
-	 * @param pollingInterval the pollingInterval to set
+	 * @param pollingInterval the new polling interval
 	 */
 	public synchronized void setPollingInterval(int pollingInterval) {
 		this.pollingInterval = pollingInterval;
@@ -136,7 +136,7 @@ public class ELMAutoConnectPoller {
 	/**
 	 * Gets the polling interval.
 	 *
-	 * @return the pollingInterval
+	 * @return the polling interval
 	 */
 	public synchronized int getPollingInterval() {
 		return pollingInterval;

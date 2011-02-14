@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class OBDConfigurationMode {
 
-	/** The configured mode hex. */
+	/** The mode hex. */
 	private String modeHex;
 
 	/** The configured pid list. */

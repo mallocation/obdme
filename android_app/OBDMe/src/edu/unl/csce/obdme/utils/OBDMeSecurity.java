@@ -2,7 +2,18 @@ package edu.unl.csce.obdme.utils;
 
 import java.security.MessageDigest;
 
+/**
+ * The Class OBDMeSecurity.
+ */
 public abstract class OBDMeSecurity {
+	
+	/**
+	 * Encrypt.
+	 *
+	 * @param plaintext the plaintext
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String encrypt(String plaintext) throws Exception {
 		MessageDigest msgDigest = null;
 		msgDigest = MessageDigest.getInstance("SHA");

@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import android.content.Context;
 import android.content.SharedPreferences;
 import edu.unl.csce.obdme.R;
-import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 
@@ -23,10 +22,11 @@ public class OBDFramework {
 	/** The elm framework. */
 	private ELMFramework elmFramework;
 
+	/** The saved configuration. */
 	private boolean savedConfiguration = false;
 
 	/**
-	 * Instantiates a new OBD framework.
+	 * Instantiates a new oBD framework.
 	 *
 	 * @param context the context
 	 * @param parentELMFramework the parent elm framework
@@ -174,7 +174,7 @@ public class OBDFramework {
 	 * Query valid pids.
 	 *
 	 * @return true, if successful
-	 * @throws Exception 
+	 * @throws Exception the exception
 	 */
 	public boolean queryValidPIDS() throws Exception {
 
@@ -227,7 +227,7 @@ public class OBDFramework {
 	/**
 	 * Gets the configured protocol.
 	 *
-	 * @return the configuredProtocol
+	 * @return the configured protocol
 	 */
 	public ConcurrentHashMap<String, OBDMode> getConfiguredProtocol() {
 		return configuredProtocol;
@@ -236,21 +236,25 @@ public class OBDFramework {
 	/**
 	 * Sets the configured protocol.
 	 *
-	 * @param configuredProtocol the configuredProtocol to set
+	 * @param configuredProtocol the configured protocol
 	 */
 	public void setConfiguredProtocol(ConcurrentHashMap<String, OBDMode> configuredProtocol) {
 		this.configuredProtocol = configuredProtocol;
 	}
 
 	/**
-	 * @param savedConfiguration the savedConfiguration to set
+	 * Sets the saved configuration.
+	 *
+	 * @param savedConfiguration the new saved configuration
 	 */
 	public void setSavedConfiguration(boolean savedConfiguration) {
 		this.savedConfiguration = savedConfiguration;
 	}
 
 	/**
-	 * @return the savedConfiguration
+	 * Checks if is saved configuration.
+	 *
+	 * @return true, if is saved configuration
 	 */
 	public boolean isSavedConfiguration() {
 		return savedConfiguration;

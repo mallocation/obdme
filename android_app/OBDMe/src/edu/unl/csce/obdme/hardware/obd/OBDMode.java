@@ -22,7 +22,7 @@ public class OBDMode {
 
 
 	/**
-	 * Instantiates a new OBD mode.
+	 * Instantiates a new oBD mode.
 	 *
 	 * @param modeHex the mode hex
 	 * @param modeDescription the mode description
@@ -40,7 +40,7 @@ public class OBDMode {
 	/**
 	 * Sets the mode hex.
 	 *
-	 * @param modeName the modeName to set
+	 * @param modeName the new mode hex
 	 */
 	public void setModeHex(String modeName) {
 		this.modeHex = modeName;
@@ -50,7 +50,7 @@ public class OBDMode {
 	/**
 	 * Gets the mode hex.
 	 *
-	 * @return the modeName
+	 * @return the mode hex
 	 */
 	public String getModeHex() {
 		return modeHex;
@@ -59,7 +59,7 @@ public class OBDMode {
 	/**
 	 * Sets the mode description.
 	 *
-	 * @param modeDescription the modeDescription to set
+	 * @param modeDescription the new mode description
 	 */
 	public void setModeDescription(String modeDescription) {
 		this.modeDescription = modeDescription;
@@ -69,7 +69,7 @@ public class OBDMode {
 	/**
 	 * Gets the mode description.
 	 *
-	 * @return the modeDescription
+	 * @return the mode description
 	 */
 	public String getModeDescription() {
 		return modeDescription;
@@ -113,7 +113,7 @@ public class OBDMode {
 	/**
 	 * Sets the mode value.
 	 *
-	 * @param modeValue the modeValue to set
+	 * @param modeValue the new mode value
 	 */
 	public void setModeValue(int modeValue) {
 		this.modeValue = modeValue;
@@ -123,14 +123,14 @@ public class OBDMode {
 	/**
 	 * Gets the mode value.
 	 *
-	 * @return the modeValue
+	 * @return the mode value
 	 */
 	public int getModeValue() {
 		return modeValue;
 	}
 
 	/**
-	 * Key set.
+	 * Pid key set.
 	 *
 	 * @return the sets the
 	 */

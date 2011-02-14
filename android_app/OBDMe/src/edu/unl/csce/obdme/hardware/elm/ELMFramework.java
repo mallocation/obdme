@@ -53,7 +53,7 @@ public class ELMFramework {
 	private int MAXIMUM_REQUEST_RETRIES;
 
 	/**
-	 * Instantiates a new ELM Framework.
+	 * Instantiates a new eLM framework.
 	 *
 	 * @param context the context
 	 * @param bluetoothService the bluetooth service
@@ -78,11 +78,11 @@ public class ELMFramework {
 	}
 
 	/**
-	 * Send OBD request.
+	 * Send obd request.
 	 *
 	 * @param request the request
 	 * @return the oBD response
-	 * @throws Exception 
+	 * @throws Exception the exception
 	 */
 	public synchronized OBDResponse sendOBDRequest(OBDRequest request) throws Exception {
 
@@ -159,7 +159,7 @@ public class ELMFramework {
 	 *
 	 * @param pid the pid
 	 * @return the oBD response
-	 * @throws Exception 
+	 * @throws Exception the exception
 	 */
 	public synchronized OBDResponse sendOBDRequest(OBDPID pid) throws Exception {
 
@@ -235,7 +235,7 @@ public class ELMFramework {
 	}
 
 	/**
-	 * Initializes the connection.
+	 * Inits the connection.
 	 *
 	 * @return true, if successful
 	 */
@@ -431,7 +431,7 @@ public class ELMFramework {
 	/**
 	 * Checks if is connection init.
 	 *
-	 * @return the connectionInit
+	 * @return true, if is connection init
 	 */
 	public boolean isConnectionInit() {
 		return connectionInit;
@@ -440,7 +440,7 @@ public class ELMFramework {
 	/**
 	 * Sets the connection init.
 	 *
-	 * @param connectionInit the connectionInit to set
+	 * @param connectionInit the new connection init
 	 */
 	@SuppressWarnings("unused")
 	private void setConnectionInit(boolean connectionInit) {
@@ -450,7 +450,7 @@ public class ELMFramework {
 	/**
 	 * Checks if is hardware verified.
 	 *
-	 * @return the hardwareVerified
+	 * @return true, if is hardware verified
 	 */
 	public boolean isHardwareVerified() {
 		return hardwareVerified;
@@ -459,7 +459,7 @@ public class ELMFramework {
 	/**
 	 * Sets the hardware verified.
 	 *
-	 * @param hardwareVerified the hardwareVerified to set
+	 * @param hardwareVerified the new hardware verified
 	 */
 	@SuppressWarnings("unused")
 	private void setHardwareVerified(boolean hardwareVerified) {
@@ -469,7 +469,7 @@ public class ELMFramework {
 	/**
 	 * Sets the ignition on.
 	 *
-	 * @param ignitionOn the ignitionOn to set
+	 * @param ignitionOn the new ignition on
 	 */
 	@SuppressWarnings("unused")
 	private void setIgnitionOn(boolean ignitionOn) {
@@ -479,7 +479,7 @@ public class ELMFramework {
 	/**
 	 * Checks if is ignition on.
 	 *
-	 * @return the ignitionOn
+	 * @return true, if is ignition on
 	 */
 	public boolean isIgnitionOn() {
 		return ignitionOn;
@@ -488,7 +488,7 @@ public class ELMFramework {
 	/**
 	 * Sets the protocol set.
 	 *
-	 * @param protocolSet the protocolSet to set
+	 * @param protocolSet the new protocol set
 	 */
 	@SuppressWarnings("unused")
 	private void setProtocolSet(boolean protocolSet) {
@@ -498,7 +498,7 @@ public class ELMFramework {
 	/**
 	 * Checks if is protocol set.
 	 *
-	 * @return the protocolSet
+	 * @return true, if is protocol set
 	 */
 	public boolean isProtocolSet() {
 		return protocolSet;
@@ -507,7 +507,7 @@ public class ELMFramework {
 	/**
 	 * Sets the obd framework.
 	 *
-	 * @param obdFramework the obdFramework to set
+	 * @param obdFramework the new obd framework
 	 */
 	public void setObdFramework(OBDFramework obdFramework) {
 		this.obdFramework = obdFramework;
@@ -516,7 +516,7 @@ public class ELMFramework {
 	/**
 	 * Gets the obd framework.
 	 *
-	 * @return the obdFramework
+	 * @return the obd framework
 	 */
 	public OBDFramework getObdFramework() {
 		return obdFramework;

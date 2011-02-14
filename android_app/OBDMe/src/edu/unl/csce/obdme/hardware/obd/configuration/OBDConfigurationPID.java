@@ -75,7 +75,7 @@ public class OBDConfigurationPID {
 	/**
 	 * Sets the enabled.
 	 *
-	 * @param enabled the enabled to set
+	 * @param enabled the new enabled
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
@@ -84,7 +84,7 @@ public class OBDConfigurationPID {
 	/**
 	 * Checks if is enabled.
 	 *
-	 * @return the enabled
+	 * @return true, if is enabled
 	 */
 	public boolean isEnabled() {
 		return enabled;
