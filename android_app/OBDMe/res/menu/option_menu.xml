@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/scan"
-          android:icon="@android:drawable/ic_menu_search"
-          android:title="@string/connect" />
-<item android:id="@+id/settings" android:icon="@android:drawable/ic_menu_preferences" android:title="@string/settings"></item>
+	<item android:id="@+id/menu.options.start" android:icon="@android:drawable/ic_media_play"
+		android:title="@string/menu.options.start" />
+	<item android:id="@+id/menu.options.pause" android:icon="@android:drawable/ic_media_pause"
+		android:title="@string/menu.options.pause" />
+	<item android:id="@+id/menu.options.quit" android:icon="@android:drawable/ic_menu_close_clear_cancel"
+		android:title="@string/menu.options.quit" />
+	<item android:id="@+id/menu.options.prefs" android:icon="@android:drawable/ic_menu_preferences"
+		android:title="@string/menu.options.prefs" />
 </menu>
