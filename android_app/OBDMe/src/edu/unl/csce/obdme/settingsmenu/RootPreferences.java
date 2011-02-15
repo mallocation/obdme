@@ -1,5 +1,8 @@
 package edu.unl.csce.obdme.settingsmenu;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -43,6 +46,18 @@ public class RootPreferences extends PreferenceActivity {
     
     /** The unitsPref Preference. */
     private CheckBoxPreference unitsPref;
+    
+    /** Shared Preferences */
+	SharedPreferences sharedPrefs;
+    
+	/** Modes of Operation */
+	public static final int BASIC_USER_MODE = 0;
+	public static final int ADVANCED_USER_MODE = 1;
+	
+	/** Data upload options */
+	public static final int DATAUPLOAD_WIFI_ONLY = 0;
+	public static final int DATAUPLOAD_NETWORK_ONLY = 1;
+	public static final int DATAUPLOAD_BOTH = 2;
  
     /* (non-Javadoc)
      * @see android.preference.PreferenceActivity#onCreate(android.os.Bundle)
@@ -52,6 +67,8 @@ public class RootPreferences extends PreferenceActivity {
  
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        
+        sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
 
         rootView = new LinearLayout(this); 
         rootView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
@@ -175,24 +192,76 @@ public class RootPreferences extends PreferenceActivity {
 
 	@Override
 	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-		
-		if (preference == vehiclePref) {
+	
+		if (preference == usermodePref) {
+			final String[] items = {getResources().getString(R.string.settings_modeselect_basicusermode), getResources().getString(R.string.settings_modeselect_advancedusermode)};
 
-		} else if (preference == accountPref) {
-			
-		} else if (preference == usermodePref) {
-			
-		} else if (preference == displayPref) {
-			
-		} else if (preference == collectionPref) {
-			
+	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    	builder.setTitle(getResources().getString(R.string.settings_modeselect_title));
+	    	builder.setSingleChoiceItems(items, sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), 0), new DialogInterface.OnClickListener() {
+	    	    public void onClick(DialogInterface dialog, int item) {
+	    	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
+	    	        switch(item){
+	    	        	case BASIC_USER_MODE:
+	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), BASIC_USER_MODE);
+	    	        		prefEditor.commit();
+	    	        		break;
+	    	        	case ADVANCED_USER_MODE:
+	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), ADVANCED_USER_MODE);
+	    	        		prefEditor.commit();
+	    	        		break;
+	    	        	default:
+	    	        		break;
+	    	        }
+	    	    }
+	    	});
+	    	AlertDialog alert = builder.create();
+	    	
+	    	alert.show();
 		} else if (preference == uploadPref) {
-			
-		} else if (preference == unitsPref) {
-			
+			final String[] items = {getResources().getString(R.string.datausage_wifionly), getResources().getString(R.string.datausage_phonenetworkonly), getResources().getString(R.string.datausage_wifiandphonenetwork)};
+
+	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    	builder.setTitle(getResources().getString(R.string.datausage_title));
+	    	builder.setSingleChoiceItems(items, sharedPrefs.getInt(getResources().getString(R.string.prefs_dataupload), 0), new DialogInterface.OnClickListener() {
+	    	    public void onClick(DialogInterface dialog, int item) {
+	    	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
+	    	        switch(item){
+	    	        	case DATAUPLOAD_WIFI_ONLY:
+	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_WIFI_ONLY);
+	    	        		prefEditor.commit();
+	    	        		break;
+	    	        	case DATAUPLOAD_NETWORK_ONLY:
+	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_NETWORK_ONLY);
+	    	        		prefEditor.commit();
+	    	        		break;
+	    	        	case DATAUPLOAD_BOTH:
+	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_BOTH);
+	    	        		prefEditor.commit();
+	    	        		break;
+	    	        	default:
+	    	        		break;
+	    	        }
+	    	    }
+	    	});
+	    	AlertDialog alert = builder.create();
+	    	
+	    	alert.show();
 		} else {
 			return false;
 		}
+		
+/*		if (preference == vehiclePref) {
+
+		} else if (preference == accountPref) {
+			
+		}  else if (preference == displayPref) {
+			
+		} else if (preference == collectionPref) {
+			
+		} else if (preference == unitsPref) {
+*/			
+		
 		
 		return true;
 	}
