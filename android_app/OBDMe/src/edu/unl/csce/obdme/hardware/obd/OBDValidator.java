@@ -2,7 +2,6 @@ package edu.unl.csce.obdme.hardware.obd;
 
 import java.util.List;
 
-import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 
 /**

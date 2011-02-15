@@ -211,10 +211,10 @@ public class OBDPID {
 
 		case FORMULA:
 			if (this.pidCompiledFormula != null) {
-				return decimalFormat.format(this.pidCompiledFormula.formulaEval(byteResponse));
+				return this.pidCompiledFormula.formulaEval(byteResponse);
 			}
 			else{
-				return decimalFormat.format(formulaEvaluator(byteResponse));
+				return formulaEvaluator(byteResponse);
 			}
 
 		case RAW:

@@ -7,7 +7,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Window;
 
 
 /**
@@ -24,6 +26,8 @@ public class Splash extends Activity {
 		super.onCreate(savedInstanceState);
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_launcher),
 				"Starting the OBDMe Launcher Activity.");
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.splash);
 
@@ -42,7 +46,7 @@ public class Splash extends Activity {
 					//Check which action we need to perform.
 					//Is this a first start?  If so, run setup.
 					
-					SharedPreferences sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
+					SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 					
 					if (sharedPrefs.contains(getResources().getString(R.string.prefs_firstrun)) && 
 							!getResources().getBoolean(R.bool.debug_setupwizard)) {						
@@ -79,9 +83,7 @@ public class Splash extends Activity {
 						try {
 							int waited = 0;
 							while (waited < getResources().getInteger(R.integer.splash_wait_milliseconds)) {
-								//((OBDMeApplication)getApplication()).getBluetoothService();
 								sleep(500);
-								//((OBDMeApplication)getApplication()).getELMFramework();
 								waited += 500;
 							}
 						} catch (InterruptedException e) {

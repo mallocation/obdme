@@ -1,8 +1,7 @@
 package edu.unl.csce.obdme;
 
 import java.util.ArrayList;
-
-import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.os.Handler;
@@ -38,6 +37,13 @@ public class ConnectionStatusLandscape {
 	/** The continue dongle animation. */
 	private boolean continueDongleAnimation;
 
+	/** The connection failed. */
+	private boolean connectionFailed;
+
+	/** The wireless fialed image. */
+	private ImageView wirelessFialedImage;
+
+
 	/**
 	 * Instantiates a new connection status landscape.
 	 *
@@ -62,12 +68,13 @@ public class ConnectionStatusLandscape {
 		LayoutParams rootParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		rootLinearLayout.setLayoutParams(rootParams);
 		rootLinearLayout.setGravity(Gravity.CENTER);
+		rootLinearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.obdme_background));
 
 		//Add the object views to the linear layout
 		rootLinearLayout.addView(buildPhoneIcon());
 		rootLinearLayout.addView(buildConnectingIcon());
 		rootLinearLayout.addView(buildDongleIcon());
-		
+
 		this.root = rootLinearLayout;
 
 	}
@@ -113,6 +120,12 @@ public class ConnectionStatusLandscape {
 		connectingFrameLayout.setLayoutParams(rootParams);
 		connectingFrameLayout.setPadding(10, 10, 10, 10);
 
+		//Build the large bar
+		this.wirelessFialedImage = new ImageView(context);
+		this.wirelessFialedImage.setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connect_fail_landscape));
+		this.wirelessFialedImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		this.wirelessFialedImage.setVisibility(View.INVISIBLE);
+
 		//Build the small bar
 		ImageView wireless1Image = new ImageView(context);
 		wireless1Image.setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_landscape_1));
@@ -138,11 +151,12 @@ public class ConnectionStatusLandscape {
 		connectingFrameLayout.addView(wireless1Image);
 		connectingFrameLayout.addView(wireless2Image);
 		connectingFrameLayout.addView(wireless3Image);
+		connectingFrameLayout.addView(this.wirelessFialedImage);
 
 		return connectingFrameLayout;
 
 	}
-	
+
 	/**
 	 * Builds the dongle icon.
 	 *
@@ -199,7 +213,7 @@ public class ConnectionStatusLandscape {
 		return rootAnimationSet;
 
 	}
-	
+
 	/**
 	 * Cycle dongle animation set.
 	 *
@@ -210,24 +224,23 @@ public class ConnectionStatusLandscape {
 		//Start the cyclic connecting animation set
 		AnimationSet rootAnimationSet = new AnimationSet(true); 
 
+
 		//Build the fade in action
 		AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
 		fadeIn.setDuration(500);
 		fadeIn.setStartOffset(0);
-		fadeIn.setFillAfter(true);
 		rootAnimationSet.addAnimation(fadeIn);
-		
+
 		//Build the fade out action
 		AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
 		fadeOut.setDuration(500);
 		fadeOut.setStartOffset(500);
-		fadeOut.setFillAfter(true);
 		rootAnimationSet.addAnimation(fadeOut);
+
+		rootAnimationSet.setStartOffset(0);
 
 		//Apply permanence to the transformation
 		rootAnimationSet.setFillAfter(true);
-		
-		rootAnimationSet.setStartOffset(0);
 
 		return rootAnimationSet;
 
@@ -250,7 +263,7 @@ public class ConnectionStatusLandscape {
 		fadeIn.setStartOffset(0);
 		fadeIn.setFillAfter(true);
 		rootAnimationSet.addAnimation(fadeIn);
-		
+
 		//Set the sequence offset
 		rootAnimationSet.setStartOffset(startOffset*200);
 
@@ -260,34 +273,32 @@ public class ConnectionStatusLandscape {
 		return rootAnimationSet;
 
 	}
-	
+
 	/**
-	 * Update state.
+	 * Fade out wireless animation set.
 	 *
-	 * @param bluetoothServiceState the bluetooth service state
+	 * @return the animation set
 	 */
-	public void updateState(int bluetoothServiceState) {
-		switch(bluetoothServiceState) {
+	private AnimationSet fadeOutWirelessAnimationSet() {
 
-		case BluetoothService.STATE_NONE:
-			finishWirelessAnimation();
-			finishDongleAnimation();
-			buildInitialView();
-			break;
+		//Start the connected animation set
+		AnimationSet rootAnimationSet = new AnimationSet(true); 
 
-		case BluetoothService.STATE_CONNECTING:
-			startWirelessAnimation();
-			break;
+		//Build the fade in action
+		AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+		fadeOut.setDuration(300);
+		fadeOut.setStartOffset(0);
+		fadeOut.setFillAfter(true);
+		rootAnimationSet.addAnimation(fadeOut);
 
-		case BluetoothService.STATE_CONNECTED:
-			finishWirelessAnimation();
-			startDongleAnimation();
-			
-			break;
-		case BluetoothService.STATE_FAILED:
-			break;
+		//Set the sequence offset
+		rootAnimationSet.setStartOffset(0);
 
-		}
+		//Apply permanence to the transformation
+		rootAnimationSet.setFillAfter(true);
+
+		return rootAnimationSet;
+
 	}
 
 	/**
@@ -295,16 +306,23 @@ public class ConnectionStatusLandscape {
 	 */
 	public void startWirelessAnimation() {
 
-		//Set the loop property of the custom animation looper
-		this.continueWirelessAnimation = true;
+		if(wirelessFialedImage.isShown()) {
+			wirelessFialedImage.startAnimation(fadeOutWirelessAnimationSet());
+		}
 
-		//Reset the connection images to blue (connecting) in case they were set to connected (green) earlier
-		wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_landscape_1));
-		wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_landscape_2));
-		wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_landscape_3));
+		if (!this.continueWirelessAnimation) {
+			//Set the loop property of the custom animation looper
+			this.continueWirelessAnimation = true;
+			this.connectionFailed = false;
 
-		//Start our custom animation handler
-		wirelessAnimationHandler.postDelayed(wirelessAnimationRunnable, 0);
+			//Reset the connection images to blue (connecting) in case they were set to connected (green) earlier
+			wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_landscape_1));
+			wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_landscape_2));
+			wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_landscape_3));
+
+			//Start our custom animation handler
+			wirelessAnimationHandler.postDelayed(wirelessAnimationRunnable, 0);
+		}
 	}
 
 	/**
@@ -313,13 +331,12 @@ public class ConnectionStatusLandscape {
 	public void finishWirelessAnimation() {
 		this.continueWirelessAnimation = false;
 	}
-	
+
 	/**
 	 * Start dongle animation.
 	 */
 	public void startDongleAnimation() {
 		this.continueDongleAnimation = true;
-		//Start our custom animation handler
 		donlgeAnimationHandler.postDelayed(dongleAnimationRunnable, 1000);
 	}
 
@@ -331,6 +348,71 @@ public class ConnectionStatusLandscape {
 	}
 
 	/**
+	 * Sets the connection failed.
+	 */
+	public void setConnectionFailed() {
+		this.connectionFailed = true;
+	}
+	
+	/**
+	 * Checks if is wireless animating.
+	 *
+	 * @return true, if is wireless animating
+	 */
+	public boolean isWirelessAnimating() {
+		return this.continueWirelessAnimation;
+	}
+	
+	/**
+	 * Package state.
+	 *
+	 * @return the hash map
+	 */
+	public HashMap<String, Boolean> packageState() {
+		
+		HashMap<String, Boolean> stateMap = new HashMap<String, Boolean>();
+		
+		stateMap.put("cwa", this.continueWirelessAnimation);
+		stateMap.put("cda" , this.continueDongleAnimation);
+		stateMap.put("cf" , this.connectionFailed);
+		
+		return stateMap;
+	}
+	
+	/**
+	 * Sets the state.
+	 *
+	 * @param packagedState the packaged state
+	 */
+	public void setState(HashMap<String, Boolean> packagedState) {
+		
+		if (packagedState.get("cwa")) {
+			startWirelessAnimation();
+		}
+		if(packagedState.get("cda")) {
+			
+			wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_1));
+			wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_2));
+			wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_3));
+			
+			for(int i = 0; i < wirelessBars.size(); i++) {
+				
+				//If the wireless bars are not visible yet, make them visible
+				if(!wirelessBars.get(i).isShown()) {
+					wirelessBars.get(i).setVisibility(View.VISIBLE);
+				}
+			}
+			startDongleAnimation();
+		}
+		if(packagedState.get("cf")) {
+			if(!wirelessFialedImage.isShown()) {
+				wirelessFialedImage.setVisibility(View.VISIBLE);
+			}
+			wirelessFialedImage.startAnimation(fadeInWirelessAnimationSet(0));
+		}
+	}
+
+	/**
 	 * Sets the root.
 	 *
 	 * @param root the new root
@@ -338,7 +420,7 @@ public class ConnectionStatusLandscape {
 	public void setRoot(LinearLayout root) {
 		this.root = root;
 	}
-	
+
 	/**
 	 * Gets the root.
 	 *
@@ -347,7 +429,7 @@ public class ConnectionStatusLandscape {
 	public LinearLayout getRoot() {
 		return root;
 	}
-	
+
 	/** The donlge animation handler. */
 	private Handler donlgeAnimationHandler = new Handler();
 
@@ -364,10 +446,10 @@ public class ConnectionStatusLandscape {
 				//Re-run this runnable object in 1 second
 				wirelessAnimationHandler.postDelayed(this, 1000);
 			}
-			
+
 			//Otherwise we want to stop the sequence animation
 			else {
-				
+
 			}
 		}
 
@@ -390,7 +472,7 @@ public class ConnectionStatusLandscape {
 					if(!wirelessBars.get(i).isShown()) {
 						wirelessBars.get(i).setVisibility(View.VISIBLE);
 					}
-					
+
 					//Start the animation sequence for each wireless bar
 					wirelessBars.get(i).startAnimation(cycleWirelessAnimationSet(i));
 				}
@@ -398,18 +480,28 @@ public class ConnectionStatusLandscape {
 				//Re-run this runnable object in 1 second
 				wirelessAnimationHandler.postDelayed(this, 1000);
 			}
-			
+
 			//Otherwise we want to stop the sequence animation
 			else {
-				
-				//Change the wireless bars to green
-				wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_1));
-				wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_2));
-				wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_3));
-				
-				//Set the final fade in action to signify a connection
-				for(int i = 0; i < wirelessBars.size(); i++) {
-					wirelessBars.get(i).startAnimation(fadeInWirelessAnimationSet(i));
+				if(connectionFailed) {
+
+					if(!wirelessFialedImage.isShown()) {
+						wirelessFialedImage.setVisibility(View.VISIBLE);
+					}
+					wirelessFialedImage.startAnimation(fadeInWirelessAnimationSet(0));
+
+				}
+				else {
+
+					//Change the wireless bars to green
+					wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_1));
+					wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_2));
+					wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_landscape_3));
+
+					//Set the final fade in action to signify a connection
+					for(int i = 0; i < wirelessBars.size(); i++) {
+						wirelessBars.get(i).startAnimation(fadeInWirelessAnimationSet(i));
+					}
 				}
 			}
 		}

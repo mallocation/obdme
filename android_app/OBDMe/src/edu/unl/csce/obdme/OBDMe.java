@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
@@ -16,6 +15,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -33,6 +33,7 @@ import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
+import edu.unl.csce.obdme.settingsmenu.OBDMeRootPreferences;
 
 /**
  * The Class OBDMe.
@@ -44,9 +45,6 @@ public class OBDMe extends Activity {
 
 	/** The elm framework. */
 	private ELMFramework elmFramework;
-
-	/** The busy dialog. */
-	private ProgressDialog busyDialog;
 
 	/** The hardware poller. */
 	private ELMCheckHardwarePoller hardwarePoller;
@@ -81,6 +79,9 @@ public class OBDMe extends Activity {
 	/** The gesture listener. */
 	View.OnTouchListener gestureListener;
 
+	/** The connection status. */
+	private boolean connectionStatus;
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -88,17 +89,42 @@ public class OBDMe extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+		//Get all the singletons from the application context
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
+		collectorThread = ((OBDMeApplication)getApplication()).getDataCollector();
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
+		
+		//Get the shared preferences
+		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-		checkBluetoothEnabled();
+		//If the bluetooth thread is already connected (from the setup wizard)
+		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+			
+			//Dont show the connection status screen
+			this.connectionStatus = false;
+		}
+		
+		//Otherwise, we need to set up a connection with the device
+		else {
+			this.connectionStatus = true;
+		}
+
+		//If we need to set up a connection
+		if (this.connectionStatus) {
+			
+			//Start the connection routine
+			checkBluetoothEnabled();
+		}
+		
+		//Otherwise set the configured data view
+		else {
+			setConfiguredView();
+		}
 
 		//Set up a new gesture detector for swipes
 		gestureDetector = new GestureDetector(new FlingGestureDetector());
-
 
 	}
 
@@ -174,15 +200,42 @@ public class OBDMe extends Activity {
 
 		//If the orientation is portrait mode:
 		case Configuration.ORIENTATION_PORTRAIT:
-			this.theUI = new ConnectionStatusPortrait(getApplicationContext());
-			setContentView(((ConnectionStatusPortrait) this.theUI).getRoot());
+			
+			//If this is a lanscape instance of the connection status screen
+			if(theUI instanceof ConnectionStatusLandscape) {
+				
+				//Save the state of the status screen
+				HashMap<String, Boolean> currentState = ((ConnectionStatusLandscape) theUI).packageState();
+				
+				//Pass that state to a new portrait connection status screen
+				theUI = new ConnectionStatusPortrait(getApplicationContext());
+				setContentView(((ConnectionStatusPortrait) theUI).getRoot());
+				((ConnectionStatusPortrait) theUI).setState(currentState);
+			}
+			
+			//Otherwise, this is an intitial screen create
+			else {
+				theUI = new ConnectionStatusPortrait(getApplicationContext());
+				setContentView(((ConnectionStatusPortrait) theUI).getRoot());
+			}
 			break;
 
 			//If the orientation is landscape mode:
 		case Configuration.ORIENTATION_LANDSCAPE:
-
-			this.theUI = new ConnectionStatusLandscape(getApplicationContext());
-			setContentView(((ConnectionStatusLandscape) this.theUI).getRoot());
+			if(this.theUI instanceof ConnectionStatusPortrait) {
+				
+				//Save the state of the status screen
+				HashMap<String, Boolean> currentState = ((ConnectionStatusPortrait) theUI).packageState();
+				
+				//Pass that state to a new landscape connection status screen
+				theUI = new ConnectionStatusLandscape(getApplicationContext());
+				setContentView(((ConnectionStatusLandscape) theUI).getRoot());
+				((ConnectionStatusLandscape) theUI).setState(currentState);
+			}
+			else {
+				theUI = new ConnectionStatusLandscape(getApplicationContext());
+				setContentView(((ConnectionStatusLandscape) theUI).getRoot());
+			}
 			break;
 		}
 	}
@@ -200,10 +253,12 @@ public class OBDMe extends Activity {
 		case Configuration.ORIENTATION_PORTRAIT:
 
 			//Switch on the user preferred mode
-			switch(sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+			switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
 
 			case BASIC_USER_MODE:
-				((BasicUserModePortrait) theUI).updateValues(collectorThread);
+				if (theUI instanceof BasicUserModePortrait){
+					((BasicUserModePortrait) theUI).updateValues(collectorThread);
+				}
 				break;
 
 			case ADVANCED_USER_MODE:
@@ -219,7 +274,9 @@ public class OBDMe extends Activity {
 			switch(sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
 
 			case BASIC_USER_MODE:
-				((BasicUserModeLandscape) theUI).updateValues(collectorThread);
+				if (theUI instanceof BasicUserModeLandscape){
+					((BasicUserModeLandscape) theUI).updateValues(collectorThread);
+				}
 				break;
 
 			case ADVANCED_USER_MODE:
@@ -302,7 +359,18 @@ public class OBDMe extends Activity {
 	 */
 	public synchronized void onResume() {
 		super.onResume();
-		//setConfiguredView();
+		//Set the configured view
+		//If the bluetooth service is not connected to a device, set the connection status view
+		if (this.connectionStatus) {
+			if (this.bluetoothService.getState() == BluetoothService.STATE_NONE){
+				startBluetoothConnectionThread();
+			}
+		}
+
+		//Otherwise, set the data view
+		else {
+			setConfiguredView();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -349,10 +417,26 @@ public class OBDMe extends Activity {
 		case R.id.menu_options_pause:
 			return true;
 		case R.id.menu_options_quit:
+			
+			//Start the quit routine
+			
+			//Stop the data collector
+			collectorThread.pausePolling();
+			
+			//Write all of the in memory data to the database
+			collectorThread.batchDatabaseWrite();
+			
+			//Set the bluetooth state to none
+			bluetoothService.setState(BluetoothService.STATE_NONE);
+			
+			//Set the connection status to true (show the connecting screen on startup)
+			this.connectionStatus = true;
+			
+			//Finish this activity
 			this.finish();
 			return true;
 		case R.id.menu_options_prefs:
-			startActivity(new Intent(this, edu.unl.csce.obdme.settingsmenu.RootPreferences.class));
+			startActivityForResult(new Intent(this, edu.unl.csce.obdme.settingsmenu.OBDMeRootPreferences.class), OBDMeRootPreferences.USER_QUIT_SETTINGS);
 			return true;
 		}
 
@@ -365,7 +449,17 @@ public class OBDMe extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		setConfiguredView();
+
+		//Set the configured view
+		//If the bluetooth service is not connected to a device, set the connection status view
+		if (this.connectionStatus) {
+			setConnectionStatusView();
+		}
+
+		//Otherwise, set the data view
+		else {
+			setConfiguredView();
+		}
 	}
 
 	/**
@@ -394,19 +488,28 @@ public class OBDMe extends Activity {
 	 */
 	private void startBluetoothConnectionThread() {
 
+		//Set the connection status view
 		setConnectionStatusView();
-		
-		bluetoothService.setAppHandler(eventHandler);
+		this.connectionStatus = true;
+
+		//Set up the bluetooth service to communicate with this thread
+		this.bluetoothService.setAppHandler(this.eventHandler);
+
+		//Get the bluetooth device from shared prefs
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		String device = sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
+		String device = this.sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
 		BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
 
 		switch (bluetoothService.getState()) {
 		case BluetoothService.STATE_NONE:
-			bluetoothService.connect(bluetoothDevice);
+
+			//Attempt to connect
+			this.bluetoothService.connect(bluetoothDevice);
 			break;
 
 		case BluetoothService.STATE_CONNECTED:
+
+			//We're already connected, try to verify the hardware
 			startHardwareVerifierThread();
 			break;
 
@@ -414,8 +517,14 @@ public class OBDMe extends Activity {
 			break;
 
 		case BluetoothService.STATE_FAILED:
-			collectorThread.pausePolling();
-			bluetoothService.connect(bluetoothDevice);
+			
+			//If the bluetooth status is failed initially, pause the data collector if it exists
+			if (this.collectorThread != null) {
+				this.collectorThread.pausePolling();
+			}
+			
+			//Attempt to reconnect to the device
+			this.bluetoothService.connect(bluetoothDevice);
 			break;
 		}
 	}
@@ -424,32 +533,32 @@ public class OBDMe extends Activity {
 	 * Start hardware verifier thread.
 	 */
 	private void startHardwareVerifierThread() {
-		hardwarePoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, elmFramework, 500);
-		hardwarePoller.startPolling();
+		this.hardwarePoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, elmFramework, 500);
+		this.hardwarePoller.startPolling();
 	}
 
 	/**
 	 * Start ignition poller thread.
 	 */
 	private void startIgnitionPollerThread() {
-		ignitionPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, elmFramework, 500);
-		ignitionPoller.startPolling();
+		this.ignitionPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, elmFramework, 500);
+		this.ignitionPoller.startPolling();
 	}
 
 	/**
 	 * Start auto connect poller thread.
 	 */
 	private void startAutoConnectPollerThread() {
-		autoConnectPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, elmFramework, 500);
-		autoConnectPoller.startPolling();
+		this.autoConnectPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, elmFramework, 500);
+		this.autoConnectPoller.startPolling();
 	}
 
 	/**
 	 * Start data collector thread.
 	 */
 	private void startDataCollectorThread() {
-		collectorThread = new DataCollector(getApplicationContext(), eventHandler, elmFramework);
-		collectorThread.startCollecting();
+		this.collectorThread.setAppHandler(eventHandler);
+		this.collectorThread.startCollecting();
 	}
 
 	/** The event handler. */
@@ -466,33 +575,78 @@ public class OBDMe extends Activity {
 
 				switch (msg.arg1) {
 				case BluetoothService.STATE_CONNECTED:
+
+					//Ok, we're connected, finish the wireless animation
 					if(theUI instanceof ConnectionStatusPortrait) {
 						((ConnectionStatusPortrait) theUI).finishWirelessAnimation();
 					}
+					else if(theUI instanceof ConnectionStatusLandscape) {
+						((ConnectionStatusLandscape) theUI).finishWirelessAnimation();
+					}
+
+					//Start the hardware verifier thread
 					startHardwareVerifierThread();
 					break;
 
 				case BluetoothService.STATE_FAILED:
+
+					//If the connection status is a portrait instance
 					if(theUI instanceof ConnectionStatusPortrait) {
-						((ConnectionStatusPortrait) theUI).setConnectionFailed();
-						((ConnectionStatusPortrait) theUI).finishWirelessAnimation();
+
+						//If the wireless is already animating (initial connection attempt)
+						if (((ConnectionStatusPortrait) theUI).isWirelessAnimating()) {
+							((ConnectionStatusPortrait) theUI).setConnectionFailed();
+							((ConnectionStatusPortrait) theUI).finishWirelessAnimation();
+						}
+
+						//Otherwise this is a connection retry
+						else {
+							((ConnectionStatusPortrait) theUI).startWirelessAnimation();
+						}
 					}
+
+					//Else if the connection status is a landscape instance
+					else if(theUI instanceof ConnectionStatusLandscape) {
+
+						//If the wireless is already animating (initial connection attempt)
+						if (((ConnectionStatusLandscape) theUI).isWirelessAnimating()) {
+							((ConnectionStatusLandscape) theUI).setConnectionFailed();
+							((ConnectionStatusLandscape) theUI).finishWirelessAnimation();
+						}
+
+						//Otherwise this is a connection retry
+						else {
+							((ConnectionStatusLandscape) theUI).startWirelessAnimation();
+						}
+					}
+
+					//Pause the collection if it exists
 					if(collectorThread != null) {
 						collectorThread.pausePolling();
 					}
+
+					//Reconnect
 					BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 					String device = sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
 					BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
-					bluetoothService.connect(bluetoothDevice, 10000);
+					bluetoothService.connect(bluetoothDevice, 5000);
 					break;
 
 				case BluetoothService.STATE_CONNECTING:
+
+					//Update the connection status
 					if(theUI instanceof ConnectionStatusPortrait) {
 						((ConnectionStatusPortrait) theUI).startWirelessAnimation();
+					}
+					else if(theUI instanceof ConnectionStatusLandscape) {
+						((ConnectionStatusLandscape) theUI).startWirelessAnimation();
 					}
 					break;
 
 				case BluetoothService.STATE_NONE:
+
+					//The connection status screen should be shown
+					connectionStatus = true;
 					break;
 				}
 				break;
@@ -509,17 +663,25 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMCheckHardwarePoller.CHECK_HARDWARE_POLLING:
+
+					//Update the connection status
 					if(theUI instanceof ConnectionStatusPortrait) {
 						((ConnectionStatusPortrait) theUI).startDongleAnimation();
+					}
+					else if(theUI instanceof ConnectionStatusLandscape) {
+						((ConnectionStatusLandscape) theUI).startDongleAnimation();
 					}
 					break;
 
 				case ELMCheckHardwarePoller.CHECK_HARDWARE_VERIFIED:
+
+					//We got what we needed, kill the hardware verifier thread
 					if(hardwarePoller != null){
 						hardwarePoller.stop();
 						hardwarePoller = null;
 					}
 
+					//Start the ignition poller
 					startIgnitionPollerThread();
 					break;
 
@@ -547,6 +709,8 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMIgnitionPoller.IGNITION_OFF:
+
+					//Update the polling interval so it is much less frequent
 					if(ignitionPoller != null){
 						ignitionPoller.setPollingInterval(2000);
 					}
@@ -554,11 +718,14 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMIgnitionPoller.IGNITION_ON:
+
+					//Kill the ignition poller, we got what we needed
 					if(ignitionPoller != null){
 						ignitionPoller.stop();
 						ignitionPoller = null;
 					}
 
+					//Start the auto connector
 					startAutoConnectPollerThread();
 					break;
 				}
@@ -580,16 +747,30 @@ public class OBDMe extends Activity {
 					break;
 
 				case ELMAutoConnectPoller.AUTO_CONNECT_FAILED:
+
+					//Update the polling interval so it is much less frequent
 					if(autoConnectPoller != null){
 						autoConnectPoller.setPollingInterval(2000);
 					}
 					break;
 
 				case ELMAutoConnectPoller.AUTO_CONNECT_COMPLETE:
+
+					//Update the UI
 					if(theUI instanceof ConnectionStatusPortrait) {
 						((ConnectionStatusPortrait) theUI).finishDongleAnimation();
 					}
+					else if(theUI instanceof ConnectionStatusLandscape) {
+						((ConnectionStatusLandscape) theUI).finishDongleAnimation();
+					}
+
+					//Set connection status to true (dont show the connecting screen)
+					connectionStatus = false;
+
+					//Set the configured data view
 					setConfiguredView();
+
+					//Start the data collector
 					startDataCollectorThread();
 
 					break;
@@ -616,6 +797,18 @@ public class OBDMe extends Activity {
 
 					break;
 
+				case DataCollector.COLLECTOR_FAILED:
+
+					//The collector failed, set the connection status
+					connectionStatus = false;
+
+					//Set up the connection status screen
+					setConnectionStatusView();
+
+					//Update the bluetooth state to start the establishment routine
+					bluetoothService.setState(BluetoothService.STATE_FAILED);
+					break;
+
 				}
 				break;
 
@@ -624,6 +817,8 @@ public class OBDMe extends Activity {
 				switch (msg.arg1) {
 
 				case DataCollector.COLLECTOR_NEW_DATA:
+
+					//On new data, update the values for the current view
 					updateConfiguredViewData();
 					break;
 
@@ -667,6 +862,21 @@ public class OBDMe extends Activity {
 			}
 			break;
 
+			//The user just left the properties screen
+		case OBDMeRootPreferences.USER_QUIT_SETTINGS:
+
+			//Set the configured view
+			//If the bluetooth service is not connected to a device, set the connection status view
+			if (this.connectionStatus) {
+				setConnectionStatusView();
+			}
+
+			//Otherwise, set the data view
+			else {
+				setConfiguredView();
+			}
 		}
+
+
 	}
 }

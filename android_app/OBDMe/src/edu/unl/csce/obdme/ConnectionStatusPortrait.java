@@ -1,8 +1,7 @@
 package edu.unl.csce.obdme;
 
 import java.util.ArrayList;
-
-import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.os.Handler;
@@ -311,17 +310,19 @@ public class ConnectionStatusPortrait {
 			wirelessFialedImage.startAnimation(fadeOutWirelessAnimationSet());
 		}
 
-		//Set the loop property of the custom animation looper
-		this.continueWirelessAnimation = true;
-		this.connectionFailed = false;
+		if (!this.continueWirelessAnimation) {
+			//Set the loop property of the custom animation looper
+			this.continueWirelessAnimation = true;
+			this.connectionFailed = false;
 
-		//Reset the connection images to blue (connecting) in case they were set to connected (green) earlier
-		wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_portrait_1));
-		wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_portrait_2));
-		wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_portrait_3));
+			//Reset the connection images to blue (connecting) in case they were set to connected (green) earlier
+			wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_portrait_1));
+			wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_portrait_2));
+			wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connecting_portrait_3));
 
-		//Start our custom animation handler
-		wirelessAnimationHandler.postDelayed(wirelessAnimationRunnable, 0);
+			//Start our custom animation handler
+			wirelessAnimationHandler.postDelayed(wirelessAnimationRunnable, 0);
+		}
 	}
 
 	/**
@@ -351,6 +352,64 @@ public class ConnectionStatusPortrait {
 	 */
 	public void setConnectionFailed() {
 		this.connectionFailed = true;
+	}
+	
+	/**
+	 * Checks if is wireless animating.
+	 *
+	 * @return true, if is wireless animating
+	 */
+	public boolean isWirelessAnimating() {
+		return this.continueWirelessAnimation;
+	}
+
+	/**
+	 * Package state.
+	 *
+	 * @return the hash map
+	 */
+	public HashMap<String, Boolean> packageState() {
+
+		HashMap<String, Boolean> stateMap = new HashMap<String, Boolean>();
+
+		stateMap.put("cwa", this.continueWirelessAnimation);
+		stateMap.put("cda" , this.continueDongleAnimation);
+		stateMap.put("cf" , this.connectionFailed);
+
+		return stateMap;
+	}
+
+	/**
+	 * Sets the state.
+	 *
+	 * @param packagedState the packaged state
+	 */
+	public void setState(HashMap<String, Boolean> packagedState) {
+
+		if (packagedState.get("cwa")) {
+			startWirelessAnimation();
+		}
+		if(packagedState.get("cda")) {
+
+			wirelessBars.get(0).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_portrait_1));
+			wirelessBars.get(1).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_portrait_2));
+			wirelessBars.get(2).setImageDrawable(context.getApplicationContext().getResources().getDrawable(R.drawable.wireless_connected_portrait_3));
+
+			for(int i = 0; i < wirelessBars.size(); i++) {
+
+				//If the wireless bars are not visible yet, make them visible
+				if(!wirelessBars.get(i).isShown()) {
+					wirelessBars.get(i).setVisibility(View.VISIBLE);
+				}
+			}
+			startDongleAnimation();
+		}
+		if(packagedState.get("cf")) {
+			if(!wirelessFialedImage.isShown()) {
+				wirelessFialedImage.setVisibility(View.VISIBLE);
+			}
+			wirelessFialedImage.startAnimation(fadeInWirelessAnimationSet(0));
+		}
 	}
 
 	/**

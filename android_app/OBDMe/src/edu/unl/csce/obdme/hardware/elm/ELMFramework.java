@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.bluetooth.BluetoothServiceRequestMaxRetriesException;
 import edu.unl.csce.obdme.bluetooth.BluetoothServiceRequestTimeoutException;
 import edu.unl.csce.obdme.hardware.obd.OBDFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
@@ -118,8 +119,9 @@ public class ELMFramework {
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
 							"Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid() 
-							+ ".  There is most likely something wrong with the bluetooth connection.");
+							+ ".  There is most likely something wrong with the bluetooth connection.  Throwing an exception to the caller.");
 				}
+				throw new BluetoothServiceRequestMaxRetriesException("Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid());
 			}
 
 		} catch (ELMDeviceNoDataException dnde) {
@@ -138,8 +140,11 @@ public class ELMFramework {
 			//Unable to connect exception
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
-				"ELM Device is indicating that it is unable to connect.  The car is most likely off.");
+						"ELM Device is indicating that it is unable to connect.  The car is most likely off." +
+				"  Throwing an exception to the caller.");
 			}
+
+			throw new ELMUnableToConnectException(utce.getMessage());
 
 		} catch (ELMException elme) {
 
@@ -200,8 +205,7 @@ public class ELMFramework {
 							"Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid() 
 							+ ".  There is most likely something wrong with the bluetooth connection.");
 				}
-				//bluetoothService.setState(BluetoothService.STATE_FAILED);
-			}
+				throw new BluetoothServiceRequestMaxRetriesException("Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid());			}
 
 		} catch (ELMDeviceNoDataException dnde) {
 			//This most likely means that the PID is not supported.
@@ -211,15 +215,18 @@ public class ELMFramework {
 						"ELM Device is indicating no data for Mode " + request.getMode() + " PID " + request.getPid() 
 						+ " .  Most likely because the remote ECU is off or the car has been turned off");
 			}
-			//bluetoothService.setState(BluetoothService.STATE_FAILED);
-
+			throw new ELMDeviceNoDataException("Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid());
+			
 		} catch (ELMUnableToConnectException utce) {
 
 			//Unable to connect exception
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
-				"ELM Device is indicating that it is unable to connect.  The car is most likely off.");
+						"ELM Device is indicating that it is unable to connect.  The car is most likely off." +
+				"  Throwing an exception to the caller.");
 			}
+
+			throw new ELMUnableToConnectException(utce.getMessage());
 
 		} catch (ELMException elme) {
 
@@ -230,8 +237,9 @@ public class ELMFramework {
 						+ ".  Not taking any actions");
 			}
 		}
-
+		
 		return response;
+		
 	}
 
 	/**

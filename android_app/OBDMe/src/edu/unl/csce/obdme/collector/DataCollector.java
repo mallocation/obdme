@@ -8,14 +8,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.bluetooth.BluetoothServiceRequestMaxRetriesException;
 import edu.unl.csce.obdme.database.OBDMeDatabaseHelper;
+import edu.unl.csce.obdme.hardware.elm.ELMDeviceNoDataException;
 import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.hardware.elm.ELMUnableToConnectException;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
+import edu.unl.csce.obdme.utils.UnitConversion;
 
 /**
  * The Class DataCollector.
@@ -23,7 +30,7 @@ import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 public class DataCollector {
 
 	/** The app handler. */
-	private final Handler appHandler;
+	private Handler appHandler;
 
 	/** The collector thread. */
 	private DataCollectorThread collectorThread;
@@ -46,6 +53,9 @@ public class DataCollector {
 	/** The current data queue. */
 	private ConcurrentLinkedQueue<HashMap<String, String>> currentDataQueue;
 
+	/** The shared prefs. */
+	private SharedPreferences sharedPrefs;
+
 	/** The Constant STATE_CHANGE. */
 	public static final int STATE_CHANGE = 738264738;
 
@@ -57,6 +67,9 @@ public class DataCollector {
 
 	/** The Constant COLLECTOR_PAUSED. */
 	public static final int COLLECTOR_PAUSED = 2;
+
+	/** The Constant COLLECTOR_FAILED. */
+	public static final int COLLECTOR_FAILED = 3;
 
 	/** The Constant DATA_CHANGE. */
 	public static final int DATA_CHANGE = 113513131;
@@ -77,9 +90,34 @@ public class DataCollector {
 		this.elmFramework = elmFramework;
 		this.context = context;
 
+		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-			"Initializing the DataCollector.");
+					"Initializing the DataCollector.");
+		}
+
+		currentData = new ConcurrentHashMap<String, String>();
+		currentDataQueue = new ConcurrentLinkedQueue<HashMap<String, String>>();
+
+	}
+
+	/**
+	 * Instantiates a new data collector.
+	 *
+	 * @param context the context
+	 * @param elmFramework the elm framework
+	 */
+	public DataCollector(Context context, ELMFramework elmFramework) {
+		messageState = COLLECTOR_NONE;
+		this.elmFramework = elmFramework;
+		this.context = context;
+
+		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+					"Initializing the DataCollector.");
 		}
 
 		currentData = new ConcurrentHashMap<String, String>();
@@ -118,6 +156,15 @@ public class DataCollector {
 	}
 
 	/**
+	 * Sets the app handler.
+	 *
+	 * @param appHandler the new app handler
+	 */
+	public void setAppHandler(Handler appHandler) {
+		this.appHandler = appHandler;
+	}
+
+	/**
 	 * Start collecting.
 	 */
 	public synchronized void startCollecting() {
@@ -153,6 +200,16 @@ public class DataCollector {
 	}
 
 	/**
+	 * Failed polling.
+	 */
+	private synchronized void failedPolling() {
+		if (collectorThread != null) {
+			collectorThread.pause();
+		}
+		setState(COLLECTOR_FAILED);
+	}
+
+	/**
 	 * Put current data.
 	 *
 	 * @param key the key
@@ -170,13 +227,18 @@ public class DataCollector {
 	 * @return the current data
 	 */
 	public synchronized String getCurrentData(String modeHex, String pidHex) {
+		
+		//Try to get the current data for modeHex and PidHex 
 		try {
 			return currentData.get((modeHex + pidHex).toString());
-		} catch (Exception e) {
-			return "";
+		} 
+		
+		//On failure return the uninit string
+		catch (Exception e) {
+			return "----";
 		}
 	}
-	
+
 	/**
 	 * Gets the current data.
 	 *
@@ -184,10 +246,15 @@ public class DataCollector {
 	 * @return the current data
 	 */
 	public synchronized String getCurrentData(String modeHexPidHex) {
+		
+		//Try to get the current data for modeHexPidHex 
 		try {
 			return currentData.get(modeHexPidHex);
-		} catch (Exception e) {
-			return "";
+		} 
+		
+		//On failure return the uninit string
+		catch (Exception e) {
+			return "----";
 		}
 	}
 
@@ -202,19 +269,19 @@ public class DataCollector {
 		//The the amount of collected data we have exceeds the threshold
 		if (currentDataQueue.size() > context.getResources()
 				.getInteger(R.integer.collector_system_memory_threshold)) {
-			
+
 			//If there isn't a database writing thread
 			if (writerThread == null) {
-				
+
 				//Batch DB write
 				batchDatabaseWrite();
 			}
-			
+
 			//If there is a database writer thread and
 			//it's not currently running
 			if (writerThread != null) {
 				if (!writerThread.isAlive()) {
-					
+
 					//Batch DB write
 					batchDatabaseWrite();
 				}
@@ -254,10 +321,10 @@ public class DataCollector {
 		 * Instantiates a new data collector thread.
 		 */
 		public DataCollectorThread() {
-			
+
 			//Set the thread name
 			setName("Data Collector");
-			
+
 			//We are assuming that we want to start polling immediately
 			this.continuePolling = true;
 			this.collectionPaused = false;
@@ -303,14 +370,8 @@ public class DataCollector {
 							//If the collection is paused, Loop for a while
 							while(collectionPaused) {
 								//Loop-de-loop
-								try {
-									Thread.sleep(1000);
-								} catch(Exception e) {
-									if(context.getResources().getBoolean(R.bool.debug)) {
-										Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-												"Interrupted exception while the thread was paused: " + e.getMessage());
-									}
-								}
+								SystemClock.sleep(1000);
+								//wEEEEEEEEEEEEEEEEE.
 							}
 
 							//Make the request for the current pollable and enabled mode and PID
@@ -319,28 +380,50 @@ public class DataCollector {
 							//If the response isn't null
 							if (response != null) {
 								try {
-									
+
 									//If the return value is a double
 									if (response.getProcessedResponse() instanceof Double) {
+										
+										//Get the processed double
 										Double responseDouble = (Double)response.getProcessedResponse();
-										putCurrentData((modeHex+currentPID).toString(), Double.toString(responseDouble));
-										currentDataForQueue.put((modeHex+currentPID).toString(), Double.toString(responseDouble));
+										
+										//Put the processed response into the current data for the queue (we do not want to convert to english units, they are always metric
+										currentDataForQueue.put((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(
+												modeHex, currentPID).getDecimalFormat().format(responseDouble));
+										
+										//If we need to convert to English units
+										if(sharedPrefs.getBoolean(context.getResources().getString(R.string.prefs_englishunits), false)) {
+											responseDouble = UnitConversion.convertToEnglish(elmFramework.getConfiguredPID(modeHex, currentPID)
+													.getPidUnit(), responseDouble);
+										}
+										
+										//Add the user configured unit value (Metric or English) to the current data hash map
+										putCurrentData((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(modeHex, currentPID)
+												.getDecimalFormat().format(responseDouble));
 									}
 
 									//If the return value is a string
 									else if (response.getProcessedResponse() instanceof String) {
+										
+										//Put the string in the current data for the queue 
 										putCurrentData((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
+										
+										//Put the string in the current data hash map
 										currentDataForQueue.put((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
 									}
 
 									//If the return value is a List
 									else if (response.getProcessedResponse() instanceof List) {
 										@SuppressWarnings("unchecked")
-										//Not nice but we ALWAYS return a list of strings...
+										//Not nice but we ALWAYS return a list of strings... 
+										//So we can make some assumptions here and ignore the warnings
 										List<String> resultsList = (List<String>) response.getProcessedResponse();
+										
+										//Store the list
 										putCurrentData((modeHex+currentPID).toString(), resultsList.toString());
 										currentDataForQueue.put((modeHex+currentPID).toString(), resultsList.toString());
 									}
+									
 								} catch (Exception e) {
 									if(context.getResources().getBoolean(R.bool.debug)) {
 										Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
@@ -349,13 +432,54 @@ public class DataCollector {
 								}
 							}
 
-						} catch (ELMException elme) {
+							//If we are exceeding the maximum tries on a request, reestablish collection
+						} catch (BluetoothServiceRequestMaxRetriesException bsrmre) {
+							if(context.getResources().getBoolean(R.bool.debug)) {
+								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+										"Bluetooth Service Request Max Retries Exception: " + bsrmre.getMessage() 
+										+ ".  Stopping the collector.");
+							}
+							
+							//Set the state to failed
+							failedPolling();
+						} 
+						
+						//If the ELM is unable to connect with the ECU, reestablish collection
+						catch (ELMUnableToConnectException euce) {
+							if(context.getResources().getBoolean(R.bool.debug)) {
+								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+										"ELM Unable to connect exception: " + euce.getMessage() 
+										+ ".  Stopping the collector.");
+							}
+							
+							//Set the state to failed
+							failedPolling();
+
+						} 
+						
+						//If the ELM is not getting any data from the ECU, reestablish collection
+						catch (ELMDeviceNoDataException edne) {
+							if(context.getResources().getBoolean(R.bool.debug)) {
+								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+										"ELM no data exception: " + edne.getMessage() 
+										+ ".  Stopping the collector.");
+							}
+							
+							//Set the state to failed
+							failedPolling();
+
+						}
+						
+						//Some general ELM exception that we don't particularly care about
+						catch (ELMException elme) {
 							if(context.getResources().getBoolean(R.bool.debug)) {
 								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
 										"General ELM Exception: " + elme.getMessage());
 							}
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
+						}
+						
+						//Who the fuck knows what caused this...
+						catch (Exception e) {
 							e.printStackTrace();
 						}
 
@@ -450,7 +574,7 @@ public class DataCollector {
 		 * Instantiates a new database writer thread.
 		 */
 		public DatabaseWriterThread() {
-			
+
 			//Set the thread name
 			setName("Database Writer");
 
@@ -495,14 +619,14 @@ public class DataCollector {
 
 				//For all the values that were recorded
 				for (String currentKey : currentSet.keySet()) {
-					
+
 					//add them to the table
 					cv.put("data_" + currentKey, currentSet.get(currentKey));
 				}
-				
+
 				//Load the content values into a new table row
 				long tableRow = sqldb.insert(OBDMeDatabaseHelper.TABLE_NAME, null, cv);
-				
+
 				//If debugging is enabled, print row number to the developer
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.d(context.getResources().getString(R.string.debug_tag_datacollector),

@@ -8,4 +8,5 @@
 	<string name="prefs.account.vin">OBDMeVIN</string>
 	<string name="prefs.mode">OBDMeMode</string>
 	<string name="prefs.dataupload">OBDMeDataUpload</string>
+	<string name="prefs.englishunits">OBDMeEnglishUnits</string>
 </resources>
