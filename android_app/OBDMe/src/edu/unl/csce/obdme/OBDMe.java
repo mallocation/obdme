@@ -67,10 +67,7 @@ public class OBDMe extends Activity {
 	public static final int BASIC_USER_MODE = 0;
 
 	/** The Constant ENTHUSIAST_USER_MODE. */
-	public static final int ENTHUSIAST_USER_MODE = 1;
-
-	/** The Constant MECHANIC_MODE. */
-	public static final int MECHANIC_MODE = 2;
+	public static final int ADVANCED_USER_MODE = 1;
 
 	/** The shared prefs. */
 	private SharedPreferences sharedPrefs;
@@ -124,10 +121,7 @@ public class OBDMe extends Activity {
 				setContentView(((BasicUserModePortrait) this.theUI).getFlipper());
 				break;
 
-			case OBDMe.ENTHUSIAST_USER_MODE:
-				break;
-
-			case OBDMe.MECHANIC_MODE:
+			case OBDMe.ADVANCED_USER_MODE:
 				break;
 
 				//If it doesn't exist or is invalid, reset
@@ -153,10 +147,7 @@ public class OBDMe extends Activity {
 				setContentView(((BasicUserModeLandscape) this.theUI).getFlipper());
 				break;
 
-			case OBDMe.ENTHUSIAST_USER_MODE:
-				break;
-
-			case OBDMe.MECHANIC_MODE:
+			case OBDMe.ADVANCED_USER_MODE:
 				break;
 
 				//If it doesn't exist or is invalid, reset
@@ -215,12 +206,9 @@ public class OBDMe extends Activity {
 				((BasicUserModePortrait) theUI).updateValues(collectorThread);
 				break;
 
-			case ENTHUSIAST_USER_MODE:
+			case ADVANCED_USER_MODE:
 				break;
-
-			case MECHANIC_MODE:
-				break;
-
+				
 			}
 			break;
 
@@ -234,12 +222,9 @@ public class OBDMe extends Activity {
 				((BasicUserModeLandscape) theUI).updateValues(collectorThread);
 				break;
 
-			case ENTHUSIAST_USER_MODE:
+			case ADVANCED_USER_MODE:
 				break;
-
-			case MECHANIC_MODE:
-				break;
-
+				
 			}
 			break;
 		}
@@ -683,35 +668,5 @@ public class OBDMe extends Activity {
 			break;
 
 		}
-	}
-
-	/**
-	 * Mechanic mode.
-	 */
-	public void mechanicMode(){
-		// Set up real-time data list view
-		ListView dataList = (ListView) findViewById(R.id.mechanicmode_realtimedata_list);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getEnabledPollablePIDList();
-
-		for (String currentMode : pollablePIDList.keySet()) {
-			for (Iterator<String> pidIrt = pollablePIDList.get(currentMode).iterator(); pidIrt.hasNext(); ) {
-				String currentPID = pidIrt.next();
-
-				//Indicated if Enabled 
-				elmFramework.getConfiguredPID(currentMode, currentPID).isEnabled();
-
-				//Build the list to display using the pid name
-				dataAdapter.add(elmFramework.getConfiguredPID(currentMode, currentPID).getPidName());
-			}
-		}
-
-		dataList.setAdapter(dataAdapter);
-
-		// Set up error codes list view
-		ListView errorList = (ListView) findViewById(R.id.mechanicmode_errorcodes_list);
-		String[] errorItems = { "error code 1", "error code 2" };
-		ArrayAdapter<String> errorAdapter = new ArrayAdapter<String>(this, R.layout.device_name, errorItems);
-		errorList.setAdapter(errorAdapter);
 	}
 }
