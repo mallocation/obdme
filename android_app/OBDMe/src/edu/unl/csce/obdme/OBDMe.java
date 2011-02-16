@@ -62,6 +62,15 @@ public class OBDMe extends Activity {
 
 	/** The Constant ENTHUSIAST_USER_MODE. */
 	public static final int ADVANCED_USER_MODE = 1;
+	
+	/** The Constant DATA_USAGE_WIFIONLY. */
+	public static final int DATA_USAGE_WIFI_ONLY = 0;
+	
+	/** The Constant DATA_USAGE_NETWORKONLY. */
+	public static final int DATA_USAGE_NETWORK_ONLY = 1;
+	
+	/** The Constant DATA_USAGE_WIFIANDNETWORK. */
+	public static final int DATA_USAGE_WIFI_AND_NETWORK = 2;
 
 	/** The shared prefs. */
 	private SharedPreferences sharedPrefs;
@@ -96,6 +105,8 @@ public class OBDMe extends Activity {
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		setConfiguredView();
+		
+		setDataUsage();
 		
 //		//If the bluetooth thread is already connected (from the setup wizard)
 //		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
@@ -187,6 +198,31 @@ public class OBDMe extends Activity {
 			break;
 		}
 
+	}
+	
+	/**
+	 * Sets the Data Usage (data upload settings)
+	 */
+	private void setDataUsage() {
+		switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_dataupload), -1)) {
+
+		case OBDMe.DATA_USAGE_WIFI_ONLY:
+			break;
+
+		case OBDMe.DATA_USAGE_NETWORK_ONLY:
+			break;
+			
+		case OBDMe.DATA_USAGE_WIFI_AND_NETWORK:
+			break;
+
+			//If it doesn't exist or is invalid, reset
+		default:
+			SharedPreferences.Editor prefEditor = this.sharedPrefs.edit();
+			prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), OBDMe.DATA_USAGE_WIFI_ONLY);
+			prefEditor.commit();
+			break;
+
+		}
 	}
 
 	/**

@@ -165,9 +165,22 @@ public class RootPreferences extends PreferenceActivity {
         applicationCategory.addPreference(collectionPref);
                 
         //Upload options
-        Preference uploadPref = new Preference(this);
+        IntegerListPreference uploadPref = new IntegerListPreference(this);
         uploadPref.setTitle(getResources().getString(R.string.menu_prefs_datausage_title));
         uploadPref.setSummary(getResources().getString(R.string.menu_prefs_datausage_summary));
+        uploadPref.setDialogTitle(getResources().getString(R.string.menu_prefs_datausage_dialog_title));
+        
+        uploadPref.setPersistent(true);
+        uploadPref.setKey(getResources().getString(R.string.prefs_dataupload));
+        
+        uploadPref.setEntries(new String[] {getResources().getString(R.string.menu_prefs_datausage_wifionly), 
+        		getResources().getString(R.string.menu_prefs_datausage_phonenetworkonly),
+        		getResources().getString(R.string.menu_prefs_datausage_wifiandphonenetwork)});
+        
+        uploadPref.setEntryValues(new String[] {Integer.toString(OBDMe.DATA_USAGE_WIFI_ONLY), 
+        		Integer.toString(OBDMe.DATA_USAGE_NETWORK_ONLY),
+        		Integer.toString(OBDMe.DATA_USAGE_WIFI_AND_NETWORK)});
+        
         applicationCategory.addPreference(uploadPref);
        
         //English/Metric option

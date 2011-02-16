@@ -163,6 +163,7 @@
 	<string name="menu.prefs.units.summary">The default option is to display metric units.  Check this box to display English units.</string>
 	<string name="menu.prefs.datausage.title">Data Usage</string>
 	<string name="menu.prefs.datausage.summary">Designate how collected information is uploaded to OBDMe</string>
+	<string name="menu.prefs.datausage.dialog.title">Set Data Upload Option</string>
 	
 	<string name="menu.prefs.category.device">Device Preferences</string>
 	<string name="menu.prefs.device.title">Account Preferences</string>
@@ -170,6 +171,10 @@
 	<string name="menu.prefs.usermode.dialog.title">Set Display Mode</string>
 	<string name="menu.prefs.usermode.basic">Basic Display</string>
 	<string name="menu.prefs.usermode.advanced">Advanced Display</string>
+	
+	<string name="menu.prefs.datausage.wifionly">Wifi Only</string>
+	<string name="menu.prefs.datausage.phonenetworkonly">Phone Network Only</string>
+	<string name="menu.prefs.datausage.wifiandphonenetwork">Phone Network Until Wifi Is Available</string>
 	
 	<!-- Options Menu -->
 	<string name="menu.options.start">Start Collecting</string>
@@ -194,11 +199,6 @@
 	<string name="settings.modeselect.title">Select A Mode</string>
 	<string name="settings.modeselect.basicusermode">Basic User Mode</string>
 	<string name="settings.modeselect.advancedusermode">Advanced User Mode</string>
-	
-	<string name="datausage.title">Select Data Usage</string>
-	<string name="datausage.wifionly">Wifi Only</string>
-	<string name="datausage.phonenetworkonly">Phone Network Only</string>
-	<string name="datausage.wifiandphonenetwork">Phone Network Until Wifi Is Available</string>
 	
 	<!-- Vehicle Info -->
 	<string name="vehicle.info.titletext.vin">VIN:</string>
