@@ -3,9 +3,10 @@ package edu.unl.csce.obdme;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.ViewFlipper;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
+import edu.unl.csce.obdme.utils.UnitConversion;
 
 /**
  * The Class BasicUserModePortrait.
@@ -27,18 +29,29 @@ public class BasicUserModePortrait {
 
 	/** The elm framework. */
 	private ELMFramework elmFramework;
-	
+
 	/** The flipper. */
 	private ViewFlipper flipper;
-	
+
 	/** The flip interval. */
 	private int flipInterval;
-	
+
 	/** The values maps. */
 	private HashMap<Integer, HashMap<String,TextView>> valuesMaps;
 
 	/** The data update thread. */
 	private BasicUIDataUpdater dataUpdateThread;
+
+	/** The shared prefs. */
+	private SharedPreferences sharedPrefs;
+
+	/** The context. */
+	private Context context;
+
+	/** The data collector thread. */
+	private DataCollector dataCollectorThread;
+
+
 
 	/**
 	 * Instantiates a new basic user mode portrait.
@@ -47,13 +60,44 @@ public class BasicUserModePortrait {
 	 */
 	public BasicUserModePortrait(Context context) {
 
+		this.context = context;
+
+		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+
 		//Build the view flipper
 		flipper = buildViewFlipper(context);
-		
+
 		//Set the default animations (timer controlled)
 		flipper.setInAnimation(inFromRightAnimation(false));
 		flipper.setOutAnimation(outToLeftAnimation(false));
-		
+
+		//Set the default flip interval
+		this.flipInterval = 5000;
+		flipper.setFlipInterval(flipInterval);
+
+	}
+
+	/**
+	 * Instantiates a new basic user mode portrait.
+	 *
+	 * @param context the context
+	 * @param dataCollector the data collector
+	 */
+	public BasicUserModePortrait(Context context, DataCollector dataCollector) {
+
+		this.context = context;
+
+		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+
+		this.dataCollectorThread = dataCollector;
+
+		//Build the view flipper
+		flipper = buildViewFlipper(context);
+
+		//Set the default animations (timer controlled)
+		flipper.setInAnimation(inFromRightAnimation(false));
+		flipper.setOutAnimation(outToLeftAnimation(false));
+
 		//Set the default flip interval
 		this.flipInterval = 5000;
 		flipper.setFlipInterval(flipInterval);
@@ -70,11 +114,11 @@ public class BasicUserModePortrait {
 
 		//Build the view flipper
 		flipper = buildViewFlipper(context);
-		
+
 		//Set the default animations (timer controlled)
 		flipper.setInAnimation(inFromRightAnimation(false));
 		flipper.setOutAnimation(outToLeftAnimation(false));
-		
+
 		//Set the default flip interval
 		this.flipInterval = flipInterval;
 		flipper.setFlipInterval(flipInterval);
@@ -88,7 +132,7 @@ public class BasicUserModePortrait {
 	 * @return the view flipper
 	 */
 	private ViewFlipper buildViewFlipper(Context context) {
-		
+
 		//Get the enabled pollable PIDS
 		elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getEnabledPollablePIDList();
@@ -99,13 +143,13 @@ public class BasicUserModePortrait {
 
 		//Initialize the values map (this contains references to ALL the stats displayed in the list view
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();
-		
+
 		Integer currentView = new Integer(0);
 
 		//For all the pollable and enabled PIDS,
 		for (String currentMode : pollablePIDList.keySet()) {
 			for (Iterator<String> pidIrt = pollablePIDList.get(currentMode).iterator(); pidIrt.hasNext(); ) {
-				
+
 				this.valuesMaps.put(currentView, new HashMap<String, TextView>());
 
 				OBDPID upperPID = null;
@@ -113,23 +157,23 @@ public class BasicUserModePortrait {
 
 				//If there is a PID left in the Iterator
 				if (pidIrt.hasNext()) {
-					
+
 					//Save the reference
 					upperPID = elmFramework.getConfiguredPID(currentMode, pidIrt.next());
-					
+
 					//If there is another PID to be read (second)
 					if (pidIrt.hasNext()) {
-						
+
 						//Save the reference
 						lowerPID = elmFramework.getConfiguredPID(currentMode, pidIrt.next());
-						
+
 						//Create a 2 PID view and add it to the flipper
 						rootFlipper.addView(buildEnabledView(context, upperPID, lowerPID, currentView));
 					}
-					
+
 					//Otherwise there is only one PID left in the iterator
 					else {
-						
+
 						//Add a view with only one PID shown
 						rootFlipper.addView(buildEnabledView(context, upperPID, currentView));
 					}
@@ -182,7 +226,7 @@ public class BasicUserModePortrait {
 	 * @return the view
 	 */
 	private View buildEnabledView(Context context, OBDPID singlePID, Integer currentView) {
-		
+
 		//Initialize the Linear layout for this view and set the parameters
 		LinearLayout rootLinearLayout = new LinearLayout(context);
 		rootLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -212,7 +256,7 @@ public class BasicUserModePortrait {
 		TextView titleTextView = new TextView(context);
 		LayoutParams titleParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		titleTextView.setLayoutParams(titleParams);
-		
+
 		//Set the TextView text size based on the amount of text to be displayed
 		if (pid.getPidName().length() <= 10) {
 			titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
@@ -229,16 +273,16 @@ public class BasicUserModePortrait {
 		else {
 			titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
 		}
-		
+
 		//The the padding
 		titleTextView.setPadding(5, 5, 5, 5);
-		
+
 		//Set the gravity
 		titleTextView.setGravity(Gravity.CENTER);
-		
+
 		//Set the title text
 		titleTextView.setText(pid.getPidName());
-		
+
 		//Set the color
 		titleTextView.setTextColor(context.getResources().getColor(android.R.color.white));
 
@@ -255,7 +299,7 @@ public class BasicUserModePortrait {
 	 * @return the linear layout
 	 */
 	private LinearLayout buildValueView(Context context, OBDPID pid, Integer currentView) {
-		
+
 		//Initialize the value LinearLayout and set the parameters
 		LinearLayout valueLinearLayout = new LinearLayout(context);
 		valueLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -267,50 +311,56 @@ public class BasicUserModePortrait {
 		TextView valueTextView = new TextView(context);
 		LayoutParams valueParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		valueTextView.setLayoutParams(valueParams);
-		
+
 		//Set the text size (in DIP)
 		valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 90);
-		
+
 		//The the padding
 		valueTextView.setPadding(5, 5, 5, 5);
-		
-		//Set the gravity
-		//valueTextView.setGravity(Gravity.CENTER);
-		
-		//Set the default values text
-		valueTextView.setText("----");
-		
+
+		//If the constructor was passed a data collector thread, set the values from that
+		if (dataCollectorThread != null) {
+			valueTextView.setText(this.dataCollectorThread.getCurrentData(pid.getParentMode(),pid.getPidHex()));
+		}
+
+		//Otherwise init to "----"
+		else {
+			valueTextView.setText("----");
+		}
+
 		//Set the color
 		valueTextView.setTextColor(context.getResources().getColor(android.R.color.white));
-		
+
 		valueLinearLayout.addView(valueTextView);
-		
+
 		//Add a reference to this view to the values hashmap
 		valuesMaps.get(currentView).put(pid.getParentMode()+pid.getPidHex(), valueTextView);
-		
+
 		//Initialize the unit TextView and set the parameters
 		TextView unitTextView = new TextView(context);
 		LayoutParams unitParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		unitTextView.setLayoutParams(unitParams);
-		
+
 		//Set the text size (in DIP)
 		unitTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
-		
+
 		//The the padding
 		unitTextView.setPadding(5, 5, 5, 5);
-		
-		//Set the gravity
-		//unitTextView.setGravity(Gravity.CENTER);
-		
+
 		//Set the unit text
-		unitTextView.setText(pid.getPidUnit());
-		
+		if(this.sharedPrefs.getBoolean(this.context.getResources().getString(R.string.prefs_englishunits), false)) {
+			unitTextView.setText(UnitConversion.getEnglishUnit(pid.getPidUnit()));
+		}
+		else {
+			unitTextView.setText(pid.getPidUnit());
+		}
+
 		//Set the color
 		unitTextView.setTextColor(context.getResources().getColor(android.R.color.white));
-	
+
 		valueLinearLayout.addView(unitTextView);
-		
-		
+
+
 
 		//Return the values text view
 		return valueLinearLayout;
@@ -328,7 +378,7 @@ public class BasicUserModePortrait {
 				Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f);
-		
+
 		//If this is a fling, speed up the animation
 		if (fling) {
 			inFromRight.setDuration(500);
@@ -352,7 +402,7 @@ public class BasicUserModePortrait {
 				Animation.RELATIVE_TO_PARENT, -1.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f);
-		
+
 		//If this is a fling, speed up the animation
 		if (fling) {
 			outtoLeft.setDuration(500);
@@ -376,7 +426,7 @@ public class BasicUserModePortrait {
 				Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f);
-		
+
 		//If this is a fling, speed up the animation
 		if (fling) {
 			inFromLeft.setDuration(500);
@@ -400,7 +450,7 @@ public class BasicUserModePortrait {
 				Animation.RELATIVE_TO_PARENT, +1.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT, 0.0f);
-		
+
 		//If this is a fling, speed up the animation
 		if (fling) {
 			outtoRight.setDuration(500);
@@ -416,34 +466,34 @@ public class BasicUserModePortrait {
 	 * Fling left.
 	 */
 	public void flingLeft() {
-		
+
 		//Stop timed flipping
 		flipper.stopFlipping();
-		
+
 		//Set the fling animation based on the direction of the fling
 		flipper.setInAnimation(inFromLeftAnimation(true));
 		flipper.setOutAnimation(outToRightAnimation(true));
-		
+
 		//Show the new view
 		flipper.showPrevious();
-	
+
 	}
 
 	/**
 	 * Fling right.
 	 */
 	public void flingRight() {
-		
+
 		//Stop timed flipping
 		flipper.stopFlipping();
-		
+
 		//Set the fling animation based on the direction of the fling
 		flipper.setInAnimation(inFromRightAnimation(true));
 		flipper.setOutAnimation(outToLeftAnimation(true));
-		
+
 		//Show the new view
 		flipper.showNext();
-		
+
 	}
 
 	/**
@@ -453,7 +503,7 @@ public class BasicUserModePortrait {
 	 */
 	public void updateValues(DataCollector collectorThread) {
 		if (dataUpdateThread == null) {
-		dataUpdateThread = new BasicUIDataUpdater(); 
+			dataUpdateThread = new BasicUIDataUpdater(); 
 		}
 		else {
 			if (!dataUpdateThread.isAlive()) {
@@ -468,7 +518,7 @@ public class BasicUserModePortrait {
 	public void startFlipping() {
 		flipper.startFlipping();
 	}
-	
+
 	/**
 	 * Stop flipping.
 	 */
@@ -524,7 +574,7 @@ public class BasicUserModePortrait {
 		 * Instantiates a new basic ui data updater.
 		 */
 		public BasicUIDataUpdater() {
-			
+
 			//Set the thread name
 			setName("Basic UI Data Updater");
 

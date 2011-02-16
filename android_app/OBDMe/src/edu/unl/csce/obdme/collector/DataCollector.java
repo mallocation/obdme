@@ -94,7 +94,7 @@ public class DataCollector {
 
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-					"Initializing the DataCollector.");
+			"Initializing the DataCollector.");
 		}
 
 		currentData = new ConcurrentHashMap<String, String>();
@@ -117,7 +117,7 @@ public class DataCollector {
 
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-					"Initializing the DataCollector.");
+			"Initializing the DataCollector.");
 		}
 
 		currentData = new ConcurrentHashMap<String, String>();
@@ -195,8 +195,8 @@ public class DataCollector {
 	public synchronized void pausePolling() {
 		if (collectorThread != null) {
 			collectorThread.pause();
+			setState(COLLECTOR_PAUSED);
 		}
-		setState(COLLECTOR_PAUSED);
 	}
 
 	/**
@@ -227,12 +227,12 @@ public class DataCollector {
 	 * @return the current data
 	 */
 	public synchronized String getCurrentData(String modeHex, String pidHex) {
-		
+
 		//Try to get the current data for modeHex and PidHex 
 		try {
 			return currentData.get((modeHex + pidHex).toString());
 		} 
-		
+
 		//On failure return the uninit string
 		catch (Exception e) {
 			return "----";
@@ -246,12 +246,12 @@ public class DataCollector {
 	 * @return the current data
 	 */
 	public synchronized String getCurrentData(String modeHexPidHex) {
-		
+
 		//Try to get the current data for modeHexPidHex 
 		try {
 			return currentData.get(modeHexPidHex);
 		} 
-		
+
 		//On failure return the uninit string
 		catch (Exception e) {
 			return "----";
@@ -383,20 +383,20 @@ public class DataCollector {
 
 									//If the return value is a double
 									if (response.getProcessedResponse() instanceof Double) {
-										
+
 										//Get the processed double
 										Double responseDouble = (Double)response.getProcessedResponse();
-										
+
 										//Put the processed response into the current data for the queue (we do not want to convert to english units, they are always metric
 										currentDataForQueue.put((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(
 												modeHex, currentPID).getDecimalFormat().format(responseDouble));
-										
+
 										//If we need to convert to English units
 										if(sharedPrefs.getBoolean(context.getResources().getString(R.string.prefs_englishunits), false)) {
 											responseDouble = UnitConversion.convertToEnglish(elmFramework.getConfiguredPID(modeHex, currentPID)
 													.getPidUnit(), responseDouble);
 										}
-										
+
 										//Add the user configured unit value (Metric or English) to the current data hash map
 										putCurrentData((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(modeHex, currentPID)
 												.getDecimalFormat().format(responseDouble));
@@ -404,10 +404,10 @@ public class DataCollector {
 
 									//If the return value is a string
 									else if (response.getProcessedResponse() instanceof String) {
-										
+
 										//Put the string in the current data for the queue 
 										putCurrentData((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
-										
+
 										//Put the string in the current data hash map
 										currentDataForQueue.put((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
 									}
@@ -418,12 +418,12 @@ public class DataCollector {
 										//Not nice but we ALWAYS return a list of strings... 
 										//So we can make some assumptions here and ignore the warnings
 										List<String> resultsList = (List<String>) response.getProcessedResponse();
-										
+
 										//Store the list
 										putCurrentData((modeHex+currentPID).toString(), resultsList.toString());
 										currentDataForQueue.put((modeHex+currentPID).toString(), resultsList.toString());
 									}
-									
+
 								} catch (Exception e) {
 									if(context.getResources().getBoolean(R.bool.debug)) {
 										Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
@@ -439,11 +439,11 @@ public class DataCollector {
 										"Bluetooth Service Request Max Retries Exception: " + bsrmre.getMessage() 
 										+ ".  Stopping the collector.");
 							}
-							
+
 							//Set the state to failed
 							failedPolling();
 						} 
-						
+
 						//If the ELM is unable to connect with the ECU, reestablish collection
 						catch (ELMUnableToConnectException euce) {
 							if(context.getResources().getBoolean(R.bool.debug)) {
@@ -451,12 +451,12 @@ public class DataCollector {
 										"ELM Unable to connect exception: " + euce.getMessage() 
 										+ ".  Stopping the collector.");
 							}
-							
+
 							//Set the state to failed
 							failedPolling();
 
 						} 
-						
+
 						//If the ELM is not getting any data from the ECU, reestablish collection
 						catch (ELMDeviceNoDataException edne) {
 							if(context.getResources().getBoolean(R.bool.debug)) {
@@ -464,12 +464,12 @@ public class DataCollector {
 										"ELM no data exception: " + edne.getMessage() 
 										+ ".  Stopping the collector.");
 							}
-							
+
 							//Set the state to failed
 							failedPolling();
 
 						}
-						
+
 						//Some general ELM exception that we don't particularly care about
 						catch (ELMException elme) {
 							if(context.getResources().getBoolean(R.bool.debug)) {
@@ -477,7 +477,7 @@ public class DataCollector {
 										"General ELM Exception: " + elme.getMessage());
 							}
 						}
-						
+
 						//Who the fuck knows what caused this...
 						catch (Exception e) {
 							e.printStackTrace();

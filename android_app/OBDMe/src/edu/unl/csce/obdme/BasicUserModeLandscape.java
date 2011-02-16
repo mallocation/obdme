@@ -3,9 +3,10 @@ package edu.unl.csce.obdme;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.ViewFlipper;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
+import edu.unl.csce.obdme.utils.UnitConversion;
 
 /**
  * The Class BasicUserModeLandscape.
@@ -40,12 +42,52 @@ public class BasicUserModeLandscape {
 	/** The data update thread. */
 	private BasicUIDataUpdater dataUpdateThread;
 
+	/** The shared prefs. */
+	private SharedPreferences sharedPrefs;
+
+	/** The context. */
+	private Context context;
+
+	/** The data collector thread. */
+	private DataCollector dataCollectorThread;
+
 	/**
 	 * Instantiates a new basic user mode landscape.
 	 *
 	 * @param context the context
 	 */
 	public BasicUserModeLandscape(Context context) {
+
+		this.context = context;
+
+		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+
+		//Build the view flipper
+		flipper = buildViewFlipper(context);
+
+		//Set the default animations (timer controlled)
+		flipper.setInAnimation(inFromRightAnimation(false));
+		flipper.setOutAnimation(outToLeftAnimation(false));
+
+		//Set the default flip interval
+		this.flipInterval = 5000;
+		flipper.setFlipInterval(flipInterval);
+
+	}
+
+	/**
+	 * Instantiates a new basic user mode landscape.
+	 *
+	 * @param context the context
+	 * @param dataCollector the data collector
+	 */
+	public BasicUserModeLandscape(Context context, DataCollector dataCollector) {
+
+		this.context = context;
+
+		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+
+		this.dataCollectorThread = dataCollector;
 
 		//Build the view flipper
 		flipper = buildViewFlipper(context);
@@ -88,18 +130,18 @@ public class BasicUserModeLandscape {
 	 * @return the view flipper
 	 */
 	private ViewFlipper buildViewFlipper(Context context) {
-		
+
 		//Get the enabled pollable PIDS
 		elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getEnabledPollablePIDList();
 
 		//Start a new View Flipper object
 		ViewFlipper rootFlipper = new ViewFlipper(context);
-		
+
 		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.obdme_background));
 
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();
-		
+
 		Integer currentView = new Integer(0);
 
 		//For all the pollable and enabled PIDS,
@@ -107,13 +149,13 @@ public class BasicUserModeLandscape {
 			for (Iterator<String> pidIrt = pollablePIDList.get(currentMode).iterator(); pidIrt.hasNext(); ) {
 
 				this.valuesMaps.put(currentView, new HashMap<String, TextView>());
-				
+
 				OBDPID middlePID = null;
 
 				//Save the reference
 				middlePID = elmFramework.getConfiguredPID(currentMode, pidIrt.next());
 				rootFlipper.addView(buildEnabledView(context, middlePID, currentView));
-								
+
 				currentView = new Integer(currentView+1);
 
 			}
@@ -206,7 +248,7 @@ public class BasicUserModeLandscape {
 	 * @return the linear layout
 	 */
 	private LinearLayout buildValueView(Context context, OBDPID pid, Integer currentView) {
-		
+
 		//Initialize the value LinearLayout and set the parameters
 		LinearLayout valueLinearLayout = new LinearLayout(context);
 		valueLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -218,46 +260,53 @@ public class BasicUserModeLandscape {
 		TextView valueTextView = new TextView(context);
 		LayoutParams valueParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		valueTextView.setLayoutParams(valueParams);
-		
+
 		//Set the text size (in DIP)
 		valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 110);
-		
+
 		//The the padding
 		valueTextView.setPadding(5, 5, 5, 5);
-		
-		//Set the default values text
-		valueTextView.setText("----");
-		
+
+		//If the constructor was passed a data collector thread, set the values from that
+		if (dataCollectorThread != null) {
+			valueTextView.setText(this.dataCollectorThread.getCurrentData(pid.getParentMode(),pid.getPidHex()));
+		}
+		else {
+			valueTextView.setText("----");
+		}
+
 		//Set the color
 		valueTextView.setTextColor(context.getResources().getColor(android.R.color.white));
-		
+
 		valueLinearLayout.addView(valueTextView);
-		
+
 		//Add a reference to this view to the values hashmap
 		valuesMaps.get(currentView).put(pid.getParentMode()+pid.getPidHex(), valueTextView);
-		
+
 		//Initialize the unit TextView and set the parameters
 		TextView unitTextView = new TextView(context);
 		LayoutParams unitParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		unitTextView.setLayoutParams(unitParams);
-		
+
 		//Set the text size (in DIP)
 		unitTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
-		
+
 		//The the padding
 		unitTextView.setPadding(5, 5, 5, 5);
-		
-		//Set the gravity
-		//unitTextView.setGravity(Gravity.CENTER);
-		
+
 		//Set the unit text
-		unitTextView.setText(pid.getPidUnit());
-		
+		if(this.sharedPrefs.getBoolean(this.context.getResources().getString(R.string.prefs_englishunits), false)) {
+			unitTextView.setText(UnitConversion.getEnglishUnit(pid.getPidUnit()));
+		}
+		else {
+			unitTextView.setText(pid.getPidUnit());
+		}
+
 		//Set the color
 		unitTextView.setTextColor(context.getResources().getColor(android.R.color.white));
-	
+
 		valueLinearLayout.addView(unitTextView);
-		
+
 		//Return the values text view
 		return valueLinearLayout;
 	}

@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -66,7 +67,7 @@ public class SetupWizardAccount extends Activity {
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
 		"Starting the OBDMe Account Setup Wizard Activity.");
 
-		prefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		emailRegEx = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
 		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();

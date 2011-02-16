@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -67,7 +68,7 @@ public class SetupWizardVehicle extends Activity {
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
 		"Starting the OBDMe Vehicle Setup Wizard Activity.");
 
-		prefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		setContentView(R.layout.setupwizard_vehicle);
 

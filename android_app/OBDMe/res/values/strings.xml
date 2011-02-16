@@ -163,10 +163,13 @@
 	<string name="menu.prefs.units.summary">The default option is to display metric units.  Check this box to display English units.</string>
 	<string name="menu.prefs.datausage.title">Data Usage</string>
 	<string name="menu.prefs.datausage.summary">Designate how collected information is uploaded to OBDMe</string>
-
 	
 	<string name="menu.prefs.category.device">Device Preferences</string>
 	<string name="menu.prefs.device.title">Account Preferences</string>
+	
+	<string name="menu.prefs.usermode.dialog.title">Set Display Mode</string>
+	<string name="menu.prefs.usermode.basic">Basic Display</string>
+	<string name="menu.prefs.usermode.advanced">Advanced Display</string>
 	
 	<!-- Options Menu -->
 	<string name="menu.options.start">Start Collecting</string>

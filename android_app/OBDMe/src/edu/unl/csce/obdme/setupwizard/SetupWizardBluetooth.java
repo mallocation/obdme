@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -75,7 +76,7 @@ public class SetupWizardBluetooth extends Activity {
 		"Starting the OBDMe Setup Wizard Bluetooth Activity.");
 
 		//Load the App Pref DB
-		prefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		setContentView(R.layout.setupwizard_bluetooth);
 

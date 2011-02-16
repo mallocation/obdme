@@ -1,8 +1,6 @@
 package edu.unl.csce.obdme;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,15 +23,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
-import edu.unl.csce.obdme.settingsmenu.OBDMeRootPreferences;
+import edu.unl.csce.obdme.settingsmenu.RootPreferences;
 
 /**
  * The Class OBDMe.
@@ -99,29 +95,31 @@ public class OBDMe extends Activity {
 		//Get the shared preferences
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-		//If the bluetooth thread is already connected (from the setup wizard)
-		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
-			
-			//Dont show the connection status screen
-			this.connectionStatus = false;
-		}
+		setConfiguredView();
 		
-		//Otherwise, we need to set up a connection with the device
-		else {
-			this.connectionStatus = true;
-		}
-
-		//If we need to set up a connection
-		if (this.connectionStatus) {
-			
-			//Start the connection routine
-			checkBluetoothEnabled();
-		}
-		
-		//Otherwise set the configured data view
-		else {
-			setConfiguredView();
-		}
+//		//If the bluetooth thread is already connected (from the setup wizard)
+//		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+//			
+//			//Dont show the connection status screen
+//			this.connectionStatus = false;
+//		}
+//		
+//		//Otherwise, we need to set up a connection with the device
+//		else {
+//			this.connectionStatus = true;
+//		}
+//
+//		//If we need to set up a connection
+//		if (this.connectionStatus) {
+//			
+//			//Start the connection routine
+//			checkBluetoothEnabled();
+//		}
+//		
+//		//Otherwise set the configured data view
+//		else {
+//			setConfiguredView();
+//		}
 
 		//Set up a new gesture detector for swipes
 		gestureDetector = new GestureDetector(new FlingGestureDetector());
@@ -436,7 +434,7 @@ public class OBDMe extends Activity {
 			this.finish();
 			return true;
 		case R.id.menu_options_prefs:
-			startActivityForResult(new Intent(this, edu.unl.csce.obdme.settingsmenu.OBDMeRootPreferences.class), OBDMeRootPreferences.USER_QUIT_SETTINGS);
+			startActivityForResult(new Intent(this, edu.unl.csce.obdme.settingsmenu.RootPreferences.class), RootPreferences.USER_QUIT_SETTINGS);
 			return true;
 		}
 
@@ -863,7 +861,7 @@ public class OBDMe extends Activity {
 			break;
 
 			//The user just left the properties screen
-		case OBDMeRootPreferences.USER_QUIT_SETTINGS:
+		case RootPreferences.USER_QUIT_SETTINGS:
 
 			//Set the configured view
 			//If the bluetooth service is not connected to a device, set the connection status view

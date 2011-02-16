@@ -1,7 +1,5 @@
 package edu.unl.csce.obdme.settingsmenu;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -9,55 +7,29 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
-import android.view.Window;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.R;
 
 /**
- * The Class Preferences.
+ * The Class OBDMeRootPreferences.
  */
 public class RootPreferences extends PreferenceActivity {
 	 
-    /** The root view. */
+    /** The Constant USER_QUIT_SETTINGS. */
+    public static final int USER_QUIT_SETTINGS = 113518329;
+
+	/** The root view. */
     private LinearLayout rootView;
  
     /** The preference view. */
     private ListView preferenceView;
     
-    /** The vehiclePref Preference. */
-    private Preference vehiclePref;
-    
-    /** The accountPref Preference. */
-    private Preference accountPref;
-    
-    /** The usermodePref Preference. */
-    private Preference usermodePref;
-    
-    /** The displayPref Preference. */
-    private Preference displayPref;
-    
-    /** The collectionPref Preference. */
-    private Preference collectionPref;
-    
-    /** The uploadPref Preference. */
-    private Preference uploadPref;
-    
-    /** The unitsPref Preference. */
-    private CheckBoxPreference unitsPref;
-    
     /** Shared Preferences */
 	SharedPreferences sharedPrefs;
-    
-	/** Modes of Operation */
-	public static final int BASIC_USER_MODE = 0;
-	public static final int ADVANCED_USER_MODE = 1;
-	
-	/** Data upload options */
-	public static final int DATAUPLOAD_WIFI_ONLY = 0;
-	public static final int DATAUPLOAD_NETWORK_ONLY = 1;
-	public static final int DATAUPLOAD_BOTH = 2;
  
     /* (non-Javadoc)
      * @see android.preference.PreferenceActivity#onCreate(android.os.Bundle)
@@ -65,25 +37,31 @@ public class RootPreferences extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
  
+    	//Get rid of that ugly title bar... GTFO TITLE BAR.  NO ONE LIKES YOU!
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         
         sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
 
+        //Init the root view
         rootView = new LinearLayout(this); 
         rootView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
         rootView.setOrientation(LinearLayout.VERTICAL);
        
+        //Init the preference view
         preferenceView = new ListView(this);
         preferenceView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
         preferenceView.setId(android.R.id.list);
         
+        //Set up the preference screen from our created preference hierarchy
         PreferenceScreen screen = createPreferenceHierarchy();
         screen.bind(preferenceView);
         preferenceView.setAdapter(screen.getRootAdapter());
  
+        //Compose that shit
         rootView.addView(preferenceView);
-
+        
+        //BAM! PREFERENCE IN YO FACE
         this.setContentView(rootView);
         setPreferenceScreen(screen);
 
@@ -113,17 +91,21 @@ public class RootPreferences extends PreferenceActivity {
      * @return the preference category
      */
     private PreferenceCategory createAccountCategory(PreferenceScreen root) {
+    	
+    	//Create the account preference group (category)
     	PreferenceCategory accountCategory = new PreferenceCategory(this);
         accountCategory.setTitle(getResources().getString(R.string.menu_prefs_category_account));
         root.addPreference(accountCategory);
         
-        accountPref = new Preference(this);
+        //Account info settings
+        Preference accountPref = new Preference(this);
         accountPref.setTitle(getResources().getString(R.string.menu_prefs_accountinfo_title));
         accountPref.setSummary(getResources().getString(R.string.menu_prefs_accountinfo_summary));
         accountPref.setPersistent(false);
         accountCategory.addPreference(accountPref);
         
-        vehiclePref = new Preference(this);
+        //Vehicle settings
+        Preference vehiclePref = new Preference(this);
         vehiclePref.setTitle(getResources().getString(R.string.menu_prefs_vehicles_title));
         vehiclePref.setSummary(getResources().getString(R.string.menu_prefs_vehicles_summary));
         accountCategory.addPreference(vehiclePref);
@@ -140,33 +122,65 @@ public class RootPreferences extends PreferenceActivity {
      */
     private PreferenceCategory createApplicationCategory(PreferenceScreen root) {
     	
+    	//Create the application preference group (category)
     	PreferenceCategory applicationCategory = new PreferenceCategory(this);
         applicationCategory.setTitle(getResources().getString(R.string.menu_prefs_category_application));
         root.addPreference(applicationCategory);
         
-        usermodePref = new Preference(this);
+        //Make this preference pretty
+        IntegerListPreference usermodePref = new IntegerListPreference(this);
         usermodePref.setTitle(getResources().getString(R.string.menu_prefs_usermode_title));
         usermodePref.setSummary(getResources().getString(R.string.menu_prefs_usermode_summary));
+        usermodePref.setDialogTitle(getResources().getString(R.string.menu_prefs_usermode_dialog_title));
+
+        //We want this to persist
+        usermodePref.setPersistent(true);
+        
+        //Set the key in shared prefs
+        usermodePref.setKey(getResources().getString(R.string.prefs_mode));
+        
+        //Build the entry options (text)
+        usermodePref.setEntries(new String[] {getResources().getString(R.string.menu_prefs_usermode_basic), 
+        		getResources().getString(R.string.menu_prefs_usermode_advanced)});
+        
+        //Build the entry values -> the value corresponding you each item in the list (in order)
+        //The ListPreference typically stores only string (Android bug report has been filed on this)
+        //EXTEND AND OVERIDE!!!!!! YEAH!
+        //See the IntegerListPreference class I made overrides the methods that store the value into the
+        //shared preferences
+        usermodePref.setEntryValues(new String[] {Integer.toString(OBDMe.BASIC_USER_MODE), 
+        		Integer.toString(OBDMe.ADVANCED_USER_MODE)});
         applicationCategory.addPreference(usermodePref);
         
-        displayPref = new Preference(this);
+        //Display options
+        Preference displayPref = new Preference(this);
         displayPref.setTitle(getResources().getString(R.string.menu_prefs_displayopts_title));
         displayPref.setSummary(getResources().getString(R.string.menu_prefs_displayopts_summary));
         applicationCategory.addPreference(displayPref);
         
-        collectionPref = new Preference(this);
+        //Data collection options
+        Preference collectionPref = new Preference(this);
         collectionPref.setTitle(getResources().getString(R.string.menu_prefs_collectionopts_title));
         collectionPref.setSummary(getResources().getString(R.string.menu_prefs_collectionopts_summary));
         applicationCategory.addPreference(collectionPref);
-        
-        uploadPref = new Preference(this);
+                
+        //Upload options
+        Preference uploadPref = new Preference(this);
         uploadPref.setTitle(getResources().getString(R.string.menu_prefs_datausage_title));
         uploadPref.setSummary(getResources().getString(R.string.menu_prefs_datausage_summary));
         applicationCategory.addPreference(uploadPref);
+       
+        //English/Metric option
+        CheckBoxPreference unitsPref = new CheckBoxPreference(this);
         
-        unitsPref = new CheckBoxPreference(this);
+        //We want to save the settings after the user modifies them
+        unitsPref.setPersistent(true);
+  
         unitsPref.setTitle(getResources().getString(R.string.menu_prefs_units_title));
-        unitsPref.setChecked(true); //TODO
+        
+        //You just have to set the key (in SharedPreferences) that corresponds to this preference item
+        unitsPref.setKey(getResources().getString(R.string.prefs_englishunits));
+        
         unitsPref.setSummary(getResources().getString(R.string.menu_prefs_units_summary));
         applicationCategory.addPreference(unitsPref);
         
@@ -182,6 +196,7 @@ public class RootPreferences extends PreferenceActivity {
      */
     private PreferenceCategory createDeviceCategory(PreferenceScreen root) {
     	
+    	//Create the device preference group (category)
     	PreferenceCategory deviceCategory = new PreferenceCategory(this);
         deviceCategory.setTitle(getResources().getString(R.string.menu_prefs_category_device));
         root.addPreference(deviceCategory);
@@ -190,81 +205,96 @@ public class RootPreferences extends PreferenceActivity {
     	
     }
 
-	@Override
-	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-	
-		if (preference == usermodePref) {
-			final String[] items = {getResources().getString(R.string.settings_modeselect_basicusermode), getResources().getString(R.string.settings_modeselect_advancedusermode)};
-
-	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    	builder.setTitle(getResources().getString(R.string.settings_modeselect_title));
-	    	builder.setSingleChoiceItems(items, sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), 0), new DialogInterface.OnClickListener() {
-	    	    public void onClick(DialogInterface dialog, int item) {
-	    	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
-	    	        switch(item){
-	    	        	case BASIC_USER_MODE:
-	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), BASIC_USER_MODE);
-	    	        		prefEditor.commit();
-	    	        		break;
-	    	        	case ADVANCED_USER_MODE:
-	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), ADVANCED_USER_MODE);
-	    	        		prefEditor.commit();
-	    	        		break;
-	    	        	default:
-	    	        		break;
-	    	        }
-	    	    }
-	    	});
-	    	AlertDialog alert = builder.create();
-	    	
-	    	alert.show();
-		} else if (preference == uploadPref) {
-			final String[] items = {getResources().getString(R.string.datausage_wifionly), getResources().getString(R.string.datausage_phonenetworkonly), getResources().getString(R.string.datausage_wifiandphonenetwork)};
-
-	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    	builder.setTitle(getResources().getString(R.string.datausage_title));
-	    	builder.setSingleChoiceItems(items, sharedPrefs.getInt(getResources().getString(R.string.prefs_dataupload), 0), new DialogInterface.OnClickListener() {
-	    	    public void onClick(DialogInterface dialog, int item) {
-	    	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
-	    	        switch(item){
-	    	        	case DATAUPLOAD_WIFI_ONLY:
-	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_WIFI_ONLY);
-	    	        		prefEditor.commit();
-	    	        		break;
-	    	        	case DATAUPLOAD_NETWORK_ONLY:
-	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_NETWORK_ONLY);
-	    	        		prefEditor.commit();
-	    	        		break;
-	    	        	case DATAUPLOAD_BOTH:
-	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_BOTH);
-	    	        		prefEditor.commit();
-	    	        		break;
-	    	        	default:
-	    	        		break;
-	    	        }
-	    	    }
-	    	});
-	    	AlertDialog alert = builder.create();
-	    	
-	    	alert.show();
-		} else {
-			return false;
-		}
-		
-/*		if (preference == vehiclePref) {
-
-		} else if (preference == accountPref) {
-			
-		}  else if (preference == displayPref) {
-			
-		} else if (preference == collectionPref) {
-			
-		} else if (preference == unitsPref) {
-*/			
-		
-		
-		return true;
-	}
     
-    
+    /**
+     * Return error to caller.
+     *
+     * @param bundle the bundle
+     */
+    public void returnErrorToCaller(Bundle bundle) {
+    	
+    	  // sets the result for the calling activity
+    	  setResult(USER_QUIT_SETTINGS);
+
+    	  // equivalent of 'return'
+    	  finish();
+    }
+ 
 }
+//	@Override
+//	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+//	
+//		if (preference == usermodePref) {
+//			final String[] items = {getResources().getString(R.string.settings_modeselect_basicusermode), getResources().getString(R.string.settings_modeselect_advancedusermode)};
+//
+//	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//	    	builder.setTitle(getResources().getString(R.string.settings_modeselect_title));
+//	    	builder.setSingleChoiceItems(items, sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), 0), new DialogInterface.OnClickListener() {
+//	    	    public void onClick(DialogInterface dialog, int item) {
+//	    	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
+//	    	        switch(item){
+//	    	        	case BASIC_USER_MODE:
+//	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), BASIC_USER_MODE);
+//	    	        		prefEditor.commit();
+//	    	        		break;
+//	    	        	case ADVANCED_USER_MODE:
+//	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_mode), ADVANCED_USER_MODE);
+//	    	        		prefEditor.commit();
+//	    	        		break;
+//	    	        	default:
+//	    	        		break;
+//	    	        }
+//	    	    }
+//	    	});
+//	    	AlertDialog alert = builder.create();
+//	    	
+//	    	alert.show();
+//		} else if (preference == uploadPref) {
+//			final String[] items = {getResources().getString(R.string.datausage_wifionly), getResources().getString(R.string.datausage_phonenetworkonly), getResources().getString(R.string.datausage_wifiandphonenetwork)};
+//
+//	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//	    	builder.setTitle(getResources().getString(R.string.datausage_title));
+//	    	builder.setSingleChoiceItems(items, sharedPrefs.getInt(getResources().getString(R.string.prefs_dataupload), 0), new DialogInterface.OnClickListener() {
+//	    	    public void onClick(DialogInterface dialog, int item) {
+//	    	    	SharedPreferences.Editor prefEditor = sharedPrefs.edit();
+//	    	        switch(item){
+//	    	        	case DATAUPLOAD_WIFI_ONLY:
+//	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_WIFI_ONLY);
+//	    	        		prefEditor.commit();
+//	    	        		break;
+//	    	        	case DATAUPLOAD_NETWORK_ONLY:
+//	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_NETWORK_ONLY);
+//	    	        		prefEditor.commit();
+//	    	        		break;
+//	    	        	case DATAUPLOAD_BOTH:
+//	    	        		prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), DATAUPLOAD_BOTH);
+//	    	        		prefEditor.commit();
+//	    	        		break;
+//	    	        	default:
+//	    	        		break;
+//	    	        }
+//	    	    }
+//	    	});
+//	    	AlertDialog alert = builder.create();
+//	    	
+//	    	alert.show();
+//		} else {
+//			return false;
+//		}
+//		
+///*		if (preference == vehiclePref) {
+//
+//		} else if (preference == accountPref) {
+//			
+//		}  else if (preference == displayPref) {
+//			
+//		} else if (preference == collectionPref) {
+//			
+//		} else if (preference == unitsPref) {
+//*/			
+//		
+//		
+//		return true;
+//	}
+//    
+//}

@@ -3,6 +3,7 @@ package edu.unl.csce.obdme.setupwizard;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +32,7 @@ public class SetupWizardComplete extends Activity {
 		//Set the content view
 		setContentView(R.layout.setupwizard_complete);
 		
-		prefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         
         Button next = (Button) findViewById(R.id.setupwizard_complete_button_next);
         next.setOnClickListener(new View.OnClickListener() {
