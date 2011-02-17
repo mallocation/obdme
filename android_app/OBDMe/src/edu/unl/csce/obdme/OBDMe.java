@@ -157,6 +157,8 @@ public class OBDMe extends Activity {
 				break;
 
 			case OBDMe.ADVANCED_USER_MODE:
+				this.theUI = new AdvancedUserMode(this);
+				setContentView(((AdvancedUserMode) this.theUI).getDataListView());
 				break;
 
 				//If it doesn't exist or is invalid, reset
@@ -183,6 +185,8 @@ public class OBDMe extends Activity {
 				break;
 
 			case OBDMe.ADVANCED_USER_MODE:
+				this.theUI = new AdvancedUserMode(this);
+				setContentView(((AdvancedUserMode) this.theUI).getDataListView());
 				break;
 
 				//If it doesn't exist or is invalid, reset
@@ -296,6 +300,7 @@ public class OBDMe extends Activity {
 				break;
 
 			case ADVANCED_USER_MODE:
+				((AdvancedUserMode) theUI).updateValues(collectorThread);
 				break;
 				
 			}
@@ -314,6 +319,7 @@ public class OBDMe extends Activity {
 				break;
 
 			case ADVANCED_USER_MODE:
+				((AdvancedUserMode) theUI).updateValues(collectorThread);
 				break;
 				
 			}
