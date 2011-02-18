@@ -10,8 +10,14 @@ public class OBDConfigurationPID {
 	/** The pid hex. */
 	private String pidHex;
 
-	/** The enabled. */
-	private boolean enabled;
+	/** The supported. */
+	private boolean supported;
+
+	/** The displayed. */
+	private boolean displayed;
+
+	/** The collected. */
+	private boolean collected;
 
 	/**
 	 * Instantiates a new oBD configuration pid.
@@ -20,24 +26,65 @@ public class OBDConfigurationPID {
 	 */
 	public OBDConfigurationPID(String pidHex) {
 		this.pidHex = pidHex;
-		this.enabled = false;
+		this.supported = false;
 	}
 
 	/**
 	 * Instantiates a new oBD configuration pid.
 	 *
 	 * @param pidHex the pid hex
-	 * @param enabled the enabled
+	 * @param supported the supported
 	 */
-	public OBDConfigurationPID(String pidHex, String enabled) {
+	public OBDConfigurationPID(String pidHex, String supported) {
 		this.pidHex = pidHex;
 
-		if (enabled.toString().equals("true")) {
-			this.enabled = true;
+		if (supported.toString().equals("true")) {
+			this.supported = true;
 		}
 
 		else {
-			this.enabled = false;
+			this.supported = false;
+		}
+
+	}
+
+	/**
+	 * Instantiates a new oBD configuration pid.
+	 *
+	 * @param pidHex the pid hex
+	 * @param supported the supported
+	 * @param collected the collected
+	 * @param displayed the displayed
+	 */
+	public OBDConfigurationPID(String pidHex, String supported, String collected, String displayed) {
+		this.pidHex = pidHex;
+
+		//Check if the PID is supported
+		if (supported.toString().equals("true")) {
+			this.supported = true;
+			
+			//If the PID is collected
+			if(collected.toString().equals("true")) {
+				this.collected = true;
+			}
+			else {
+				this.collected = false;
+			}
+
+			//If the PID is displayed
+			if(displayed.toString().equals("true")) {
+				this.displayed = true;
+			}
+			else {
+				this.displayed = false;
+			}
+		}
+		
+		//Otherwise, the PID is not supported so it cannot be collected or displayed
+		else {
+			this.supported = false;
+			this.collected = false;
+			this.displayed = false;
 		}
 
 	}
@@ -50,7 +97,7 @@ public class OBDConfigurationPID {
 	 */
 	public OBDConfigurationPID(String pidHex, boolean enabled) {
 		this.pidHex = pidHex;
-		this.enabled = enabled;
+		this.supported = enabled;
 	}
 
 
@@ -73,21 +120,58 @@ public class OBDConfigurationPID {
 	}
 
 	/**
-	 * Sets the enabled.
+	 * Sets the supported.
 	 *
-	 * @param enabled the new enabled
+	 * @param supported the new supported
 	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setSupported(boolean supported) {
+		this.supported = supported;
 	}
 
 	/**
-	 * Checks if is enabled.
+	 * Checks if is supported.
 	 *
-	 * @return true, if is enabled
+	 * @return true, if is supported
 	 */
-	public boolean isEnabled() {
-		return enabled;
+	public boolean isSupported() {
+		return supported;
 	}
+
+	/**
+	 * Sets the displayed.
+	 *
+	 * @param displayed the new displayed
+	 */
+	public void setDisplayed(boolean displayed) {
+		this.displayed = displayed;
+	}
+
+	/**
+	 * Checks if is displayed.
+	 *
+	 * @return true, if is displayed
+	 */
+	public boolean isDisplayed() {
+		return displayed;
+	}
+
+	/**
+	 * Sets the collected.
+	 *
+	 * @param collected the new collected
+	 */
+	public void setCollected(boolean collected) {
+		this.collected = collected;
+	}
+
+	/**
+	 * Checks if is collected.
+	 *
+	 * @return true, if is collected
+	 */
+	public boolean isCollected() {
+		return collected;
+	}
+
 
 }

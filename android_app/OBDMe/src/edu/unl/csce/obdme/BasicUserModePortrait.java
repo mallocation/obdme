@@ -135,11 +135,11 @@ public class BasicUserModePortrait {
 
 		//Get the enabled pollable PIDS
 		elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
-		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getEnabledPollablePIDList();
+		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getDisplayedPIDList();
 
 		//Start a new View Flipper object
 		ViewFlipper rootFlipper = new ViewFlipper(context);
-		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.obdme_background));
+		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background));
 
 		//Initialize the values map (this contains references to ALL the stats displayed in the list view
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();

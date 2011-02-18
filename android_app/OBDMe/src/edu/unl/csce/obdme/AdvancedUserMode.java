@@ -77,7 +77,7 @@ public class AdvancedUserMode {
 
 		//Get the enabled pollable PIDS
 		elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
-		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getEnabledPollablePIDList();
+		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getDisplayedPIDList();
 
 		//Start a new List View object
 		ListView rootListView = new ListView(context);

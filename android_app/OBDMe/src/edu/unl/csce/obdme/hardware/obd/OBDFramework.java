@@ -67,53 +67,34 @@ public class OBDFramework {
 	}
 
 	/**
-	 * Enable all pids.
+	 * Collect all pids.
 	 */
-	public void enableAllPIDS() {
+	public void collectAllPIDS() {
 		for (String modeHex : configuredProtocol.keySet()) {
 			for(String pidHex : configuredProtocol.get(modeHex).pidKeySet()) {
-				configuredProtocol.get(modeHex).getPID(pidHex).setEnabled(true);
+				configuredProtocol.get(modeHex).getPID(pidHex).setCollected(true);
 
+			}
+		}
+	}
+	
+	/**
+	 * Display all pids.
+	 */
+	public void displayAllPIDS() {
+		for (String modeHex : configuredProtocol.keySet()) {
+			for(String pidHex : configuredProtocol.get(modeHex).pidKeySet()) {
+				configuredProtocol.get(modeHex).getPID(pidHex).setDisplayed(true);
 			}
 		}
 	}
 
 	/**
-	 * Gets the enabled pid list.
+	 * Gets the supported pollable pid list.
 	 *
-	 * @return the enabled pid list
+	 * @return the supported pollable pid list
 	 */
-	public HashMap<String, List<String>> getEnabledPIDList() {
-
-		HashMap<String, List<String>> enabledPIDS = new HashMap<String, List<String>>();
-
-		//For all the modes that exist in the configured protocol
-		for ( String currentMode : configuredProtocol.keySet() ) {
-
-			enabledPIDS.put(currentMode, new ArrayList<String>());
-
-			//For all the pids that exist in the configured protocol
-			for ( String currentPID : configuredProtocol.get(currentMode).pidKeySet()) {
-
-				//If the PID is enabled
-				if (configuredProtocol.get(currentMode).getPID(currentPID).isSupported() && 
-						configuredProtocol.get(currentMode).getPID(currentPID).isEnabled()) {
-
-					//Add the PID hex to the list
-					enabledPIDS.get(currentMode).add(currentPID);
-				}
-			}
-		}
-
-		return enabledPIDS;
-	}
-
-	/**
-	 * Gets the pollable pid list.
-	 *
-	 * @return the pollable pid list
-	 */
-	public synchronized HashMap<String, List<String>> getPollablePIDList() {
+	public synchronized HashMap<String, List<String>> getSupportedPollablePIDList() {
 
 		HashMap<String, List<String>> pollablePIDS = new HashMap<String, List<String>>();
 
@@ -138,11 +119,11 @@ public class OBDFramework {
 	}
 
 	/**
-	 * Gets the enabled pollable pid list.
+	 * Gets the collected pid list.
 	 *
-	 * @return the enabled pollable pid list
+	 * @return the collected pid list
 	 */
-	public synchronized HashMap<String, List<String>> getEnabledPollablePIDList() {
+	public synchronized HashMap<String, List<String>> getCollectedPIDList() {
 
 		HashMap<String, List<String>> enabledPollablePIDS = new HashMap<String, List<String>>();
 
@@ -156,8 +137,40 @@ public class OBDFramework {
 
 				//If the PID is enabled
 				if (configuredProtocol.get(currentMode).getPID(currentPID).isSupported() && 
-						configuredProtocol.get(currentMode).getPID(currentPID).isEnabled() &&
-						configuredProtocol.get(currentMode).getPID(currentPID).isPollable()) {
+						configuredProtocol.get(currentMode).getPID(currentPID).isPollable() && 
+						configuredProtocol.get(currentMode).getPID(currentPID).isCollected()) {
+
+					//Add the PID hex to the list
+					enabledPollablePIDS.get(currentMode).add(currentPID);
+				}
+			}
+		}
+
+		return enabledPollablePIDS;
+	}
+	
+	/**
+	 * Gets the displayed pid list.
+	 *
+	 * @return the displayed pid list
+	 */
+	public synchronized HashMap<String, List<String>> getDisplayedPIDList() {
+
+		HashMap<String, List<String>> enabledPollablePIDS = new HashMap<String, List<String>>();
+
+		//For all the modes that exist in the configured protocol
+		for ( String currentMode : configuredProtocol.keySet() ) {
+
+			enabledPollablePIDS.put(currentMode, new ArrayList<String>());
+
+			//For all the pids that exist in the configured protocol
+			for ( String currentPID : configuredProtocol.get(currentMode).pidKeySet()) {
+
+				//If the PID is enabled
+				if (configuredProtocol.get(currentMode).getPID(currentPID).isSupported() && 
+						configuredProtocol.get(currentMode).getPID(currentPID).isCollected() &&
+						configuredProtocol.get(currentMode).getPID(currentPID).isPollable() &&
+						configuredProtocol.get(currentMode).getPID(currentPID).isDisplayed()) {
 
 					//Add the PID hex to the list
 					enabledPollablePIDS.get(currentMode).add(currentPID);

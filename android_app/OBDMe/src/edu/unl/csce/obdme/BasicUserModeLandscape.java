@@ -133,12 +133,12 @@ public class BasicUserModeLandscape {
 
 		//Get the enabled pollable PIDS
 		elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
-		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getEnabledPollablePIDList();
+		HashMap<String, List<String>> pollablePIDList = elmFramework.getObdFramework().getDisplayedPIDList();
 
 		//Start a new View Flipper object
 		ViewFlipper rootFlipper = new ViewFlipper(context);
 
-		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.obdme_background));
+		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background));
 
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();
 

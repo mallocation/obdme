@@ -87,6 +87,8 @@ public class OBDConfiguration {
 		//Otherwise, it's not supported
 		return false;
 	}
+	
+	
 
 	/**
 	 * Mode key set.

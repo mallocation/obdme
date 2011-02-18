@@ -133,7 +133,7 @@ public class ELMFramework {
 						+ ".  Disabling this PID for now");
 			}
 			getObdFramework().getConfiguredProtocol().get(request.getMode())
-			.getPID(request.getPid()).setEnabled(false);
+			.getPID(request.getPid()).setCollected(false);
 
 		} catch (ELMUnableToConnectException utce) {
 

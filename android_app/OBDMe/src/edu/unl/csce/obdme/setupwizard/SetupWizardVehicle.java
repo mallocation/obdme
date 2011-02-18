@@ -199,7 +199,8 @@ public class SetupWizardVehicle extends Activity {
 					vinText.setText(vinResult);
 
 					//Enabled all the PID's for the new protocol
-					elmFramework.getObdFramework().enableAllPIDS();
+					elmFramework.getObdFramework().collectAllPIDS();
+					elmFramework.getObdFramework().displayAllPIDS();
 
 					//Save the configuration
 					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), elmFramework.getObdFramework().getConfiguredProtocol(), vinResult);

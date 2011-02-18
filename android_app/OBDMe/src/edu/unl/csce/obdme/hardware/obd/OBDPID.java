@@ -67,8 +67,11 @@ public class OBDPID {
 	/** The supported. */
 	private boolean supported;
 	
-	/** The enabled. */
-	private boolean enabled;
+	/** The collected. */
+	private boolean collected;
+	
+	/** The displayed. */
+	private boolean displayed;
 	
 	/** The pollable. */
 	private boolean pollable;
@@ -112,7 +115,7 @@ public class OBDPID {
 			this.pollable = false;
 		}
 		
-		this.enabled = false;
+		this.setCollected(false);
 		this.supported = false;
 
 		//Switch on the eval method to initialize variables 
@@ -165,7 +168,7 @@ public class OBDPID {
 			this.pollable = false;
 		}
 		
-		this.enabled = true;
+		this.setCollected(true);
 		this.supported = supported;
 
 
@@ -770,24 +773,6 @@ public class OBDPID {
 	}
 
 	/**
-	 * Sets the enabled.
-	 *
-	 * @param enabled the new enabled
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	/**
-	 * Checks if is enabled.
-	 *
-	 * @return true, if is enabled
-	 */
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	/**
 	 * Checks if is pollable.
 	 *
 	 * @return true, if is pollable
@@ -924,6 +909,42 @@ public class OBDPID {
 	 */
 	public OBDFormulas getPidCompiledFormula() {
 		return pidCompiledFormula;
+	}
+
+	/**
+	 * Sets the collected.
+	 *
+	 * @param collected the new collected
+	 */
+	public void setCollected(boolean collected) {
+		this.collected = collected;
+	}
+
+	/**
+	 * Checks if is collected.
+	 *
+	 * @return true, if is collected
+	 */
+	public boolean isCollected() {
+		return collected;
+	}
+
+	/**
+	 * Sets the displayed.
+	 *
+	 * @param displayed the new displayed
+	 */
+	public void setDisplayed(boolean displayed) {
+		this.displayed = displayed;
+	}
+
+	/**
+	 * Checks if is displayed.
+	 *
+	 * @return true, if is displayed
+	 */
+	public boolean isDisplayed() {
+		return displayed;
 	}
 
 }

@@ -335,7 +335,7 @@ public class DataCollector {
 			}
 
 			//Save the list of pollable and enabled PIDS.
-			this.pollableEnabledPIDS = elmFramework.getObdFramework().getEnabledPollablePIDList();
+			this.pollableEnabledPIDS = elmFramework.getObdFramework().getCollectedPIDList();
 
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),

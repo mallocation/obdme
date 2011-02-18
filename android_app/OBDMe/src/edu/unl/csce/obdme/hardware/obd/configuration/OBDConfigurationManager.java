@@ -173,8 +173,11 @@ public abstract class OBDConfigurationManager {
 						//If a pid node, add it to the hashmap
 						else if (startTagName.equals("pid")) {
 							configurationStructure.getMode(parentMode).putPID(
-									new OBDConfigurationPID(xpp.getAttributeValue(null, "hex"), 
-											xpp.getAttributeValue(null, "enabled")));
+									new OBDConfigurationPID(
+											xpp.getAttributeValue(null, "hex"), 
+											xpp.getAttributeValue(null, "supported"),
+											xpp.getAttributeValue(null, "collected"),
+											xpp.getAttributeValue(null, "displayed")));
 						}
 					}
 					eventType = xpp.next();
@@ -398,12 +401,18 @@ public abstract class OBDConfigurationManager {
 										xrp.getAttributeValue(null, "pollable"),
 										config.querySupportedPID(parentMode, pidHex)));
 
-						//Set the enabled status for the newly created PID
+						//Set the supported, collected, and displayed status for the newly created PID
 						if (config.querySupportedPID(parentMode, pidHex)) {
-							protocolStructure.get(parentMode).getPID(pidHex).setEnabled(
-									config.getMode(parentMode).getPID(pidHex).isEnabled());
-						}
+							protocolStructure.get(parentMode).getPID(pidHex).setSupported(
+									config.getMode(parentMode).getPID(pidHex).isSupported());
 
+							protocolStructure.get(parentMode).getPID(pidHex).setCollected(
+									config.getMode(parentMode).getPID(pidHex).isCollected());
+
+							protocolStructure.get(parentMode).getPID(pidHex).setDisplayed(
+									config.getMode(parentMode).getPID(pidHex).isDisplayed());
+						}
+						
 						//Save the current PID
 						currentPID = pidHex;
 					}
@@ -422,10 +431,16 @@ public abstract class OBDConfigurationManager {
 										parentMode,
 										xrp.getAttributeValue(null, "pollable"), true));
 
-						//Set the enabled status for the newly created PID
+						//Set the supported, collected, and displayed status for the newly created PID
 						if (config.querySupportedPID(parentMode, pidHex)) {
-							protocolStructure.get(parentMode).getPID(pidHex).setEnabled(
-									config.getMode(parentMode).getPID(pidHex).isEnabled());
+							protocolStructure.get(parentMode).getPID(pidHex).setSupported(
+									config.getMode(parentMode).getPID(pidHex).isSupported());
+
+							protocolStructure.get(parentMode).getPID(pidHex).setCollected(
+									config.getMode(parentMode).getPID(pidHex).isCollected());
+
+							protocolStructure.get(parentMode).getPID(pidHex).setDisplayed(
+									config.getMode(parentMode).getPID(pidHex).isDisplayed());
 						}
 
 						//Save the current PID
@@ -651,9 +666,9 @@ public abstract class OBDConfigurationManager {
 
 						//Save the attributes of the current PID
 						serializer.attribute(null, "hex", pidHex);
-						serializer.attribute(null, "name", configuredProtocol.get(modeHex).getPID(pidHex).getPidName());
 						serializer.attribute(null, "supported", new Boolean(configuredProtocol.get(modeHex).getPID(pidHex).isSupported()).toString());
-						serializer.attribute(null, "enabled", new Boolean(configuredProtocol.get(modeHex).getPID(pidHex).isEnabled()).toString());
+						serializer.attribute(null, "collected", new Boolean(configuredProtocol.get(modeHex).getPID(pidHex).isCollected()).toString());
+						serializer.attribute(null, "displayed", new Boolean(configuredProtocol.get(modeHex).getPID(pidHex).isDisplayed()).toString());
 
 						//End the PID tag
 						serializer.endTag(null, "pid");
