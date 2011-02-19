@@ -54,6 +54,8 @@ public class AdvancedUserMode {
 
 		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
 
+		dataListView = buildListView(context);
+		
 	}
 
 	/**
@@ -69,6 +71,8 @@ public class AdvancedUserMode {
 		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
 
 		this.dataCollectorThread = dataCollector;
+		
+		dataListView = buildListView(context);
 
 	}
 	
