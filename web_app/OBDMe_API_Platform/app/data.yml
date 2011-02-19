@@ -6,6 +6,10 @@
 #   password: secret
 #   fullname: Bob
 
-ExternalApp(android):
-name: OBDMe API Android Library
-apikey: c48ecc86348652a5037574b6f93d20172a25ae0ff13132ccf4aa753f0544cf45
+#obdme.Applications.ExternalApp(android):
+#name: OBDMe API Android Library
+#apikey: c48ecc86348652a5037574b6f93d20172a25ae0ff13132ccf4aa753f0544cf45
+
+obdme.Vehicles.Vehicle(v1):
+id: 1
+VIN: ABCD123ABCD

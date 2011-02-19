@@ -45,7 +45,7 @@ public class User extends Model {
 	
 	/* Persisted Relations */
 	
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(name="uservehicle")
 	public Set<Vehicle> vehicles;
 	
@@ -56,7 +56,7 @@ public class User extends Model {
 	public User(){}
 	
 	private User(String email, String passwordhash) {
-		this.email = email;
+		this.email = email.toLowerCase();
 		this.passwordhash = passwordhash;
 		this.regdate = new Date();
 	}
@@ -82,7 +82,7 @@ public class User extends Model {
 	 * @param email E-mail address of the user.
 	 */
 	public static User findByEmail(String email) {
-		return find("email", email).first();
+		return find("email", email.toLowerCase()).first();
 	}
 	
 	/*
@@ -93,7 +93,7 @@ public class User extends Model {
 	 * @param password Hashed password of the user (SHA).
 	 */
 	public static User validateUserLogin(String email, String pw) {
-		return find("email like ? and passwordhash like ?", email, pw).first();
+		return find("email like ? and passwordhash like ?", email.toLowerCase(), pw).first();
 	}
 	
 }

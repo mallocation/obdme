@@ -1,17 +1,18 @@
 package models.obdme.Vehicles;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import models.obdme.User;
 import models.obdme.statistics.VehicleDataset;
-
 import play.data.validation.Required;
 import play.db.jpa.Model;
 
@@ -22,7 +23,7 @@ public class Vehicle extends Model {
 	/* Persisted Fields */
 	
 	@Required
-	@Column(name="vin", unique=true, nullable=false)
+	@Column(name="vin", unique=true)
 	public String VIN;
 	
 	/* End Persisted Fields */
@@ -31,11 +32,7 @@ public class Vehicle extends Model {
 	
 	@ManyToMany(mappedBy="vehicles")
 	Set<User> owners;
-	
-	@OneToMany
-	@JoinColumn(name="vehicle_id", nullable=false)
-	Set<VehicleDataset> datasets;
-	
+
 	/* End Persisted Relations */
 	
 	/* Default Constructor */

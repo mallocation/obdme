@@ -1,5 +1,6 @@
 package controllers.obdme.rest;
 
+import api.entities.graph.GraphEntry;
 import models.obdme.User;
 import models.obdme.Vehicles.Vehicle;
 import play.data.validation.Required;
@@ -21,5 +22,7 @@ public class Vehicles extends Controller {
     		}
     	}
     	renderJSON(vehicle);
-    }    
+    }
+
+
 }
