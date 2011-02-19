@@ -14,6 +14,7 @@ import android.widget.ListView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 
 /**
  * The Class DisplayedPIDList.
@@ -173,6 +174,9 @@ public class DisplayedPIDList extends Activity {
 				index += 1;
 			}
 		}
+		
+		OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(),
+				elmFramework.getObdFramework().getConfiguredProtocol());
 
 
 	}

@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
@@ -37,7 +38,7 @@ public class OBDFramework {
 		this.elmFramework = parentELMFramework;
 
 		//Initalize a temporary shared preferences object
-		SharedPreferences prefs = context.getSharedPreferences(context.getResources().getString(R.string.prefs_tag), 0);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
 		//If the VIN preference is saved (from some previous setup) and we are not debugging the setup wizard...
 		if (prefs.contains(context.getString(R.string.prefs_account_vin)) && 

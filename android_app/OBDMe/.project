@@ -32,6 +32,16 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>http_utils</name>
+			<type>2</type>
+			<location>/Users/mike/Dropbox/Documents/workspace/OBDMe_Http_Utils/src</location>
+		</link>
+		<link>
+			<name>obdme_api</name>
+			<type>2</type>
+			<location>/Users/mike/Dropbox/Documents/workspace/OBDMe_API_Client_Library/src</location>
+		</link>
+		<link>
 			<name>utils</name>
 			<type>2</type>
 			<location>/Users/mike/Dropbox/Documents/workspace/CSCE_488_489_WebApp/OBDMe_Http_Utils/src</location>

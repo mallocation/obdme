@@ -16,8 +16,10 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources.NotFoundException;
 import android.content.res.XmlResourceParser;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Xml;
 import edu.unl.csce.obdme.R;
@@ -647,6 +649,105 @@ public abstract class OBDConfigurationManager {
 			//Create the OBD configuration tag with the VIN attached
 			serializer.startTag(null, "obd-config");
 			serializer.attribute(null, "vin", VIN);
+
+			//For each mode
+			for (String modeHex : configuredProtocol.keySet()) {
+
+				//Create the mode start tag
+				serializer.startTag(null, "mode");
+				serializer.attribute(null, "hex", modeHex);
+
+				//For each PID
+				for(String pidHex : configuredProtocol.get(modeHex).pidKeySet()) {
+
+					//If the PID is supported
+					if (configuredProtocol.get(modeHex).getPID(pidHex).isSupported()) {
+
+						//Star the PID tag
+						serializer.startTag(null, "pid");
+
+						//Save the attributes of the current PID
+						serializer.attribute(null, "hex", pidHex);
+						serializer.attribute(null, "supported", new Boolean(configuredProtocol.get(modeHex).getPID(pidHex).isSupported()).toString());
+						serializer.attribute(null, "collected", new Boolean(configuredProtocol.get(modeHex).getPID(pidHex).isCollected()).toString());
+						serializer.attribute(null, "displayed", new Boolean(configuredProtocol.get(modeHex).getPID(pidHex).isDisplayed()).toString());
+
+						//End the PID tag
+						serializer.endTag(null, "pid");
+					}
+				}
+
+				//End the mode tag
+				serializer.endTag(null, "mode");
+
+			}
+
+			//End the document, flush it to the file, and close the file
+			serializer.endDocument();
+			serializer.flush();
+			outputStream.close();
+
+		} catch (FileNotFoundException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+				"Error writing current obd configuration: File not found exception occured.");
+			}
+		} catch (IllegalArgumentException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+				"Error parsing obd configuration: Illegal argument exception occured.");
+			}
+		} catch (IllegalStateException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+				"Error parsing obd configuration: Illegal state exception occured.");
+			}
+		} catch (IOException e) {
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
+				"Error parsing obd configuration: A general IO exception occured.");
+			}
+		}
+
+	}
+	
+	/**
+	 * Write obd configuration.
+	 *
+	 * @param context the context
+	 * @param configuredProtocol the configured protocol
+	 */
+	public static void writeOBDConfiguration(Context context, ConcurrentHashMap<String, OBDMode> configuredProtocol) {
+
+		try {
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			
+			//Get the saved configuration output file
+			File outputFile = new File(context.getExternalFilesDir(null), prefs.getString(
+					context.getResources().getString(R.string.prefs_account_vin), "NO_VIN") + ".xml");
+
+			//If the file exists, delete it
+			if (outputFile.exists()) {
+				outputFile.delete();
+			}
+
+			//Create the new file and make an output stream for it
+			outputFile.createNewFile();
+			FileOutputStream outputStream = new FileOutputStream(outputFile);
+
+			//Initialize the XML serializer
+			XmlSerializer serializer = Xml.newSerializer();
+			serializer.setOutput(outputStream, "UTF-8");
+			serializer.startDocument(null, Boolean.valueOf(true));
+
+			//Turn on document indenting
+			serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+
+			//Create the OBD configuration tag with the VIN attached
+			serializer.startTag(null, "obd-config");
+			serializer.attribute(null, "vin", prefs.getString(
+					context.getResources().getString(R.string.prefs_account_vin), "NO_VIN"));
 
 			//For each mode
 			for (String modeHex : configuredProtocol.keySet()) {

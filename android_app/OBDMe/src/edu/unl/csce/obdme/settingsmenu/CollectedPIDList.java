@@ -14,6 +14,7 @@ import android.widget.ListView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 
 /**
  * The Class CollectedPIDList.
@@ -123,7 +124,7 @@ public class CollectedPIDList extends Activity {
 				String currentPID = str;
 
 				//If the PID is displayed 
-				if (elmFramework.getConfiguredPID(currentMode, currentPID).isDisplayed()) {
+				if (elmFramework.getConfiguredPID(currentMode, currentPID).isCollected()) {
 					
 					//Set the PID checked in the list
 					this.dataList.setItemChecked(index, true);
@@ -160,21 +161,23 @@ public class CollectedPIDList extends Activity {
 				if (checked.get(index)) {
 					
 					//Set the PID displayed in the application
-					elmFramework.getConfiguredPID(currentMode, currentPID).setDisplayed(true);
+					elmFramework.getConfiguredPID(currentMode, currentPID).setCollected(true);
 				}
 				
 				//Otherwise
 				else {
 					
 					//Set the PID not displayed in the application
-					elmFramework.getConfiguredPID(currentMode, currentPID).setDisplayed(false);
+					elmFramework.getConfiguredPID(currentMode, currentPID).setCollected(false);
 				}
 
 				index += 1;
 			}
 		}
 
-
+		OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(),
+				elmFramework.getObdFramework().getConfiguredProtocol());
+		
 	}
 
 	/**
