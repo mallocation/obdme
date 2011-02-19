@@ -21,8 +21,7 @@ public class ServiceWrapper {
 	
 	protected void performPost(String requestPath, List<NameValuePair> parameters, RequestListener listener) {
 		this.performRequest(HttpRequest.POST, requestPath, parameters, listener);	
-	}
-	
+	}	
 
 	protected void performPut(String requestPath, List<NameValuePair> parameters, RequestListener listener) {
 		this.performRequest(HttpRequest.PUT, requestPath, parameters, listener);
@@ -34,7 +33,7 @@ public class ServiceWrapper {
 	}	
 	
 	private String joinBaseWithRequestPath(String requestPath) {
-		return OBDME_API_BASE_PATH + requestPath;
+		return String.format("%s%s", OBDME_API_BASE_PATH, requestPath);
 	}
 	
 }
