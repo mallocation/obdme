@@ -13,6 +13,10 @@
 
 #/----------------------BEGIN OBDME API------------------------------------/
 
+#Graph
+POST 	/api/graph								controllers.obdme.rest.VehicleGraph.addGraphEntry
+
+
 #Users
 POST	/api/users								controllers.obdme.rest.Users.createUser
 GET		/api/users/{email}/login				controllers.obdme.rest.Users.validateUserCredentials
