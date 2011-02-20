@@ -11,7 +11,6 @@ import android.os.Handler;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import edu.unl.csce.obdme.api.entities.User;
 import edu.unl.csce.obdme.api.entities.Vehicle;
 import edu.unl.csce.obdme.client.http.request.RequestListener;
 
