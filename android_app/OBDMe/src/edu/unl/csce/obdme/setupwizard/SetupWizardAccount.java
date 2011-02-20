@@ -238,6 +238,7 @@ public class SetupWizardAccount extends Activity {
 	public void accountCreationSuccessful(User newUserObject) {
 		//Update the local preference file
 		SharedPreferences.Editor editor = prefs.edit();
+		editor.putLong(getResources().getString(R.string.prefs_account_uid), newUserObject.getId());
 		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
 		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
 		editor.commit();
@@ -260,6 +261,7 @@ public class SetupWizardAccount extends Activity {
 		//Update the local preference file
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
+		editor.putLong(getResources().getString(R.string.prefs_account_uid), newUserObject.getId());
 		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
 		editor.commit();
 		

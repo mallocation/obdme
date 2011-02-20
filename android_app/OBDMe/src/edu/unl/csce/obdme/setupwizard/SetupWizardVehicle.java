@@ -203,7 +203,12 @@ public class SetupWizardVehicle extends Activity {
 					elmFramework.getObdFramework().displayAllPIDS();
 
 					//Save the configuration
-					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), elmFramework.getObdFramework().getConfiguredProtocol(), vinResult);
+					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), 
+							elmFramework.getObdFramework().getConfiguredProtocol(), 
+							vinResult);
+					webFramework.getVehicleService().addVehicle(vinResult, 
+							prefs.getLong(getResources().getString(R.string.prefs_account_uid), -1), 
+							eventHandler);
 
 					//Save the VIN in the preferences
 					SharedPreferences.Editor editor = prefs.edit();

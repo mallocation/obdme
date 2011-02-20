@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.R;
 
 /**
@@ -39,7 +40,12 @@ public class SetupWizardComplete extends Activity {
             @Override
 			public void onClick(View view) {
             	
+            	//Put the default preferences
             	SharedPreferences.Editor editor = prefs.edit();
+            	editor.putInt(getResources().getString(R.string.prefs_dataupload), OBDMe.DATA_USAGE_WIFI_AND_NETWORK);
+        		editor.putInt(getResources().getString(R.string.prefs_mode), OBDMe.BASIC_USER_MODE);
+        		editor.putBoolean(getResources().getString(R.string.prefs_englishunits), false);
+        		editor.putBoolean(getResources().getString(R.string.prefs_gps), false);
 				editor.putString(getResources().getString(R.string.prefs_firstrun), "done");
 				editor.commit();
             	

@@ -184,6 +184,13 @@ public class RootPreferences extends PreferenceActivity {
         unitsPref.setKey(getResources().getString(R.string.prefs_englishunits));
         unitsPref.setSummary(getResources().getString(R.string.menu_prefs_units_summary));
         
+        //GPS/Location option
+        CheckBoxPreference gpsPref = new CheckBoxPreference(this);
+        gpsPref.setPersistent(true);
+        gpsPref.setTitle(getResources().getString(R.string.menu_prefs_gps_title));
+        gpsPref.setKey(getResources().getString(R.string.prefs_gps));
+        gpsPref.setSummary(getResources().getString(R.string.menu_prefs_gps_summary));
+        
         applicationCategory.addPreference(unitsPref);
         
         return applicationCategory;
