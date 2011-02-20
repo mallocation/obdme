@@ -85,7 +85,7 @@ public class AdvancedUserMode {
 
 		//Start a new List View object
 		ListView rootListView = new ListView(context);
-		rootListView.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.obdme_background));
+		rootListView.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background_portrait));
 
 		//Initialize the values map (this contains references to ALL the stats displayed in the list view
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();

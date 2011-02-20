@@ -68,7 +68,7 @@ public class ConnectionStatusLandscape {
 		LayoutParams rootParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		rootLinearLayout.setLayoutParams(rootParams);
 		rootLinearLayout.setGravity(Gravity.CENTER);
-		rootLinearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.obdme_background));
+		rootLinearLayout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background_landscape));
 
 		//Add the object views to the linear layout
 		rootLinearLayout.addView(buildPhoneIcon());

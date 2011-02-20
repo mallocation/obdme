@@ -127,25 +127,25 @@ PID Methods of evaluation (eval attribute)
 		</pid>
 
 		<pid hex="06" return="1" unit="%" eval="FORMULA" pollable="true"
-			name="Short term fuel % trim—Bank 1">
+			name="Short term fuel trim">
 			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
 			<compiled-formula value="FORMULA_3" format="\###.##" />
 		</pid>
 
 		<pid hex="07" return="1" unit="%" eval="FORMULA" pollable="true"
-			name="Long term fuel % trim—Bank 1">
+			name="Long term fuel trim">
 			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
 			<compiled-formula value="FORMULA_3" format="\###.##" />
 		</pid>
 
 		<pid hex="08" return="1" unit="%" eval="FORMULA" pollable="true"
-			name="Short term fuel % trim—Bank 2">
+			name="Short term fuel trim">
 			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
 			<compiled-formula value="FORMULA_3" format="\###.##" />
 		</pid>
 
 		<pid hex="09" return="1" unit="%" eval="FORMULA" pollable="true"
-			name="Long term fuel % trim—Bank 2">
+			name="Long term fuel trim">
 			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
 			<compiled-formula value="FORMULA_3" format="\###.##" />
 		</pid>
@@ -299,7 +299,7 @@ PID Methods of evaluation (eval attribute)
 		</pid>
 
 		<pid hex="21" return="2" unit="km" eval="FORMULA" pollable="true"
-			name="Distance traveled with malfunction indicator lamp (MIL) on">
+			name="Distance traveled with MIL on">
 			<formula value="( ( A * 256 ) + B )" format="\##,###" />
 			<compiled-formula value="FORMULA_9" format="\##,###" />
 		</pid>
@@ -421,21 +421,21 @@ PID Methods of evaluation (eval attribute)
 		</pid>
 
 		<pid hex="3D" return="2" unit="&#176;C" eval="FORMULA" pollable="true"
-			name="Catalyst Temperature Bank 2, Sensor 1">
+			name="Catalyst Temperature">
 			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )"
 				format="\#,###.#" />
 			<compiled-formula value="FORMULA_13" format="\#,###.#" />
 		</pid>
 
 		<pid hex="3E" return="2" unit="&#176;C" eval="FORMULA" pollable="true"
-			name="Catalyst Temperature Bank 1, Sensor 2">
+			name="Catalyst Temperature">
 			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )"
 				format="\#,###.#" />
 			<compiled-formula value="FORMULA_13" format="\#,###.#" />
 		</pid>
 
 		<pid hex="3F" return="2" unit="&#176;C" eval="FORMULA" pollable="true"
-			name="Catalyst Temperature Bank 2, Sensor 2">
+			name="Catalyst Temperature">
 			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )"
 				format="\#,###.#" />
 			<compiled-formula value="FORMULA_13" format="\#,###.#" />

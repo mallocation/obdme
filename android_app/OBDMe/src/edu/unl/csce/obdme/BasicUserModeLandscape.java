@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -51,6 +52,9 @@ public class BasicUserModeLandscape {
 	/** The data collector thread. */
 	private DataCollector dataCollectorThread;
 
+	/** The custom font. */
+	private Typeface customFont;
+
 	/**
 	 * Instantiates a new basic user mode landscape.
 	 *
@@ -61,6 +65,7 @@ public class BasicUserModeLandscape {
 		this.context = context;
 
 		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+		this.customFont = Typeface.createFromAsset(context.getAssets(), "LCD.ttf");  
 
 		//Build the view flipper
 		flipper = buildViewFlipper(context);
@@ -138,7 +143,7 @@ public class BasicUserModeLandscape {
 		//Start a new View Flipper object
 		ViewFlipper rootFlipper = new ViewFlipper(context);
 
-		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background));
+		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background_landscape));
 
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();
 
@@ -180,7 +185,7 @@ public class BasicUserModeLandscape {
 		rootLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		LayoutParams rootParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		rootLinearLayout.setLayoutParams(rootParams);
-		rootLinearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+		rootLinearLayout.setGravity(Gravity.CENTER);
 
 		//Add the upper title and value TextView objects to this linear layout
 		rootLinearLayout.addView(buildTitleView(context, middlePID));
@@ -258,11 +263,12 @@ public class BasicUserModeLandscape {
 
 		//Initialize the value TextView and set the parameters
 		TextView valueTextView = new TextView(context);
+		valueTextView.setTypeface(customFont);
 		LayoutParams valueParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		valueTextView.setLayoutParams(valueParams);
 
 		//Set the text size (in DIP)
-		valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 110);
+		valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 130);
 
 		//The the padding
 		valueTextView.setPadding(5, 5, 5, 5);
@@ -272,7 +278,7 @@ public class BasicUserModeLandscape {
 			valueTextView.setText(this.dataCollectorThread.getCurrentData(pid.getParentMode(),pid.getPidHex()));
 		}
 		else {
-			valueTextView.setText("----");
+			valueTextView.setText("8888");
 		}
 
 		//Set the color

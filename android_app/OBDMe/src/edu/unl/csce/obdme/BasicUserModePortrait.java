@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -51,6 +52,9 @@ public class BasicUserModePortrait {
 	/** The data collector thread. */
 	private DataCollector dataCollectorThread;
 
+	/** The custom font. */
+	private Typeface customFont;
+
 
 
 	/**
@@ -63,6 +67,7 @@ public class BasicUserModePortrait {
 		this.context = context;
 
 		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+		this.customFont = Typeface.createFromAsset(context.getAssets(), "LCD.ttf");  
 
 		//Build the view flipper
 		flipper = buildViewFlipper(context);
@@ -139,7 +144,7 @@ public class BasicUserModePortrait {
 
 		//Start a new View Flipper object
 		ViewFlipper rootFlipper = new ViewFlipper(context);
-		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background));
+		rootFlipper.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background_portrait));
 
 		//Initialize the values map (this contains references to ALL the stats displayed in the list view
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();
@@ -275,7 +280,7 @@ public class BasicUserModePortrait {
 		}
 
 		//The the padding
-		titleTextView.setPadding(5, 5, 5, 5);
+		titleTextView.setPadding(15, 15, 15, 15);
 
 		//Set the gravity
 		titleTextView.setGravity(Gravity.CENTER);
@@ -309,6 +314,7 @@ public class BasicUserModePortrait {
 
 		//Initialize the value TextView and set the parameters
 		TextView valueTextView = new TextView(context);
+		valueTextView.setTypeface(customFont);  
 		LayoutParams valueParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		valueTextView.setLayoutParams(valueParams);
 
@@ -316,19 +322,18 @@ public class BasicUserModePortrait {
 		valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 90);
 
 		//The the padding
-		valueTextView.setPadding(5, 5, 5, 5);
+		valueTextView.setPadding(5, 5, 5, 65);
 
 		//If the constructor was passed a data collector thread, set the values from that
 		if (dataCollectorThread != null) {
 			valueTextView.setText(this.dataCollectorThread.getCurrentData(pid.getParentMode(),pid.getPidHex()));
 		}
 
-		//Otherwise init to "----"
+		//Otherwise init to "8888"
 		else {
-			valueTextView.setText("----");
-		}
-
-		//Set the color
+			valueTextView.setText("8888");
+		}		
+		
 		valueTextView.setTextColor(context.getResources().getColor(android.R.color.white));
 
 		valueLinearLayout.addView(valueTextView);
@@ -359,8 +364,6 @@ public class BasicUserModePortrait {
 		unitTextView.setTextColor(context.getResources().getColor(android.R.color.white));
 
 		valueLinearLayout.addView(unitTextView);
-
-
 
 		//Return the values text view
 		return valueLinearLayout;
@@ -592,6 +595,8 @@ public class BasicUserModePortrait {
 			int currentView = flipper.indexOfChild(flipper.getCurrentView());
 			for(String entry : valuesMaps.get(currentView).keySet()) {
 				valuesMaps.get(currentView).get(entry).setText(collectorThread.getCurrentData(entry));
+				valuesMaps.get(currentView).get(entry).setTextColor(
+						context.getResources().getColor(android.R.color.white));
 			}
 		}
 

@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
@@ -60,16 +61,16 @@ public class OBDMe extends Activity {
 	/** The Constant BASIC_USER_MODE. */
 	public static final int BASIC_USER_MODE = 0;
 
-	/** The Constant ENTHUSIAST_USER_MODE. */
+	/** The Constant ADVANCED_USER_MODE. */
 	public static final int ADVANCED_USER_MODE = 1;
 	
-	/** The Constant DATA_USAGE_WIFIONLY. */
+	/** The Constant DATA_USAGE_WIFI_ONLY. */
 	public static final int DATA_USAGE_WIFI_ONLY = 0;
 	
-	/** The Constant DATA_USAGE_NETWORKONLY. */
+	/** The Constant DATA_USAGE_NETWORK_ONLY. */
 	public static final int DATA_USAGE_NETWORK_ONLY = 1;
 	
-	/** The Constant DATA_USAGE_WIFIANDNETWORK. */
+	/** The Constant DATA_USAGE_WIFI_AND_NETWORK. */
 	public static final int DATA_USAGE_WIFI_AND_NETWORK = 2;
 
 	/** The shared prefs. */
@@ -87,6 +88,9 @@ public class OBDMe extends Activity {
 	/** The connection status. */
 	private boolean connectionStatus;
 
+	/** The web framework. */
+	private ObdMeService webFramework;
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -100,7 +104,8 @@ public class OBDMe extends Activity {
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		collectorThread = ((OBDMeApplication)getApplication()).getDataCollector();
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		
+		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
+
 		//Get the shared preferences
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -108,6 +113,9 @@ public class OBDMe extends Activity {
 		
 		setDataUsage();
 		
+		//checkAccountStatus();
+		
+//		
 //		//If the bluetooth thread is already connected (from the setup wizard)
 //		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
 //			
@@ -135,6 +143,19 @@ public class OBDMe extends Activity {
 		//Set up a new gesture detector for swipes
 		gestureDetector = new GestureDetector(new FlingGestureDetector());
 
+	}
+
+	/**
+	 * Check account status.
+	 */
+	private void checkAccountStatus() {
+		
+		//Send the request to the webservice to get this users credentials
+		webFramework.getUsersService().validateUserCredentials(
+				this.sharedPrefs.getString(getResources().getString(R.string.prefs_account_username), "none"), 
+				this.sharedPrefs.getString(getResources().getString(R.string.prefs_account_password), "none"), 
+				getAccountCredentialsHandler);
+		
 	}
 
 	/**
@@ -205,7 +226,7 @@ public class OBDMe extends Activity {
 	}
 	
 	/**
-	 * Sets the Data Usage (data upload settings)
+	 * Sets the data usage.
 	 */
 	private void setDataUsage() {
 		switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_dataupload), -1)) {
@@ -864,6 +885,41 @@ public class OBDMe extends Activity {
 
 				}
 				break;
+
+			}
+		}
+	};
+	
+	/** The get account credentials handler. */
+	private final Handler getAccountCredentialsHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+
+			switch (msg.what) {
+
+			//Messsage from BT service indicating a connection state change
+			case 0:
+				if(msg.obj != null) {
+
+				} 
+				else {
+
+					//Show alert dialog, the app must exit.  This is not recoverable
+					AlertDialog.Builder builder = new AlertDialog.Builder(OBDMe.this);
+					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
+					.setCancelable(false)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							OBDMe.this.finish();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
+				}
+				break;
+
+
 
 			}
 		}
