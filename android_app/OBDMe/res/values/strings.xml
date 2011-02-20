@@ -176,6 +176,9 @@
 	<string name="menu.prefs.datausage.phonenetworkonly">Phone Network Only</string>
 	<string name="menu.prefs.datausage.wifiandphonenetwork">Phone Network Until Wifi Is Available</string>
 	
+	<string name="menu.prefs.gps.title">Location Data</string>
+	<string name="menu.prefs.gps.summary">Collect location data for location aware statistics</string>
+	
 	<!-- Options Menu -->
 	<string name="menu.options.start">Start Collecting</string>
 	<string name="menu.options.pause">Pause Collection</string>

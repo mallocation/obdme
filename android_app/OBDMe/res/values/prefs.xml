@@ -3,10 +3,12 @@
 	<string name="prefs.tag">OBDMePrefs</string>
 	<string name="prefs.firstrun">OBDMePrefsFirstRun</string>
 	<string name="prefs.bluetooth.device">OBDMeBluetoothDevice</string>
+	<string name="prefs.account.uid">OBDMeAccountUID</string>
 	<string name="prefs.account.username">OBDMeAccountUsername</string>
 	<string name="prefs.account.password">OBDMeAccountPassword</string>
 	<string name="prefs.account.vin">OBDMeVIN</string>
 	<string name="prefs.mode">OBDMeMode</string>
 	<string name="prefs.dataupload">OBDMeDataUpload</string>
 	<string name="prefs.englishunits">OBDMeEnglishUnits</string>
+	<string name="prefs.gps">OBDMeCaptureGPS</string>
 </resources>

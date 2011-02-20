@@ -2,11 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="src" path="obdme_api"/>
-	<classpathentry kind="src" path="http_utils"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="lib" path="/OBDMe_API_Client_Library/lib/gson-1.6.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OBDMe_API_Client_Library"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OBDMe_Http_Utils"/>
-	<classpathentry kind="lib" path="/OBDMe_API_Client_Library/lib/gson-1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

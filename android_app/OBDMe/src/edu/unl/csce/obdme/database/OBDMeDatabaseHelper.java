@@ -49,6 +49,12 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
     	
     	sb.append("CREATE TABLE " + TABLE_NAME + " ( " + TABLE_KEY + " INTEGER PRIMARY KEY");
     	
+    	//Setup the timestamp column
+    	sb.append(" , timestamp" + " TEXT");
+    	
+    	//Setup the vin column
+    	sb.append(" , vin" + " TEXT");
+    	
     	//For all the modes that exist in the full protocol
 		for ( String currentMode : protocol.keySet() ) {
 			//For all the pids that exist in the full protocol

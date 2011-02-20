@@ -7,6 +7,9 @@
 	<integer name="bluetooth.response.timeout">500</integer>
 	<integer name="bluetooth.response.maxretries">5</integer>
 	<integer name="collector.system.memory.threshold">25</integer>
+	<integer name="uploader.timer.interval">30000</integer>
+	<integer name="uploader.setcount.3g">50</integer>
+	<integer name="uploader.setcount.wifi">100</integer>
 	<string name="webservice.apikey">abcd</string>
 	
 </resources>
