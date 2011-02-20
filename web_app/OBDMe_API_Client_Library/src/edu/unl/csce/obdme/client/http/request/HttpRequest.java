@@ -94,9 +94,11 @@ public class HttpRequest implements Runnable {
 			case HttpRequest.POST:
 				request = new HttpPost(this.url);
 				((HttpPost)request).setEntity(getEntityForPutPostRequests(this.parameters));
+				break;
 			case HttpRequest.PUT:
 				request = new HttpPut(this.url);
 				((HttpPut)request).setEntity(getEntityForPutPostRequests(this.parameters));
+				break;
 			default:
 				break;
 			}
