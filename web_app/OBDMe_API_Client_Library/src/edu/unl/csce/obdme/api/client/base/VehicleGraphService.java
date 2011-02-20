@@ -20,7 +20,7 @@ public class VehicleGraphService extends ProtectedServiceWrapper {
 	
 	public void pushVehicleGraphData(GraphPush graphPush, Handler handler) {
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-		parameters.add(new BasicNameValuePair("graphentry", graphPush.toJSONString()));
+		parameters.add(new BasicNameValuePair("graphpush", graphPush.toJSONString()));
 		this.performPost(VEHICLE_GRAPH_BASE, parameters, new PushGraphListener(handler));
 	}
 	
