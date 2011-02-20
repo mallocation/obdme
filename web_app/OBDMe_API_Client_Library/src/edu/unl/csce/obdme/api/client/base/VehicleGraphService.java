@@ -34,7 +34,8 @@ public class VehicleGraphService extends ProtectedServiceWrapper {
 
 		@Override
 		public void onComplete(String response) {
-			handler.sendMessage(handler.obtainMessage(0, null));			
+			boolean result = Boolean.valueOf(response).booleanValue();
+			handler.sendMessage(handler.obtainMessage(0, result));			
 		}
 		
 	}

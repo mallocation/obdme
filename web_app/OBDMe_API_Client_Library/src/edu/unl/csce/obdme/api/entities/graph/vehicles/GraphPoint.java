@@ -5,9 +5,12 @@ import java.io.Serializable;
 public class GraphPoint implements Serializable {
 	
 	private static final long serialVersionUID = -1683133256179599140L;
+	
 	private String mode;
 	private String pid;
 	private String value;
+	
+	public GraphPoint() {}
 	
 	public GraphPoint(String mode, String pid, String value) {
 		this.mode = mode;

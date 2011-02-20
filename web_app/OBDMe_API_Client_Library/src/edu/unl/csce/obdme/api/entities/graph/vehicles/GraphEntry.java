@@ -8,6 +8,7 @@ import java.util.List;
 public class GraphEntry implements Serializable {
 	
 	private static final long serialVersionUID = -8575830165765977418L;
+	
 	private String VIN;
 	private List<GraphPoint> points;
 	private Date timestamp;
