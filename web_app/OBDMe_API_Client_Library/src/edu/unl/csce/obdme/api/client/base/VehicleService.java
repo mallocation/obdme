@@ -108,5 +108,7 @@ public class VehicleService extends ProtectedServiceWrapper {
 			handler.sendMessage(handler.obtainMessage(0, vehicle));
 		}		
 	}
+	
+	
 
 }

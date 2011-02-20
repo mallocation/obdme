@@ -10,6 +10,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -93,6 +94,9 @@ public class HttpRequest implements Runnable {
 			case HttpRequest.POST:
 				request = new HttpPost(this.url);
 				((HttpPost)request).setEntity(getEntityForPutPostRequests(this.parameters));
+			case HttpRequest.PUT:
+				request = new HttpPut(this.url);
+				((HttpPut)request).setEntity(getEntityForPutPostRequests(this.parameters));
 			default:
 				break;
 			}
