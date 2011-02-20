@@ -42,7 +42,7 @@ public class VehicleService extends ProtectedServiceWrapper {
 	 * @param handler The result handler.
 	 */
 	public void addVehicle(String VIN, Handler handler) {
-		this.addVehicle(VIN, null, handler);
+		this.addVehicle(VIN, 0, handler);
 	}
 	
 	/**
@@ -51,14 +51,14 @@ public class VehicleService extends ProtectedServiceWrapper {
 	 * The result will be a Vehicle entity.
 	 *
 	 * @param VIN The vehicle identification number of the vehicle.
-	 * @param user The user to tie to the vehicle.
+	 * @param userId The user id to tie the vehicle to (Pass 0 for null)
 	 * @param handler The result handler.
 	 */
-	public void addVehicle(String VIN, User user, Handler handler) {
+	public void addVehicle(String VIN, long userId, Handler handler) {
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("VIN", VIN));
-		if (user != null) { 
-			parameters.add(new BasicNameValuePair("userid", user.getId().toString())); 
+		if (userId > 0) { 
+			parameters.add(new BasicNameValuePair("userid", Long.toString(userId))); 
 		}
 		this.performPut(VEHICLE_SERVICE_BASE_PATH, parameters, new BasicVehicleRequestListener(handler));		
 	}
