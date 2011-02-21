@@ -1,4 +1,4 @@
-package api.entities.graph;
+package api.entities.graph.vehicle;
 
 import java.io.Serializable;
 
@@ -8,6 +8,8 @@ public class GraphPoint implements Serializable {
 	private String mode;
 	private String pid;
 	private String value;
+	
+	public GraphPoint(){}
 	
 	public String getMode() {
 		return mode;

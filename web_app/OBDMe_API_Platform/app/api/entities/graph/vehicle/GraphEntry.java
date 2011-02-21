@@ -1,4 +1,4 @@
-package api.entities.graph;
+package api.entities.graph.vehicle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class GraphEntry implements Serializable {
 		return points;
 	}
 
-	public void setData(List<GraphPoint> points) {
+	public void setPoints(List<GraphPoint> points) {
 		this.points = points;
 	}
 
@@ -42,16 +42,6 @@ public class GraphEntry implements Serializable {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
-	}
-	
-	public static GraphEntry fromJSON(String json) {
-		Gson gson = new Gson();
-		return (GraphEntry)gson.fromJson(json, GraphEntry.class);
-	}
-	
-	public String toJSONString() {
-		Gson gson = new Gson();
-		return gson.toJson(this);
 	}
 	
 }

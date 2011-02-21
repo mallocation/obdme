@@ -1,6 +1,6 @@
 package controllers.obdme.rest;
 
-import api.entities.graph.GraphEntry;
+import api.entities.graph.vehicle.GraphEntry;
 import models.obdme.User;
 import models.obdme.Vehicles.Vehicle;
 import play.data.validation.Required;

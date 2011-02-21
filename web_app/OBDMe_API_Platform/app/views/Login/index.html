@@ -9,20 +9,36 @@
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
         <script src="@{'/public/javascripts/jquery-1.4.2.min.js'}" type="text/javascript" charset="utf-8"></script>
         #{get 'moreScripts' /}
+        
+        <style type="text/css">
+        	.splashdiv
+        	{
+        		margin-left: auto;
+        		margin-right: auto;
+        		width: 930px;
+        	}
+        	
+        
+        	.splashdiv > .logindiv
+        	{
+        		position: absolute;
+        		top: 0px;
+        		left: 0px;
+        	}
+        	body
+        	{
+        		color: #ffffff;
+        	}
+        
+        </style>
     </head>
     <body style="background-color:#000000;">
-       	<div style="width:930px; margin-left:auto; margin-right:auto;">
-       		<img src="@{'/public/images/splash.png'}" />
-       		
-       		<div 
-       		
-       		<div style="margin-left:auto; margin-right:auto; clear:both">
-       			<input type="text" style="font-size: 20px; font-size-adjust: none; width:400px; height:30px;" />
-       		</div>
-   			<div style="clear:both;">
-   				<input type="password" style="font-size: 20px; width:400px; height:30px;"/>
-   			</div>
-   			
-   		</div>    	
+    	<div class="splashdiv">
+    		<img src="@{'/public/images/splash.png'}"/>
+    		<div class="logindiv">
+    			<div><input type="text"/></div>
+    			<div><input type="password"/></div>
+    		</div>
+    	</div>
     </body>
 </html>

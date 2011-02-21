@@ -28,7 +28,7 @@ public class VehicleDataset extends Model {
 	
 	/* Persisted Fields */
 	
-	@Column(name="date", nullable=false)
+	@Column(name="timestamp", nullable=false)
 	public Date timestamp;
 	
 	/* End Persisted Fields */	
