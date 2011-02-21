@@ -14,7 +14,7 @@
 #/----------------------BEGIN OBDME API------------------------------------/
 
 #Graph
-POST 	/api/graph								controllers.obdme.rest.VehicleGraph.addGraphEntry
+POST 	/api/graph/vehicles						controllers.obdme.rest.VehicleGraph.pushVehicleGraphData
 
 
 #Users
