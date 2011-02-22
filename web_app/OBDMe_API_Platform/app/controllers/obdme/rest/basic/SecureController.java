@@ -14,10 +14,7 @@ import play.mvc.Controller;
  * When extending this controller class, security will automatically be added
  * to your REST controller.
  */
-public abstract class SecureController extends Controller {
-	//private static final String[] EXCLUDE_PARAMS = {"body"};
-	
-	
+public abstract class SecureController extends Controller {	
 	
 	/**
 	 * Validate access and http request.
@@ -27,13 +24,12 @@ public abstract class SecureController extends Controller {
 	 */
 	@SuppressWarnings("unused")
 	@Before
-	private static void validateAccessAndHttpRequest(String apikey, String sig) {
+	private static void validateAccessAndHttpRequest(String apikey) {
 		/* validate that the api and signature key exist */
 		validation.required(apikey);
-		//validation.required(sig);
 
 		if(validation.hasErrors()) {
-			/* api key or signature were not present; access forbidden! */
+			/* api key is not present; access forbidden! */
 			Logger.info("API Key is not present.");
 			forbidden();
 		}

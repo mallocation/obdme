@@ -1,10 +1,11 @@
 package controllers.obdme.rest;
 
+import controllers.obdme.rest.basic.LoggedController;
 import controllers.obdme.rest.basic.SecureController;
 import models.obdme.User;
 import play.data.validation.Required;
 
-public class Users extends SecureController {
+public class Users extends LoggedController {
     
     public static void getUser(String email) {
     	renderJSON(User.findByEmail(email));

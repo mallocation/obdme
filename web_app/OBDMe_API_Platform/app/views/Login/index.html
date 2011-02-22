@@ -11,34 +11,53 @@
         #{get 'moreScripts' /}
         
         <style type="text/css">
-        	.splashdiv
-        	{
+        	body {
+        		background: #030303 url("@{'/public/images/splash.png'}") no-repeat fixed top center;
+        	}
+        	div.main {
+           		width:930px;        		
         		margin-left: auto;
         		margin-right: auto;
-        		width: 930px;
         	}
-        	
-        
-        	.splashdiv > .logindiv
-        	{
-        		position: absolute;
-        		top: 0px;
-        		left: 0px;
+        	div.login {
+        		margin-top:400px;
+        		width:350px;
+        		margin-left: auto;
+        		margin-right: auto;
+        		
         	}
-        	body
+        	input.cred {
+        		width:350px;
+        		font-size: 20px;       	
+        	}
+        	input.login {
+        		float: right;
+        	}
+        	span
         	{
         		color: #ffffff;
+        		font: 12px/1.4 Verdana,sans-serif;
         	}
-        
-        </style>
+        	
+        </style>       
     </head>
-    <body style="background-color:#000000;">
-    	<div class="splashdiv">
-    		<img src="@{'/public/images/splash.png'}"/>
-    		<div class="logindiv">
-    			<div><input type="text"/></div>
-    			<div><input type="password"/></div>
-    		</div>
-    	</div>
-    </body>
+    <body>
+    	<form method="post" action="">
+	    	<div class="main">
+	    		<div class="login">
+	    			<div>
+	    				<input class="cred" type="text"/>
+	    			</div>
+	    			<div>
+	   					<input class="cred" type="password"/>
+	   				</div>
+	   				<div>   				
+	   					<input type="checkbox"/>
+	   					<span>Remember Me</span>
+	   					<input class="login" type="submit" value="Login"/>   					
+	   				</div>
+	   			</div>
+	    	</div>
+  		</form>
+	</body>
 </html>
