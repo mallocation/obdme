@@ -1,15 +1,20 @@
 package edu.unl.csce.obdme;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,7 +24,7 @@ import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
 import edu.unl.csce.obdme.utils.UnitConversion;
 
-public class AdvancedUserMode {
+public class AdvancedUserMode extends ListActivity{
 	
 	/** The elm framework. */
 	private ELMFramework elmFramework;
@@ -41,6 +46,9 @@ public class AdvancedUserMode {
 	
 	/** The listview */
 	private ListView dataListView;
+	
+	private OBDPID listPID;
+	private Integer currentView;
 	
 	
 	/**
@@ -90,7 +98,7 @@ public class AdvancedUserMode {
 		//Initialize the values map (this contains references to ALL the stats displayed in the list view
 		this.valuesMaps = new HashMap<Integer, HashMap<String, TextView>>();
 
-		Integer currentView = new Integer(0);
+		currentView = new Integer(0);
 
 		//For all the pollable and enabled PIDS,
 		for (String currentMode : pollablePIDList.keySet()) {
@@ -98,7 +106,7 @@ public class AdvancedUserMode {
 
 				this.valuesMaps.put(currentView, new HashMap<String, TextView>());
 
-				OBDPID listPID = null;
+				listPID = null;
 
 				//If there is a PID left in the Iterator
 				if (pidIrt.hasNext()) {
@@ -106,7 +114,9 @@ public class AdvancedUserMode {
 					//Save the reference
 					listPID = elmFramework.getConfiguredPID(currentMode, pidIrt.next());
 					
-					rootListView.addFooterView(buildEnabledView(context, listPID, currentView));
+					// TODO: add view to array adapter
+					
+					//rootListView.addFooterView(buildEnabledView(context, listPID, currentView));
 				}
 				currentView = new Integer(currentView+1);
 			}
@@ -130,7 +140,7 @@ public class AdvancedUserMode {
 		//Initialize the Linear layout for this view and set the parameters
 		LinearLayout dataLinearLayout = new LinearLayout(context);
 		dataLinearLayout.setOrientation(LinearLayout.VERTICAL);
-		LayoutParams rootParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		LayoutParams rootParams = new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
 		dataLinearLayout.setLayoutParams(rootParams);
 		dataLinearLayout.setGravity(Gravity.CENTER_VERTICAL);
 
@@ -158,7 +168,7 @@ public class AdvancedUserMode {
 		titleTextView.setLayoutParams(titleParams);
 
 		//Set the TextView text size based on the amount of text to be displayed
-		if (pid.getPidName().length() <= 10) {
+/*		if (pid.getPidName().length() <= 10) {
 			titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
 		}
 		else if (pid.getPidName().length() > 10 && pid.getPidName().length() <= 20) {
@@ -173,7 +183,9 @@ public class AdvancedUserMode {
 		else {
 			titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
 		}
-
+*/
+		titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
+		
 		//The the padding
 		titleTextView.setPadding(5, 5, 5, 5);
 
@@ -203,7 +215,7 @@ public class AdvancedUserMode {
 		//Initialize the value LinearLayout and set the parameters
 		LinearLayout valueLinearLayout = new LinearLayout(context);
 		valueLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-		LayoutParams rootParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		LayoutParams rootParams = new LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		valueLinearLayout.setLayoutParams(rootParams);
 		valueLinearLayout.setGravity(Gravity.CENTER_HORIZONTAL);
 
@@ -213,7 +225,7 @@ public class AdvancedUserMode {
 		valueTextView.setLayoutParams(valueParams);
 
 		//Set the text size (in DIP)
-		valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 90);
+		valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
 
 		//The the padding
 		valueTextView.setPadding(5, 5, 5, 5);
@@ -242,7 +254,7 @@ public class AdvancedUserMode {
 		unitTextView.setLayoutParams(unitParams);
 
 		//Set the text size (in DIP)
-		unitTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
+		unitTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
 
 		//The the padding
 		unitTextView.setPadding(5, 5, 5, 5);
@@ -317,12 +329,32 @@ public class AdvancedUserMode {
 		 */
 		public void run(DataCollector collectorThread) {
 			// TODO implement this functionality (not sure what to do exactly)
-			int currentView = dataListView.indexOfChild(dataListView.getRootView());
-			for(String entry : valuesMaps.get(currentView).keySet()) {
-				valuesMaps.get(currentView).get(entry).setText(collectorThread.getCurrentData(entry));
-			}
+			//int currentView = dataListView.indexOfChild(dataListView.getRootView());
+			//for(String entry : valuesMaps.get(currentView).keySet()) {
+			//	valuesMaps.get(currentView).get(entry).setText(collectorThread.getCurrentData(entry));
+			//}
 		}
 
-	};
+	}
+	
+	private class CustomListAdapter extends ArrayAdapter<View> {
+		
+		private ArrayList<View> views;
+		
+		public CustomListAdapter(Context context, int textViewResourceId, ArrayList<View> views) {
+		 super(context, textViewResourceId, views);
+		 // TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			
+			// TODO: implement this...
+			
+			//View v = convertView;
+			
+			return convertView;
+		}
+	}
 
 }
