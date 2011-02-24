@@ -113,10 +113,8 @@ public class AdvancedUserMode extends ListActivity{
 
 					//Save the reference
 					listPID = elmFramework.getConfiguredPID(currentMode, pidIrt.next());
-					
-					// TODO: add view to array adapter
-					
-					//rootListView.addFooterView(buildEnabledView(context, listPID, currentView));
+										
+					rootListView.addView(buildEnabledView(context, listPID, currentView));
 				}
 				currentView = new Integer(currentView+1);
 			}
@@ -328,33 +326,13 @@ public class AdvancedUserMode extends ListActivity{
 		 * @param collectorThread the collector thread
 		 */
 		public void run(DataCollector collectorThread) {
-			// TODO implement this functionality (not sure what to do exactly)
-			//int currentView = dataListView.indexOfChild(dataListView.getRootView());
-			//for(String entry : valuesMaps.get(currentView).keySet()) {
-			//	valuesMaps.get(currentView).get(entry).setText(collectorThread.getCurrentData(entry));
-			//}
+			// TODO check to make sure this is correct
+			int currentView = dataListView.indexOfChild(dataListView.getRootView());
+			for(String entry : valuesMaps.get(currentView).keySet()) {
+				valuesMaps.get(currentView).get(entry).setText(collectorThread.getCurrentData(entry));
+			}
 		}
 
-	}
-	
-	private class CustomListAdapter extends ArrayAdapter<View> {
-		
-		private ArrayList<View> views;
-		
-		public CustomListAdapter(Context context, int textViewResourceId, ArrayList<View> views) {
-		 super(context, textViewResourceId, views);
-		 // TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			// TODO: implement this...
-			
-			//View v = convertView;
-			
-			return convertView;
-		}
 	}
 
 }
