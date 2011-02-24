@@ -6,7 +6,7 @@
 *      /admin              						module:crud
 
 # Home page
-#GET     /                                       Application.index
+GET     /                                       Application.index
 
 
 
@@ -14,19 +14,19 @@
 #/----------------------BEGIN OBDME API------------------------------------/
 
 #Graph
-POST 	/api/graph/vehicles						controllers.obdme.rest.VehicleGraph.pushVehicleGraphData
+POST 	/api/graph/vehicles						controllers.api.VehicleGraph.pushVehicleGraphData
 
 
 #Users
-POST	/api/users								controllers.obdme.rest.Users.createUser
-GET		/api/users/{email}/login				controllers.obdme.rest.Users.validateUserCredentials
-GET		/api/users/{email}						controllers.obdme.rest.Users.getUser
+POST	/api/users								controllers.api.Users.createUser
+GET		/api/users/{email}/login				controllers.api.Users.validateUserCredentials
+GET		/api/users/{email}						controllers.api.Users.getUser
 
 
 
 #Vehicles
-GET		/api/vehicles/{VIN}						controllers.obdme.rest.Vehicles.getVehicleByVIN
-PUT		/api/vehicles							controllers.obdme.rest.Vehicles.addVehicle
+GET		/api/vehicles/{VIN}						controllers.Vehicles.getVehicleByVIN
+PUT		/api/vehicles							controllers.Vehicles.addVehicle
 
 
 
