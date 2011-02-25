@@ -4,6 +4,7 @@ import android.app.Application;
 import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
+import edu.unl.csce.obdme.collector.DataUploader;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 
 /**
@@ -25,6 +26,9 @@ public class OBDMeApplication extends Application {
 
 	/** The data collector. */
 	private DataCollector dataCollector;
+
+	/** The data uploader. */
+	private DataUploader dataUploader;
 
 	/**
 	 * Gets the single instance of OBDMeApplication.
@@ -87,6 +91,19 @@ public class OBDMeApplication extends Application {
 		}
 		return webFramework;
 	}
+	
+	/**
+	 * Gets the data uploader.
+	 *
+	 * @return the data uploader
+	 */
+	public DataUploader getDataUploader() {
+		if (dataUploader == null) {
+			checkInstance();
+			dataUploader = new DataUploader(getApplicationContext(), getWebFramework());
+		}
+		return dataUploader;
+	}
 
 	/**
 	 * Check instance.
@@ -94,6 +111,19 @@ public class OBDMeApplication extends Application {
 	private static void checkInstance() {
 		if (instance == null)
 			throw new IllegalStateException("Application not created yet!");
+	}
+	
+	/**
+	 * Destroy application.
+	 */
+	public void destroyApplication() {
+		this.dataUploader = null;
+		this.webFramework = null;
+		this.dataCollector = null;
+		this.elmFramework = null;
+		this.bluetoothService = null;
+		android.os.Process.killProcess(android.os.Process.myPid());
+		
 	}
 
 	/* (non-Javadoc)
@@ -104,6 +134,7 @@ public class OBDMeApplication extends Application {
 		//provide an instance for our static accessors
 		instance = this;
 		getELMFramework();
+		getDataUploader();
 	}
 
 }

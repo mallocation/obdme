@@ -16,7 +16,7 @@ import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.R;
 
 /**
- * The Class OBDMeRootPreferences.
+ * The Class RootPreferences.
  */
 public class RootPreferences extends PreferenceActivity {
 	 
@@ -29,7 +29,7 @@ public class RootPreferences extends PreferenceActivity {
     /** The preference view. */
     private ListView preferenceView;
     
-    /** Shared Preferences */
+    /** The shared prefs. */
 	SharedPreferences sharedPrefs;
  
     /* (non-Javadoc)
@@ -183,6 +183,7 @@ public class RootPreferences extends PreferenceActivity {
         unitsPref.setTitle(getResources().getString(R.string.menu_prefs_units_title));
         unitsPref.setKey(getResources().getString(R.string.prefs_englishunits));
         unitsPref.setSummary(getResources().getString(R.string.menu_prefs_units_summary));
+        applicationCategory.addPreference(unitsPref);
         
         //GPS/Location option
         CheckBoxPreference gpsPref = new CheckBoxPreference(this);
@@ -191,7 +192,7 @@ public class RootPreferences extends PreferenceActivity {
         gpsPref.setKey(getResources().getString(R.string.prefs_gps));
         gpsPref.setSummary(getResources().getString(R.string.menu_prefs_gps_summary));
         
-        applicationCategory.addPreference(unitsPref);
+        applicationCategory.addPreference(gpsPref);
         
         return applicationCategory;
     	

@@ -2,14 +2,15 @@
 <resources>
 
 	<!-- Global Parameters -->
-	<integer name="splash.wait.milliseconds">3000</integer>
+	<integer name="splash.wait.milliseconds">6000</integer>
 	<integer name="setupwizard.toast.time">3000</integer>
 	<integer name="bluetooth.response.timeout">500</integer>
 	<integer name="bluetooth.response.maxretries">5</integer>
 	<integer name="collector.system.memory.threshold">25</integer>
-	<integer name="uploader.timer.interval">30000</integer>
-	<integer name="uploader.setcount.3g">50</integer>
-	<integer name="uploader.setcount.wifi">100</integer>
+	<integer name="uploader.setcount.min">5</integer>
+	<integer name="uploader.setcount.max">15</integer>
+	<integer name="uploader.thread.sucessive.delay">10</integer>
+	<integer name="uploader.thread.pool.size">5</integer>
 	<string name="webservice.apikey">abcd</string>
 	
 </resources>

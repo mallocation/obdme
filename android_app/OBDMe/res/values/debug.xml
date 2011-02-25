@@ -32,4 +32,7 @@
 
 	<!-- Debug tags for the Data Collector -->
 	<string name="debug.tag.datacollector">DataCollector</string>
+	<string name="debug.tag.databasewriter">DatabaseWriterThread</string>
+	<string name="debug.tag.datauploader">DataUploader</string>
+	<string name="debug.tag.datauploaderthread">DataUploaderThread</string>
 </resources>

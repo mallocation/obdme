@@ -96,7 +96,7 @@ public class OBDMe extends Activity {
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(null);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -105,7 +105,7 @@ public class OBDMe extends Activity {
 		collectorThread = ((OBDMeApplication)getApplication()).getDataCollector();
 		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
 		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
-
+		
 		//Get the shared preferences
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -115,30 +115,30 @@ public class OBDMe extends Activity {
 		
 		//checkAccountStatus();
 		
-//		
-//		//If the bluetooth thread is already connected (from the setup wizard)
-//		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
-//			
-//			//Dont show the connection status screen
-//			this.connectionStatus = false;
-//		}
-//		
-//		//Otherwise, we need to set up a connection with the device
-//		else {
-//			this.connectionStatus = true;
-//		}
-//
-//		//If we need to set up a connection
-//		if (this.connectionStatus) {
-//			
-//			//Start the connection routine
-//			checkBluetoothEnabled();
-//		}
-//		
-//		//Otherwise set the configured data view
-//		else {
-//			setConfiguredView();
-//		}
+		
+		//If the bluetooth thread is already connected (from the setup wizard)
+		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+			
+			//Dont show the connection status screen
+			this.connectionStatus = false;
+		}
+		
+		//Otherwise, we need to set up a connection with the device
+		else {
+			this.connectionStatus = true;
+		}
+
+		//If we need to set up a connection
+		if (this.connectionStatus) {
+			
+			//Start the connection routine
+			checkBluetoothEnabled();
+		}
+		
+		//Otherwise set the configured data view
+		else {
+			setConfiguredView();
+		}
 
 		//Set up a new gesture detector for swipes
 		gestureDetector = new GestureDetector(new FlingGestureDetector());
@@ -422,16 +422,8 @@ public class OBDMe extends Activity {
 		super.onResume();
 		//Set the configured view
 		//If the bluetooth service is not connected to a device, set the connection status view
-		if (this.connectionStatus) {
-			if (this.bluetoothService.getState() == BluetoothService.STATE_NONE){
-				startBluetoothConnectionThread();
-			}
-		}
-
-		//Otherwise, set the data view
-		else {
-			setConfiguredView();
-		}
+		
+		checkBluetoothEnabled();
 	}
 
 	/* (non-Javadoc)
@@ -490,11 +482,11 @@ public class OBDMe extends Activity {
 			//Set the bluetooth state to none
 			bluetoothService.setState(BluetoothService.STATE_NONE);
 			
-			//Set the connection status to true (show the connecting screen on startup)
-			this.connectionStatus = true;
+			((OBDMeApplication)getApplication()).destroyApplication();
 			
 			//Finish this activity
 			this.finish();
+
 			return true;
 		case R.id.menu_options_prefs:
 			startActivityForResult(new Intent(this, edu.unl.csce.obdme.settingsmenu.RootPreferences.class), RootPreferences.USER_QUIT_SETTINGS);

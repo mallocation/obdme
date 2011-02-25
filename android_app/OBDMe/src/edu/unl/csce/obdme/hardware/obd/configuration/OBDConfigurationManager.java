@@ -804,7 +804,7 @@ public abstract class OBDConfigurationManager {
 		} catch (IOException e) {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.e(context.getResources().getString(R.string.debug_tag_obdframework_parseconfig),
-				"Error parsing obd configuration: A general IO exception occured.");
+				"Error parsing obd configuration: A general IO exception occured.", e);
 			}
 		}
 

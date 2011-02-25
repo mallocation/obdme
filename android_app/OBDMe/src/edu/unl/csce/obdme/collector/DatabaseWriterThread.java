@@ -39,7 +39,7 @@ public class DatabaseWriterThread extends Thread {
 		setName("Database Writer");
 
 		if(context.getResources().getBoolean(R.bool.debug)) {
-			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+			Log.d(context.getResources().getString(R.string.debug_tag_databasewriter),
 			"Initializing the Database Writer Thread.");
 		}
 
@@ -51,7 +51,7 @@ public class DatabaseWriterThread extends Thread {
 
 			//Failed... Print of the error.
 			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+				Log.e(context.getResources().getString(R.string.debug_tag_databasewriter),
 						"Could not get writable database: " + e.getMessage());
 			}
 		}
@@ -64,7 +64,7 @@ public class DatabaseWriterThread extends Thread {
 
 		//If logging is enabled, print a nice message that we are starting a local DB push
 		if(context.getResources().getBoolean(R.bool.debug)) {
-			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+			Log.d(context.getResources().getString(R.string.debug_tag_databasewriter),
 			"Executing batch database write");
 		}
 
@@ -84,6 +84,10 @@ public class DatabaseWriterThread extends Thread {
 				if (currentKey.equals("timestamp")) {
 					cv.put("timestamp", currentSet.get(currentKey));
 				}
+				
+				else if (currentKey.equals("vin")) {
+					cv.put("vin", currentSet.get(currentKey));
+				}
 
 				//Otherwise it is a PID data item
 				else {
@@ -97,7 +101,7 @@ public class DatabaseWriterThread extends Thread {
 
 			//If debugging is enabled, print row number to the developer
 			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+				Log.d(context.getResources().getString(R.string.debug_tag_databasewriter),
 						"Inserted data into table row: " + tableRow);
 			}
 

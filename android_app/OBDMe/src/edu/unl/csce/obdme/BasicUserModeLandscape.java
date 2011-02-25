@@ -77,6 +77,7 @@ public class BasicUserModeLandscape {
 		//Set the default flip interval
 		this.flipInterval = 5000;
 		flipper.setFlipInterval(flipInterval);
+		flipper.startFlipping();
 
 	}
 
