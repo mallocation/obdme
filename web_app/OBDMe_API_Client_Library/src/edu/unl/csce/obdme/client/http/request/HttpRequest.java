@@ -20,7 +20,6 @@ import android.util.Log;
 import edu.unl.csce.obdme.client.http.HttpConnectionFactory;
 import edu.unl.csce.obdme.client.http.HttpConnectionManager;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class HttpRequest.
  */
