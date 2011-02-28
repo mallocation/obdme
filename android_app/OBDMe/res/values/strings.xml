@@ -131,7 +131,7 @@
 	<string name="sendButtonText">Send</string>
 	<string name="settings_title">OBDMe Settings</string>
 	<string name="account_info_title">Account Information</string>
-	<string name="vehicle_info_title">Currently Connected Vehicle Information</string>
+	<string name="vehicle_info_title">Vehicle Information</string>
 	<string name="display_data_title">Data To Be Displayed</string>
 
 

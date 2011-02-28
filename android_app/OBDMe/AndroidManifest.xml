@@ -40,6 +40,7 @@
 		<activity android:name=".settingsmenu.RootPreferences"></activity>
 		<activity android:name=".settingsmenu.DisplayedPIDList"></activity>
 		<activity android:name=".settingsmenu.CollectedPIDList"></activity>
+		<activity android:name=".settingsmenu.VehicleInformation"></activity>
 	</application>
 	<uses-sdk android:minSdkVersion="8" />
 	<uses-permission android:name="android.permission.BLUETOOTH" />

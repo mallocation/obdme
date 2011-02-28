@@ -109,6 +109,7 @@ public class RootPreferences extends PreferenceActivity {
         Preference vehiclePref = new Preference(this);
         vehiclePref.setTitle(getResources().getString(R.string.menu_prefs_vehicles_title));
         vehiclePref.setSummary(getResources().getString(R.string.menu_prefs_vehicles_summary));
+        vehiclePref.setIntent(new Intent(this, VehicleInformation.class));
         accountCategory.addPreference(vehiclePref);
         
         return accountCategory;
