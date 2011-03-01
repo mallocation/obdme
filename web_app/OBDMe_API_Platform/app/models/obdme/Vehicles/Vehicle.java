@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -17,7 +19,7 @@ import play.data.validation.Required;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name="vehicles")
+@Table(name="vehicle")
 public class Vehicle extends Model {
 	
 	/* Persisted Fields */
@@ -30,8 +32,11 @@ public class Vehicle extends Model {
 	
 	/* Persisted Relations */
 	
-	@ManyToMany(mappedBy="vehicles")
-	Set<User> owners;
+	@ManyToMany
+	@JoinTable(name="user_vehicle",
+			joinColumns={ @JoinColumn(name="vehicle_id") },
+			inverseJoinColumns={ @JoinColumn(name="user_id") })
+	transient List<User> owners;
 
 	/* End Persisted Relations */
 	
@@ -61,4 +66,5 @@ public class Vehicle extends Model {
 	public static Vehicle findByVIN(String VIN) {
 		return find("VIN", VIN).first();
 	}
+	
 }

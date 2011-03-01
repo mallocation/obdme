@@ -1,24 +1,17 @@
 package models.obdme;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import models.obdme.Vehicles.Vehicle;
-
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.eclipse.jdt.core.dom.ThisExpression;
-
 import play.data.validation.Email;
-import play.data.validation.Password;
 import play.data.validation.Required;
 import play.db.jpa.Model;
 
@@ -35,7 +28,7 @@ public class User extends Model {
 	
 	@Required
 	@Column(name="passwordhash", nullable=false, length=64)
-	public String passwordhash;
+	transient public String passwordhash;
 	
 	@Required
 	@Column(name="regdate", nullable=false)
@@ -45,9 +38,11 @@ public class User extends Model {
 	
 	/* Persisted Relations */
 	
-	@ManyToMany(fetch=FetchType.EAGER)
-	@JoinTable(name="uservehicle")
-	public Set<Vehicle> vehicles;
+	@ManyToMany
+	@JoinTable(name="user_vehicle",
+			joinColumns={ @JoinColumn(name="user_id") },
+			inverseJoinColumns={ @JoinColumn(name="vehicle_id") })
+	transient public List<Vehicle> vehicles;
 	
 	/* End Persisted Relations */
 	
@@ -94,6 +89,5 @@ public class User extends Model {
 	 */
 	public static User validateUserLogin(String email, String pw) {
 		return find("email like ? and passwordhash like ?", email.toLowerCase(), pw).first();
-	}
-	
+	}	
 }
