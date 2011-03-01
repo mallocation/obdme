@@ -1,6 +1,5 @@
 package controllers.api;
 
-import api.entities.graph.vehicle.GraphEntry;
 import models.obdme.User;
 import models.obdme.Vehicles.Vehicle;
 import play.data.validation.Required;
@@ -23,6 +22,12 @@ public class Vehicles extends Controller {
     	}
     	renderJSON(vehicle);
     }
-
+    
+    public static void getVehiclesForUser(String email) {
+    	User user = User.findByEmail(email);
+    	if (user != null) {
+    		renderJSON(user.vehicles);
+    	}
+    }
 
 }
