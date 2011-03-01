@@ -1,15 +1,13 @@
 package controllers;
 
+import play.db.DB;
 import play.mvc.Controller;
 
 public class Application extends Controller {
-
-//    public static void index() {
-//    	render(ExternalApp.findAll());
-//    }
-//    
-//    public static void addApiKey(String apikey) {
-//    	new ExternalApp("abcd", "abcd").validateAndSave();
-//    }
+	
+	public static void login() {
+		Login.index();
+		
+	}
 
 }
