@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
 
-public class SettingsMenuAccountInfo extends Activity {
+public class AccountInformation extends Activity {
 	
 	/** The title bar. */
 	private TextView titleBar;
@@ -17,7 +17,7 @@ public class SettingsMenuAccountInfo extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-		setContentView(R.layout.settings);
+		setContentView(R.layout.accountinformation);
 		
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
