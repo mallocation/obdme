@@ -13,20 +13,25 @@ GET     /                                       Application.index
 
 #/----------------------BEGIN OBDME API------------------------------------/
 
+
+POST	/api/graph/trips/VIN/{VIN}/email/{email} controllers.api.Trips.createTripForUserByVIN
+
 #Graph
 POST 	/api/graph/vehicles						controllers.api.VehicleGraph.pushVehicleGraphData
 
 
 #Users
-POST	/api/users								controllers.api.Users.createUser
+POST	/api/users 								controllers.api.Users.createUser
 GET		/api/users/{email}/login				controllers.api.Users.validateUserCredentials
 GET		/api/users/{email}						controllers.api.Users.getUser
 
 
 
 #Vehicles
-GET		/api/vehicles/{VIN}						controllers.Vehicles.getVehicleByVIN
-PUT		/api/vehicles							controllers.Vehicles.addVehicle
+GET		/api/vehicles/vin/{VIN}					controllers.api.Vehicles.getVehicleByVIN
+GET		/api/vehicles/user/{email}				controllers.api.Vehicles.getVehiclesForUser
+PUT		/api/vehicles							controllers.api.Vehicles.addVehicle
+
 
 
 
