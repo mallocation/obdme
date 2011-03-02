@@ -210,4 +210,7 @@
 	<string name="vehicle.info.titletext.year">Year:</string>
 	<string name="vehicle.info.titletext.serial">Serial #:</string>
 	
+	<!-- Account Information Page -->
+	<string name="useremail.titletext">Email Address (Username):</string>
+	
 </resources>

@@ -2,5 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-    <TextView android:text="TextView" android:id="@+id/userEmail" android:layout_width="fill_parent" android:layout_height="wrap_content"></TextView>
+    
+    <TextView
+    	android:id="@+id/useremail.titletext"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal"
+    	android:textSize="20dp"
+    	android:paddingTop="5dp">
+    </TextView>
+    
+    <TextView
+    	android:id="@+id/useremail.value"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal"
+    	android:textSize="20dp">
+    </TextView>
+
 </LinearLayout>
