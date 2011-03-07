@@ -1,15 +1,14 @@
 package models.obdme;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import models.obdme.Vehicles.UserVehicle;
 import models.obdme.Vehicles.Vehicle;
 import play.data.validation.Email;
 import play.data.validation.Required;
@@ -19,11 +18,10 @@ import play.db.jpa.Model;
 @Table(name="userbase")
 public class User extends Model {
 	
-	/* Persisted Fields */
-	
+	/* Persisted Fields */	
 	@Email
 	@Required
-	@Column(name="email", unique=true, nullable=false)
+	@Column(name="email", unique=true)
 	public String email;
 	
 	@Required
@@ -31,21 +29,10 @@ public class User extends Model {
 	transient public String passwordhash;
 	
 	@Required
-	@Column(name="regdate", nullable=false)
-	public Date regdate;
-	
+	@Column(name="regdate")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date regdate;	
 	/* End Persisted Fields */
-	
-	/* Persisted Relations */
-	
-	@ManyToMany
-	@JoinTable(name="user_vehicle",
-			joinColumns={ @JoinColumn(name="user_id") },
-			inverseJoinColumns={ @JoinColumn(name="vehicle_id") })
-	transient public List<Vehicle> vehicles;
-	
-	/* End Persisted Relations */
-	
 	
 	/* Default Constructor */
 	public User(){}
@@ -63,6 +50,7 @@ public class User extends Model {
 	 * @return User if the user was created successfully, or null otherwise.
 	 */
 	public static User createUser(String email, String passwordhash) {
+		email = email.trim();
 		User newUser = new User(email, passwordhash);
 		return newUser.validateAndSave() ? newUser : null;
 	}
@@ -89,5 +77,15 @@ public class User extends Model {
 	 */
 	public static User validateUserLogin(String email, String pw) {
 		return find("email like ? and passwordhash like ?", email.toLowerCase(), pw).first();
-	}	
+	}
+	
+	public UserVehicle addVehicleToUser(Vehicle v, String userVehicleAlias) {	
+		UserVehicle uv = new UserVehicle();
+		uv.setUser(this);
+		uv.setVehicle(v);
+		uv.setAlias(userVehicleAlias);
+		this.validateAndSave();
+		uv.validateAndSave();		
+		return uv;	
+	}
 }

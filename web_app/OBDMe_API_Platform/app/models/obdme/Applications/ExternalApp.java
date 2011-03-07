@@ -23,11 +23,11 @@ public class ExternalApp extends Model {
 	/* Persisted Fields */
 	
 	@Required
-	@Column(name="apikey", unique=true, nullable=false)
+	@Column(name="apikey", unique=true)
 	public String apikey;
 
 	@Required
-	@Column(name="name", nullable=false)
+	@Column(name="name")
 	public String name;
 	
 	/* End Persisted Fields */

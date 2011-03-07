@@ -26,7 +26,7 @@ public class VehicleDataset extends Model {
 	
 	@ManyToOne
 	@JoinColumn(name="vehicle_id")
-	Vehicle vehicle;
+	public Vehicle vehicle;
 	
 	public VehicleDataset(Vehicle vehicle, Date timestamp) {
 		this.vehicle = vehicle;

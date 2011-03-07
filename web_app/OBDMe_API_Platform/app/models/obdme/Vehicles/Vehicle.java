@@ -30,16 +30,6 @@ public class Vehicle extends Model {
 	
 	/* End Persisted Fields */
 	
-	/* Persisted Relations */
-	
-	@ManyToMany
-	@JoinTable(name="user_vehicle",
-			joinColumns={ @JoinColumn(name="vehicle_id") },
-			inverseJoinColumns={ @JoinColumn(name="user_id") })
-	transient List<User> owners;
-
-	/* End Persisted Relations */
-	
 	/* Default Constructor */
 	public Vehicle(){}
 	
@@ -66,5 +56,5 @@ public class Vehicle extends Model {
 	public static Vehicle findByVIN(String VIN) {
 		return find("VIN", VIN).first();
 	}
-	
+
 }
