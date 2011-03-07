@@ -30,6 +30,7 @@ GET		/api/users/{email}						controllers.api.Users.getUser
 #Vehicles
 GET		/api/vehicles/vin/{VIN}					controllers.api.Vehicles.getVehicleByVIN
 GET		/api/vehicles/user/{email}				controllers.api.Vehicles.getVehiclesForUser
+PUT		/api/vehicles/vin/{VIN}/user/{email}    controllers.api.Vehicles.addUpdateVehicleOwner
 PUT		/api/vehicles							controllers.api.Vehicles.addVehicle
 
 

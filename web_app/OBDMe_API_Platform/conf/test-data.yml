@@ -1,4 +1,8 @@
-User(u1):
-email: farmboy30@gmail.com
-passwordhash: abcd
-regdate:12/3/2010
+#models.obdme.User(curtis):
+#EMAIL: farmboy30@gmail.com
+#passwordhash: ABACCDAAABACCDD1345678945678909876
+#regdate: 12/3/2010
+
+models.obdme.Applications.ExternalApp(android):
+apikey: abcd
+name: obdme tester
