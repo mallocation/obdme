@@ -30,12 +30,11 @@ public class OBDFramework {
 	 * Instantiates a new oBD framework.
 	 *
 	 * @param context the context
-	 * @param parentELMFramework the parent elm framework
 	 */
-	public OBDFramework(Context context, ELMFramework parentELMFramework) {
+	public OBDFramework(Context context, ELMFramework elmFramework) {
 		
 		//Save a refference to the ELMFramework
-		this.elmFramework = parentELMFramework;
+		this.elmFramework = elmFramework;
 
 		//Initalize a temporary shared preferences object
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

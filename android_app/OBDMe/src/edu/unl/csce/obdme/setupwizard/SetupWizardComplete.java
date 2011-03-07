@@ -1,14 +1,13 @@
 package edu.unl.csce.obdme.setupwizard;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import edu.unl.csce.obdme.OBDMe;
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
  * The Class SetupWizardComplete.
@@ -18,8 +17,8 @@ public class SetupWizardComplete extends Activity {
 	/** The Constant SETUP_COMPLETE_RESULT_OK. */
 	public static final int SETUP_COMPLETE_RESULT_OK = 10;
 	
-	/** The prefs. */
-	private SharedPreferences prefs;
+	/** The app settings. */
+	private AppSettings appSettings;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -29,25 +28,18 @@ public class SetupWizardComplete extends Activity {
 		super.onCreate(savedInstanceState);
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_complete),
 				"Starting the OBDMe Setup Wizard Complete Activity.");
+		
+		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
 
 		//Set the content view
 		setContentView(R.layout.setupwizard_complete);
-		
-		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        
+	        
         Button next = (Button) findViewById(R.id.setupwizard_complete_button_next);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
 			public void onClick(View view) {
             	
-            	//Put the default preferences
-            	SharedPreferences.Editor editor = prefs.edit();
-            	editor.putInt(getResources().getString(R.string.prefs_dataupload), OBDMe.DATA_USAGE_WIFI_AND_NETWORK);
-        		editor.putInt(getResources().getString(R.string.prefs_mode), OBDMe.BASIC_USER_MODE);
-        		editor.putBoolean(getResources().getString(R.string.prefs_englishunits), false);
-        		editor.putBoolean(getResources().getString(R.string.prefs_gps), false);
-				editor.putString(getResources().getString(R.string.prefs_firstrun), "done");
-				editor.commit();
+            	appSettings.setFirstRun(false);
             	
             	//On the button press, backprop to the last activity
             	setResult(Activity.RESULT_OK);

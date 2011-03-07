@@ -23,17 +23,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BluetoothDiscovery.
  */
 public class BluetoothDiscovery extends Activity {
-	
-	/** The Constant DEBUG_TAG. */
-	private static final String DEBUG_TAG = "DeviceListActivity";
-	
-	/** The Constant DEBUG. */
-	private static final boolean DEBUG = true;
 
 	/** The EXTR a_ devic e_ address. */
 	public static String EXTRA_DEVICE_ADDRESS = "device_address";
@@ -116,7 +109,10 @@ public class BluetoothDiscovery extends Activity {
 	 * Do discovery.
 	 */
 	private void doDiscovery() {
-		if (DEBUG) Log.d(DEBUG_TAG, "Executing Bluetooth device discovery");
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_bluetooth_discovery),
+					"Executing Bluetooth device discovery");
+		}
 
 		setProgressBarIndeterminateVisibility(true);
 		setTitle(R.string.btdiscovery_scanning);

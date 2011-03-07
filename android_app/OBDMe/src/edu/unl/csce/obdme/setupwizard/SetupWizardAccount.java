@@ -8,11 +8,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +23,7 @@ import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.api.entities.User;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
  * The Class SetupWizardAccount.
@@ -51,12 +50,13 @@ public class SetupWizardAccount extends Activity {
 
 	/** The web framework. */
 	private ObdMeService webFramework;
-
-	/** The prefs. */
-	private SharedPreferences prefs;
-
+	
 	/** The email reg ex. */
 	private Pattern emailRegEx;
+
+	/** The app settings. */
+	private AppSettings	appSettings;
+
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -66,11 +66,10 @@ public class SetupWizardAccount extends Activity {
 		super.onCreate(savedInstanceState);
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
 		"Starting the OBDMe Account Setup Wizard Activity.");
-
-		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		
 		emailRegEx = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-
 		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
+		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
 
 		setContentView(R.layout.setupwizard_account);
 
@@ -236,12 +235,13 @@ public class SetupWizardAccount extends Activity {
 	 * @param newUserObject the new user object
 	 */
 	public void accountCreationSuccessful(User newUserObject) {
-		//Update the local preference file
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putLong(getResources().getString(R.string.prefs_account_uid), newUserObject.getId());
-		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
-		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
-		editor.commit();
+		
+		EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
+		
+		//Update the local preferences
+		appSettings.setAccountUID(newUserObject.getId());
+		appSettings.setAccountUsername(newUserObject.getEmail());
+		appSettings.setAccountPassword(passwordText.getText().toString());
 		
 		if (busyDialog != null) {
 			busyDialog.dismiss();
@@ -258,12 +258,13 @@ public class SetupWizardAccount extends Activity {
 	 * @param newUserObject the new user object
 	 */
 	public void accountValidationSuccessful(User newUserObject) {
-		//Update the local preference file
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(getResources().getString(R.string.prefs_account_username), newUserObject.getEmail());
-		editor.putLong(getResources().getString(R.string.prefs_account_uid), newUserObject.getId());
-		editor.putString(getResources().getString(R.string.prefs_account_password), newUserObject.getPasswordHash());
-		editor.commit();
+		
+		EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
+		
+		//Update the local preferences
+		appSettings.setAccountUID(newUserObject.getId());
+		appSettings.setAccountUsername(newUserObject.getEmail());
+		appSettings.setAccountPassword(passwordText.getText().toString());
 		
 		if (busyDialog != null) {
 			busyDialog.dismiss();

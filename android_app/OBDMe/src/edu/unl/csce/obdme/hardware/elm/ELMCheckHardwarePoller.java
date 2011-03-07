@@ -3,6 +3,7 @@ package edu.unl.csce.obdme.hardware.elm;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 
 /**
@@ -48,14 +49,13 @@ public class ELMCheckHardwarePoller {
 	 *
 	 * @param context the context
 	 * @param handler the handler
-	 * @param elmFramework the elm framework
 	 */
-	public ELMCheckHardwarePoller(Context context, Handler handler, ELMFramework elmFramework) {
-		messageState = CHECK_HARDWARE_NONE;
-		appHandler = handler;
-		this.elmFramework = elmFramework;
+	public ELMCheckHardwarePoller(Context context, Handler handler) {
+		this.appHandler = handler;
 		this.context = context;
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		this.pollingInterval = 1000;
+		messageState = CHECK_HARDWARE_NONE;
 	}
 	
 	/**
@@ -63,15 +63,14 @@ public class ELMCheckHardwarePoller {
 	 *
 	 * @param context the context
 	 * @param handler the handler
-	 * @param elmFramework the elm framework
 	 * @param pollingInterval the polling interval
 	 */
-	public ELMCheckHardwarePoller(Context context, Handler handler, ELMFramework elmFramework, int pollingInterval) {
-		messageState = CHECK_HARDWARE_NONE;
-		appHandler = handler;
-		this.elmFramework = elmFramework;
+	public ELMCheckHardwarePoller(Context context, Handler handler, int pollingInterval) {
+		this.appHandler = handler;
 		this.context = context;
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		this.pollingInterval = pollingInterval;
+		messageState = CHECK_HARDWARE_NONE;
 	}
 
 	/**

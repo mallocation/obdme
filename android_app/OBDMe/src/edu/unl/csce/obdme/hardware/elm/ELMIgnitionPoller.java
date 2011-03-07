@@ -1,5 +1,6 @@
 package edu.unl.csce.obdme.hardware.elm;
 
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import android.content.Context;
 import android.os.Handler;
@@ -48,14 +49,13 @@ public class ELMIgnitionPoller {
 	 *
 	 * @param context the context
 	 * @param handler the handler
-	 * @param elmFramework the elm framework
 	 */
-	public ELMIgnitionPoller(Context context, Handler handler, ELMFramework elmFramework) {
-		messageState = IGNITION_NONE;
-		appHandler = handler;
-		this.elmFramework = elmFramework;
+	public ELMIgnitionPoller(Context context, Handler handler) {
+		this.appHandler = handler;
 		this.context = context;
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		this.pollingInterval = 1000;
+		messageState = IGNITION_NONE;
 	}
 	
 	/**
@@ -63,15 +63,14 @@ public class ELMIgnitionPoller {
 	 *
 	 * @param context the context
 	 * @param handler the handler
-	 * @param elmFramework the elm framework
 	 * @param pollingInterval the polling interval
 	 */
-	public ELMIgnitionPoller(Context context, Handler handler, ELMFramework elmFramework, int pollingInterval) {
-		messageState = IGNITION_NONE;
-		appHandler = handler;
-		this.elmFramework = elmFramework;
+	public ELMIgnitionPoller(Context context, Handler handler, int pollingInterval) {
+		this.appHandler = handler;
 		this.context = context;
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		this.pollingInterval = pollingInterval;
+		messageState = IGNITION_NONE;
 	}
 
 	/**

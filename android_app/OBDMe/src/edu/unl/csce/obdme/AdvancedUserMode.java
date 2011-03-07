@@ -1,29 +1,27 @@
 package edu.unl.csce.obdme;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
-import edu.unl.csce.obdme.utils.UnitConversion;
+import edu.unl.csce.obdme.utilities.AppSettings;
+import edu.unl.csce.obdme.utilities.UnitConversion;
 
+/**
+ * The Class AdvancedUserMode.
+ */
 public class AdvancedUserMode extends ListActivity{
 	
 	/** The elm framework. */
@@ -35,56 +33,41 @@ public class AdvancedUserMode extends ListActivity{
 	/** The data update thread. */
 	private AdvancedUIDataUpdater dataUpdateThread;
 
-	/** The shared prefs. */
-	private SharedPreferences sharedPrefs;
-
-	/** The context. */
-	private Context context;
-
 	/** The data collector thread. */
 	private DataCollector dataCollectorThread;
 	
-	/** The listview */
+	/** The data list view. */
 	private ListView dataListView;
 	
+	/** The list pid. */
 	private OBDPID listPID;
+	
+	/** The current view. */
 	private Integer currentView;
+
+	/** The app settings. */
+	private AppSettings appSettings;
 	
 	
 	/**
-	 * Instantiates a new basic user mode portrait.
+	 * Instantiates a new advanced user mode.
 	 *
 	 * @param context the context
 	 */
 	public AdvancedUserMode(Context context) {
-
-		this.context = context;
-
-		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
+		this.dataCollectorThread = ((OBDMeApplication)context.getApplicationContext()).getDataCollector();
 
 		dataListView = buildListView(context);
 		
 	}
-
+	
 	/**
-	 * Instantiates a new basic user mode portrait.
+	 * Builds the list view.
 	 *
 	 * @param context the context
-	 * @param dataCollector the data collector
+	 * @return the list view
 	 */
-	public AdvancedUserMode(Context context, DataCollector dataCollector) {
-
-		this.context = context;
-
-		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
-
-		this.dataCollectorThread = dataCollector;
-		
-		dataListView = buildListView(context);
-
-	}
-	
-	
 	private ListView buildListView(Context context) {
 
 		//Get the enabled pollable PIDS
@@ -258,7 +241,7 @@ public class AdvancedUserMode extends ListActivity{
 		unitTextView.setPadding(5, 5, 5, 5);
 
 		//Set the unit text
-		if(this.sharedPrefs.getBoolean(this.context.getResources().getString(R.string.prefs_englishunits), false)) {
+		if(appSettings.isEnglishUnits()) {
 			unitTextView.setText(UnitConversion.getEnglishUnit(pid.getPidUnit()));
 		}
 		else {
@@ -293,22 +276,22 @@ public class AdvancedUserMode extends ListActivity{
 	}
 	
 	/**
-	 * Gets the Data List View.
+	 * Gets the data list view.
 	 *
-	 * @return the dataListView
+	 * @return the data list view
 	 */
 	public ListView getDataListView() {
 		return dataListView;
 	}
 	
 	/**
-	 * The Class BasicUIDataUpdater.
+	 * The Class AdvancedUIDataUpdater.
 	 */
 	private class AdvancedUIDataUpdater extends Thread {
 
 
 		/**
-		 * Instantiates a new basic ui data updater.
+		 * Instantiates a new advanced ui data updater.
 		 */
 		public AdvancedUIDataUpdater() {
 

@@ -169,15 +169,46 @@ public class RootPreferences extends PreferenceActivity {
         uploadPref.setPersistent(true);
         uploadPref.setKey(getResources().getString(R.string.prefs_dataupload));
         
-        uploadPref.setEntries(new String[] {getResources().getString(R.string.menu_prefs_datausage_wifionly), 
+        uploadPref.setEntries(new String[] {
+        		getResources().getString(R.string.menu_prefs_datausage_wifionly), 
         		getResources().getString(R.string.menu_prefs_datausage_phonenetworkonly),
-        		getResources().getString(R.string.menu_prefs_datausage_wifiandphonenetwork)});
+        		getResources().getString(R.string.menu_prefs_datausage_wifiandphonenetwork),
+        		getResources().getString(R.string.menu_prefs_datausage_never)});
         
-        uploadPref.setEntryValues(new String[] {Integer.toString(OBDMe.DATA_USAGE_WIFI_ONLY), 
+        uploadPref.setEntryValues(new String[] {
+        		Integer.toString(OBDMe.DATA_USAGE_WIFI_ONLY), 
         		Integer.toString(OBDMe.DATA_USAGE_NETWORK_ONLY),
-        		Integer.toString(OBDMe.DATA_USAGE_WIFI_AND_NETWORK)});
+        		Integer.toString(OBDMe.DATA_USAGE_WIFI_AND_NETWORK),
+        		Integer.toString(OBDMe.DATA_USAGE_NEVER)});
         
         applicationCategory.addPreference(uploadPref);
+        
+        //Collection Frequescy options
+        IntegerListPreference freqPref = new IntegerListPreference(this);
+        freqPref.setTitle(getResources().getString(R.string.menu_prefs_frequency_title));
+        freqPref.setSummary(getResources().getString(R.string.menu_prefs_frequency_summary));
+        freqPref.setDialogTitle(getResources().getString(R.string.menu_prefs_frequency_dialog_title));
+        
+        freqPref.setPersistent(true);
+        freqPref.setKey(getResources().getString(R.string.prefs_frequency));
+        
+        freqPref.setEntries(new String[] {
+        		getResources().getString(R.string.menu_prefs_frequency_nolimit), 
+        		getResources().getString(R.string.menu_prefs_frequency_onesecond),
+        		getResources().getString(R.string.menu_prefs_frequency_twoseconds),
+        		getResources().getString(R.string.menu_prefs_frequency_fiveseconds),
+        		getResources().getString(R.string.menu_prefs_frequency_tenseconds),
+        		getResources().getString(R.string.menu_prefs_frequency_fifteenseconds)});
+        
+        freqPref.setEntryValues(new String[] {
+        		Integer.toString(0), 
+        		Integer.toString(1000),
+        		Integer.toString(2000),
+        		Integer.toString(5000),
+        		Integer.toString(10000),
+        		Integer.toString(15000)});
+        
+        applicationCategory.addPreference(freqPref);
        
         //English/Metric option
         CheckBoxPreference unitsPref = new CheckBoxPreference(this);

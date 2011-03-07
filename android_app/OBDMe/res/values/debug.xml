@@ -12,6 +12,7 @@
 
 	<!-- Debug tags for the Bluetooth Service -->
 	<string name="debug.tag.service.bluetooth">OBDMeBluetoothService</string>
+	<string name="debug.tag.bluetooth.discovery">OBDMeBluetoothDiscovery</string>
 
 	<!-- Debug tags for the Setup Wizard -->
 	<string name="debug.tag.setupwizard.main">OBDMeSetupWizardMain</string>
@@ -35,4 +36,5 @@
 	<string name="debug.tag.databasewriter">DatabaseWriterThread</string>
 	<string name="debug.tag.datauploader">DataUploader</string>
 	<string name="debug.tag.datauploaderthread">DataUploaderThread</string>
+	<string name="debug.tag.gpsservice">GPSService</string>
 </resources>

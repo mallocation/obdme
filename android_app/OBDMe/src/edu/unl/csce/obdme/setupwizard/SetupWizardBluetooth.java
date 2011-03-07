@@ -7,11 +7,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +21,7 @@ import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothDiscovery;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
-import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
  * The Class SetupWizardBluetooth.
@@ -50,10 +48,7 @@ public class SetupWizardBluetooth extends Activity {
 
 	/** The bluetooth service. */
 	private BluetoothService bluetoothService = null;
-
-	/** The prefs. */
-	private SharedPreferences prefs;
-
+	
 	/** The connect dialog. */
 	private ProgressDialog connectDialog;
 
@@ -63,8 +58,8 @@ public class SetupWizardBluetooth extends Activity {
 	/** The ch dialog. */
 	private ProgressDialog chDialog;
 
-	/** The elm framework. */
-	private ELMFramework elmFramework;
+	/** The app settings. */
+	private AppSettings appSettings;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -75,13 +70,9 @@ public class SetupWizardBluetooth extends Activity {
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
 		"Starting the OBDMe Setup Wizard Bluetooth Activity.");
 
-		//Load the App Pref DB
-		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
+		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
+		
 		setContentView(R.layout.setupwizard_bluetooth);
-
-		//Intent intent = new Intent(getBaseContext(), BluetoothAndroidService.class);
-		//startService(intent);
 
 		//Setup the button on-click listener
 		Button next = (Button) findViewById(R.id.setupwizard_bluetooth_button);
@@ -285,7 +276,7 @@ public class SetupWizardBluetooth extends Activity {
 		//Start the Bluetooth service for communication with the device
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		bluetoothService.setAppHandler(eventHandler);
-		BluetoothDevice device = bluetoothAdapter.getRemoteDevice(prefs.getString(getResources().getString(R.string.prefs_bluetooth_device), null)); 
+		BluetoothDevice device = bluetoothAdapter.getRemoteDevice(appSettings.getBluetoothDeviceAddress()); 
 
 		//Request a connection to device
 		bluetoothService.connect(device);
@@ -295,8 +286,7 @@ public class SetupWizardBluetooth extends Activity {
 	 * Check hardware version.
 	 */
 	protected void checkHardwareVersion() {
-		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, elmFramework, 2000);
+		chPoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, 2000);
 		chPoller.startPolling();
 	}
 
@@ -321,9 +311,7 @@ public class SetupWizardBluetooth extends Activity {
 				.getString(BluetoothDiscovery.EXTRA_DEVICE_ADDRESS);
 
 				//Save the device address to prefs for later
-				SharedPreferences.Editor editor = prefs.edit();
-				editor.putString(getResources().getString(R.string.prefs_bluetooth_device), address);
-				editor.commit();
+				appSettings.setBluetoothDeviceAddress(address);
 
 				//Update the view
 				SETUP_STATE = 3;

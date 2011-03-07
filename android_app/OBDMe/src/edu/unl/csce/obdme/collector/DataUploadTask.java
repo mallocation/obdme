@@ -1,17 +1,21 @@
 package edu.unl.csce.obdme.collector;
 
 import java.util.Date;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.util.Log;
+import edu.unl.csce.obdme.OBDMe;
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.api.entities.graph.vehicles.GraphEntry;
 import edu.unl.csce.obdme.api.entities.graph.vehicles.GraphPoint;
 import edu.unl.csce.obdme.api.entities.graph.vehicles.GraphPush;
 import edu.unl.csce.obdme.database.OBDMeDatabaseHelper;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
  * The Class DataUploadTask.
@@ -27,20 +31,23 @@ public class DataUploadTask implements Runnable {
 	/** The web framework. */
 	private ObdMeService webFramework;
 
+	/** The data upload handler. */
 	private Handler dataUploadHandler;
+	
+	/** The app settings. */
+	private AppSettings appSettings;
 
 	/**
 	 * Instantiates a new data upload task.
 	 *
 	 * @param context the context
-	 * @param webFramework the web framework
-	 * @param dataUploadHander 
+	 * @param dataUploadHander the data upload hander
 	 */
-	public DataUploadTask(Context context, ObdMeService webFramework, Handler dataUploadHander) {
-
+	public DataUploadTask(Context context, Handler dataUploadHander) {
 		this.context = context;
 		this.dataUploadHandler = dataUploadHander;
-		this.webFramework = webFramework;
+		this.webFramework = ((OBDMeApplication)context.getApplicationContext()).getWebFramework();
+		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
 
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
@@ -53,105 +60,114 @@ public class DataUploadTask implements Runnable {
 	 */
 	public void run() {
 
-		//Try to get a writable database handle
-		try {
-			OBDMeDatabaseHelper dbh = new OBDMeDatabaseHelper(context);
-			this.sqldb = dbh.getWritableDatabase();
-		} catch (Exception e) {
+		//If the user does not want to upload data, then dont
+		if (appSettings.getDataUpload() != OBDMe.DATA_USAGE_NEVER) {
 
-			//Failed... Print of the error.
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-						"Could not get writable database: " + e.getMessage());
+			//Try to get a writable database handle
+			try {
+				OBDMeDatabaseHelper dbh = new OBDMeDatabaseHelper(context);
+				this.sqldb = dbh.getWritableDatabase();
+			} catch (Exception e) {
+
+				//Failed... Print of the error.
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.e(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+							"Could not get writable database: " + e.getMessage());
+				}
 			}
-		}
 
-		//If logging is enabled, print a nice message that we are starting a graph push
-		if(context.getResources().getBoolean(R.bool.debug)) {
-			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-			"Starting a graph push");
-		}
+			//If logging is enabled, print a nice message that we are starting a graph push
+			if(context.getResources().getBoolean(R.bool.debug)) {
+				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+				"Starting a graph push");
+			}
 
-		//Get the first rows from the database 
-		Cursor queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
-				null, null, null, null, null, null, 
-				Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
+			//Get the first rows from the database 
+			Cursor queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
+					null, null, null, null, null, null, 
+					Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
 
-		StringBuffer sb = new StringBuffer();
+			StringBuffer sb = new StringBuffer();
 
-		//If we are ready to upload (requirements met)
-		if(checkIfReadyForUpload(queryResults)) {
+			//If we are ready to upload (requirements met)
+			if(checkIfReadyForUpload(queryResults)) {
 
-			//Make a new graph push object
-			GraphPush graphPush = new GraphPush();
+				//Make a new graph push object
+				GraphPush graphPush = new GraphPush();
 
-			//Move to the first row of the query
-			queryResults.moveToFirst();
+				//Move to the first row of the query
+				queryResults.moveToFirst();
 
-			do {
+				do {
 
-				//Make a new graph entry
-				GraphEntry graphEntry = new GraphEntry();
+					//Make a new graph entry
+					GraphEntry graphEntry = new GraphEntry();
 
-				//For all the columns
-				for (int i = 0; i < queryResults.getColumnCount(); i++) {
+					//For all the columns
+					for (int i = 0; i < queryResults.getColumnCount(); i++) {
 
-					//If the cell is not empty
-					if (!queryResults.isNull(i)) {
+						//If the cell is not empty
+						if (!queryResults.isNull(i)) {
 
-						//Get the column name
-						String columnName = queryResults.getColumnName(i);
+							//Get the column name
+							String columnName = queryResults.getColumnName(i);
 
-						if (columnName.equals(OBDMeDatabaseHelper.TABLE_KEY)) {
-							sb.append(Integer.toString(queryResults.getInt(i)) + ",");
-						}
+							if (columnName.equals(OBDMeDatabaseHelper.TABLE_KEY)) {
+								sb.append(Integer.toString(queryResults.getInt(i)) + ",");
+							}
 
-						//If the column contains PID data
-						if (columnName.contains("data_")) {
-							String modeHex = columnName.substring(5,7);
-							String pidHex = columnName.substring(7);
-							graphEntry.getPoints().add(new GraphPoint(modeHex, pidHex, queryResults.getString(i)));
-						}
+							//If the column contains PID data
+							if (columnName.contains("data_")) {
+								String modeHex = columnName.substring(5,7);
+								String pidHex = columnName.substring(7);
+								graphEntry.getPoints().add(new GraphPoint(modeHex, pidHex, queryResults.getString(i)));
+							}
 
-						//Otherwise if the column is the timestamp
-						else if (columnName.equals("timestamp")) {
-							graphEntry.setTimestamp(new Date(queryResults.getString(i)));
-						}
+							//Otherwise if the column is the timestamp
+							else if (columnName.equals("timestamp")) {
+								graphEntry.setTimestamp(new Date(queryResults.getString(i)));
+							}
 
-						//Otherwise if the column is the VIN
-						else if (columnName.equals("vin")) {
-							graphEntry.setVIN(queryResults.getString(i));
-						}
-					}	
+							//Otherwise if the column is the VIN
+							else if (columnName.equals("vin")) {
+								graphEntry.setVIN(queryResults.getString(i));
+							}
+						}	
+					}
+
+					//Add the graph entry to the graph push
+					graphPush.getEntries().add(graphEntry);
+
+					//While there are still rows, continue
+				} while(queryResults.moveToNext());
+
+				sb.deleteCharAt(sb.length()-1);
+
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+					"Pushing a graph to the web service");
 				}
 
-				//Add the graph entry to the graph push
-				graphPush.getEntries().add(graphEntry);
+				//Send the graph push to the vehicle graph service
+				webFramework.getVehicleGraphService().pushVehicleGraphData(graphPush, dataUploadHandler);	
 
-				//While there are still rows, continue
-			} while(queryResults.moveToNext());
+				int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
 
-			sb.deleteCharAt(sb.length()-1);
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+							"Datasets removed from the database: " + affectedRows);
+				}
 
+				//Close the connection, we're done.
+				queryResults.close();
+				sqldb.close();
+			}
+		}
+		else {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-				"Pushing a graph to the web service");
+						"Skipping upload, the user has specified that they do not want to upload data.");
 			}
-
-			//Send the graph push to the vehicle graph service
-			webFramework.getVehicleGraphService().pushVehicleGraphData(graphPush, dataUploadHandler);	
-
-			int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
-			
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-						"Datasets removed from the database: " + affectedRows);
-			}
-
-			//Close the connection, we're done.
-			queryResults.close();
-			sqldb.close();
-			
 		}
 	}
 
@@ -168,7 +184,7 @@ public class DataUploadTask implements Runnable {
 
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-						"There is not enough data in the database to batch upload. Quit.");
+				"There is not enough data in the database to batch upload. Quit.");
 			}
 
 			//Return false

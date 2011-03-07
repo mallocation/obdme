@@ -1,4 +1,4 @@
-package edu.unl.csce.obdme.utils;
+package edu.unl.csce.obdme.utilities;
 
 import java.security.MessageDigest;
 

@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -21,7 +19,8 @@ import android.widget.ViewFlipper;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.obd.OBDPID;
-import edu.unl.csce.obdme.utils.UnitConversion;
+import edu.unl.csce.obdme.utilities.AppSettings;
+import edu.unl.csce.obdme.utilities.UnitConversion;
 
 /**
  * The Class BasicUserModePortrait.
@@ -43,18 +42,16 @@ public class BasicUserModePortrait {
 	/** The data update thread. */
 	private BasicUIDataUpdater dataUpdateThread;
 
-	/** The shared prefs. */
-	private SharedPreferences sharedPrefs;
-
-	/** The context. */
-	private Context context;
-
 	/** The data collector thread. */
 	private DataCollector dataCollectorThread;
 
 	/** The custom font. */
 	private Typeface customFont;
 
+	/** The app settings. */
+	private AppSettings appSettings;
+
+	private Context context;
 
 
 	/**
@@ -63,42 +60,13 @@ public class BasicUserModePortrait {
 	 * @param context the context
 	 */
 	public BasicUserModePortrait(Context context) {
-
 		this.context = context;
-
-		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
+		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
+		this.dataCollectorThread = ((OBDMeApplication)context.getApplicationContext()).getDataCollector();
 		this.customFont = Typeface.createFromAsset(context.getAssets(), "LCD.ttf");  
 
 		//Build the view flipper
-		flipper = buildViewFlipper(context);
-
-		//Set the default animations (timer controlled)
-		flipper.setInAnimation(inFromRightAnimation(false));
-		flipper.setOutAnimation(outToLeftAnimation(false));
-
-		//Set the default flip interval
-		this.flipInterval = 5000;
-		flipper.setFlipInterval(flipInterval);
-		flipper.startFlipping();
-
-	}
-
-	/**
-	 * Instantiates a new basic user mode portrait.
-	 *
-	 * @param context the context
-	 * @param dataCollector the data collector
-	 */
-	public BasicUserModePortrait(Context context, DataCollector dataCollector) {
-
-		this.context = context;
-
-		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context.getApplicationContext());
-
-		this.dataCollectorThread = dataCollector;
-
-		//Build the view flipper
-		flipper = buildViewFlipper(context);
+		flipper = buildViewFlipper();
 
 		//Set the default animations (timer controlled)
 		flipper.setInAnimation(inFromRightAnimation(false));
@@ -117,9 +85,13 @@ public class BasicUserModePortrait {
 	 * @param flipInterval the flip interval
 	 */
 	public BasicUserModePortrait(Context context, int flipInterval) {
+		this.context = context;
+		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
+		this.dataCollectorThread = ((OBDMeApplication)context.getApplicationContext()).getDataCollector();
+		this.customFont = Typeface.createFromAsset(context.getAssets(), "LCD.ttf");  
 
 		//Build the view flipper
-		flipper = buildViewFlipper(context);
+		flipper = buildViewFlipper();
 
 		//Set the default animations (timer controlled)
 		flipper.setInAnimation(inFromRightAnimation(false));
@@ -137,7 +109,7 @@ public class BasicUserModePortrait {
 	 * @param context the context
 	 * @return the view flipper
 	 */
-	private ViewFlipper buildViewFlipper(Context context) {
+	private ViewFlipper buildViewFlipper() {
 
 		//Get the enabled pollable PIDS
 		elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
@@ -174,14 +146,14 @@ public class BasicUserModePortrait {
 						lowerPID = elmFramework.getConfiguredPID(currentMode, pidIrt.next());
 
 						//Create a 2 PID view and add it to the flipper
-						rootFlipper.addView(buildEnabledView(context, upperPID, lowerPID, currentView));
+						rootFlipper.addView(buildEnabledView(upperPID, lowerPID, currentView));
 					}
 
 					//Otherwise there is only one PID left in the iterator
 					else {
 
 						//Add a view with only one PID shown
-						rootFlipper.addView(buildEnabledView(context, upperPID, currentView));
+						rootFlipper.addView(buildEnabledView(upperPID, currentView));
 					}
 				}
 				currentView = new Integer(currentView+1);
@@ -201,7 +173,7 @@ public class BasicUserModePortrait {
 	 * @param currentView the current view
 	 * @return the view
 	 */
-	private View buildEnabledView(Context context, OBDPID upperPID, OBDPID lowerPID, Integer currentView) {
+	private View buildEnabledView(OBDPID upperPID, OBDPID lowerPID, Integer currentView) {
 
 		//Initialize the Linear layout for this view and set the parameters
 		LinearLayout rootLinearLayout = new LinearLayout(context);
@@ -211,12 +183,12 @@ public class BasicUserModePortrait {
 		rootLinearLayout.setGravity(Gravity.CENTER_VERTICAL);
 
 		//Add the upper title and value TextView objects to this linear layout
-		rootLinearLayout.addView(buildTitleView(context, upperPID));
-		rootLinearLayout.addView(buildValueView(context, upperPID, currentView));
+		rootLinearLayout.addView(buildTitleView(upperPID));
+		rootLinearLayout.addView(buildValueView(upperPID, currentView));
 
 		//Add the lower title and value TextView objects to this linear layout
-		rootLinearLayout.addView(buildTitleView(context, lowerPID));
-		rootLinearLayout.addView(buildValueView(context, lowerPID, currentView));
+		rootLinearLayout.addView(buildTitleView(lowerPID));
+		rootLinearLayout.addView(buildValueView(lowerPID, currentView));
 
 		//Return this single view object
 		return rootLinearLayout;
@@ -231,7 +203,7 @@ public class BasicUserModePortrait {
 	 * @param currentView the current view
 	 * @return the view
 	 */
-	private View buildEnabledView(Context context, OBDPID singlePID, Integer currentView) {
+	private View buildEnabledView(OBDPID singlePID, Integer currentView) {
 
 		//Initialize the Linear layout for this view and set the parameters
 		LinearLayout rootLinearLayout = new LinearLayout(context);
@@ -241,8 +213,8 @@ public class BasicUserModePortrait {
 		rootLinearLayout.setGravity(Gravity.CENTER);
 
 		//Add the upper title and value TextView objects to this linear layout
-		rootLinearLayout.addView(buildTitleView(context, singlePID));
-		rootLinearLayout.addView(buildValueView(context, singlePID, currentView));
+		rootLinearLayout.addView(buildTitleView(singlePID));
+		rootLinearLayout.addView(buildValueView(singlePID, currentView));
 
 		//Return this single view object
 		return rootLinearLayout;
@@ -256,7 +228,7 @@ public class BasicUserModePortrait {
 	 * @param pid the pid
 	 * @return the text view
 	 */
-	private TextView buildTitleView(Context context, OBDPID pid) {
+	private TextView buildTitleView(OBDPID pid) {
 
 		//Initialize the title TextView and set the parameters
 		TextView titleTextView = new TextView(context);
@@ -304,7 +276,7 @@ public class BasicUserModePortrait {
 	 * @param currentView the current view
 	 * @return the linear layout
 	 */
-	private LinearLayout buildValueView(Context context, OBDPID pid, Integer currentView) {
+	private LinearLayout buildValueView(OBDPID pid, Integer currentView) {
 
 		//Initialize the value LinearLayout and set the parameters
 		LinearLayout valueLinearLayout = new LinearLayout(context);
@@ -326,7 +298,7 @@ public class BasicUserModePortrait {
 		valueTextView.setPadding(5, 5, 5, 65);
 
 		//If the constructor was passed a data collector thread, set the values from that
-		if (dataCollectorThread != null) {
+		if (dataCollectorThread.getPollerState() == DataCollector.COLLECTOR_POLLING) {
 			valueTextView.setText(this.dataCollectorThread.getCurrentData(pid.getParentMode(),pid.getPidHex()));
 		}
 
@@ -354,7 +326,7 @@ public class BasicUserModePortrait {
 		unitTextView.setPadding(5, 5, 5, 5);
 
 		//Set the unit text
-		if(this.sharedPrefs.getBoolean(this.context.getResources().getString(R.string.prefs_englishunits), false)) {
+		if(appSettings.isEnglishUnits()) {
 			unitTextView.setText(UnitConversion.getEnglishUnit(pid.getPidUnit()));
 		}
 		else {
@@ -596,8 +568,6 @@ public class BasicUserModePortrait {
 			int currentView = flipper.indexOfChild(flipper.getCurrentView());
 			for(String entry : valuesMaps.get(currentView).keySet()) {
 				valuesMaps.get(currentView).get(entry).setText(collectorThread.getCurrentData(entry));
-				valuesMaps.get(currentView).get(entry).setTextColor(
-						context.getResources().getColor(android.R.color.white));
 			}
 		}
 

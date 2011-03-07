@@ -2,6 +2,7 @@ package edu.unl.csce.obdme.hardware.elm;
 
 import android.content.Context;
 import android.util.Log;
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.bluetooth.BluetoothServiceRequestMaxRetriesException;
@@ -57,13 +58,12 @@ public class ELMFramework {
 	 * Instantiates a new eLM framework.
 	 *
 	 * @param context the context
-	 * @param bluetoothService the bluetooth service
 	 */
-	public ELMFramework(Context context, BluetoothService bluetoothService) {
+	public ELMFramework(Context context) {
 
-		//Save a refference to our services
-		this.bluetoothService = bluetoothService;
+		//Save a reference to our services
 		this.context = context;
+		this.bluetoothService = ((OBDMeApplication)context.getApplicationContext()).getBluetoothService();
 
 		//Set the initial state of the ELMFramework
 		this.connectionInit = false;
@@ -76,87 +76,6 @@ public class ELMFramework {
 
 		//Create a new OBD Framework
 		this.obdFramework = new OBDFramework(context, this);
-	}
-
-	/**
-	 * Send obd request.
-	 *
-	 * @param request the request
-	 * @return the oBD response
-	 * @throws Exception the exception
-	 */
-	public synchronized OBDResponse sendOBDRequest(OBDRequest request) throws Exception {
-
-
-		//Initalize the response
-		OBDResponse response = null;
-
-		//Initialize the number of retries
-		int retries = 0;
-
-		try {
-			//Write the request 
-			do {
-				//Send the formatted request to the bluetooth service
-				bluetoothService.write(request.toString());
-
-				//Parse the response from the bluetooth service
-				try {
-					response = new OBDResponse(context, request, bluetoothService.getResponseFromQueue());
-				} catch (BluetoothServiceRequestTimeoutException e) {
-					if(context.getResources().getBoolean(R.bool.debug)) {
-						Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
-						"Bluetooth Timeout Exception waiting for response from the device: " );
-					}
-
-					retries++;
-				}
-
-			} while (response == null && retries <= MAXIMUM_REQUEST_RETRIES);
-
-			//If we reached our maximum number of retries... 
-			if(retries >= MAXIMUM_REQUEST_RETRIES) {
-				if(context.getResources().getBoolean(R.bool.debug)) {
-					Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
-							"Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid() 
-							+ ".  There is most likely something wrong with the bluetooth connection.  Throwing an exception to the caller.");
-				}
-				throw new BluetoothServiceRequestMaxRetriesException("Maximum request retries reached for Mode " + request.getMode() + " PID " + request.getPid());
-			}
-
-		} catch (ELMDeviceNoDataException dnde) {
-			//This most likely means that the PID is not supported.
-			//For safetey's sake, we are going to disable it.
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
-						"ELM Device is indicating no data for Mode " + request.getMode() + " PID " + request.getPid() 
-						+ ".  Disabling this PID for now");
-			}
-			getObdFramework().getConfiguredProtocol().get(request.getMode())
-			.getPID(request.getPid()).setCollected(false);
-
-		} catch (ELMUnableToConnectException utce) {
-
-			//Unable to connect exception
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
-						"ELM Device is indicating that it is unable to connect.  The car is most likely off." +
-				"  Throwing an exception to the caller.");
-			}
-
-			throw new ELMUnableToConnectException(utce.getMessage());
-
-		} catch (ELMException elme) {
-
-			//General ELM Exception, do not take any actions.
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.e(context.getResources().getString(R.string.debug_tag_elmframework),
-						"ELM Device is indicating no data for Mode " + request.getMode() + " PID " + request.getPid() 
-						+ ".  Not taking any actions");
-			}
-		}
-
-		return response;
 	}
 
 	/**

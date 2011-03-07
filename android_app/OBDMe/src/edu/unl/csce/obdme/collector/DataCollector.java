@@ -8,11 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import edu.unl.csce.obdme.OBDMe;
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.bluetooth.BluetoothServiceRequestMaxRetriesException;
 import edu.unl.csce.obdme.hardware.elm.ELMDeviceNoDataException;
@@ -20,7 +20,8 @@ import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMUnableToConnectException;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
-import edu.unl.csce.obdme.utils.UnitConversion;
+import edu.unl.csce.obdme.utilities.AppSettings;
+import edu.unl.csce.obdme.utilities.UnitConversion;
 
 /**
  * The Class DataCollector.
@@ -51,8 +52,8 @@ public class DataCollector {
 	/** The current data queue. */
 	private ConcurrentLinkedQueue<HashMap<String, String>> currentDataQueue;
 
-	/** The shared prefs. */
-	private SharedPreferences sharedPrefs;
+	/** The app settings. */
+	private AppSettings appSettings;
 
 	/** The Constant STATE_CHANGE. */
 	public static final int STATE_CHANGE = 738264738;
@@ -80,16 +81,13 @@ public class DataCollector {
 	 *
 	 * @param context the context
 	 * @param handler the handler
-	 * @param elmFramework the elm framework
 	 */
-	public DataCollector(Context context, Handler handler, ELMFramework elmFramework) {
-		messageState = COLLECTOR_NONE;
-		appHandler = handler;
-		this.elmFramework = elmFramework;
+	public DataCollector(Context context, Handler handler) {
+		this.appHandler = handler;
 		this.context = context;
-
-		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
+		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
+		
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 			"Initializing the DataCollector.");
@@ -98,29 +96,28 @@ public class DataCollector {
 		currentData = new ConcurrentHashMap<String, String>();
 		currentDataQueue = new ConcurrentLinkedQueue<HashMap<String, String>>();
 
+		messageState = COLLECTOR_NONE;
 	}
 
 	/**
 	 * Instantiates a new data collector.
 	 *
 	 * @param context the context
-	 * @param elmFramework the elm framework
 	 */
-	public DataCollector(Context context, ELMFramework elmFramework) {
-		messageState = COLLECTOR_NONE;
-		this.elmFramework = elmFramework;
+	public DataCollector(Context context) {
 		this.context = context;
-
-		this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
+		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
 
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 			"Initializing the DataCollector.");
 		}
-
+		
 		currentData = new ConcurrentHashMap<String, String>();
 		currentDataQueue = new ConcurrentLinkedQueue<HashMap<String, String>>();
 
+		messageState = COLLECTOR_NONE;
 	}
 
 	/**
@@ -367,9 +364,7 @@ public class DataCollector {
 
 							//If the collection is paused, Loop for a while
 							while(collectionPaused) {
-								//Loop-de-loop
 								SystemClock.sleep(2000);
-								//wEEEEEEEEEEEEEEEEE.
 							}
 
 							//Make the request for the current pollable and enabled mode and PID
@@ -390,7 +385,7 @@ public class DataCollector {
 												modeHex, currentPID).getDecimalFormat().format(responseDouble));
 
 										//If we need to convert to English units
-										if(sharedPrefs.getBoolean(context.getResources().getString(R.string.prefs_englishunits), false)) {
+										if(appSettings.isEnglishUnits()) {
 											responseDouble = UnitConversion.convertToEnglish(elmFramework.getConfiguredPID(modeHex, currentPID)
 													.getPidUnit(), responseDouble);
 										}
@@ -478,24 +473,41 @@ public class DataCollector {
 
 						//Who the fuck knows what caused this...
 						catch (Exception e) {
-							e.printStackTrace();
+							if(context.getResources().getBoolean(R.bool.debug)) {
+								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+										"There was a general exception", e);
+							}
 						}
 
 
 					}
 				}
-				
+
 				//Record the timestamp
 				currentDataForQueue.put("timestamp", new Date().toString());
-				
-				//Record the VIN
-				currentDataForQueue.put("vin", sharedPrefs.getString(context.getResources().getString(R.string.prefs_account_vin), null));
 
-				//Add the current collection to the queue
-				putCurrentDataSet(currentDataForQueue);
+				//Record the VIN
+				currentDataForQueue.put("vin", appSettings.getAccountVIN());
+
+				//If the user does not want to upload data, then dont collect it.
+				if (appSettings.getDataUpload() != OBDMe.DATA_USAGE_NEVER) {
+					//Add the current collection to the queue
+					putCurrentDataSet(currentDataForQueue);
+				}
 
 				//Tell the GUI app that we have new data to update the screen with
 				setDataChange(COLLECTOR_NEW_DATA);
+
+				//If the sleep frequency was defined
+				int frequency;
+				if ((frequency = appSettings.getCollectionFrequency()) > 0) {
+					//Sleep for the defined frequency
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+								"Sleeping the collector for " + frequency + " seconds.");
+					}
+					SystemClock.sleep(frequency);
+				}
 
 			}
 
@@ -508,7 +520,7 @@ public class DataCollector {
 		public synchronized void cancel(){
 			continuePolling = false;
 			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
+				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 				"Cancel Polling");
 			}
 		}
@@ -519,7 +531,7 @@ public class DataCollector {
 		public synchronized void pause(){
 			collectionPaused = true;
 			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.d(context.getResources().getString(R.string.debug_tag_elmframework_acpoller),
+				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 				"Pausing Polling");
 			}
 		}

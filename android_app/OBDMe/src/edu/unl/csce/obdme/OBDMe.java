@@ -8,12 +8,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -23,14 +21,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
-import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 import edu.unl.csce.obdme.settingsmenu.RootPreferences;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
  * The Class OBDMe.
@@ -39,10 +36,7 @@ public class OBDMe extends Activity {
 
 	/** The bluetooth service. */
 	private BluetoothService bluetoothService;
-
-	/** The elm framework. */
-	private ELMFramework elmFramework;
-
+	
 	/** The hardware poller. */
 	private ELMCheckHardwarePoller hardwarePoller;
 
@@ -72,9 +66,9 @@ public class OBDMe extends Activity {
 	
 	/** The Constant DATA_USAGE_WIFI_AND_NETWORK. */
 	public static final int DATA_USAGE_WIFI_AND_NETWORK = 2;
-
-	/** The shared prefs. */
-	private SharedPreferences sharedPrefs;
+	
+	/** The Constant DATA_USAGE_NEVER. */
+	public static final int DATA_USAGE_NEVER = 3;
 
 	/** The ui. */
 	private Object theUI;
@@ -87,9 +81,9 @@ public class OBDMe extends Activity {
 
 	/** The connection status. */
 	private boolean connectionStatus;
-
-	/** The web framework. */
-	private ObdMeService webFramework;
+	
+	/** The app settings. */
+	private AppSettings appSettings;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -103,42 +97,34 @@ public class OBDMe extends Activity {
 		//Get all the singletons from the application context
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		collectorThread = ((OBDMeApplication)getApplication()).getDataCollector();
-		elmFramework = ((OBDMeApplication)getApplication()).getELMFramework();
-		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
-		
-		//Get the shared preferences
-		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
 
-		setConfiguredView();
+		setConfiguredView();		
+		checkAccountStatus();
 		
-		setDataUsage();
-		
-		//checkAccountStatus();
-		
-		
-		//If the bluetooth thread is already connected (from the setup wizard)
-		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
-			
-			//Dont show the connection status screen
-			this.connectionStatus = false;
-		}
-		
-		//Otherwise, we need to set up a connection with the device
-		else {
-			this.connectionStatus = true;
-		}
-
-		//If we need to set up a connection
-		if (this.connectionStatus) {
-			
-			//Start the connection routine
-			checkBluetoothEnabled();
-		}
-		
-		//Otherwise set the configured data view
-		else {
-			setConfiguredView();
-		}
+//		//If the bluetooth thread is already connected (from the setup wizard)
+//		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+//			
+//			//Dont show the connection status screen
+//			this.connectionStatus = false;
+//		}
+//		
+//		//Otherwise, we need to set up a connection with the device
+//		else {
+//			this.connectionStatus = true;
+//		}
+//
+//		//If we need to set up a connection
+//		if (this.connectionStatus) {
+//			
+//			//Start the connection routine
+//			checkBluetoothEnabled();
+//		}
+//		
+//		//Otherwise set the configured data view
+//		else {
+//			setConfiguredView();
+//		}
 
 		//Set up a new gesture detector for swipes
 		gestureDetector = new GestureDetector(new FlingGestureDetector());
@@ -151,9 +137,9 @@ public class OBDMe extends Activity {
 	private void checkAccountStatus() {
 		
 		//Send the request to the webservice to get this users credentials
-		webFramework.getUsersService().validateUserCredentials(
-				this.sharedPrefs.getString(getResources().getString(R.string.prefs_account_username), "none"), 
-				this.sharedPrefs.getString(getResources().getString(R.string.prefs_account_password), "none"), 
+		((OBDMeApplication)getApplication()).getWebFramework().getUsersService().validateUserCredentials(
+				appSettings.getAccountUsername(),
+				appSettings.getAccountPassword(),
 				getAccountCredentialsHandler);
 		
 	}
@@ -170,7 +156,7 @@ public class OBDMe extends Activity {
 		case Configuration.ORIENTATION_PORTRAIT:
 
 			//Switch on the user preferred mode
-			switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+			switch(appSettings.getDisplayMode()) {
 
 			case OBDMe.BASIC_USER_MODE:
 				this.theUI = new BasicUserModePortrait(this);
@@ -184,9 +170,7 @@ public class OBDMe extends Activity {
 
 				//If it doesn't exist or is invalid, reset
 			default:
-				SharedPreferences.Editor prefEditor = this.sharedPrefs.edit();
-				prefEditor.putInt(getResources().getString(R.string.prefs_mode), OBDMe.BASIC_USER_MODE);
-				prefEditor.commit();
+				appSettings.setDisplayMode(OBDMe.BASIC_USER_MODE);
 				this.theUI = new BasicUserModePortrait(this);
 				setContentView(((BasicUserModePortrait) this.theUI).getFlipper());
 				break;
@@ -198,7 +182,7 @@ public class OBDMe extends Activity {
 		case Configuration.ORIENTATION_LANDSCAPE:
 
 			//Switch on the user preferred mode
-			switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+			switch(appSettings.getDisplayMode()) {
 
 			case OBDMe.BASIC_USER_MODE:
 				this.theUI = new BasicUserModeLandscape(this);
@@ -212,9 +196,7 @@ public class OBDMe extends Activity {
 
 				//If it doesn't exist or is invalid, reset
 			default:
-				SharedPreferences.Editor prefEditor = this.sharedPrefs.edit();
-				prefEditor.putInt(getResources().getString(R.string.prefs_mode), OBDMe.BASIC_USER_MODE);
-				prefEditor.commit();
+				appSettings.setDisplayMode(OBDMe.BASIC_USER_MODE);
 				this.theUI = new BasicUserModeLandscape(this);
 				setContentView(((BasicUserModeLandscape) this.theUI).getFlipper());
 				break;
@@ -223,31 +205,6 @@ public class OBDMe extends Activity {
 			break;
 		}
 
-	}
-	
-	/**
-	 * Sets the data usage.
-	 */
-	private void setDataUsage() {
-		switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_dataupload), -1)) {
-
-		case OBDMe.DATA_USAGE_WIFI_ONLY:
-			break;
-
-		case OBDMe.DATA_USAGE_NETWORK_ONLY:
-			break;
-			
-		case OBDMe.DATA_USAGE_WIFI_AND_NETWORK:
-			break;
-
-			//If it doesn't exist or is invalid, reset
-		default:
-			SharedPreferences.Editor prefEditor = this.sharedPrefs.edit();
-			prefEditor.putInt(getResources().getString(R.string.prefs_dataupload), OBDMe.DATA_USAGE_WIFI_ONLY);
-			prefEditor.commit();
-			break;
-
-		}
 	}
 
 	/**
@@ -312,7 +269,7 @@ public class OBDMe extends Activity {
 		case Configuration.ORIENTATION_PORTRAIT:
 
 			//Switch on the user preferred mode
-			switch(this.sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+			switch(appSettings.getDisplayMode()) {
 
 			case BASIC_USER_MODE:
 				if (theUI instanceof BasicUserModePortrait){
@@ -331,7 +288,7 @@ public class OBDMe extends Activity {
 		case Configuration.ORIENTATION_LANDSCAPE:
 
 			//Switch on the user preferred mode
-			switch(sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1)) {
+			switch(appSettings.getDisplayMode()) {
 
 			case BASIC_USER_MODE:
 				if (theUI instanceof BasicUserModeLandscape){
@@ -367,7 +324,7 @@ public class OBDMe extends Activity {
 				if(e1.getX() - e2.getX() > 120 && Math.abs(velocityX) > 200) {
 
 					//And we're in basic user interface mode:
-					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+					if(appSettings.getDisplayMode() == OBDMe.BASIC_USER_MODE){
 
 						if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 							((BasicUserModePortrait) theUI).flingRight();
@@ -379,7 +336,7 @@ public class OBDMe extends Activity {
 
 				}  else if (e2.getX() - e1.getX() > 120 && Math.abs(velocityX) > 200) {
 					//And we're in basic user interface mode:
-					if( sharedPrefs.getInt(getResources().getString(R.string.prefs_mode), -1) == BASIC_USER_MODE ){
+					if(appSettings.getDisplayMode() == OBDMe.BASIC_USER_MODE){
 
 						if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 							((BasicUserModePortrait) theUI).flingLeft();
@@ -423,7 +380,7 @@ public class OBDMe extends Activity {
 		//Set the configured view
 		//If the bluetooth service is not connected to a device, set the connection status view
 		
-		checkBluetoothEnabled();
+		//checkBluetoothEnabled();
 	}
 
 	/* (non-Javadoc)
@@ -479,6 +436,9 @@ public class OBDMe extends Activity {
 			//Write all of the in memory data to the database
 			collectorThread.batchDatabaseWrite();
 			
+			//Save any settings
+			appSettings.commitUnsavedChanges();
+			
 			//Set the bluetooth state to none
 			bluetoothService.setState(BluetoothService.STATE_NONE);
 			
@@ -489,6 +449,9 @@ public class OBDMe extends Activity {
 
 			return true;
 		case R.id.menu_options_prefs:
+			//Save any settings that have not yet been saved
+			appSettings.commitUnsavedChanges();
+			
 			startActivityForResult(new Intent(this, edu.unl.csce.obdme.settingsmenu.RootPreferences.class), RootPreferences.USER_QUIT_SETTINGS);
 			return true;
 		}
@@ -550,8 +513,7 @@ public class OBDMe extends Activity {
 
 		//Get the bluetooth device from shared prefs
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		String device = this.sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
-		BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
+		BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(appSettings.getBluetoothDeviceAddress());
 
 		switch (bluetoothService.getState()) {
 		case BluetoothService.STATE_NONE:
@@ -586,7 +548,7 @@ public class OBDMe extends Activity {
 	 * Start hardware verifier thread.
 	 */
 	private void startHardwareVerifierThread() {
-		this.hardwarePoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, elmFramework, 500);
+		this.hardwarePoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, 500);
 		this.hardwarePoller.startPolling();
 	}
 
@@ -594,7 +556,7 @@ public class OBDMe extends Activity {
 	 * Start ignition poller thread.
 	 */
 	private void startIgnitionPollerThread() {
-		this.ignitionPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, elmFramework, 500);
+		this.ignitionPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, 500);
 		this.ignitionPoller.startPolling();
 	}
 
@@ -602,7 +564,7 @@ public class OBDMe extends Activity {
 	 * Start auto connect poller thread.
 	 */
 	private void startAutoConnectPollerThread() {
-		this.autoConnectPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, elmFramework, 500);
+		this.autoConnectPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, 500);
 		this.autoConnectPoller.startPolling();
 	}
 
@@ -680,7 +642,7 @@ public class OBDMe extends Activity {
 
 					//Reconnect
 					BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-					String device = sharedPrefs.getString(getString(R.string.prefs_bluetooth_device), null);
+					String device = appSettings.getBluetoothDeviceAddress();
 					BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device);
 					bluetoothService.connect(bluetoothDevice, 5000);
 					break;
@@ -952,6 +914,9 @@ public class OBDMe extends Activity {
 
 			//The user just left the properties screen
 		case RootPreferences.USER_QUIT_SETTINGS:
+			
+			//Reload any settings changed while the user was editing preferences
+			appSettings.loadPersistentPrefs();
 
 			//Set the configured view
 			//If the bluetooth service is not connected to a device, set the connection status view

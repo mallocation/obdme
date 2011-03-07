@@ -1,5 +1,6 @@
 package edu.unl.csce.obdme.bluetooth;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -465,6 +466,9 @@ public class BluetoothService {
 
 		/** The input stream. */
 		private final InputStream inputStream;
+		
+		/** The buffered input stream. */
+		private final BufferedInputStream bufferedInputStream;
 
 		/** The output stream. */
 		private final OutputStream outputStream;
@@ -507,7 +511,8 @@ public class BluetoothService {
 
 			inputStream = tmpIn;
 			outputStream = tmpOut;
-
+			bufferedInputStream = new BufferedInputStream(inputStream);
+			
 			responseQueue = new ConcurrentLinkedQueue<String>();
 		}
 
@@ -531,10 +536,10 @@ public class BluetoothService {
 					do {
 
 						//If there are bytes available, read them
-						if (inputStream.available() > 0) {
+						if (bufferedInputStream.available() > 0) {
 
 							//Append the read byte to the buffer
-							currentChar = (char)this.inputStream.read();
+							currentChar = (char)this.bufferedInputStream.read();
 							recievedData.append(currentChar);
 						}
 					} while (currentChar != ASCII_COMMAND_PROMPT); //Continue until we reach a prompt character
@@ -565,18 +570,11 @@ public class BluetoothService {
 			//While the response queue is empty
 			while(responseQueue.isEmpty()){
 
-				//Sleep for 5 milliseconds
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					if(context.getResources().getBoolean(R.bool.debug)) {
-						Log.e(context.getResources().getString(R.string.debug_tag_service_bluetooth),
-						"Interrupted exception waiting for response");
-					}
-				}
+				//Sleep for 10 milliseconds
+				SystemClock.sleep(10);
 
 				//Increase the amount of time we've spent waiting
-				timeWaiting += 5;
+				timeWaiting += 10;
 
 				//If the time waiting exceeds the request timeout limit, throw a BluetoothServiceRequestTimeoutException
 				if (timeWaiting >= timeout) {

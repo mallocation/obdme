@@ -1,5 +1,6 @@
 package edu.unl.csce.obdme.hardware.elm;
 
+import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 import android.content.Context;
@@ -49,14 +50,13 @@ public class ELMAutoConnectPoller {
 	 *
 	 * @param context the context
 	 * @param handler the handler
-	 * @param elmFramework the elm framework
 	 */
-	public ELMAutoConnectPoller(Context context, Handler handler, ELMFramework elmFramework) {
-		messageState = AUTO_CONNECT_NONE;
-		appHandler = handler;
-		this.elmFramework = elmFramework;
+	public ELMAutoConnectPoller(Context context, Handler handler) {
+		this.appHandler = handler;
 		this.context = context;
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		this.pollingInterval = 1000;
+		messageState = AUTO_CONNECT_NONE;
 	}
 
 	/**
@@ -64,15 +64,14 @@ public class ELMAutoConnectPoller {
 	 *
 	 * @param context the context
 	 * @param handler the handler
-	 * @param elmFramework the elm framework
 	 * @param pollingInterval the polling interval
 	 */
-	public ELMAutoConnectPoller(Context context, Handler handler, ELMFramework elmFramework, int pollingInterval) {
-		messageState = AUTO_CONNECT_NONE;
-		appHandler = handler;
-		this.elmFramework = elmFramework;
+	public ELMAutoConnectPoller(Context context, Handler handler, int pollingInterval) {
+		this.appHandler = handler;
 		this.context = context;
+		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		this.pollingInterval = pollingInterval;
+		messageState = AUTO_CONNECT_NONE;
 	}
 
 	/**

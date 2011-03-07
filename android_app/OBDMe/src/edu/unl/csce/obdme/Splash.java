@@ -3,6 +3,7 @@ package edu.unl.csce.obdme;
 import edu.unl.csce.obdme.setupwizard.SetupWizardAccount;
 import edu.unl.csce.obdme.setupwizard.SetupWizardMain;
 import edu.unl.csce.obdme.setupwizard.SetupWizardVehicle;
+import edu.unl.csce.obdme.utilities.AppSettings;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,17 +19,22 @@ import android.view.Window;
 @SuppressWarnings("unused")
 public class Splash extends Activity {
 
+	/** The app settings. */
+	private AppSettings appSettings;
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_launcher),
 				"Starting the OBDMe Launcher Activity.");
 		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
+		
 		setContentView(R.layout.splash);
 
 		Thread splashThread = new Thread() {
@@ -46,10 +52,7 @@ public class Splash extends Activity {
 					//Check which action we need to perform.
 					//Is this a first start?  If so, run setup.
 					
-					SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-					
-					if (sharedPrefs.contains(getResources().getString(R.string.prefs_firstrun)) && 
-							!getResources().getBoolean(R.bool.debug_setupwizard)) {						
+					if (!appSettings.isFirstRun() && !getResources().getBoolean(R.bool.debug_setupwizard)) {						
 						//The first run preference exists.  First time setup already completed.
 						Intent intent = new Intent();
 						intent.setClass(getBaseContext(), edu.unl.csce.obdme.OBDMe.class);
@@ -91,10 +94,8 @@ public class Splash extends Activity {
 						} finally {
 							//Check which action we need to perform.
 							//Is this a first start?  If so, run setup.
-							
-							SharedPreferences sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), 0);
-							
-							if (sharedPrefs.contains(getResources().getString(R.string.prefs_firstrun))) {						
+														
+							if (!appSettings.isFirstRun()) {						
 								//The first run preference exists.  First time setup already completed.
 								Intent intent = new Intent();
 								intent.setClass(getBaseContext(), edu.unl.csce.obdme.OBDMe.class);

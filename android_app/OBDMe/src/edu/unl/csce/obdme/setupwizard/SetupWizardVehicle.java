@@ -3,11 +3,9 @@ package edu.unl.csce.obdme.setupwizard;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +20,7 @@ import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
  * The Class SetupWizardVehicle.
@@ -48,12 +47,12 @@ public class SetupWizardVehicle extends Activity {
 
 	/** The ac dialog. */
 	private ProgressDialog acDialog;
-
-	/** The prefs. */
-	private SharedPreferences prefs;
-
+	
 	/** The SETU p_ state. */
 	private int SETUP_STATE = 0;
+
+	/** The app settings. */
+	private AppSettings appSettings;
 
 	/** The Constant SETUP_VEHICLE_RESULT_OK. */
 	public static final int SETUP_VEHICLE_RESULT_OK = 10;
@@ -68,11 +67,10 @@ public class SetupWizardVehicle extends Activity {
 		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
 		"Starting the OBDMe Vehicle Setup Wizard Activity.");
 
-		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
 		setContentView(R.layout.setupwizard_vehicle);
 
 		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
+		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
 		bluetoothService = ((OBDMeApplication)getApplication()).getBluetoothService();
 		bluetoothService.setAppHandler(eventHandler);
 
@@ -161,7 +159,7 @@ public class SetupWizardVehicle extends Activity {
 	 * Start ignition poller thread.
 	 */
 	private void startIgnitionPollerThread() {
-		ignPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, elmFramework, 2000);
+		ignPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, 2000);
 		ignPoller.startPolling();
 	}
 
@@ -169,7 +167,7 @@ public class SetupWizardVehicle extends Activity {
 	 * Start auto connect poller thread.
 	 */
 	private void startAutoConnectPollerThread() {
-		acPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, elmFramework, 2000);
+		acPoller = new ELMAutoConnectPoller(getApplicationContext(), eventHandler, 2000);
 		acPoller.startPolling();
 	}
 
@@ -206,14 +204,10 @@ public class SetupWizardVehicle extends Activity {
 					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), 
 							elmFramework.getObdFramework().getConfiguredProtocol(), 
 							vinResult);
-					webFramework.getVehicleService().addVehicle(vinResult, 
-							prefs.getLong(getResources().getString(R.string.prefs_account_uid), -1), 
-							eventHandler);
+					webFramework.getVehicleService().addVehicle(vinResult, appSettings.getAccountUID(),eventHandler);
 
 					//Save the VIN in the preferences
-					SharedPreferences.Editor editor = prefs.edit();
-					editor.putString(getResources().getString(R.string.prefs_account_vin), vinResult);
-					editor.commit();
+					appSettings.setAccountVIN(vinResult);
 
 					//Update the GUI to reflect the new status
 					SETUP_STATE = 1;

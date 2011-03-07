@@ -6,6 +6,7 @@ import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.collector.DataUploader;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
  * The Class OBDMeApplication.
@@ -29,6 +30,9 @@ public class OBDMeApplication extends Application {
 
 	/** The data uploader. */
 	private DataUploader dataUploader;
+
+	/** The application settings. */
+	private AppSettings applicationSettings;
 
 	/**
 	 * Gets the single instance of OBDMeApplication.
@@ -61,7 +65,7 @@ public class OBDMeApplication extends Application {
 	public ELMFramework getELMFramework() {
 		if (elmFramework == null) {
 			checkInstance();
-			elmFramework = new ELMFramework(getApplicationContext(), getBluetoothService());
+			elmFramework = new ELMFramework(getApplicationContext());
 		}
 		return elmFramework;
 	}
@@ -74,7 +78,7 @@ public class OBDMeApplication extends Application {
 	public DataCollector getDataCollector() {
 		if (dataCollector == null) {
 			checkInstance();
-			dataCollector = new DataCollector(getApplicationContext(), elmFramework);
+			dataCollector = new DataCollector(getApplicationContext());
 		}
 		return dataCollector;
 	}
@@ -90,6 +94,19 @@ public class OBDMeApplication extends Application {
 			webFramework = new ObdMeService(getString(R.string.webservice_apikey));
 		}
 		return webFramework;
+	}
+	
+	/**
+	 * Gets the application settings.
+	 *
+	 * @return the application settings
+	 */
+	public AppSettings getApplicationSettings() {
+		if (applicationSettings == null) {
+			checkInstance();
+			applicationSettings = new AppSettings(getApplicationContext());
+		}
+		return applicationSettings;
 	}
 	
 	/**
@@ -133,6 +150,8 @@ public class OBDMeApplication extends Application {
 		super.onCreate();
 		//provide an instance for our static accessors
 		instance = this;
+		getApplicationSettings();
+		getBluetoothService();
 		getELMFramework();
 		getDataUploader();
 	}

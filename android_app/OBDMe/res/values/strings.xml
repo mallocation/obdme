@@ -133,17 +133,6 @@
 	<string name="account_info_title">Account Information</string>
 	<string name="vehicle_info_title">Vehicle Information</string>
 	<string name="display_data_title">Data To Be Displayed</string>
-
-
-	<!-- Basic Data Display -->
-	<string name="speed">Vehicle Speed</string>
-	<string name="speedValue">00.0</string>
-	<string name="rpms">Engine RPMS</string>
-	<string name="rpmsValue">0000</string>
-	<string name="instMPG">Instantaneous MPG</string>
-	<string name="instMPGValue">00.0</string>
-	<string name="avgMPG">Average MPG</string>
-	<string name="avgMPGValue">00.0</string>
 	
 	<!-- Basic Data Display -->
 	<string name="menu.prefs.category.account">Account Preferences</string>
@@ -164,6 +153,9 @@
 	<string name="menu.prefs.datausage.title">Data Usage</string>
 	<string name="menu.prefs.datausage.summary">Designate how collected information is uploaded to OBDMe</string>
 	<string name="menu.prefs.datausage.dialog.title">Set Data Upload Option</string>
+	<string name="menu.prefs.frequency.title">Collection Frequency</string>
+	<string name="menu.prefs.frequency.summary">Set how often your phone will update OBD data</string>
+	<string name="menu.prefs.frequency.dialog.title">Set Collection Frequency</string>
 	
 	<string name="menu.prefs.category.device">Device Preferences</string>
 	<string name="menu.prefs.device.title">Account Preferences</string>
@@ -175,6 +167,14 @@
 	<string name="menu.prefs.datausage.wifionly">Wifi Only</string>
 	<string name="menu.prefs.datausage.phonenetworkonly">Phone Network Only</string>
 	<string name="menu.prefs.datausage.wifiandphonenetwork">Phone Network Until Wifi Is Available</string>
+	<string name="menu.prefs.datausage.never">Never upload data</string>
+	
+	<string name="menu.prefs.frequency.nolimit">No Limit</string>
+	<string name="menu.prefs.frequency.onesecond">1 Second</string>
+	<string name="menu.prefs.frequency.twoseconds">2 Seconds</string>
+	<string name="menu.prefs.frequency.fiveseconds">5 Seconds</string>
+	<string name="menu.prefs.frequency.tenseconds">10 Seconds</string>
+	<string name="menu.prefs.frequency.fifteenseconds">15 Seconds</string>
 	
 	<string name="menu.prefs.gps.title">Location Data</string>
 	<string name="menu.prefs.gps.summary">Collect location data for location aware statistics</string>
