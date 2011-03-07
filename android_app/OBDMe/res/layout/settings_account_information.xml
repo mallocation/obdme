@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:background="@drawable/gradient">
+	<TextView android:id="@+id/settings.account.heading" style="@style/settings.header"
+		android:text="@string/settings.account.heading.text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="0"></TextView>
+	<ScrollView android:id="@+id/ScrollView"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="1">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:orientation="vertical">
+			<TextView android:id="@+id/settings.account" android:text="@string/settings.account.text"
+				style="@style/settings.body" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_weight="0"
+				android:padding="5dip"></TextView>
+
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:orientation="horizontal" android:layout_gravity="center_vertical"
+				android:gravity="center_vertical">
+				<TextView android:id="@+id/settings.account.email.header.current"
+					android:text="@string/settings.account.email.header.current.text"
+					style="@style/settings.body" android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_weight="1"
+					android:padding="5dip" android:textSize="30dip">
+				</TextView>
+				<Button android:text="@string/settings.account.button.change.text"
+					android:id="@+id/settings.account.button.change"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:gravity="center|center_vertical"></Button>
+			</LinearLayout>
+			<TextView android:id="@+id/settings.account.email.current"
+				style="@style/settings.body" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_weight="0"
+				android:textSize="25dip">
+			</TextView>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:orientation="vertical" android:visibility="gone"
+				android:id="@+id/settings.account.change.layout">
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					style="@style/settings.body" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:orientation="vertical"
+					android:layout_weight="0">
+					<TextView android:id="@+id/settings.account.email"
+						android:text="@string/settings.account.email.text" style="@style/settings.body"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:layout_weight="0"></TextView>
+					<EditText android:id="@+id/settings.account.email.input"
+						android:layout_weight="0" android:layout_width="fill_parent"
+						android:layout_height="wrap_content"></EditText>
+				</LinearLayout>
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:orientation="vertical" style="@style/settings.body"
+					android:layout_weight="0">
+					<TextView android:id="@+id/settings.account.password"
+						android:text="@string/settings.account.password.text" style="@style/settings.body"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:layout_weight="0"></TextView>
+					<EditText android:id="@+id/settings.account.password.input"
+						android:password="true" android:layout_width="fill_parent"
+						android:layout_height="wrap_content" android:layout_weight="0"></EditText>
+				</LinearLayout>
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:orientation="vertical" android:layout_weight="1"
+					style="@style/settings.body">
+					<TextView android:id="@+id/settings.account.confirmpassword"
+						android:visibility="gone" android:text="@string/settings.account.confirmpassword.text"
+						style="@style/settings.body" android:layout_width="fill_parent"
+						android:layout_height="wrap_content"></TextView>
+					<EditText android:id="@+id/settings.account.confirmpassword.input"
+						android:visibility="gone" android:password="true"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
+				</LinearLayout>
+				<Button android:text="@string/settings.account.button.signin.text"
+					android:id="@+id/settings.account.button" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:padding="10dip"></Button>
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

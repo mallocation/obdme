@@ -179,6 +179,31 @@
 	<string name="menu.prefs.gps.title">Location Data</string>
 	<string name="menu.prefs.gps.summary">Collect location data for location aware statistics</string>
 	
+	<!-- Setup Wizard Account Activity -->
+	<string name="settings.account.label">Account Information</string>
+	<string name="settings.account.heading.text">Account Information</string>
+	<string name="settings.account.text">Your OBDMe account information is shown below</string>
+	<string name="settings.account.email.header.current.text">Username: </string>
+	<string name="settings.account.button.change.text">Change</string>
+	<string name="settings.account.button.cancel.text">Cancel</string>
+	<string name="settings.account.email.text">Username (Email Address)</string>
+	<string name="settings.account.password.text">Password</string>
+	<string name="settings.account.confirmpassword.text">Confirm Password</string>
+	<string name="settings.account.button.signin.text">Log in</string>
+	<string name="settings.account.button.createaccount.text">Create Account</string>
+	<string name="settings.account.password.error.bad">Your password does not meet the minimum requirement
+		of 6 characters</string>
+	<string name="settings.account.password.error.incorrect">The password you have entered does not match the
+		supplied username</string>
+	<string name="settings.account.password.error.match">Your passwords do not match</string>
+	<string name="settings.account.email.error.bad">Your email address is not valid</string>
+	<string name="settings.account.dialog.creating">Creating your account...</string>
+	<string name="settings.account.dialog.loggingin">Logging In...</string>
+	<string name="settings.account.dialog.account.create.failure">We were unable to create your account. Please try
+		again later.</string>
+	<string name="settings.account.dialog.account.validate.failure">We were unable to validate your account. Please try
+		again later.</string>
+	
 	<!-- Options Menu -->
 	<string name="menu.options.start">Start Collecting</string>
 	<string name="menu.options.pause">Pause Collection</string>

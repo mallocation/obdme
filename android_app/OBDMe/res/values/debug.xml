@@ -37,4 +37,7 @@
 	<string name="debug.tag.datauploader">DataUploader</string>
 	<string name="debug.tag.datauploaderthread">DataUploaderThread</string>
 	<string name="debug.tag.gpsservice">GPSService</string>
+	
+	<!-- debug tags for the OBD Framework -->
+	<string name="debug.tag.settings.account">AccountInformation</string>
 </resources>
