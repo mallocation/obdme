@@ -19,15 +19,34 @@
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				style="@style/setupwizard.body" android:layout_width="fill_parent"
 				android:layout_height="wrap_content" android:orientation="vertical"
-				android:layout_weight="0">
-				<TextView android:id="@+id/setupwizard.vehicle.vin.title"
-					android:text="@string/setupwizard.vehicle.vin.title.text" style="@style/setupwizard.vehicle"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
-					android:layout_weight="0" android:visibility="gone"></TextView>
-				<TextView android:id="@+id/setupwizard.vehicle.vin"
-					android:text="NO DATA" style="@style/setupwizard.vehicle.vin"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
-					android:layout_weight="0" android:visibility="gone"></TextView>
+				android:layout_weight="1" android:visibility="gone" android:id="@+id/setupwizard.vehicle.vin.layout">
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					style="@style/setupwizard.body" android:layout_width="match_parent"
+					android:layout_height="wrap_content" android:orientation="vertical"
+					android:layout_weight="0" android:layout_marginBottom="10dip"
+					android:padding="0dip">
+					<TextView android:id="@+id/setupwizard.vehicle.vin.title"
+						android:text="@string/setupwizard.vehicle.vin.title.text" style="@style/setupwizard.vehicle"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:padding="0dip" android:textSize="15dip" android:gravity="left"></TextView>
+					<TextView android:id="@+id/setupwizard.vehicle.vin"
+						android:text="NO DATA" style="@style/setupwizard.vehicle.vin"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:padding="0dip"></TextView>
+				</LinearLayout>
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					style="@style/setupwizard.body" android:layout_width="match_parent"
+					android:layout_height="wrap_content" android:orientation="vertical"
+					android:layout_weight="0" android:padding="0dip">
+					<TextView android:id="@+id/setupwizard.vehicle.alias"
+						android:text="@string/setupwizard.vehicle.alias.title.text"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						style="@style/setupwizard.vehicle" android:textSize="15dip"
+						android:padding="0dip"></TextView>
+				</LinearLayout>
+				<EditText android:layout_width="match_parent"
+					android:layout_height="wrap_content" android:text="@string/setupwizard.vehicle.alias.edit.text"
+					android:id="@+id/setupwizard.vehicle.alias.edit"></EditText>
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>

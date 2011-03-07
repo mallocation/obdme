@@ -9,6 +9,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
@@ -129,8 +130,7 @@ public class SetupWizardVehicle extends Activity {
 
 		Button button = (Button) findViewById(R.id.setupwizard_vehicle_button);
 		TextView text = (TextView) findViewById(R.id.setupwizard_vehicle_text);
-		TextView vinTitleText = (TextView) findViewById(R.id.setupwizard_vehicle_vin_title);
-		TextView vinText = (TextView) findViewById(R.id.setupwizard_vehicle_vin);
+		LinearLayout vinLayout = (LinearLayout) findViewById(R.id.setupwizard_vehicle_vin_layout);
 
 
 		//Switch on the current state of the setup
@@ -139,16 +139,14 @@ public class SetupWizardVehicle extends Activity {
 		case -1:
 			text.setText(R.string.setupwizard_vehicle_body_text_failure);
 			button.setText(R.string.setupwizard_vehicle_button_exit_text);
-			vinTitleText.setVisibility(View.GONE);
-			vinText.setVisibility(View.GONE);
+			vinLayout.setVisibility(View.GONE);
 			break;
 
 			//Post Bluetooth is supported
 		case 1:
 			text.setText(R.string.setupwizard_vehicle_body_text_confirm);
 			button.setText(R.string.setupwizard_vehicle_button_confirm_text);
-			vinTitleText.setVisibility(View.VISIBLE);
-			vinText.setVisibility(View.VISIBLE);
+			vinLayout.setVisibility(View.VISIBLE);
 			break;
 
 

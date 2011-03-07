@@ -83,8 +83,10 @@
 		vehicle automatically.\n\nIn order to do this, the vehicle must be
 		running. Please
 		start you vehicle and click next to proceed</string>
-	<string name="setupwizard.vehicle.body.text.confirm">Your vehicle was successfully identified. Please
-		confirm the information below.</string>
+	<string name="setupwizard.vehicle.body.text.confirm">Your vehicle was successfully identified. You may
+		optionally enter an alias for this vehicle. Please
+		confirm the
+		information below and click next to proceed.</string>
 	<string name="setupwizard.vehicle.body.text.failure">Your vehicle does not support the ability to
 		retrieve the VIN. OBDMe requires this option to operate.\nThe setup
 		wizard cannot continue.</string>
@@ -92,6 +94,8 @@
 	<string name="setupwizard.vehicle.button.confirm.text">Confirm</string>
 	<string name="setupwizard.vehicle.button.exit.text">Quit OBDMe</string>
 	<string name="setupwizard.vehicle.vin.title.text">VIN (Vehicle Identification Number)</string>
+	<string name="setupwizard.vehicle.alias.title.text">Vehicle Alias:</string>
+	<string name="setupwizard.vehicle.alias.edit.text">My Awesome Car</string>
 	<string name="setupwizard.vehicle.dialog.ignition">Waiting for ignition...</string>
 	<string name="setupwizard.vehicle.dialog.autoconnect">Waiting for device...</string>
 
@@ -133,56 +137,66 @@
 	<string name="account_info_title">Account Information</string>
 	<string name="vehicle_info_title">Vehicle Information</string>
 	<string name="display_data_title">Data To Be Displayed</string>
-	
+
 	<!-- Basic Data Display -->
 	<string name="menu.prefs.category.account">Account Preferences</string>
 	<string name="menu.prefs.accountinfo.title">Account Information</string>
-	<string name="menu.prefs.accountinfo.summary">View or change your OBDMe account and user information.</string>
+	<string name="menu.prefs.accountinfo.summary">View or change your OBDMe account and user
+		information.</string>
 	<string name="menu.prefs.vehicles.title">Vehicle Information</string>
-	<string name="menu.prefs.vehicles.summary">Add, remove, view, or change vehicle information on your account</string>
-	
+	<string name="menu.prefs.vehicles.summary">Add, remove, view, or change vehicle information on
+		your account</string>
+
 	<string name="menu.prefs.category.application">Application Preferences</string>
 	<string name="menu.prefs.usermode.title">User Mode</string>
-	<string name="menu.prefs.usermode.summary">Change the format in which information is displayed.</string>
+	<string name="menu.prefs.usermode.summary">Change the format in which information is
+		displayed.</string>
 	<string name="menu.prefs.collectionopts.title">Collected Information</string>
-	<string name="menu.prefs.collectionopts.summary">Designate what kind of data gets collected from your vehicle</string>
+	<string name="menu.prefs.collectionopts.summary">Designate what kind of data gets collected from
+		your vehicle</string>
 	<string name="menu.prefs.displayopts.title">Display Options</string>
-	<string name="menu.prefs.displayopts.summary">Change the order and presence that collected data is displayed</string>
+	<string name="menu.prefs.displayopts.summary">Change the order and presence that collected data
+		is displayed</string>
 	<string name="menu.prefs.units.title">English Units</string>
-	<string name="menu.prefs.units.summary">The default option is to display metric units.  Check this box to display English units.</string>
+	<string name="menu.prefs.units.summary">The default option is to display metric units.
+		Check this box to display English units.</string>
 	<string name="menu.prefs.datausage.title">Data Usage</string>
-	<string name="menu.prefs.datausage.summary">Designate how collected information is uploaded to OBDMe</string>
+	<string name="menu.prefs.datausage.summary">Designate how collected information is uploaded to
+		OBDMe</string>
 	<string name="menu.prefs.datausage.dialog.title">Set Data Upload Option</string>
 	<string name="menu.prefs.frequency.title">Collection Frequency</string>
-	<string name="menu.prefs.frequency.summary">Set how often your phone will update OBD data</string>
+	<string name="menu.prefs.frequency.summary">Set how often your phone will update OBD data
+	</string>
 	<string name="menu.prefs.frequency.dialog.title">Set Collection Frequency</string>
-	
+
 	<string name="menu.prefs.category.device">Device Preferences</string>
 	<string name="menu.prefs.device.title">Account Preferences</string>
-	
+
 	<string name="menu.prefs.usermode.dialog.title">Set Display Mode</string>
 	<string name="menu.prefs.usermode.basic">Basic Display</string>
 	<string name="menu.prefs.usermode.advanced">Advanced Display</string>
-	
+
 	<string name="menu.prefs.datausage.wifionly">Wifi Only</string>
 	<string name="menu.prefs.datausage.phonenetworkonly">Phone Network Only</string>
 	<string name="menu.prefs.datausage.wifiandphonenetwork">Phone Network Until Wifi Is Available</string>
 	<string name="menu.prefs.datausage.never">Never upload data</string>
-	
+
 	<string name="menu.prefs.frequency.nolimit">No Limit</string>
 	<string name="menu.prefs.frequency.onesecond">1 Second</string>
 	<string name="menu.prefs.frequency.twoseconds">2 Seconds</string>
 	<string name="menu.prefs.frequency.fiveseconds">5 Seconds</string>
 	<string name="menu.prefs.frequency.tenseconds">10 Seconds</string>
 	<string name="menu.prefs.frequency.fifteenseconds">15 Seconds</string>
-	
+
 	<string name="menu.prefs.gps.title">Location Data</string>
-	<string name="menu.prefs.gps.summary">Collect location data for location aware statistics</string>
-	
+	<string name="menu.prefs.gps.summary">Collect location data for location aware statistics
+	</string>
+
 	<!-- Setup Wizard Account Activity -->
 	<string name="settings.account.label">Account Information</string>
 	<string name="settings.account.heading.text">Account Information</string>
-	<string name="settings.account.text">Your OBDMe account information is shown below</string>
+	<string name="settings.account.text">Your OBDMe account information is shown below
+	</string>
 	<string name="settings.account.email.header.current.text">Username: </string>
 	<string name="settings.account.button.change.text">Change</string>
 	<string name="settings.account.button.cancel.text">Cancel</string>
@@ -203,7 +217,7 @@
 		again later.</string>
 	<string name="settings.account.dialog.account.validate.failure">We were unable to validate your account. Please try
 		again later.</string>
-	
+
 	<!-- Options Menu -->
 	<string name="menu.options.start">Start Collecting</string>
 	<string name="menu.options.pause">Pause Collection</string>
@@ -223,19 +237,19 @@
 	<string name="mechanicmode.title">Mechanic Mode</string>
 	<string name="mechanicmode.realtimedata">Real Time Data:</string>
 	<string name="mechanicmode.errorcodes">Error Codes:</string>
-	
+
 	<string name="settings.modeselect.title">Select A Mode</string>
 	<string name="settings.modeselect.basicusermode">Basic User Mode</string>
 	<string name="settings.modeselect.advancedusermode">Advanced User Mode</string>
-	
+
 	<!-- Vehicle Info -->
 	<string name="vehicle.info.titletext.vin">VIN:</string>
 	<string name="vehicle.info.titletext.model">Model:</string>
 	<string name="vehicle.info.titletext.make">Make:</string>
 	<string name="vehicle.info.titletext.year">Year:</string>
 	<string name="vehicle.info.titletext.serial">Serial #:</string>
-	
+
 	<!-- Account Information Page -->
 	<string name="useremail.titletext">Email Address (Username):</string>
-	
+
 </resources>
