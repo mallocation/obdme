@@ -26,9 +26,5 @@ public class VehiclesTester extends FunctionalTest {
 		Response response = GET(String.format("/api/vehicles/vin/%s", TEST_VIN));
 		assertNotNull(response);
 	}
-	
-	
-	
-	
 
 }
