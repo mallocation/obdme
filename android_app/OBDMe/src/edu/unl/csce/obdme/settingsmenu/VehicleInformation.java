@@ -1,80 +1,131 @@
 package edu.unl.csce.obdme.settingsmenu;
 
-import edu.unl.csce.obdme.R;
 import android.app.Activity;
-import android.content.SharedPreferences;
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.os.Handler;
+import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
+import edu.unl.csce.obdme.OBDMeApplication;
+import edu.unl.csce.obdme.R;
+import edu.unl.csce.obdme.api.ObdMeService;
+import edu.unl.csce.obdme.utilities.AppSettings;
 
+/**
+ * The Class settingsVehicle.
+ */
 public class VehicleInformation extends Activity {
-	/** The vehicles list view. */
-    private ListView vehiclesListView;
-    
-    /** The shared prefs. */
-	SharedPreferences sharedPrefs;
-	
-	/** The title bar. */
-	private TextView titleBar;
-	
-	/** The root ui. */
-	private LinearLayout rootUI;
-	
-	/** The data list. */
-	private ListView dataList;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
-		
-		
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-		
-		this.rootUI = buildRootDataListView();
-		setContentView(this.rootUI);
-		
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
+	/** The web framework. */
+	private ObdMeService webFramework;
 
-		titleBar = (TextView) findViewById(R.id.title_left_text);
-		titleBar.setText(R.string.vehicle_info_title);
-		titleBar = (TextView) findViewById(R.id.title_right_text);
-		
-		sharedPrefs = getSharedPreferences(getResources().getString(R.string.prefs_tag), MODE_PRIVATE);
-		
-		//Build the list view and set the content view for this activity
-		this.rootUI = buildRootDataListView();
-		setContentView(this.rootUI);
-	}
+	/** The app settings. */
+	private AppSettings appSettings;
+
+	private ProgressDialog webDialog;
 	
-	/**
-	 * Builds the root data list view.
-	 *
-	 * @return the linear layout
+	/** The Constant SETUP_VEHICLE_RESULT_OK. */
+	public static final int SETUP_VEHICLE_RESULT_OK = 10;
+
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
-	private LinearLayout buildRootDataListView() {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_settings_vehicle),
+		"Starting the OBDMe Vehicle Settings Activity.");
 
-		//Construct the root linear layout
-		LinearLayout rootLinearLayout = new LinearLayout(this);
-		rootLinearLayout.setOrientation(LinearLayout.VERTICAL);
-		LayoutParams rootParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-		rootLinearLayout.setLayoutParams(rootParams);
+		setContentView(R.layout.settings_vehicle);
 
-		//Build the data list object
-		this.dataList = new ListView(this);
-		this.dataList.setItemsCanFocus(false);
+		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
+		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
 		
-		//TODO: build list based on users vehicles
+		setTextValues();
+		
 
-		//Add the list to the root linear layout
-		rootLinearLayout.addView(dataList);
+		//Setup the button on-click listener
+		Button next = (Button) findViewById(R.id.settings_vehicle_button);
+		next.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				
+				Button changeButton = (Button) findViewById(R.id.settings_vehicle_button);
+				changeButton.setVisibility(View.GONE);
+				
+				webFramework.getVehicleService().addVehicle(
+						appSettings.getAccountVIN(),
+						appSettings.getAccountUID(),
+						eventHandler);
+				
+				if(webDialog == null){
+					webDialog = ProgressDialog.show(VehicleInformation.this, "", getResources().getString(R.string.settings_vehicle_dialog), true);
+				}
 
-		//Return the root linear layout
-		return rootLinearLayout;
+			}
+		});
+		
+		//Password box event listener
+		final EditText aliasText = (EditText) findViewById(R.id.settings_vehicle_alias_edit);
+		aliasText.addTextChangedListener(new TextWatcher() { 
+			@Override
+			public void afterTextChanged(Editable s) {
+
+				//If there's any change in the password, run a verify
+				Button changeButton = (Button) findViewById(R.id.settings_vehicle_button);
+				if(!aliasText.getText().equals(appSettings.getAccountVehicleAlias())) {
+					changeButton.setVisibility(View.VISIBLE);
+				}
+				else {
+					changeButton.setVisibility(View.GONE);
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) { }
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) { } 
+		});
+		
+		aliasText.setSelected(false);
+
 	}
+	
+	private void setTextValues() {
+		
+		TextView vinText = (TextView) findViewById(R.id.settings_vehicle_vin);
+		vinText.setText(appSettings.getAccountVIN());
+		
+		TextView vehicleAliasText = (TextView) findViewById(R.id.settings_vehicle_alias_edit);
+		vehicleAliasText.setText(appSettings.getAccountVehicleAlias());
+		
+	}
+	
+	private final Handler eventHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
 
-	
-	
+			//Messsage from BT service indicating a connection state change
+			case 0:
+				if(webDialog != null){
+					webDialog.dismiss();
+				}
+				
+				break;
+				
+			}
+				
+		}
+	};
+
 }
+

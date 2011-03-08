@@ -29,7 +29,7 @@
 		<item name="android:textSize">15dip</item>
 		<item name="android:padding">0dip</item>
 	</style>
-		<style name="setupwizard.vehicle.vin" parent="android:Theme">
+	<style name="setupwizard.vehicle.vin" parent="android:Theme">
 		<item name="android:textSize">30dip</item>
 		<item name="android:padding">0dip</item>
 	</style>
@@ -52,7 +52,7 @@
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:textSize">70sp</item>
 	</style>
-	
+
 	<!-- Mechanic Mode Style -->
 	<style name="mechanicMode.list" parent="android:Theme">
 		<item name="android:background">#fff</item>
@@ -60,7 +60,7 @@
 		<item name="android:textColor">#666</item>
 		<item name="android:textSize">15dip</item>
 	</style>
-	
+
 	<!-- Settings Account Style -->
 	<style name="settings.header" parent="android:Theme">
 		<item name="android:textSize">30dip</item>
@@ -72,5 +72,15 @@
 	</style>
 	<style name="settings.button" parent="android:Theme">
 		<item name="android:textSize">15dip</item>
+	</style>
+
+	<!-- Settings Vehicle Style -->
+	<style name="settings.vehicle" parent="android:Theme">
+		<item name="android:textSize">15dip</item>
+		<item name="android:padding">0dip</item>
+	</style>
+	<style name="settings.vehicle.vin" parent="android:Theme">
+		<item name="android:textSize">30dip</item>
+		<item name="android:padding">0dip</item>
 	</style>
 </resources>

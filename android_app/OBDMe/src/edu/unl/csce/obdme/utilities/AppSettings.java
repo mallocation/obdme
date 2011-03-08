@@ -44,6 +44,8 @@ public class AppSettings {
 	/** The english units. */
 	private boolean englishUnits;
 	
+	private String accountVehicleAlias;
+	
 	/** The context. */
 	private Context context;
 	
@@ -79,6 +81,7 @@ public class AppSettings {
 		accountUsername = sharedPrefs.getString(context.getResources().getString(R.string.prefs_account_username), null);
 		accountPassword = sharedPrefs.getString(context.getResources().getString(R.string.prefs_account_password), null);
 		accountVIN = sharedPrefs.getString(context.getResources().getString(R.string.prefs_account_vin), null);
+		accountVehicleAlias = sharedPrefs.getString(context.getResources().getString(R.string.prefs_account_vehicle_alias), "My Awesome Car");
 		
 		//Device Settings
 		bluetoothDeviceAddress = sharedPrefs.getString(context.getResources().getString(R.string.prefs_bluetooth_device), null);
@@ -103,6 +106,7 @@ public class AppSettings {
 		editor.putString(context.getResources().getString(R.string.prefs_account_username), accountUsername);
 		editor.putString(context.getResources().getString(R.string.prefs_account_password), accountPassword);
 		editor.putString(context.getResources().getString(R.string.prefs_account_vin), accountVIN);
+		editor.putString(context.getResources().getString(R.string.prefs_account_vehicle_alias), accountVehicleAlias);
 
 		//Device Settings
 		editor.putString(context.getResources().getString(R.string.prefs_bluetooth_device), bluetoothDeviceAddress);
@@ -314,6 +318,14 @@ public class AppSettings {
 	 */
 	public boolean isEnglishUnits() {
 		return englishUnits;
+	}
+
+	public void setAccountVehicleAlias(String accountVehicleAlias) {
+		this.accountVehicleAlias = accountVehicleAlias;
+	}
+
+	public String getAccountVehicleAlias() {
+		return accountVehicleAlias;
 	}
 	
 

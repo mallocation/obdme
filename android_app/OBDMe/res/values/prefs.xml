@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="prefs.tag">OBDMePrefs</string>
-	<string name="prefs.firstrun">OBDMePrefsFirstRun</string>
+	
+	<!-- Local Application Device Preferences -->
 	<string name="prefs.bluetooth.device">OBDMeBluetoothDevice</string>
+	
+	<!-- Local Account Preferences -->
 	<string name="prefs.account.uid">OBDMeAccountUID</string>
 	<string name="prefs.account.username">OBDMeAccountUsername</string>
 	<string name="prefs.account.password">OBDMeAccountPassword</string>
 	<string name="prefs.account.vin">OBDMeVIN</string>
+	<string name="prefs.account.vehicle.alias">OBDMeVehAlias</string>
+	
+	<!-- Local Application Preferences -->
+	<string name="prefs.firstrun">OBDMePrefsFirstRun</string>
 	<string name="prefs.mode">OBDMeMode</string>
 	<string name="prefs.dataupload">OBDMeDataUpload</string>
 	<string name="prefs.englishunits">OBDMeEnglishUnits</string>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:background="@drawable/gradient">
+	<TextView android:id="@+id/settings.vehicle.heading" style="@style/settings.header"
+		android:text="@string/settings.vehicle.heading.text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="0"></TextView>
+	<ScrollView android:id="@+id/ScrollView"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_weight="1">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:orientation="vertical">
+			<TextView android:id="@+id/settings.vehicle.text"
+				android:text="@string/settings.vehicle.body.text.describe" style="@style/settings.body"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="0"></TextView>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				style="@style/settings.body" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:orientation="vertical"
+				android:layout_weight="1" android:id="@+id/settings.vehicle.vin.layout">
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					style="@style/settings.body" android:layout_width="match_parent"
+					android:layout_height="wrap_content" android:orientation="vertical"
+					android:layout_weight="0" android:layout_marginBottom="10dip"
+					android:padding="0dip">
+					<TextView android:id="@+id/settings.vehicle.vin.title"
+						android:text="@string/settings.vehicle.vin.title.text" style="@style/settings.vehicle"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:padding="0dip" android:textSize="15dip" android:gravity="left"></TextView>
+					<TextView android:id="@+id/settings.vehicle.vin"
+						android:text="" style="@style/settings.vehicle.vin"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:padding="0dip"></TextView>
+				</LinearLayout>
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					style="@style/settings.body" android:layout_width="match_parent"
+					android:layout_height="wrap_content" android:orientation="vertical"
+					android:layout_weight="0" android:padding="0dip">
+					<TextView android:id="@+id/settings.vehicle.alias"
+						android:text="@string/settings.vehicle.alias.title.text"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						style="@style/settings.vehicle" android:textSize="15dip"
+						android:padding="0dip"></TextView>
+				</LinearLayout>
+				<EditText android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/settings.vehicle.alias.edit"></EditText>
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+	<Button android:text="@string/settings.vehicle.button.change.text"
+		android:id="@+id/settings.vehicle.button" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:padding="10dip"></Button>
+</LinearLayout>

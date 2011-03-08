@@ -136,6 +136,11 @@ public class OBDMe extends Activity {
 	 */
 	private void checkAccountStatus() {
 		
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_obdme),
+			"Validating user account.");
+		}
+		
 		//Send the request to the webservice to get this users credentials
 		((OBDMeApplication)getApplication()).getWebFramework().getUsersService().validateUserCredentials(
 				appSettings.getAccountUsername(),
@@ -854,6 +859,10 @@ public class OBDMe extends Activity {
 			//Messsage from BT service indicating a connection state change
 			case 0:
 				if(msg.obj != null) {
+					if(getResources().getBoolean(R.bool.debug)) {
+						Log.d(getResources().getString(R.string.debug_tag_obdme),
+						"Account validation successful.");
+					}
 
 				} 
 				else {
