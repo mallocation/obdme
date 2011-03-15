@@ -8,6 +8,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.AccessType;
+
 import models.obdme.Vehicles.UserVehicle;
 import models.obdme.Vehicles.Vehicle;
 import play.data.validation.Email;
@@ -26,7 +28,7 @@ public class User extends Model {
 	
 	@Required
 	@Column(name="passwordhash", nullable=false, length=64)
-	transient public String passwordhash;
+	public String passwordhash;
 	
 	@Required
 	@Column(name="regdate")

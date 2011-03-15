@@ -3,29 +3,25 @@ package controllers.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import api.entities.ApiError;
+
 import models.obdme.User;
 import models.obdme.Vehicles.UserVehicle;
 import models.obdme.Vehicles.Vehicle;
 import play.data.validation.Required;
+import play.i18n.Messages;
 import play.mvc.Controller;
 
 public class Vehicles extends Controller {
 
-    public static void getVehicleByVIN(String VIN) { 	
-    	renderJSON(Vehicle.findByVIN(VIN));
+    public static void getVehicleByVIN(String VIN) {
+    	Vehicle v = Vehicle.findByVIN(VIN);
+    	if (v == null) {
+    		renderJSON(new ApiError(Messages.get("api.vehicles.error.vehicle.notexist", VIN)));
+    	}    	
+    	renderJSON(new api.entities.Vehicle(v.getId(), v.VIN));
     }
-    
-    public static void addVehicle(@Required String VIN, long userid) {
-    	Vehicle vehicle = Vehicle.addVehicle(VIN);
-    	if (userid > 0) {
-    		User user = User.findByUserId(userid);
-    		if (user != null) {
-    			user.addVehicleToUser(vehicle, null);
-    		}
-    	}
-    	renderJSON(vehicle);
-    }
-    
+     
     public static void addUpdateVehicleOwner(String email, String VIN, String alias) {
     	Vehicle vehicle;
     	User user;

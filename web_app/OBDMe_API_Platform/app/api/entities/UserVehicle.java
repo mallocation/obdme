@@ -2,10 +2,15 @@ package api.entities;
 
 import java.io.Serializable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class UserVehicle implements Serializable {
 	
+	@SerializedName("vehicleid")
 	private Long vehicleId;
+	@SerializedName("vin")
 	private String VIN;
+	@SerializedName("alias")
 	private String alias;	
 	
 	public UserVehicle(long vehicleId, String VIN, String alias) {
