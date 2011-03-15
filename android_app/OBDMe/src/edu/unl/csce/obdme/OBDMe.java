@@ -21,7 +21,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import edu.unl.csce.obdme.api.entities.User;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMCheckHardwarePoller;
@@ -849,41 +851,27 @@ public class OBDMe extends Activity {
 		}
 	};
 	
-	/** The get account credentials handler. */
-	private final Handler getAccountCredentialsHandler = new Handler() {
+	/** The get Basic Object <USER> handler. */
+	private final BasicObjectHandler<User> getAccountCredentialsHandler = new BasicObjectHandler<User>(User.class) {
+
 		@Override
-		public void handleMessage(Message msg) {
+		public void onCommException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
 
-			switch (msg.what) {
+		@Override
+		public void onObdmeException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
 
-			//Messsage from BT service indicating a connection state change
-			case 0:
-				if(msg.obj != null) {
-					if(getResources().getBoolean(R.bool.debug)) {
-						Log.d(getResources().getString(R.string.debug_tag_obdme),
-						"Account validation successful.");
-					}
-
-				} 
-				else {
-
-					//Show alert dialog, the app must exit.  This is not recoverable
-					AlertDialog.Builder builder = new AlertDialog.Builder(OBDMe.this);
-					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
-					.setCancelable(false)
-					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							OBDMe.this.finish();
-						}
-					});
-					AlertDialog alert = builder.create();
-					alert.show();
-				}
-				break;
-
-
-
+		@Override
+		public void onOperationCompleted(User result) {
+			// TODO Auto-generated method stub
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"Account validation successful.");
 			}
 		}
 	};
