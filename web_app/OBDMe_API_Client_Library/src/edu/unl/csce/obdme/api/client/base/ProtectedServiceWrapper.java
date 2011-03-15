@@ -6,7 +6,9 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import edu.unl.csce.obdme.client.http.request.RequestListener;
+import edu.unl.csce.obdme.client.http.exception.CommException;
+import edu.unl.csce.obdme.client.http.exception.ObdmeException;
+import edu.unl.csce.obdme.client.http.handler.IAsyncHttpHandler;
 import edu.unl.csce.obdme.http.request.ParamConstants;
 
 /**
@@ -30,11 +32,20 @@ public class ProtectedServiceWrapper extends ServiceWrapper {
 	 * @see edu.unl.csce.obdme.api.client.base.ServiceWrapper#performRequest(int, java.lang.String, java.util.List, edu.unl.csce.obdme.client.http.request.RequestListener)
 	 */
 	@Override
-	protected void performRequest(int httpMethod, String requestPath, List<NameValuePair> parameters, RequestListener listener) {
+	protected String performRequest(int httpMethod, String requestPath, java.util.List<NameValuePair> parameters) throws ObdmeException, CommException {
 		if (parameters == null) {
 			parameters = new ArrayList<NameValuePair>();
 		}
 		parameters.add(new BasicNameValuePair(ParamConstants.OBDME_REQUEST_APIKEY_PARAM, this.apiKey));
-		super.performRequest(httpMethod, requestPath, parameters, listener);
+		return super.performRequest(httpMethod, requestPath, parameters);		
 	}
+	
+	@Override
+	protected void performRequestAsync(int httpMethod, String requestPath, List<NameValuePair> parameters, IAsyncHttpHandler handler) {
+		if (parameters == null) {
+			parameters = new ArrayList<NameValuePair>();
+		}
+		parameters.add(new BasicNameValuePair(ParamConstants.OBDME_REQUEST_APIKEY_PARAM, this.apiKey));
+		super.performRequestAsync(httpMethod, requestPath, parameters, handler);
+	}	
 }
