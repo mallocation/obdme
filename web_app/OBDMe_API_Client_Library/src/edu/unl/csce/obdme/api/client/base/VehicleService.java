@@ -6,13 +6,10 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.os.Handler;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
+import edu.unl.csce.obdme.api.entities.UserVehicle;
 import edu.unl.csce.obdme.api.entities.Vehicle;
-import edu.unl.csce.obdme.client.http.request.RequestListener;
+import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;
+import edu.unl.csce.obdme.client.http.handler.BasicTypeHandler;
 
 /**
  * The Vehicle Service class.
@@ -34,80 +31,42 @@ public class VehicleService extends ProtectedServiceWrapper {
 	}
 	
 	/**
-	 * Adds a vehicle to the OBDMe system if it does not already exist.
-	 * The result will be a Vehicle identity.
+	 * Adds or updates the properties of a user owning a vehicle.
 	 *
-	 * @param VIN The vehicle identification number of the vehicle.
-	 * @param handler The result handler.
+	 * @param VIN the VIN of the vehicle
+	 * @param email the email of the user
+	 * @param alias the alias of the vehicle
+	 * @param handler the handler
 	 */
-	public void addVehicle(String VIN, Handler handler) {
-		this.addVehicle(VIN, 0, handler);
-	}
-	
-	/**
-	 * Adds a vehicle to the OBDMe system if it does not already
-	 * exist, and ties a user to the vehicle.
-	 * The result will be a Vehicle entity.
-	 *
-	 * @param VIN The vehicle identification number of the vehicle.
-	 * @param userId The user id to tie the vehicle to (Pass 0 for null)
-	 * @param handler The result handler.
-	 */
-	public void addVehicle(String VIN, long userId, Handler handler) {
+	public void addUpdateVehicleToUserAsync(String VIN, String email, String alias, BasicObjectHandler<UserVehicle> handler) {
+		String requestPath = String.format("%s/vin/%s/user/%s", VEHICLE_SERVICE_BASE_PATH, VIN, email);
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-		parameters.add(new BasicNameValuePair("VIN", VIN));
-		if (userId > 0) { 
-			parameters.add(new BasicNameValuePair("userid", Long.toString(userId))); 
-		}
-		this.performPut(VEHICLE_SERVICE_BASE_PATH, parameters, new BasicVehicleRequestListener(handler));		
+		parameters.add(new BasicNameValuePair("alias", alias));
+		super.performPutAsync(requestPath, parameters, handler);
 	}
 	
 	/**
-	 * Gets a vehicle from the OBDMe system.
-	 * The result will be a vehicle identity.
-	 *
-	 * @param VIN The vehicle identification number.
-	 * @param handler The result handler.
+	 * Gets a vehicle from the obdme system, asynchronously.
+	 * 
+	 * If the vehicle does not exist, and ObdmeException will be thrown.
+	 * 
+	 * @param VIN the VIN of the vehicle
+	 * @param handler the handler
 	 */
-	public void getVehicle(String VIN, Handler handler) {
+	public void getVehicleAsync(String VIN, BasicObjectHandler<Vehicle> handler) {
 		String requestPath = String.format("%s/%s", VEHICLE_SERVICE_BASE_PATH, VIN);
-		this.performGet(requestPath, null, new BasicVehicleRequestListener(handler));
+		super.performGetAsync(requestPath, null, handler);
 	}
 	
 	/**
-	 *	Request listener class for basic vehicle queries.
-	 *	Response is parsed into a vehicle entity.
+	 * Gets a list of vehicles that the user has registered.
+	 *
+	 * @param userEmail the user's email
+	 * @param handler the handler
 	 */
-	private static final class BasicVehicleRequestListener implements RequestListener {
-		
-		/** The handler. */
-		private Handler handler;
-		
-		/**
-		 * Instantiates a new basic vehicle request listener.
-		 *
-		 * @param handler the handler
-		 */
-		public BasicVehicleRequestListener(Handler handler) {
-			this.handler = handler;
-		}
-		
-		/* (non-Javadoc)
-		 * @see edu.unl.csce.obdme.client.http.request.RequestListener#onComplete(java.lang.String)
-		 */
-		@Override
-		public void onComplete(String response) {
-			Gson gson = new Gson();
-			Vehicle vehicle;
-			try {
-				vehicle = gson.fromJson(response, Vehicle.class);
-			} catch (JsonSyntaxException e) {
-				vehicle = null;
-			}
-			handler.sendMessage(handler.obtainMessage(0, vehicle));
-		}		
+	public void getVehiclesForUserAsync(String userEmail, BasicTypeHandler<List<UserVehicle>> handler) {
+		String requestPath = String.format("%s/user/%s", VEHICLE_SERVICE_BASE_PATH, userEmail);
+		super.performGetAsync(requestPath, null, handler);
 	}
 	
-	
-
 }
