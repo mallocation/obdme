@@ -1,11 +1,14 @@
 package edu.unl.csce.obdme.client.http.request;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -15,15 +18,22 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.protocol.HTTP;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import android.util.Log;
+import edu.unl.csce.obdme.api.entities.ApiError;
 import edu.unl.csce.obdme.client.http.HttpConnectionFactory;
-import edu.unl.csce.obdme.client.http.HttpConnectionManager;
+import edu.unl.csce.obdme.client.http.exception.CommException;
+import edu.unl.csce.obdme.client.http.exception.ObdmeException;
 
 /**
  * The Class HttpRequest.
  */
-public class HttpRequest implements Runnable {
+public class HttpRequest {
+	
+	private static final String LOG_TAG = "HttpRequest";
 	
 	/** The Constant GET. */
 	public static final int GET = 0;
@@ -46,22 +56,17 @@ public class HttpRequest implements Runnable {
 	/** The parameters. */
 	private List<NameValuePair> parameters;
 	
-	/** The listener. */
-	private RequestListener listener;
-	
 	/**
 	 * Instantiates a new http request.
 	 *
 	 * @param httpMethod the http method
 	 * @param url the url
 	 * @param parameters the parameters
-	 * @param listener the listener
 	 */
-	public HttpRequest(int httpMethod, String url, List<NameValuePair> parameters, RequestListener listener) {
+	public HttpRequest(int httpMethod, String url, List<NameValuePair> parameters) {
 		this.httpMethod = httpMethod;
 		this.url = url;
 		this.parameters = parameters;
-		this.listener = listener;
 	}
 	
 	/**
@@ -72,18 +77,13 @@ public class HttpRequest implements Runnable {
 	protected void setParameters(List<NameValuePair> parameters) {
 		this.parameters = parameters;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
-	@Override
-	public void run() {
+	
+	public String performRequestForResponse() throws ObdmeException, CommException {
+		String responseString = null;		
 		HttpRequestBase request = null;
 		HttpResponse response = null;
-		BasicResponseHandler brh = null;
-		String responseString = null;
-		try {			
-			switch (this.httpMethod) {
+		
+		switch (this.httpMethod) {
 			case HttpRequest.GET:
 				request = new HttpGet(formatGetDeleteRequestUrl(this.url, this.parameters));
 				break;
@@ -100,25 +100,44 @@ public class HttpRequest implements Runnable {
 				break;
 			default:
 				break;
-			}
-			
-			/* Get the response */
-			response = HttpConnectionFactory.getInstance().getHttpClient().execute(request);
-			
-			/* Try to read the response into a string, will complete for only 2XX status codes */
-			brh = new BasicResponseHandler();
-			responseString = brh.handleResponse(response);
-			
-			/* Response was successful, so notify the request listener */
-			if (this.listener != null) {
-				this.listener.onComplete(responseString);
-			}
-			Log.i("HTTPRequest", "Completed with code of " + response.getStatusLine().getStatusCode());				
-		} catch (Exception e) {
-			Log.e("HTTPRequest", "Exception", e);
-		} finally {
-			HttpConnectionManager.getInstance().requestCompleted(this);			
 		}
+					
+		try {
+			response = HttpConnectionFactory.getInstance().getHttpClient().execute(request);			
+		} catch (ClientProtocolException e) {
+			Log.e(LOG_TAG, e.getMessage());
+			throw new CommException(e.getMessage());
+		} catch (IOException e) {
+			Log.e(LOG_TAG, e.getMessage());
+			throw new CommException(e.getMessage());
+		}
+		
+		/* Response made it back to phone, let's try to decipher it */
+		try {
+			responseString = new BasicResponseHandler().handleResponse(response);
+		} catch (HttpResponseException e) {
+			//Error >= 300, Pass this back as an obdme exception
+			Log.e(LOG_TAG, e.getMessage());
+			throw new ObdmeException(e.getMessage());
+		} catch (IOException e) {
+			// Pass this back as a comm exception
+			Log.e(LOG_TAG, e.getMessage());
+			throw new CommException(e.getMessage());
+		}
+		
+		/* We've got a response, check for an error */
+		try {
+			ApiError apiError = new ObjectMapper().readValue(responseString, ApiError.class);
+			if (apiError != null) {
+				throw new ObdmeException(apiError.getError().getMessage());
+			}
+		} catch (JsonParseException e) {
+		} catch (JsonMappingException e) {
+		} catch (IOException e) {
+		}
+		
+		/* made it this far, should be a successful object returned */
+		return responseString;		
 	}
 	
 	/**
