@@ -2,11 +2,11 @@ package edu.unl.csce.obdme.client.http;
 
 import java.util.ArrayList;
 
-import edu.unl.csce.obdme.client.http.request.HttpRequest;
+import edu.unl.csce.obdme.client.http.request.AsyncHttpRequest;
 
 /**
  * The Class HttpConnectionManager.
- * This class is used to handle http request execution and queuing.
+ * This class is used to handle asynchronous http request execution and queuing.
  * 
  */
 public class HttpConnectionManager {
@@ -15,7 +15,7 @@ public class HttpConnectionManager {
 	private static final int MAX_ACTIVE_REQUESTS = 5;
 	
 	/** The request queue. */
-	private ArrayList<HttpRequest> requestQueue;
+	private ArrayList<AsyncHttpRequest> requestQueue;
 	
 	/** The current running requests. */
 	private int currentRunningRequests = 0;
@@ -24,7 +24,7 @@ public class HttpConnectionManager {
 	 * Instantiates a new http connection manager.
 	 */
 	private HttpConnectionManager() {
-		requestQueue = new ArrayList<HttpRequest>();
+		requestQueue = new ArrayList<AsyncHttpRequest>();
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class HttpConnectionManager {
 	private void startNext() {
 		if (!requestQueue.isEmpty() && currentRunningRequests < MAX_ACTIVE_REQUESTS) {
 			currentRunningRequests++;
-			HttpRequest request = requestQueue.remove(0);
+			AsyncHttpRequest request = requestQueue.remove(0);
 			new Thread(request).start();			
 		}
 	}
@@ -63,7 +63,7 @@ public class HttpConnectionManager {
 	 *
 	 * @param request the request to queue
 	 */
-	public void push(HttpRequest request) {
+	public void push(AsyncHttpRequest request) {
 		this.requestQueue.add(request);
 		startNext();
 	}
@@ -74,7 +74,7 @@ public class HttpConnectionManager {
 	 *
 	 * @param request the request that has completed
 	 */
-	public void requestCompleted(HttpRequest request) {
+	public void requestCompleted(AsyncHttpRequest request) {
 		currentRunningRequests--;
 		startNext();
 	}
