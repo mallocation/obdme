@@ -851,7 +851,7 @@ public class OBDMe extends Activity {
 		}
 	};
 	
-	/** The get Basic Object <USER> handler. */
+	/** The get Basic Object handler. */
 	private final BasicObjectHandler<User> getAccountCredentialsHandler = new BasicObjectHandler<User>(User.class) {
 
 		@Override
@@ -874,6 +874,34 @@ public class OBDMe extends Activity {
 				"Account validation successful.");
 			}
 		}
+		
+		/*switch (msg.what) {
+
+		//Messsage from BT service indicating a connection state change
+		case 0:
+			if(msg.obj != null) {
+
+			} 
+			else {
+
+				//Show alert dialog, the app must exit.  This is not recoverable
+				AlertDialog.Builder builder = new AlertDialog.Builder(OBDMe.this);
+				builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
+				.setCancelable(false)
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						OBDMe.this.finish();
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+			break;
+
+
+
+		}*/
 	};
 
 	/* (non-Javadoc)
