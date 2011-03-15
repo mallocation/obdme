@@ -5,80 +5,64 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 
 import edu.unl.csce.obdme.client.http.HttpConnectionManager;
+import edu.unl.csce.obdme.client.http.exception.CommException;
+import edu.unl.csce.obdme.client.http.exception.ObdmeException;
+import edu.unl.csce.obdme.client.http.handler.IAsyncHttpHandler;
+import edu.unl.csce.obdme.client.http.request.AsyncHttpRequest;
 import edu.unl.csce.obdme.client.http.request.HttpRequest;
-import edu.unl.csce.obdme.client.http.request.RequestListener;
 
-/**
- * The Class ServiceWrapper.
- */
 public class ServiceWrapper {
+	//private static final String OBDME_API_BASE_PATH = "http://192.168.1.199:9000/api";
+	private static final String OBDME_API_BASE_PATH = "http://obdme.com/api";
 	
-	/** The Constant OBDME_API_BASE_PATH. */
-	private static final String OBDME_API_BASE_PATH = "http://obdme.com/api";	
+	/* Synchronous requests */
 	
-	/**
-	 * Perform get.
-	 *
-	 * @param requestPath the request path
-	 * @param parameters the parameters
-	 * @param listener the listener
-	 */
-	protected void performGet(String requestPath, List<NameValuePair> parameters, RequestListener listener) {
-		this.performRequest(HttpRequest.GET, requestPath, parameters, listener);
+	protected String performGet(String requestPath, List<NameValuePair> parameters) throws ObdmeException, CommException {
+		return this.performRequest(HttpRequest.GET, requestPath, parameters);
 	}
 	
-	/**
-	 * Perform delete.
-	 *
-	 * @param requestPath the request path
-	 * @param parameters the parameters
-	 * @param listener the listener
-	 */
-	protected void performDelete(String requestPath, List<NameValuePair> parameters, RequestListener listener) {
-		this.performRequest(HttpRequest.DELETE, requestPath, parameters, listener);
+	protected String performDelete(String requestPath, List<NameValuePair> parameters) throws ObdmeException, CommException {
+		return this.performRequest(HttpRequest.DELETE, requestPath, parameters);
 	}
 	
-	/**
-	 * Perform post.
-	 *
-	 * @param requestPath the request path
-	 * @param parameters the parameters
-	 * @param listener the listener
-	 */
-	protected void performPost(String requestPath, List<NameValuePair> parameters, RequestListener listener) {
-		this.performRequest(HttpRequest.POST, requestPath, parameters, listener);	
+	protected String performPost(String requestPath, List<NameValuePair> parameters) throws ObdmeException, CommException {
+		return this.performRequest(HttpRequest.POST, requestPath, parameters);	
 	}	
 
-	/**
-	 * Perform put.
-	 *
-	 * @param requestPath the request path
-	 * @param parameters the parameters
-	 * @param listener the listener
-	 */
-	protected void performPut(String requestPath, List<NameValuePair> parameters, RequestListener listener) {
-		this.performRequest(HttpRequest.PUT, requestPath, parameters, listener);
+	protected String performPut(String requestPath, List<NameValuePair> parameters) throws ObdmeException, CommException {
+		return this.performRequest(HttpRequest.PUT, requestPath, parameters);
 	}
 	
-	/**
-	 * Perform request.
-	 *
-	 * @param httpMethod the http method
-	 * @param requestPath the request path
-	 * @param parameters the parameters
-	 * @param listener the listener
-	 */
-	protected void performRequest(int httpMethod, String requestPath, List<NameValuePair> parameters, RequestListener listener) {		
-		HttpRequest req = new HttpRequest(httpMethod, joinBaseWithRequestPath(requestPath), parameters, listener);
-		HttpConnectionManager.getInstance().push(req);
+	protected String performRequest(int httpMethod, String requestPath, List<NameValuePair> parameters) throws ObdmeException, CommException {
+		String url = joinBaseWithRequestPath(requestPath);
+		HttpRequest req = new HttpRequest(httpMethod, url, parameters);
+		return req.performRequestForResponse();
 	}	
 	
-	/**
-	 * Join base with request path.
-	 *
-	 * @param requestPath the request path
-	 * @return the string
-	 */
+	/* Asynchronous requests */
+	
+	protected void performGetAsync(String requestPath, List<NameValuePair> parameters, IAsyncHttpHandler handler) {
+		this.performRequestAsync(HttpRequest.GET, requestPath, parameters, handler);
+	}
+	
+	protected void performDeleteAsync(String requestPath, List<NameValuePair> parameters, IAsyncHttpHandler handler) {
+		this.performRequestAsync(HttpRequest.DELETE, requestPath, parameters, handler);
+	}
+	
+	protected void performPostAsync(String requestPath, List<NameValuePair> parameters, IAsyncHttpHandler handler) {
+		this.performRequestAsync(HttpRequest.POST, requestPath, parameters, handler);
+	}	
+
+	protected void performPutAsync(String requestPath, List<NameValuePair> parameters, IAsyncHttpHandler handler) {
+		this.performRequestAsync(HttpRequest.PUT, requestPath, parameters, handler);
+	}
+	
+	protected void performRequestAsync(int httpMethod, String requestPath, List<NameValuePair> parameters, IAsyncHttpHandler handler) {
+		String url = joinBaseWithRequestPath(requestPath);
+		AsyncHttpRequest request = new AsyncHttpRequest(httpMethod, url, parameters, handler);
+		HttpConnectionManager.getInstance().push(request);
+	}	
+	
 	private String joinBaseWithRequestPath(String requestPath) {
 		return String.format("%s%s", OBDME_API_BASE_PATH, requestPath);
 	}
