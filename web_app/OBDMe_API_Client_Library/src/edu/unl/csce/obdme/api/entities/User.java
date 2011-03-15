@@ -1,22 +1,27 @@
 package edu.unl.csce.obdme.api.entities;
 
+import java.io.Serializable;
+
+import org.codehaus.jackson.annotate.JsonProperty;
+
 /**
  * The Class User.
+ * This class represents a user associated with the obdme system.
  */
-public class User {
+public class User implements Serializable {
 	
+	private static final long serialVersionUID = 694142388417272073L;
+
 	/** The email. */
+	@JsonProperty("email")
 	private String email;
 	
-	/** The passwordhash. */
-	private String passwordhash;
-	
 	/** The id. */
-	private Long id;
-	
+	@JsonProperty("id")
+	private Long id;	
 	
 	/**
-	 * Gets the email.
+	 * Gets the email of the user.
 	 *
 	 * @return the email
 	 */
@@ -25,25 +30,16 @@ public class User {
 	}
 	
 	/**
-	 * Gets the id.
+	 * Gets the id of the user.
 	 *
 	 * @return the id
 	 */
 	public Long getId() {
 		return this.id;
-	}
+	}	
 	
 	/**
-	 * Gets the password hash.
-	 *
-	 * @return the password hash
-	 */
-	public String getPasswordHash() {
-		return this.passwordhash;
-	}
-	
-	/**
-	 * Sets the email.
+	 * Sets the email of the user.
 	 *
 	 * @param email the new email
 	 */
@@ -52,21 +48,12 @@ public class User {
 	}
 	
 	/**
-	 * Sets the id.
+	 * Sets the id of the user.
 	 *
 	 * @param id the new id
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	/**
-	 * Sets the password hash.
-	 *
-	 * @param passwordhash the new password hash
-	 */
-	public void setPasswordHash(String passwordhash) {
-		this.passwordhash = passwordhash;
 	}
 	
 }
