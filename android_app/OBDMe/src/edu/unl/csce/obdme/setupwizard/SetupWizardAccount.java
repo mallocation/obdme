@@ -23,6 +23,7 @@ import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.api.entities.User;
+import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;
 import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
@@ -209,8 +210,9 @@ public class SetupWizardAccount extends Activity {
 					busyDialog = ProgressDialog.show(SetupWizardAccount.this, "", getResources().getString(R.string.setupwizard_account_dialog_creating), true);
 
 					//Send the request to the webservice to create this user
-					webFramework.getUsersService().createUser(emailText.getText().toString(), confirmPasswordText.getText().toString(), createAccountHander);
-
+					//webFramework.getUsersService().createUser(emailText.getText().toString(), confirmPasswordText.getText().toString(), createAccountHander);
+					webFramework.getUsersService().createUserAsync(emailText.getText().toString(), confirmPasswordText.getText().toString(), createAccountHandler);
+					
 				}
 
 				else if (ready == 3 && NEW_ACCOUNT == false) {
@@ -408,8 +410,31 @@ public class SetupWizardAccount extends Activity {
 			}
 		}
 	};
+	
+	private final BasicObjectHandler<User> confirmRegisteredPasswordHandler = new BasicObjectHandler<User>(User.class) {
 
-	/** The confirm registered password handler. */
+		@Override
+		public void onCommException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onObdmeException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onOperationCompleted(User result) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+
+	/** The confirm registered password handler. NOW DEFINED ABOVE*/
+	/*
 	private final Handler confirmRegisteredPasswordHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -435,8 +460,32 @@ public class SetupWizardAccount extends Activity {
 			}
 		}
 	};
+	*/
 
-	/** The create account hander. */
+	/** The create account handler. */
+	private final BasicObjectHandler<User> createAccountHandler = new BasicObjectHandler<User>(User.class) {
+
+		@Override
+		public void onCommException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onObdmeException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onOperationCompleted(User result) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+	
+	/*
 	private final Handler createAccountHander = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -475,8 +524,36 @@ public class SetupWizardAccount extends Activity {
 			}
 		}
 	};
+	*/
+	
+	/** The getAccountCredentials handler. */
+	private final BasicObjectHandler<User> getAccountCredentialsHandler = new BasicObjectHandler<User>(User.class) {
 
-	/** The get account credentials handler. */
+		@Override
+		public void onCommException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onObdmeException(String message) {
+			// TODO Auto-generated method stub
+			// User does not exist
+		}
+
+		@Override
+		public void onOperationCompleted(User result) {
+			// TODO Auto-generated method stub
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"Account validation successful.");
+			}
+		}
+		
+	};
+	
+	/** The get account credentials handler. NOW DEFINED ABOVE*/
+	/*
 	private final Handler getAccountCredentialsHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -512,4 +589,6 @@ public class SetupWizardAccount extends Activity {
 			}
 		}
 	};
+	*/
+	
 }

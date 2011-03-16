@@ -14,7 +14,10 @@ import android.widget.TextView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
+import edu.unl.csce.obdme.api.entities.User;
+import edu.unl.csce.obdme.api.entities.UserVehicle;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
+import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
@@ -202,7 +205,8 @@ public class SetupWizardVehicle extends Activity {
 					OBDConfigurationManager.writeOBDConfiguration(getApplicationContext(), 
 							elmFramework.getObdFramework().getConfiguredProtocol(), 
 							vinResult);
-					webFramework.getVehicleService().addVehicle(vinResult, appSettings.getAccountUID(),eventHandler);
+					//webFramework.getVehicleService().addVehicle(vinResult, appSettings.getAccountUID(),eventHandler);
+					webFramework.getVehicleService().addUpdateVehicleToUserAsync(vinResult, appSettings.getAccountUsername(), appSettings.getAccountVehicleAlias(), addUpdateVehicleHandler);
 
 					//Save the VIN in the preferences
 					appSettings.setAccountVIN(vinResult);
@@ -343,5 +347,28 @@ public class SetupWizardVehicle extends Activity {
 				break;
 			}
 		}
+	};
+	
+	/** The get Basic Object handler for UserVehicle addUpdate. */
+	private final BasicObjectHandler<UserVehicle> addUpdateVehicleHandler = new BasicObjectHandler<UserVehicle>(UserVehicle.class) {
+
+		@Override
+		public void onCommException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onObdmeException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onOperationCompleted(UserVehicle result) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	};
 }
