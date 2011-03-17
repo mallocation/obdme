@@ -358,7 +358,8 @@ public class SetupWizardAccount extends Activity {
 		//Format checking to make sure that the email address is valid (syntax wise)
 		if (emailRegEx.matcher(emailText.getText()).matches()) {
 			//Verify if the user is registered
-			webFramework.getUsersService().isUserRegistered(emailText.getText().toString(), userIsRegistered);
+			//webFramework.getUsersService().isUserRegistered(emailText.getText().toString(), userIsRegistered);
+			webFramework.getUsersService().getUserByEmailAsync(emailText.getText().toString(), userIsRegistered);
 		}
 
 		//Email address is not formatted correctly, show the red x in the email box
@@ -370,8 +371,51 @@ public class SetupWizardAccount extends Activity {
 		}
 
 	}
+	
+	/** The user is registered handler */
+	private final BasicObjectHandler<User> userIsRegistered = new BasicObjectHandler<User>(User.class) {
 
-	/** The user is registered. */
+		EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
+		TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
+		EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
+		Button button = (Button) findViewById(R.id.setupwizard_account_button);
+		
+		@Override
+		public void onCommException(String message) {
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"Comm Exception in userIsRegistered.");
+			}
+		}
+
+		@Override
+		public void onObdmeException(String message) {
+			// user is not registered
+			emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_plus, 0);
+			comfirmPasswordTitle.setVisibility(View.VISIBLE);
+			comfirmPasswordInput.setVisibility(View.VISIBLE);
+			button.setText(R.string.setupwizard_account_button_createaccount_text);
+			NEW_ACCOUNT = true;	
+			VERIFIED_EMAIL = true;
+		}
+
+		@Override
+		public void onOperationCompleted(User result) {
+			// user is regestered
+			emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
+			comfirmPasswordTitle.setVisibility(View.GONE);
+			comfirmPasswordInput.setVisibility(View.GONE);
+			button.setText(R.string.setupwizard_account_button_signin_text);
+			NEW_ACCOUNT = false;
+			VERIFIED_CONFIRM_PASSWORD = true;
+			VERIFIED_EMAIL = true;
+		}
+		
+	};
+
+	/** The user is registered. NOW DEFINED ABOVE*/
+	/*
 	private final Handler userIsRegistered = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -410,25 +454,40 @@ public class SetupWizardAccount extends Activity {
 			}
 		}
 	};
+	*/
 	
 	private final BasicObjectHandler<User> confirmRegisteredPasswordHandler = new BasicObjectHandler<User>(User.class) {
 
+		EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
+		
 		@Override
 		public void onCommException(String message) {
-			// TODO Auto-generated method stub
-			
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"Comm Exception in confirmRegisteredPasswordHandler");
+			}
 		}
 
 		@Override
 		public void onObdmeException(String message) {
-			// TODO Auto-generated method stub
-			
+			// password is incorrect
+			passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red_x, 0);
+			VERIFIED_PASSWORD = 0;
 		}
 
 		@Override
 		public void onOperationCompleted(User result) {
-			// TODO Auto-generated method stub
+			// password is correct
+			passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
+			//Check the confirm password again in case user goes back to fix original password to match the confirm password
+			checkConfirmPassword();
+			VERIFIED_PASSWORD = 1;
 			
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"Confirm registered password successful.");
+			}
 		}
 		
 	};
@@ -467,20 +526,49 @@ public class SetupWizardAccount extends Activity {
 
 		@Override
 		public void onCommException(String message) {
-			// TODO Auto-generated method stub
 			
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"Comm Exception in createAccountHandler.");
+			}
+			
+			//Show alert dialog, the app must exit.  This is not recoverable
+			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
+			.setCancelable(false)
+			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					SetupWizardAccount.this.finish();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
 		}
 
 		@Override
 		public void onObdmeException(String message) {
-			// TODO Auto-generated method stub
-			
+			//Show alert dialog, the app must exit.  This is not recoverable
+			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
+			.setCancelable(false)
+			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					SetupWizardAccount.this.finish();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
 		}
 
 		@Override
 		public void onOperationCompleted(User result) {
-			// TODO Auto-generated method stub
-			
+			// account created successfully
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"Account creation successful.");
+			}
 		}
 		
 	};
@@ -531,19 +619,40 @@ public class SetupWizardAccount extends Activity {
 
 		@Override
 		public void onCommException(String message) {
-			// TODO Auto-generated method stub
-			
+			//Show alert dialog, the app must exit.  This is not recoverable
+			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
+			.setCancelable(false)
+			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					SetupWizardAccount.this.finish();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
 		}
 
 		@Override
 		public void onObdmeException(String message) {
-			// TODO Auto-generated method stub
 			// User does not exist
+			//Show alert dialog, the app must exit.  This is not recoverable
+			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
+			.setCancelable(false)
+			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					SetupWizardAccount.this.finish();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
 		}
 
 		@Override
 		public void onOperationCompleted(User result) {
-			// TODO Auto-generated method stub
+			// get account credentials successful
 			if(getResources().getBoolean(R.bool.debug)) {
 				Log.d(getResources().getString(R.string.debug_tag_obdme),
 				"Account validation successful.");
