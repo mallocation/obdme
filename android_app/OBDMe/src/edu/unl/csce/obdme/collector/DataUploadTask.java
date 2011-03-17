@@ -149,7 +149,8 @@ public class DataUploadTask implements Runnable {
 				}
 
 				//Send the graph push to the vehicle graph service
-				webFramework.getVehicleGraphService().pushVehicleGraphData(graphPush, dataUploadHandler);	
+				// TODO: get this fixed (below)
+				//webFramework.getVehicleGraphService().pushVehicleGraphData(graphPush, dataUploadHandler);	
 
 				int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
 
