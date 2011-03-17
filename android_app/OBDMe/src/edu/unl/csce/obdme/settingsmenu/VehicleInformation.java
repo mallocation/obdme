@@ -15,6 +15,9 @@ import android.widget.TextView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
+import edu.unl.csce.obdme.api.entities.User;
+import edu.unl.csce.obdme.api.entities.UserVehicle;
+import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;
 import edu.unl.csce.obdme.utilities.AppSettings;
 
 /**
@@ -60,10 +63,12 @@ public class VehicleInformation extends Activity {
 				Button changeButton = (Button) findViewById(R.id.settings_vehicle_button);
 				changeButton.setVisibility(View.GONE);
 				
-				webFramework.getVehicleService().addVehicle(
-						appSettings.getAccountVIN(),
-						appSettings.getAccountUID(),
-						eventHandler);
+//				webFramework.getVehicleService().addVehicle(
+//						appSettings.getAccountVIN(),
+//						appSettings.getAccountUID(),
+//						eventHandler);
+				
+				webFramework.getVehicleService().addUpdateVehicleToUserAsync(appSettings.getAccountVIN(), appSettings.getAccountUsername(), appSettings.getAccountVehicleAlias(), addUpdateVehicleHandler);
 				
 				if(webDialog == null){
 					webDialog = ProgressDialog.show(VehicleInformation.this, "", getResources().getString(R.string.settings_vehicle_dialog), true);
@@ -109,6 +114,7 @@ public class VehicleInformation extends Activity {
 		
 	}
 	
+	/*
 	private final Handler eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -125,6 +131,32 @@ public class VehicleInformation extends Activity {
 			}
 				
 		}
+	};
+	*/
+	
+	private final BasicObjectHandler<UserVehicle> addUpdateVehicleHandler = new BasicObjectHandler<UserVehicle>(UserVehicle.class) {
+
+		@Override
+		public void onCommException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onObdmeException(String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onOperationCompleted(UserVehicle result) {
+			// TODO Auto-generated method stub
+			// add/update vehicle was successful
+			if(webDialog != null){
+				webDialog.dismiss();
+			}
+		}
+		
 	};
 
 }
