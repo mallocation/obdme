@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/main.css'}">
+        #{get 'moreStyles' /}
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+        <script src="@{'/public/javascripts/jquery-1.4.2.min.js'}" type="text/javascript" charset="utf-8"></script>
+        #{get 'moreScripts' /}
+        
+        <style type="text/css">
+        	body {
+        		background: #030303 url("@{'/public/images/splash.png'}") no-repeat fixed top center;
+        	}
+        	div.main {
+           		width:930px;        		
+        		margin-left: auto;
+        		margin-right: auto;
+        	}
+        	div.login {
+        		margin-top:400px;
+        		width:350px;
+        		margin-left: auto;
+        		margin-right: auto;
+        		
+        	}
+        	input.cred {
+        		width:350px;
+        		font-size: 20px;       	
+        	}
+        	input.login {
+        		float: right;
+        	}
+        	span
+        	{
+        		color: #ffffff;
+        		font: 12px/1.4 Verdana,sans-serif;
+        	}
+        	
+        </style>       
+    </head>
+    <body>
+    	<form method="post" action="">
+	    	<div class="main">
+	    		<div class="login">
+	    			<div>
+	    				<input class="cred" type="text"/>
+	    			</div>
+	    			<div>
+	   					<input class="cred" type="password"/>
+	   				</div>
+	   				<div>   				
+	   					<input type="checkbox"/>
+	   					<span>Remember Me</span>
+	   					<input class="login" type="submit" value="Login"/>   					
+	   				</div>
+	   			</div>
+	    	</div>
+  		</form>
+	</body>
+</html>

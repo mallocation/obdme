@@ -1,0 +1,27 @@
+#{extends 'main.html' /}
+#{set title:'OBDMe Developer Portal' /}
+
+<form method="post" action="@{DevPortal.createExternalApp}">
+	<h3>Get access to the OBDMe system!</h3>
+	<p>First, register your application.</p>
+	<input type="text" name="name"/><input type="submit"/>
+</form>
+
+<div>
+<h3>Registered Apps</h3>
+<table>
+<tr>
+	<th>Registered Application</th>
+	<th>API Key</th>
+</tr>
+
+#{list items:registeredApps, as : 'regApp'}
+<tr>
+	<td>${regApp.name}</td>
+	<td>${regApp.apikey}</td>
+</tr>
+#{/list}
+
+
+</table>
+</div>
