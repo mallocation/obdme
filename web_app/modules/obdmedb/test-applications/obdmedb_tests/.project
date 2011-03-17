@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>obdmedb_tests</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.playframework.playclipse.playNature</nature>
+	</natures>
+	<linkedResources><link><name>obdmedb</name><type>2</type><location>/Users/cjohnson/Development/Java/obdmedb/app</location></link>
+<link><name>conf/obdmedb</name><type>2</type><location>/Users/cjohnson/Development/Java/obdmedb/conf</location></link>
+<link><name>public/obdmedb</name><type>2</type><location>/Users/cjohnson/Development/Java/obdmedb/public</location></link>
+</linkedResources>
+</projectDescription>
