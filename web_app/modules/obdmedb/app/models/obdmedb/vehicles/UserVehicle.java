@@ -24,6 +24,30 @@ public class UserVehicle extends Model {
 	@Column(name="alias")
 	public String alias;
 	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Vehicle getVehicle() {
+		return vehicle;
+	}
+
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias.trim();
+	}
+
 	public static List<UserVehicle> getVehiclesForUser(User user) {
 		return UserVehicle.find("userid=?", user.getId()).fetch();
 	}
