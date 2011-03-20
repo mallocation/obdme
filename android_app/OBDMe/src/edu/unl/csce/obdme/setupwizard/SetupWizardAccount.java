@@ -373,11 +373,6 @@ public class SetupWizardAccount extends Activity {
 	/** The user is registered handler */
 	private final BasicObjectHandler<User> userIsRegistered = new BasicObjectHandler<User>(User.class) {
 
-		EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
-		TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
-		EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
-		Button button = (Button) findViewById(R.id.setupwizard_account_button);
-		
 		@Override
 		public void onCommException(String message) {
 
@@ -389,25 +384,49 @@ public class SetupWizardAccount extends Activity {
 
 		@Override
 		public void onObdmeException(String message) {
-			// user is not registered
-			emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_plus, 0);
-			comfirmPasswordTitle.setVisibility(View.VISIBLE);
-			comfirmPasswordInput.setVisibility(View.VISIBLE);
-			button.setText(R.string.setupwizard_account_button_createaccount_text);
-			NEW_ACCOUNT = true;	
-			VERIFIED_EMAIL = true;
+			Runnable r = new Runnable() {
+				
+				@Override
+				public void run() {
+					EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
+					TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
+					EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
+					Button button = (Button) findViewById(R.id.setupwizard_account_button);
+					
+					// user is not registered
+					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_plus, 0);
+					comfirmPasswordTitle.setVisibility(View.VISIBLE);
+					comfirmPasswordInput.setVisibility(View.VISIBLE);
+					button.setText(R.string.setupwizard_account_button_createaccount_text);
+					NEW_ACCOUNT = true;	
+					VERIFIED_EMAIL = true;
+				}
+			};
+			runOnUiThread(r);
+			
 		}
 
 		@Override
-		public void onOperationCompleted(User result) {
-			// user is regestered
-			emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
-			comfirmPasswordTitle.setVisibility(View.GONE);
-			comfirmPasswordInput.setVisibility(View.GONE);
-			button.setText(R.string.setupwizard_account_button_signin_text);
-			NEW_ACCOUNT = false;
-			VERIFIED_CONFIRM_PASSWORD = true;
-			VERIFIED_EMAIL = true;
+		public void onOperationCompleted(User result) {			
+			Runnable r = new Runnable() {				
+				@Override
+				public void run() {
+					EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
+					TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
+					EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
+					Button button = (Button) findViewById(R.id.setupwizard_account_button);
+					
+					// user is registered
+					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
+					comfirmPasswordTitle.setVisibility(View.GONE);
+					comfirmPasswordInput.setVisibility(View.GONE);
+					button.setText(R.string.setupwizard_account_button_signin_text);
+					NEW_ACCOUNT = false;
+					VERIFIED_CONFIRM_PASSWORD = true;
+					VERIFIED_EMAIL = true;
+				}
+			};
+			runOnUiThread(r);
 		}
 		
 	};
@@ -455,9 +474,7 @@ public class SetupWizardAccount extends Activity {
 	*/
 	
 	private final BasicObjectHandler<User> confirmRegisteredPasswordHandler = new BasicObjectHandler<User>(User.class) {
-
-		EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
-		
+	
 		@Override
 		public void onCommException(String message) {
 
@@ -469,25 +486,39 @@ public class SetupWizardAccount extends Activity {
 
 		@Override
 		public void onObdmeException(String message) {
-			// password is incorrect
-			passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red_x, 0);
-			VERIFIED_PASSWORD = 0;
+			Runnable r = new Runnable() {				
+				@Override
+				public void run() {
+					// password is incorrect					
+					EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
+					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red_x, 0);
+					VERIFIED_PASSWORD = 0;
+				}
+			};
+			runOnUiThread(r);
+
 		}
 
 		@Override
 		public void onOperationCompleted(User result) {
-			// password is correct
-			passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
-			//Check the confirm password again in case user goes back to fix original password to match the confirm password
-			checkConfirmPassword();
-			VERIFIED_PASSWORD = 1;
-			
-			if(getResources().getBoolean(R.bool.debug)) {
-				Log.d(getResources().getString(R.string.debug_tag_obdme),
-				"Confirm registered password successful.");
-			}
-		}
-		
+			Runnable r = new Runnable() {				
+				@Override
+				public void run() {
+					// password is correct
+					EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
+					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
+					//Check the confirm password again in case user goes back to fix original password to match the confirm password
+					checkConfirmPassword();
+					VERIFIED_PASSWORD = 1;
+					
+					if(getResources().getBoolean(R.bool.debug)) {
+						Log.d(getResources().getString(R.string.debug_tag_obdme),
+						"Confirm registered password successful.");
+					}
+				}
+			};
+			runOnUiThread(r);
+		}		
 	};
 
 	/** The confirm registered password handler. NOW DEFINED ABOVE*/
@@ -529,35 +560,50 @@ public class SetupWizardAccount extends Activity {
 				Log.d(getResources().getString(R.string.debug_tag_obdme),
 				"Comm Exception in createAccountHandler.");
 			}
-			
-			//Show alert dialog, the app must exit.  This is not recoverable
-			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
-			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
-			.setCancelable(false)
-			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			Runnable r = new Runnable() {
+				
 				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					SetupWizardAccount.this.finish();
+				public void run() {
+					//Show alert dialog, the app must exit.  This is not recoverable
+					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
+					.setCancelable(false)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							SetupWizardAccount.this.finish();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
+					
 				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
+			};
+			runOnUiThread(r);
+			
+			
 		}
 
 		@Override
 		public void onObdmeException(String message) {
-			//Show alert dialog, the app must exit.  This is not recoverable
-			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
-			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
-			.setCancelable(false)
-			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			Runnable r = new Runnable() {				
 				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					SetupWizardAccount.this.finish();
+				public void run() {
+					//Show alert dialog, the app must exit.  This is not recoverable
+					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
+					.setCancelable(false)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							SetupWizardAccount.this.finish();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
 				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
+			};
+			runOnUiThread(r);			
 		}
 
 		@Override
@@ -617,35 +663,51 @@ public class SetupWizardAccount extends Activity {
 
 		@Override
 		public void onCommException(String message) {
-			//Show alert dialog, the app must exit.  This is not recoverable
-			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
-			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
-			.setCancelable(false)
-			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			Runnable r = new Runnable() {
+				
 				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					SetupWizardAccount.this.finish();
+				public void run() {
+					//Show alert dialog, the app must exit.  This is not recoverable
+					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
+					.setCancelable(false)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							SetupWizardAccount.this.finish();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
 				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
+			};
+			runOnUiThread(r);
+			
 		}
 
 		@Override
 		public void onObdmeException(String message) {
-			// User does not exist
-			//Show alert dialog, the app must exit.  This is not recoverable
-			AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
-			builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
-			.setCancelable(false)
-			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			Runnable r = new Runnable() {
+				
 				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					SetupWizardAccount.this.finish();
+				public void run() {
+					// User does not exist
+					//Show alert dialog, the app must exit.  This is not recoverable
+					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
+					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
+					.setCancelable(false)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							SetupWizardAccount.this.finish();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
 				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
+			};
+			runOnUiThread(r);
+			
 		}
 
 		@Override
