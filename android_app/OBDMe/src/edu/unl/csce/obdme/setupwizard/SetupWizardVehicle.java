@@ -14,7 +14,6 @@ import android.widget.TextView;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
-import edu.unl.csce.obdme.api.entities.User;
 import edu.unl.csce.obdme.api.entities.UserVehicle;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;

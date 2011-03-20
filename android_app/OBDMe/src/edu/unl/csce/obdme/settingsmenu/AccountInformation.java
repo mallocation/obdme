@@ -3,13 +3,9 @@ package edu.unl.csce.obdme.settingsmenu;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,8 +19,6 @@ import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.api.entities.User;
-import edu.unl.csce.obdme.client.http.exception.CommException;
-import edu.unl.csce.obdme.client.http.exception.ObdmeException;
 import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;
 import edu.unl.csce.obdme.utilities.AppSettings;
 
