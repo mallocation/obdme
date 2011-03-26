@@ -8,12 +8,21 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
+@Table(name="vehicle")
 public class Vehicle extends Model {
 
 	@Required
 	@Column(name="vin", unique=true)
 	public String VIN;
 	
+	public String getVIN() {
+		return VIN;
+	}
+
+	public void setVIN(String VIN) {
+		this.VIN = VIN;
+	}
+
 	private Vehicle(String VIN) {
 		this.VIN = VIN;
 	}
@@ -35,7 +44,6 @@ public class Vehicle extends Model {
 	 */
 	public static Vehicle findByVIN(String VIN) {
 		return find("vin", VIN).first();
-	}
-	
+	}	
     
 }

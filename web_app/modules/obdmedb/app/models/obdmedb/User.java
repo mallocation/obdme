@@ -28,11 +28,24 @@ public class User extends Model {
 	@Column(name="regdate")
 	public Date regdate;
 	
-	public User (String email, String clearTextPassword) {
-		this.email = email;
-		this.passwordhash = EncryptionUtils.encryptPassword(clearTextPassword);
-		this.regdate = new Date();
-	}	
+//	public User (String email, String clearTextPassword) {
+//		this.email = email;
+//		this.passwordhash = EncryptionUtils.encryptPassword(clearTextPassword);
+//		this.regdate = new Date();
+//	}
+	
+	public static User createUserFromClearTextCredentials(String email, String clearTextPassword) {
+		String encryptedPassword = EncryptionUtils.encryptPassword(clearTextPassword);
+		return createUserFromEncryptedCredentials(email, encryptedPassword);
+	}
+	
+	public static User createUserFromEncryptedCredentials(String email, String encryptedPassword) {
+		User user = new User();
+		user.email = email;
+		user.passwordhash = encryptedPassword;
+		user.regdate = new Date();
+		return user.validateAndSave() ? user : null;		
+	}
 	
 	public static User findByEmail(String email) {
 		return find("email", email).first();
@@ -46,15 +59,23 @@ public class User extends Model {
 		return findByEmail(email) != null;
 	}
 	
-	public static boolean isValidCredentials(String email, String password) {
-		return validateUserCredentials(email, password) != null;
+	public static boolean isValidCredentialsClearText(String email, String clearTextPassword) {
+		return validateUserCredentialsClearText(email, clearTextPassword) != null;
 	}
 	
-	public static User validateUserCredentials(String email, String password) {
-		String encryptedPassword = EncryptionUtils.encryptPassword(password);
+	public static boolean isValidCredentialsEncrypted(String email, String encryptedPassword) {
+		return validateUserCredentialsEncrypted(email, encryptedPassword) != null;
+	}
+	
+	public static User validateUserCredentialsClearText(String email, String clearTextPassword) {
+		String encryptedPassword = EncryptionUtils.encryptPassword(clearTextPassword);
+		return validateUserCredentialsEncrypted(email, encryptedPassword);
+	}
+	
+	public static User validateUserCredentialsEncrypted(String email, String encryptedPassword) {
 		return find("email like ? and passwordhash like ?", email, encryptedPassword).first();
 	}
-
+	
 	public String getEmail() {
 		return email.toLowerCase();
 	}
