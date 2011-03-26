@@ -3,7 +3,7 @@
 # ~~~~
 
 # Import CRUD routes
-*      /admin              						module:crud
+*      /api/admin          						module:crud
 
 # Home page
 GET     /                                       Application.index
@@ -17,23 +17,18 @@ GET     /                                       Application.index
 POST	/api/graph/trips/VIN/{VIN}/email/{email} controllers.api.Trips.createTripForUserByVIN
 
 #Graph
-POST 	/api/graph/vehicles						controllers.api.VehicleGraph.pushVehicleGraphData
-
+POST 	/api/graph/statistics/vehicle/{VIN}		controllers.api.graph.Statistics.postGraphDataForVehicle
 
 #Users
 POST	/api/users 								controllers.api.Users.createUser
 GET		/api/users/{email}/login				controllers.api.Users.validateUserCredentials
 GET		/api/users/{email}						controllers.api.Users.getUser
 
-
-
 #Vehicles
 GET		/api/vehicles/vin/{VIN}					controllers.api.Vehicles.getVehicleByVIN
 GET		/api/vehicles/user/{email}				controllers.api.Vehicles.getVehiclesForUser
 PUT		/api/vehicles/vin/{VIN}/user/{email}    controllers.api.Vehicles.addUpdateVehicleOwner
-
-
-
+PUT		/api/vehicles							controllers.api.Vehicles.addUpdateVehicle
 
 
 #/-----------------------END OBDME API-------------------------------------/
