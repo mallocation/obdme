@@ -1,6 +1,6 @@
 package controllers.obdme.CRUD;
 
-import models.obdme.Applications.ExternalApp;
+import models.obdmedb.applications.ExternalApp;
 import controllers.CRUD;
 import controllers.CRUD.For;
 

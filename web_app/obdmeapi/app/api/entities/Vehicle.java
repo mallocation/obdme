@@ -16,6 +16,11 @@ public class Vehicle implements Serializable {
 		this.VIN = VIN;
 	}
 	
+	public Vehicle(models.obdmedb.vehicles.Vehicle modelVehicle) {
+		this.vehicleId = modelVehicle.getId();
+		this.VIN = modelVehicle.getVIN();
+	}
+	
 	public Long getVehicleId() {
 		return vehicleId;
 	}

@@ -11,6 +11,11 @@ public class User implements Serializable {
 		this.email = email;
 	}
 	
+	public User(models.obdmedb.User modelUser) {
+		this.id = modelUser.getId();
+		this.email = modelUser.getEmail();
+	}
+	
 	@SerializedName("id")
 	private Long id;
 	
@@ -31,11 +36,6 @@ public class User implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	
-	public static User fromModelUser(models.obdme.User modelUser) {
-		User fromModel = new User(modelUser.getId(), modelUser.email);
-		return fromModel;
 	}
 
 }

@@ -1,8 +1,6 @@
 package controllers.obdme.rest.controllerbase;
 
-import org.eclipse.jdt.core.dom.ThisExpression;
-
-import models.obdme.Applications.ExternalApp;
+import models.obdmedb.applications.ExternalApp;
 import play.Logger;
 import play.mvc.Before;
 import play.mvc.Controller;
@@ -16,31 +14,31 @@ import play.mvc.Controller;
  */
 public abstract class SecureController extends Controller {	
 	
-	/**
-	 * Validate access and http request.
-	 *
-	 * @param apikey the apikey of the calling applicaiton
-	 * @param sig the signature of the request
-	 */
-	@SuppressWarnings("unused")
-	@Before
-	private static void validateAccessAndHttpRequest(String apikey) {
-		/* validate that the api and signature key exist */
-		validation.required(apikey);
-
-		if(validation.hasErrors()) {
-			/* api key is not present; access forbidden! */
-			Logger.info("API Key is not present.");
-			forbidden();
-		}
-
-		/* validate that the api key has access to the obdme system */
-		validation.isTrue(ExternalApp.hasAccess(apikey));
-		if (validation.hasErrors()) {
-			/* api key does not have access to the system */
-			Logger.info("API Key '" + apikey + "' does not have access to the OBDMe system.");
-			forbidden();
-		}
+//	/**
+//	 * Validate access and http request.
+//	 *
+//	 * @param apikey the apikey of the calling applicaiton
+//	 * @param sig the signature of the request
+//	 */
+//	@SuppressWarnings("unused")
+//	@Before
+//	private static void validateAccessAndHttpRequest(String apikey) {
+//		/* validate that the api and signature key exist */
+//		validation.required(apikey);
+//
+//		if(validation.hasErrors()) {
+//			/* api key is not present; access forbidden! */
+//			Logger.info("API Key is not present.");
+//			forbidden();
+//		}
+//
+//		/* validate that the api key has access to the obdme system */
+//		validation.isTrue(ExternalApp.hasAccessToObdme(apikey));
+//		if (validation.hasErrors()) {
+//			/* api key does not have access to the system */
+//			Logger.info("API Key '" + apikey + "' does not have access to the OBDMe system.");
+//			forbidden();
+//		}
 		
 		/* Set up the params to exclude from encryption */
 //		List<String> excludeParameters = new ArrayList<String>();
@@ -55,7 +53,7 @@ public abstract class SecureController extends Controller {
 //			Logger.error("Invalid request signature.");
 //			forbidden();
 //		}
-		
-		/* if we've gotten here, then it's a good request! have fun in the obdme system! */
-	}
+//		
+//		/* if we've gotten here, then it's a good request! have fun in the obdme system! */
+//	}
 }

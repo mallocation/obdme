@@ -1,43 +1,75 @@
 package controllers.api;
 
+import models.obdmedb.User;
 import api.entities.ApiError;
 import controllers.obdme.rest.controllerbase.LoggedController;
 import controllers.obdme.rest.controllerbase.SecureController;
-import models.obdme.User;
+//import models.obdme.User;
+import play.data.validation.Email;
 import play.data.validation.Required;
 import play.i18n.Messages;
 import play.mvc.results.Forbidden;
 
+/**
+ * This class represents the controller used for all things pertaining to users within the obdme api.
+ */
 public class Users extends LoggedController {
     
-    public static void getUser(String email) {
+    /**
+     * Gets a user by email.
+     * 
+     * This method returns a user in json format.  If the user does not exist,
+     * an api error will be thrown.
+     *
+     * @param email the email of the user to retrieve
+     */
+    public static void getUser(@Required String email) {
     	User user = User.findByEmail(email);
-    	api.entities.User entity = null;
     	if (user != null) {
-    		entity = api.entities.User.fromModelUser(user);
-    		renderJSON(entity);
+    		renderJSON(new api.entities.User(user));
     	} else {
     		renderJSON(new ApiError(Messages.get("api.users.error.user.notexist", email)));
     	}    	
     }
     
-    public static void createUser(@Required String email, @Required String pw) {
+    /**
+     * Creates a user within the obdme system.
+     * 
+     * This method will render the new user in json format if it does not exist.
+     * If the email already exists, an api error will be thrown.
+     *
+     * @param email the email of the user
+     * @param pw the pw (encrypted) of the user
+     */
+    public static void createUser(@Required @Email String email, @Required String pw) {
     	if (User.findByEmail(email) != null) {
     		renderJSON(new ApiError(Messages.get("api.users.error.adduser.errorexists", email)));
     	} else {
-    		User newUser = User.createUser(email, pw);
-    		renderJSON(api.entities.User.fromModelUser(newUser));
+    		User newUser = User.createUserFromEncryptedCredentials(email, pw);
+    		renderJSON(new api.entities.User(newUser));
     	}    	
     }
     
-    public static void validateUserCredentials(String email, String pw) {
-    	User authorizedUser = User.validateUserLogin(email, pw);
+    
+    /**
+     * Validate user credentials within the obdme system.
+     * 
+     * This method will check the obdme system for a user with the corresponding
+     * email and password (encrypted).  If the credentials are valid, the corresponding
+     * user will be returned in json format.  Otherwise, an api error will be thrown,
+     * saying the login is invalid.     * 
+     *
+     * @param email the email of the user to authenticate
+     * @param pw the pw of the user to authenticate (encrypted)
+     */
+    public static void validateUserCredentials(@Required @Email String email, @Required String pw) {
+    	User authUser = User.validateUserCredentialsEncrypted(email, pw);
     	
-    	if (authorizedUser == null) {
-    		// invalid login
-    		renderJSON(new ApiError(Messages.get("api.users.error.login.invalid")));
+    	if (authUser == null) {
+    		//invalid login
+    		renderJSON(new ApiError(Messages.get("api.users.error.login.invalid")));  		
     	}
     	
-    	renderJSON(api.entities.User.fromModelUser(authorizedUser));
+    	renderJSON(new api.entities.User(authUser));
     }
 }
