@@ -16,11 +16,10 @@ public class UserTest extends UnitTest {
 	}
 	
 	@Test
-	public void testCreateUser() {
+	public void testCreateUserClearTextCredentials() {
 		String email = "farmboy30@gmail.com";
 		String password = "qwerty";
-		User user = new User(email, password);
-		assertTrue(user.validateAndSave());
+		User user = User.createUserFromClearTextCredentials(email, password);		
 		assertNotNull(user);
 		assertTrue(user.getId() > 0L);
 		assertTrue(user.getEmail().equals(email));
@@ -30,15 +29,13 @@ public class UserTest extends UnitTest {
 	public void testValidateUserCredentials() {
 		String email = "farmboy30@gmail.com";
 		String password = "qwerty";
-		User user = new User(email, password);
-		assertTrue(user.validateAndSave());
+		User user = User.createUserFromClearTextCredentials(email, password);
 		assertNotNull(user);
 		
-		User authenticated = User.validateUserCredentials(email, password);
+		User authenticated = User.validateUserCredentialsClearText(email, password);
 		assertNotNull(authenticated);
 		assertTrue(authenticated.getEmail().equals(email));
-
-		assertTrue(User.isValidCredentials(email, password));		
+		assertTrue(User.isValidCredentialsClearText(email, password));
 	}
 	
 }
