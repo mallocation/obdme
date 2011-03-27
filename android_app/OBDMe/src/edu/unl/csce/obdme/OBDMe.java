@@ -104,29 +104,29 @@ public class OBDMe extends Activity {
 		setConfiguredView();		
 		checkAccountStatus();
 		
-//		//If the bluetooth thread is already connected (from the setup wizard)
-//		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
-//			
-//			//Dont show the connection status screen
-//			this.connectionStatus = false;
-//		}
-//		
-//		//Otherwise, we need to set up a connection with the device
-//		else {
-//			this.connectionStatus = true;
-//		}
-//
-//		//If we need to set up a connection
-//		if (this.connectionStatus) {
-//			
-//			//Start the connection routine
-//			checkBluetoothEnabled();
-//		}
-//		
-//		//Otherwise set the configured data view
-//		else {
-//			setConfiguredView();
-//		}
+		//If the bluetooth thread is already connected (from the setup wizard)
+		if (this.bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+			
+			//Dont show the connection status screen
+			this.connectionStatus = false;
+		}
+		
+		//Otherwise, we need to set up a connection with the device
+		else {
+			this.connectionStatus = true;
+		}
+
+		//If we need to set up a connection
+		if (this.connectionStatus) {
+			
+			//Start the connection routine
+			checkBluetoothEnabled();
+		}
+		
+		//Otherwise set the configured data view
+		else {
+			setConfiguredView();
+		}
 
 		//Set up a new gesture detector for swipes
 		gestureDetector = new GestureDetector(new FlingGestureDetector());
@@ -558,15 +558,7 @@ public class OBDMe extends Activity {
 		this.hardwarePoller = new ELMCheckHardwarePoller(getApplicationContext(), eventHandler, 500);
 		this.hardwarePoller.startPolling();
 	}
-
-	/**
-	 * Start ignition poller thread.
-	 */
-	private void startIgnitionPollerThread() {
-		this.ignitionPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, 500);
-		this.ignitionPoller.startPolling();
-	}
-
+	
 	/**
 	 * Start auto connect poller thread.
 	 */
@@ -704,7 +696,7 @@ public class OBDMe extends Activity {
 					}
 
 					//Start the ignition poller
-					startIgnitionPollerThread();
+					startAutoConnectPollerThread();
 					break;
 
 				case ELMCheckHardwarePoller.CHECK_HARDWARE_FAILED:
@@ -856,14 +848,18 @@ public class OBDMe extends Activity {
 
 		@Override
 		public void onCommException(String message) {
-			// TODO Auto-generated method stub
-			
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"OBDme Communications Exception attempting to validate user.");
+			}	
 		}
 
 		@Override
 		public void onObdmeException(String message) {
-			// TODO Auto-generated method stub
-			// User does not exist
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				"OBDme Exception from the remote API: " + message);
+			}
 		}
 
 		@Override
@@ -876,47 +872,6 @@ public class OBDMe extends Activity {
 		}
 		
 	};
-	
-	/** The get account credentials handler. NOW DEFINED ABOVE*/
-	/*
-	private final Handler getAccountCredentialsHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-
-			switch (msg.what) {
-
-			//Messsage from BT service indicating a connection state change
-			case 0:
-				if(msg.obj != null) {
-					if(getResources().getBoolean(R.bool.debug)) {
-						Log.d(getResources().getString(R.string.debug_tag_obdme),
-						"Account validation successful.");
-					}
-
-				} 
-				else {
-
-					//Show alert dialog, the app must exit.  This is not recoverable
-					AlertDialog.Builder builder = new AlertDialog.Builder(OBDMe.this);
-					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
-					.setCancelable(false)
-					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							OBDMe.this.finish();
-						}
-					});
-					AlertDialog alert = builder.create();
-					alert.show();
-				}
-				break;
-
-
-
-			}
-		}
-	};
-	*/
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)

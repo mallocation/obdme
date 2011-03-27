@@ -13,10 +13,10 @@ import edu.unl.csce.obdme.utilities.AppSettings;
  * The Class SetupWizardComplete.
  */
 public class SetupWizardComplete extends Activity {
-	
+
 	/** The Constant SETUP_COMPLETE_RESULT_OK. */
-	public static final int SETUP_COMPLETE_RESULT_OK = 10;
-	
+	public static final int SETUP_COMPLETE_RESULT_OK = 134135135;
+
 	/** The app settings. */
 	private AppSettings appSettings;
 
@@ -26,27 +26,31 @@ public class SetupWizardComplete extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_complete),
-				"Starting the OBDMe Setup Wizard Complete Activity.");
-		
+
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_setupwizard_complete),
+					"Starting the OBDMe Setup Wizard Complete Activity.");
+		}
+
 		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
 
 		//Set the content view
 		setContentView(R.layout.setupwizard_complete);
-	        
-        Button next = (Button) findViewById(R.id.setupwizard_complete_button_next);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-			public void onClick(View view) {
-            	
-            	appSettings.setFirstRun(false);
-            	
-            	//On the button press, backprop to the last activity
-            	setResult(Activity.RESULT_OK);
-        		finish();
-            }
 
-        });
+		Button next = (Button) findViewById(R.id.setupwizard_complete_button_next);
+		next.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+
+				appSettings.setFirstRun(false);
+				appSettings.commitUnsavedChanges();
+
+				//On the button press, backprop to the last activity
+				setResult(Activity.RESULT_OK);
+				finish();
+			}
+
+		});
 
 	}
 

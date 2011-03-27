@@ -18,7 +18,7 @@ import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 public class ELMFramework {
 
 	/** The Constant ELM_DEVICE_IDENTIFIER. */
-	private static final String ELM_DEVICE_IDENTIFIER = "ELM327 v1.4";
+	private static final String ELM_DEVICE_IDENTIFIER = "ELM327 v1";
 
 	/** The Constant ELM_DEVICE_OK. */
 	private static final String ELM_DEVICE_OK = "OK";

@@ -42,14 +42,14 @@ public class SetupWizardAccount extends Activity {
 	private static boolean VERIFIED_CONFIRM_PASSWORD = false;
 
 	/** The Constant SETUP_ACCOUNT_RESULT_OK. */
-	public static final int SETUP_ACCOUNT_RESULT_OK = 10;
+	public static final int SETUP_ACCOUNT_RESULT_OK = 245224533;
 
 	/** The busy dialog. */
 	private Dialog busyDialog;
 
 	/** The web framework. */
 	private ObdMeService webFramework;
-	
+
 	/** The email reg ex. */
 	private Pattern emailRegEx;
 
@@ -63,9 +63,12 @@ public class SetupWizardAccount extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
-		"Starting the OBDMe Account Setup Wizard Activity.");
 		
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_setupwizard_account),
+			"Starting the OBDMe Account Setup Wizard Activity.");
+		}
+
 		emailRegEx = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		webFramework = ((OBDMeApplication)getApplication()).getWebFramework();
 		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
@@ -210,7 +213,7 @@ public class SetupWizardAccount extends Activity {
 					//Send the request to the webservice to create this user
 					//webFramework.getUsersService().createUser(emailText.getText().toString(), confirmPasswordText.getText().toString(), createAccountHander);
 					webFramework.getUsersService().createUserAsync(emailText.getText().toString(), confirmPasswordText.getText().toString(), createAccountHandler);
-					
+
 				}
 
 				else if (ready == 3 && NEW_ACCOUNT == false) {
@@ -235,14 +238,14 @@ public class SetupWizardAccount extends Activity {
 	 * @param newUserObject the new user object
 	 */
 	public void accountCreationSuccessful(User newUserObject) {
-		
+
 		EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
-		
+
 		//Update the local preferences
 		appSettings.setAccountUID(newUserObject.getId());
 		appSettings.setAccountUsername(newUserObject.getEmail());
 		appSettings.setAccountPassword(passwordText.getText().toString());
-		
+
 		if (busyDialog != null) {
 			busyDialog.dismiss();
 		}
@@ -258,14 +261,14 @@ public class SetupWizardAccount extends Activity {
 	 * @param newUserObject the new user object
 	 */
 	public void accountValidationSuccessful(User newUserObject) {
-		
+
 		EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
-		
+
 		//Update the local preferences
 		appSettings.setAccountUID(newUserObject.getId());
 		appSettings.setAccountUsername(newUserObject.getEmail());
 		appSettings.setAccountPassword(passwordText.getText().toString());
-		
+
 		if (busyDialog != null) {
 			busyDialog.dismiss();
 		}
@@ -279,6 +282,7 @@ public class SetupWizardAccount extends Activity {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
 	 */
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case SetupWizardBluetooth.SETUP_BLUETOOTH_RESULT_OK:
@@ -369,30 +373,35 @@ public class SetupWizardAccount extends Activity {
 		}
 
 	}
-	
-	/** The user is registered handler */
+
+	/** The user is registered. */
 	private final BasicObjectHandler<User> userIsRegistered = new BasicObjectHandler<User>(User.class) {
 
 		@Override
 		public void onCommException(String message) {
 
 			if(getResources().getBoolean(R.bool.debug)) {
-				Log.d(getResources().getString(R.string.debug_tag_obdme),
-				"Comm Exception in userIsRegistered.");
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"Comm Exception in userIsRegistered handler: " + message);
 			}
 		}
 
 		@Override
 		public void onObdmeException(String message) {
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"OBDme API Exception in userIsRegistered handler: " + message);
+			}
+
 			Runnable r = new Runnable() {
-				
 				@Override
 				public void run() {
 					EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
 					TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
 					EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
 					Button button = (Button) findViewById(R.id.setupwizard_account_button);
-					
+
 					// user is not registered
 					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_plus, 0);
 					comfirmPasswordTitle.setVisibility(View.VISIBLE);
@@ -403,11 +412,17 @@ public class SetupWizardAccount extends Activity {
 				}
 			};
 			runOnUiThread(r);
-			
+
 		}
 
 		@Override
-		public void onOperationCompleted(User result) {			
+		public void onOperationCompleted(User result) {		
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_setupwizard_account),
+				"Is user registered request successful");
+			}
+
 			Runnable r = new Runnable() {				
 				@Override
 				public void run() {
@@ -415,7 +430,7 @@ public class SetupWizardAccount extends Activity {
 					TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
 					EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
 					Button button = (Button) findViewById(R.id.setupwizard_account_button);
-					
+
 					// user is registered
 					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
 					comfirmPasswordTitle.setVisibility(View.GONE);
@@ -428,64 +443,29 @@ public class SetupWizardAccount extends Activity {
 			};
 			runOnUiThread(r);
 		}
-		
+
 	};
 
-	/** The user is registered. NOW DEFINED ABOVE*/
-	/*
-	private final Handler userIsRegistered = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-
-			EditText emailText = (EditText) findViewById(R.id.setupwizard_account_email_input);
-			TextView comfirmPasswordTitle = (TextView) findViewById(R.id.setupwizard_account_confirmpassword);
-			EditText comfirmPasswordInput = (EditText) findViewById(R.id.setupwizard_account_confirmpassword_input);
-			Button button = (Button) findViewById(R.id.setupwizard_account_button);
-
-			switch (msg.what) {
-
-			//Messsage from BT service indicating a connection state change
-			case 0:
-
-				if ((Boolean)msg.obj) {
-					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
-					comfirmPasswordTitle.setVisibility(View.GONE);
-					comfirmPasswordInput.setVisibility(View.GONE);
-					button.setText(R.string.setupwizard_account_button_signin_text);
-					NEW_ACCOUNT = false;
-					VERIFIED_CONFIRM_PASSWORD = true;
-					VERIFIED_EMAIL = true;
-				}
-				else {
-					emailText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_plus, 0);
-					comfirmPasswordTitle.setVisibility(View.VISIBLE);
-					comfirmPasswordInput.setVisibility(View.VISIBLE);
-					button.setText(R.string.setupwizard_account_button_createaccount_text);
-					NEW_ACCOUNT = true;	
-					VERIFIED_EMAIL = true;
-				}
-				break;
-
-
-
-			}
-		}
-	};
-	*/
-	
+	/** The confirm registered password handler. */
 	private final BasicObjectHandler<User> confirmRegisteredPasswordHandler = new BasicObjectHandler<User>(User.class) {
-	
+
 		@Override
 		public void onCommException(String message) {
 
 			if(getResources().getBoolean(R.bool.debug)) {
-				Log.d(getResources().getString(R.string.debug_tag_obdme),
-				"Comm Exception in confirmRegisteredPasswordHandler");
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"Comm Exception in confirmRegisteredPasswordHandler: " + message);
 			}
 		}
 
 		@Override
 		public void onObdmeException(String message) {
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"OBDme API Exception in confirmRegisteredPasswordHandler: " + message);
+			}
+
 			Runnable r = new Runnable() {				
 				@Override
 				public void run() {
@@ -501,6 +481,12 @@ public class SetupWizardAccount extends Activity {
 
 		@Override
 		public void onOperationCompleted(User result) {
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_setupwizard_account),
+				"Confirm registered password successful.");
+			}
+
 			Runnable r = new Runnable() {				
 				@Override
 				public void run() {
@@ -510,58 +496,27 @@ public class SetupWizardAccount extends Activity {
 					//Check the confirm password again in case user goes back to fix original password to match the confirm password
 					checkConfirmPassword();
 					VERIFIED_PASSWORD = 1;
-					
-					if(getResources().getBoolean(R.bool.debug)) {
-						Log.d(getResources().getString(R.string.debug_tag_obdme),
-						"Confirm registered password successful.");
-					}
 				}
 			};
 			runOnUiThread(r);
 		}		
 	};
 
-	/** The confirm registered password handler. NOW DEFINED ABOVE*/
-	/*
-	private final Handler confirmRegisteredPasswordHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-
-			EditText passwordText = (EditText) findViewById(R.id.setupwizard_account_password_input);
-			switch (msg.what) {
-
-			//Messsage from BT service indicating a connection state change
-			case 0:
-				if(msg.obj != null) {
-					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.green_tick, 0);
-					//Check the confirm password again in case user goes back to fix original password to match the confirm password
-					checkConfirmPassword();
-					VERIFIED_PASSWORD = 1;
-				} else {
-					passwordText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red_x, 0);
-					VERIFIED_PASSWORD = 0;
-				}
-				break;
-
-
-
-			}
-		}
-	};
-	*/
-
 	/** The create account handler. */
 	private final BasicObjectHandler<User> createAccountHandler = new BasicObjectHandler<User>(User.class) {
 
 		@Override
+		//On communications exception
 		public void onCommException(String message) {
-			
+
 			if(getResources().getBoolean(R.bool.debug)) {
-				Log.d(getResources().getString(R.string.debug_tag_obdme),
-				"Comm Exception in createAccountHandler.");
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"Comm Exception in createAccountHandler: " + message);
 			}
+
+			//Build an alert dialog and run it on the UI thread.
 			Runnable r = new Runnable() {
-				
+
 				@Override
 				public void run() {
 					//Show alert dialog, the app must exit.  This is not recoverable
@@ -576,16 +531,23 @@ public class SetupWizardAccount extends Activity {
 					});
 					AlertDialog alert = builder.create();
 					alert.show();
-					
+
 				}
 			};
+
 			runOnUiThread(r);
-			
-			
+
+
 		}
 
 		@Override
 		public void onObdmeException(String message) {
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"OBDme API Exception in createAccountHandler: " + message);
+			}
+
 			Runnable r = new Runnable() {				
 				@Override
 				public void run() {
@@ -608,63 +570,42 @@ public class SetupWizardAccount extends Activity {
 
 		@Override
 		public void onOperationCompleted(User result) {
-			// account created successfully
+
 			if(getResources().getBoolean(R.bool.debug)) {
-				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				Log.d(getResources().getString(R.string.debug_tag_setupwizard_account),
 				"Account creation successful.");
 			}
-		}
-		
-	};
-	
-	/*
-	private final Handler createAccountHander = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
 
-			switch (msg.what) {
+			final User finalResult = result;
 
-			//Messsage from BT service indicating a connection state change
-			case 0:
-				if(msg.obj != null) {
-					accountCreationSuccessful((User)msg.obj);
-
-				} 
-				else {
-
-					if (busyDialog != null) {
-						busyDialog.dismiss();
-					}
-
-					//Show alert dialog, the app must exit.  This is not recoverable
-					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
-					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_create_failure))
-					.setCancelable(false)
-					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							SetupWizardAccount.this.finish();
-						}
-					});
-					AlertDialog alert = builder.create();
-					alert.show();
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					accountCreationSuccessful(finalResult);
 				}
-				break;
+			};
 
+			runOnUiThread(r);
 
-
-			}
 		}
+
 	};
-	*/
-	
-	/** The getAccountCredentials handler. */
+
+	/** The get account credentials handler. */
 	private final BasicObjectHandler<User> getAccountCredentialsHandler = new BasicObjectHandler<User>(User.class) {
 
 		@Override
+		//On communications exception
 		public void onCommException(String message) {
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"Communication Exception in getAccountCredentialsHandler: " + message);
+			}
+
+			//Create a new runnable that will be passed to the UI thread
 			Runnable r = new Runnable() {
-				
+
 				@Override
 				public void run() {
 					//Show alert dialog, the app must exit.  This is not recoverable
@@ -682,13 +623,19 @@ public class SetupWizardAccount extends Activity {
 				}
 			};
 			runOnUiThread(r);
-			
+
 		}
 
 		@Override
 		public void onObdmeException(String message) {
+
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_account),
+						"OBDme API Exception in getAccountCredentialsHandler: " + message);
+			}
+
 			Runnable r = new Runnable() {
-				
+
 				@Override
 				public void run() {
 					// User does not exist
@@ -707,57 +654,29 @@ public class SetupWizardAccount extends Activity {
 				}
 			};
 			runOnUiThread(r);
-			
+
 		}
 
 		@Override
 		public void onOperationCompleted(User result) {
+
 			// get account credentials successful
 			if(getResources().getBoolean(R.bool.debug)) {
-				Log.d(getResources().getString(R.string.debug_tag_obdme),
+				Log.d(getResources().getString(R.string.debug_tag_setupwizard_account),
 				"Account validation successful.");
 			}
-		}
-		
-	};
-	
-	/** The get account credentials handler. NOW DEFINED ABOVE*/
-	/*
-	private final Handler getAccountCredentialsHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
 
-			switch (msg.what) {
+			final User finalResult = result;
 
-			//Messsage from BT service indicating a connection state change
-			case 0:
-				if(msg.obj != null) {
-					accountValidationSuccessful((User)msg.obj);
-				} else {
-					if (busyDialog != null) {
-						busyDialog.dismiss();
-					}
-
-					//Show alert dialog, the app must exit.  This is not recoverable
-					AlertDialog.Builder builder = new AlertDialog.Builder(SetupWizardAccount.this);
-					builder.setMessage(getResources().getString(R.string.setupwizard_account_dialog_account_validate_failure))
-					.setCancelable(false)
-					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							SetupWizardAccount.this.finish();
-						}
-					});
-					AlertDialog alert = builder.create();
-					alert.show();
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					accountValidationSuccessful(finalResult);
 				}
-				break;
+			};
+			runOnUiThread(r);
 
-
-
-			}
 		}
+
 	};
-	*/
-	
 }

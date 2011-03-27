@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical" android:background="@drawable/background_portrait">
+	android:orientation="vertical" android:background="@drawable/background_landscape">
 	<ScrollView android:id="@+id/ScrollView"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:layout_weight="1">
@@ -16,11 +16,6 @@
 				android:text="@string/setupwizard.complete.body.text" style="@style/setupwizard.body"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:layout_weight="0"></TextView>
-			<ImageView android:id="@+id/setupwizard.complete.image"
-				android:src="@drawable/complete_check" android:layout_weight="1"
-				android:layout_width="fill_parent" android:layout_height="fill_parent"
-				android:gravity="fill"></ImageView>
-
 		</LinearLayout>
 	</ScrollView>
 	<Button android:text="@string/setupwizard.complete.button.next.text"

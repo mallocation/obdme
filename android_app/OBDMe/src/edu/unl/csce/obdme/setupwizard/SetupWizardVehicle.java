@@ -20,7 +20,6 @@ import edu.unl.csce.obdme.client.http.handler.BasicObjectHandler;
 import edu.unl.csce.obdme.hardware.elm.ELMAutoConnectPoller;
 import edu.unl.csce.obdme.hardware.elm.ELMException;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
-import edu.unl.csce.obdme.hardware.elm.ELMIgnitionPoller;
 import edu.unl.csce.obdme.hardware.obd.OBDResponse;
 import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 import edu.unl.csce.obdme.utilities.AppSettings;
@@ -39,12 +38,6 @@ public class SetupWizardVehicle extends Activity {
 	/** The web framework. */
 	private ObdMeService webFramework;
 
-	/** The ign poller. */
-	private ELMIgnitionPoller ignPoller;
-
-	/** The ignition dialog. */
-	private ProgressDialog ignitionDialog;
-
 	/** The ac poller. */
 	private ELMAutoConnectPoller acPoller;
 
@@ -58,7 +51,7 @@ public class SetupWizardVehicle extends Activity {
 	private AppSettings appSettings;
 
 	/** The Constant SETUP_VEHICLE_RESULT_OK. */
-	public static final int SETUP_VEHICLE_RESULT_OK = 10;
+	public static final int SETUP_VEHICLE_RESULT_OK = 1351335135;
 
 
 	/* (non-Javadoc)
@@ -67,8 +60,11 @@ public class SetupWizardVehicle extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
-		"Starting the OBDMe Vehicle Setup Wizard Activity.");
+		
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+					"Starting the OBDMe Vehicle Setup Wizard Activity.");
+		}
 
 		setContentView(R.layout.setupwizard_vehicle);
 
@@ -91,7 +87,7 @@ public class SetupWizardVehicle extends Activity {
 					finish();
 					break;
 				case 0:
-					startIgnitionPollerThread();
+					startAutoConnectPollerThread();
 					break;
 
 				case 1:
@@ -153,14 +149,6 @@ public class SetupWizardVehicle extends Activity {
 
 
 		}
-	}
-	
-	/**
-	 * Start ignition poller thread.
-	 */
-	private void startIgnitionPollerThread() {
-		ignPoller = new ELMIgnitionPoller(getApplicationContext(), eventHandler, 2000);
-		ignPoller.startPolling();
 	}
 
 	/**
@@ -237,48 +225,6 @@ public class SetupWizardVehicle extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 
-			//Messsage from BT service indicating a connection state change
-			case ELMIgnitionPoller.STATE_CHANGE:
-				if(getResources().getBoolean(R.bool.debug)) {
-					Log.d(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
-					"Ignition Poller State Change");
-				}
-
-				//Get the new state of the BT service
-				switch (msg.arg1) {
-
-				case ELMIgnitionPoller.IGNITION_NONE:
-					break;
-
-				case ELMIgnitionPoller.IGNITION_POLLING:
-					//This is an intermediate step between starting the polling and
-					//actually receiving a result.
-
-					break;
-
-				case ELMIgnitionPoller.IGNITION_OFF:
-					//Show the connecting dialog box
-					if(ignitionDialog == null){
-						ignitionDialog = ProgressDialog.show(SetupWizardVehicle.this, "", getResources().getString(R.string.setupwizard_vehicle_dialog_ignition), true);
-					}
-					break;
-
-				case ELMIgnitionPoller.IGNITION_ON:
-					if(ignPoller != null){
-						ignPoller.stop();
-						ignPoller = null;
-					}
-
-					//Dismiss connecting dialog.  Update the view and change the state to select a new device
-					if(ignitionDialog != null){
-						ignitionDialog.dismiss();
-						ignitionDialog = null;
-					}
-					startAutoConnectPollerThread();
-					break;
-				}
-				break;
-
 				//Messsage from BT service indicating a connection state change
 			case ELMAutoConnectPoller.STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) {
@@ -353,19 +299,27 @@ public class SetupWizardVehicle extends Activity {
 
 		@Override
 		public void onCommException(String message) {
-			// TODO Auto-generated method stub
-			
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+				"Communication exception: " + message);
+			}
 		}
 
 		@Override
 		public void onObdmeException(String message) {
-			// TODO Auto-generated method stub
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.e(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+				"OBD API exception: " + message);
+			}
 			
 		}
 
 		@Override
 		public void onOperationCompleted(UserVehicle result) {
-			// TODO Auto-generated method stub
+			if(getResources().getBoolean(R.bool.debug)) {
+				Log.d(getResources().getString(R.string.debug_tag_setupwizard_vehicle),
+				"Add/Update Vehicle Successful");
+			}
 			
 		}
 		

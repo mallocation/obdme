@@ -30,8 +30,10 @@ public class Splash extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_launcher),
-				"Starting the OBDMe Launcher Activity.");
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_launcher),
+			"Starting the OBDMe Splash Activity.");
+		}
 		
 		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
 		

@@ -21,6 +21,7 @@ public abstract class OBDValidator {
 
 		//See if the valid PID query for Mode 1 PID 00 is supported
 		if (elmFramework.queryConfiguredPID("01", "00")) {
+			try {
 			OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "00"));
 			if(result.getProcessedResponse() instanceof List){
 
@@ -32,33 +33,47 @@ public abstract class OBDValidator {
 					}
 				}
 			}
+			}
+			catch (Exception e) {
+				
+			}
 		}
 
 		//See if the valid PID query for Mode 1 PID 20 is supported
 		if (elmFramework.queryConfiguredPID("01", "20")) {
-			OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "20"));
-			if(result.getProcessedResponse() instanceof List){
-				//For the bit string response, change the supported status
-				for (String supportedPID : (List<String>) result.getProcessedResponse()) {
-					if (elmFramework.queryConfiguredPID("01", supportedPID)) {
-						elmFramework.getObdFramework().getConfiguredProtocol().get("01")
-						.getPID(supportedPID).setSupported(true);
+			try {
+				OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "20"));
+				if(result.getProcessedResponse() instanceof List){
+					//For the bit string response, change the supported status
+					for (String supportedPID : (List<String>) result.getProcessedResponse()) {
+						if (elmFramework.queryConfiguredPID("01", supportedPID)) {
+							elmFramework.getObdFramework().getConfiguredProtocol().get("01")
+							.getPID(supportedPID).setSupported(true);
+						}
 					}
 				}
+			}
+			catch (Exception e) {
+
 			}
 		}
 
 		//See if the valid PID query for Mode 1 PID 40 is supported
 		if (elmFramework.queryConfiguredPID("01", "40")) {
-			OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "40"));
-			if(result.getProcessedResponse() instanceof List){
-				//For the bit string response, change the supported status
-				for (String supportedPID : (List<String>) result.getProcessedResponse()) {
-					if (elmFramework.queryConfiguredPID("01", supportedPID)) {
-						elmFramework.getObdFramework().getConfiguredProtocol().get("01")
-						.getPID(supportedPID).setSupported(true);
+			try {
+				OBDResponse result = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID("01", "40"));
+				if(result.getProcessedResponse() instanceof List){
+					//For the bit string response, change the supported status
+					for (String supportedPID : (List<String>) result.getProcessedResponse()) {
+						if (elmFramework.queryConfiguredPID("01", supportedPID)) {
+							elmFramework.getObdFramework().getConfiguredProtocol().get("01")
+							.getPID(supportedPID).setSupported(true);
+						}
 					}
 				}
+			}
+			catch(Exception e) {
+
 			}
 		}
 
@@ -75,10 +90,10 @@ public abstract class OBDValidator {
 				}
 			}
 		}
-		
+
 		//Free up all the unsupported PID's to free up memory space
 		//removeUnsupportedPIDS(elmFramework);
-		
+
 		return true;
 	}
 

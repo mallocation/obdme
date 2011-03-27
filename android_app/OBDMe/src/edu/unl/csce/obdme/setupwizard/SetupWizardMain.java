@@ -14,7 +14,7 @@ import edu.unl.csce.obdme.R;
 public class SetupWizardMain extends Activity {
 	
 	/** The Constant SETUP_MAIN_RESULT_OK. */
-	public static final int SETUP_MAIN_RESULT_OK = 10;
+	public static final int SETUP_MAIN_RESULT_OK = 135135;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -22,8 +22,11 @@ public class SetupWizardMain extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_launcher),
+		
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_setupwizard_main),
 				"Starting the OBDMe Setup Wizard Activity.");
+		}
 
 		setContentView(R.layout.setupwizard_main);
 

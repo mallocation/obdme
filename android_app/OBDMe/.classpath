@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="api"/>
+	<classpathentry kind="src" path="httputils"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="lib" path="/OBDMe_API_Client_Library/lib/gson-1.6.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/OBDMe_API_Client_Library"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/OBDMe_Http_Utils"/>
-	<classpathentry kind="lib" path="lib/jackson-core-asl-1.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-mapper-asl-1.7.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="/OBDMe_API_Client_Library/lib/jackson-core-asl-1.7.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="/OBDMe_API_Client_Library/lib/jackson-mapper-asl-1.7.4.jar"/>
+	<classpathentry kind="lib" path="/OBDMe_API_Client_Library/lib/gson-1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -33,7 +33,7 @@ public class DataUploadTask implements Runnable {
 
 	/** The data upload handler. */
 	private Handler dataUploadHandler;
-	
+
 	/** The app settings. */
 	private AppSettings appSettings;
 
@@ -152,22 +152,21 @@ public class DataUploadTask implements Runnable {
 				// TODO: get this fixed (below)
 				//webFramework.getVehicleGraphService().pushVehicleGraphData(graphPush, dataUploadHandler);	
 
-				int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
+				//int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
 
-				if(context.getResources().getBoolean(R.bool.debug)) {
-					Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-							"Datasets removed from the database: " + affectedRows);
-				}
-
-				//Close the connection, we're done.
-				queryResults.close();
-				sqldb.close();
+//				if(context.getResources().getBoolean(R.bool.debug)) {
+//					Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+//							"Datasets removed from the database: " + affectedRows);
+//				}
 			}
+			//Close the connection, we're done.
+			queryResults.close();
+			sqldb.close();
 		}
 		else {
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-						"Skipping upload, the user has specified that they do not want to upload data.");
+				"Skipping upload, the user has specified that they do not want to upload data.");
 			}
 		}
 	}

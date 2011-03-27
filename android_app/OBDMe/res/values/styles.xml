@@ -19,12 +19,14 @@
 	<style name="setupwizard.body.bluetooth" parent="setupwizard.body">
 		<item name="android:layout_height">90dip</item>
 	</style>
+	
 	<style name="bluetooth.discovery.list" parent="android:Theme">
 		<item name="android:background">#fff</item>
 		<item name="android:paddingLeft">5dip</item>
 		<item name="android:textColor">#666</item>
 		<item name="android:textSize">15dip</item>
 	</style>
+	
 	<style name="setupwizard.vehicle" parent="android:Theme">
 		<item name="android:textSize">15dip</item>
 		<item name="android:padding">0dip</item>

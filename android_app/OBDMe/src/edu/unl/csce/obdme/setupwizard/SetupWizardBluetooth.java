@@ -36,9 +36,9 @@ public class SetupWizardBluetooth extends Activity {
 
 	/** The Constant MESSAGE_STATE_CHANGE. */
 	public static final int MESSAGE_STATE_CHANGE = 1;
-	
+
 	/** The Constant SETUP_BLUETOOTH_RESULT_OK. */
-	public static final int SETUP_BLUETOOTH_RESULT_OK = 10;
+	public static final int SETUP_BLUETOOTH_RESULT_OK = 13513513;
 
 	/** The SETU p_ state. */
 	private int SETUP_STATE = 0;
@@ -48,7 +48,7 @@ public class SetupWizardBluetooth extends Activity {
 
 	/** The bluetooth service. */
 	private BluetoothService bluetoothService = null;
-	
+
 	/** The connect dialog. */
 	private ProgressDialog connectDialog;
 
@@ -67,11 +67,14 @@ public class SetupWizardBluetooth extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(getResources().getBoolean(R.bool.debug)) Log.e(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
-		"Starting the OBDMe Setup Wizard Bluetooth Activity.");
+
+		if(getResources().getBoolean(R.bool.debug)) {
+			Log.d(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
+					"Starting the OBDMe Setup Wizard Bluetooth Activity.");
+		}
 
 		appSettings = ((OBDMeApplication)getApplication()).getApplicationSettings();
-		
+
 		setContentView(R.layout.setupwizard_bluetooth);
 
 		//Setup the button on-click listener
@@ -343,10 +346,10 @@ public class SetupWizardBluetooth extends Activity {
 			//Backprop
 		case SetupWizardVehicle.SETUP_VEHICLE_RESULT_OK:
 			if (resultCode == Activity.RESULT_OK) {
-				
+
 				//Backprop
 				setResult(Activity.RESULT_OK);
-				
+
 				//finish
 				finish();
 			}
@@ -415,8 +418,8 @@ public class SetupWizardBluetooth extends Activity {
 					break;
 				}
 				break;
-			
-			//Messsage from BT service indicating a connection state change
+
+				//Messsage from BT service indicating a connection state change
 			case BluetoothService.STATE_CHANGE:
 				if(getResources().getBoolean(R.bool.debug)) Log.i(getResources().getString(R.string.debug_tag_setupwizard_bluetooth),
 						"Bluetooth State Change: " + msg.arg1);

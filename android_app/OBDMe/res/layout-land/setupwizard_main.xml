@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical" android:background="@drawable/background_portrait">
+	android:orientation="vertical" android:background="@drawable/background_landscape">
 	<TextView android:id="@+id/setupwizard.main.heading" style="@style/setupwizard.header"
 		android:text="@string/setupwizard.main.heading.text"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -11,9 +11,7 @@
 		android:layout_height="wrap_content" android:layout_weight="0"></TextView>
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:orientation="vertical" android:layout_weight="1" android:gravity="center">
-		<ImageView android:src="@drawable/logo" android:id="@+id/imageView1"
-			android:layout_height="wrap_content" android:layout_width="wrap_content" ></ImageView>
+		android:orientation="vertical" android:layout_weight="1" android:gravity="center|bottom">
 	</LinearLayout>
 	<Button android:text="@string/setupwizard.main.button.next.text"
 		android:id="@+id/setupwizard.main.button.next" android:layout_width="fill_parent"
