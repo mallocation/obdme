@@ -1,0 +1,5 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+secure.title=Sign in with your OBDme ID
+secure.error=Your Username or Password is Incorrect

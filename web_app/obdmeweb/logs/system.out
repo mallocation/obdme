@@ -1,0 +1,18 @@
+06:19:36,306 INFO  ~ Starting /opt/obdme-api/obdmeweb
+06:19:36,311 INFO  ~ Module secure is available (/opt/obdme-api/modules/secure)
+06:19:36,312 INFO  ~ Module obdme is available (/opt/obdme-api/obdmeweb/../modules/obdmedb)
+06:19:37,327 WARN  ~ You're running Play! in DEV mode
+06:19:37,439 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+06:19:41,621 INFO  ~ Connected to jdbc:mysql://frank:3306/obdmedb
+06:19:42,790 INFO  ~ Application 'obdmeweb' is now started !
+06:20:01,718 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+06:20:37,320 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+06:21:28,737 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+06:34:54,194 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+06:36:24,038 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: false.
+06:36:33,004 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+06:36:48,420 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: false.
+06:37:09,122 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+07:58:36,804 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+08:02:03,551 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.
+08:06:23,851 INFO  ~ User Activity: michael@mikeryankelly.com requesting authentication. User validated: true.

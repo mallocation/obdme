@@ -1,0 +1,27 @@
+#{extends 'Secure/layout.html' /}
+
+<div class="logInMainContainer">
+	<div class="logInLogoImage"></div>
+		
+	#{form @authenticate()}
+		
+		#{if flash.error}
+		<p class="logInText logInErrorText">&{'secure.error'}</p>
+		#{/if}
+		#{else}
+		   <p class="logInText">&{'secure.title'}</p>
+		#{/else}
+		
+		#{if flash.success}
+		<p class="logInText"></p>
+		#{/if}
+		
+		<input type="text" name="username" id="username" class="logInInputFields leftRightMargin" 
+		spellcheck="false" style="width:300px;" placeholder="name@example.com" autocomplete="off"/>
+		
+		<input type="password" name="password" id="password" class="logInInputFields leftRightMargin" 
+		spellcheck="false" style="width:300px;" placeholder="Password" autocomplete="off"/>
+		
+		<input type="submit" class="submit leftRightMargin" id="signin" value="&{'secure.signin'}" />
+	#{/form}
+</div>

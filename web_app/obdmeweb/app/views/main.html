@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/main.css'}">
+		<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/slide.css'}">
+        #{get 'moreStyles' /}
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+        <script src="@{'/public/javascripts/jquery-1.5.1.js'}" type="text/javascript" charset="utf-8"></script>
+		<script src="@{'/public/javascripts/jquery.easing.1.3.js'}" type="text/javascript" charset="utf-8"></script>
+		<script src="@{'/public/javascripts/slide.js'}" type="text/javascript" charset="utf-8"></script>
+        #{get 'moreScripts' /}
+		<script type="text/javascript">
+		        $(function() {
+		                $("#username").placeholder();
+		                $("#password").placeholder();
+		        });
+		
+				$('.menuItem').hover( function(){
+				     $(this).css('background-color', '#F00');
+				},
+				function(){
+				     $(this).css('background-color', '#000');
+				});
+		</script>
+		
+    </head>
+    <body>
+        #{doLayout /}
+    </body>
+</html>

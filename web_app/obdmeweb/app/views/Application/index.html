@@ -1,0 +1,70 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<!-- Panel -->
+
+<hr id="header_stripe"/>
+<div id="page_container">
+	<div id="toppanel">
+		<div id="panel">
+			<div id="panel_contents"> 
+				<table class="cpTable">
+					<tr>
+						<td>
+							<div id="cpIconContainer">
+								<img class="cpIcon" src="/public/images/cp_icons/blank.png" />
+								<p>Home</p>
+							</div>
+						</td>
+						<td>
+							<div id="cpIconContainer">
+								<img class="cpIcon" src="/public/images/cp_icons/blank.png" />
+								<p>Trips</p>
+							</div>
+						</td>
+						<td>
+							<div id="cpIconContainer">
+								<img class="cpIcon" src="/public/images/cp_icons/blank.png" />
+								<p>Notifications</p>
+							</div>
+						</td>
+						<td>
+							<div id="cpIconContainer">
+								<img class="cpIcon" src="/public/images/cp_icons/blank.png" />
+								<p>Statistics</p>
+							</div>
+						</td>
+						<td>
+							<div id="cpIconContainer">
+								<img class="cpIcon" src="/public/images/cp_icons/blank.png" />
+								<p>Charts</p>
+							</div>
+						</td>
+						<td>
+							<div id="cpIconContainer">
+								<img class="cpIcon" src="/public/images/cp_icons/blank.png" />
+								<p>Vehicles</p>
+							</div>
+						</td>
+						<td>
+							<div id="cpIconContainer">
+								<img class="cpIcon" src="/public/images/cp_icons/blank.png" />
+								<p>Profile</p>
+							</div>
+						</td>
+						<td>
+							<div id="cpIconContainer">
+								<a href="@{Secure.logout()}">
+									<img class="cpIcon" src="/public/images/cp_icons/logout.png" />
+								</a>
+								<p>Logout</p>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="panel_button" style="display: visible;"><a href="#">Open Control Panel</a> </div>
+		<div class="panel_button" id="hide_button" style="display: none;"><a href="#">Hide Control Panel</a> </div>
+	</div>
+</div>
