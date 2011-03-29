@@ -32,34 +32,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>api</name>
+			<name>OBDme_Api_Android_Client_src</name>
 			<type>2</type>
-			<location>/Users/mike/Dropbox/Documents/workspace/OBDMe_API_Client_Library/src</location>
-		</link>
-		<link>
-			<name>http_utils</name>
-			<type>2</type>
-			<location>/Users/mike/Dropbox/Documents/workspace/OBDMe_Http_Utils/src</location>
-		</link>
-		<link>
-			<name>httputils</name>
-			<type>2</type>
-			<location>/Users/mike/Dropbox/Documents/workspace/OBDMe_Http_Utils/src</location>
-		</link>
-		<link>
-			<name>obdme_api</name>
-			<type>2</type>
-			<location>/Users/mike/Dropbox/Documents/workspace/OBDMe_API_Client_Library/src</location>
-		</link>
-		<link>
-			<name>utils</name>
-			<type>2</type>
-			<location>/Users/mike/Dropbox/Documents/workspace/CSCE_488_489_WebApp/OBDMe_Http_Utils/src</location>
-		</link>
-		<link>
-			<name>webservice</name>
-			<type>2</type>
-			<location>/Users/mike/Dropbox/Documents/workspace/CSCE_488_489_WebApp/OBDMe_API_Client_Library/src</location>
+			<locationURI>_android_OBDme_Api_Android_Client/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
