@@ -25,11 +25,15 @@ public class StatDataset {
 	@JsonSerialize(using=CustomDateSerializer.class)
 	public Date timestamp;
 	
-	public StatDataset(String email, Date timestamp) {
-		this.email = email;
-		this.timestamp = timestamp;
+	public StatDataset() {
 		this.datapoints = new ArrayList<StatDataPoint>();
 	}
+	
+//	public StatDataset(String email, Date timestamp) {
+//		this.email = email;
+//		this.timestamp = timestamp;
+//		this.datapoints = new ArrayList<StatDataPoint>();
+//	}
 	
 	private static class CustomDateSerializer extends JsonSerializer<Date> {
 		@Override
