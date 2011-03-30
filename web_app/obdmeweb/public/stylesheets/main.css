@@ -1,8 +1,8 @@
 html,
 body {
-    margin:0;
-    padding:0;
-    height:100%;
+	margin: 0;
+    padding: 0;
+    height: 100%;
     background: black;
     font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -49,18 +49,18 @@ A.buttonLogIn:active {
     color: white;
 }
 
-.mainContainer {
-	background: url('../images/login/login_background.png') no-repeat;
+.pageContainer {
+	background: url('../images/main/header_background.png') no-repeat;
 	width: 950px;
 	height: 600px;
-	margin: 0 auto;
+	margin: -40px auto 0 auto;
 	padding: 25px 0 0 0;
 	text-align: center;
 }
 
-.mainLogoImage {
-	background: url('../images/login/logo_big.png') no-repeat top center;
-	margin: 10% auto 0px auto;
+.logoHeaderImage {
+	background: url('../images/main/logo_header.png') no-repeat top center;
+	margin: 0 auto 0 auto;
 	width: 735px;
 	height: 178px;
 }

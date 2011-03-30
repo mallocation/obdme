@@ -3,3 +3,12 @@
 #
 secure.title=Sign in with your OBDme ID
 secure.error=Your Username or Password is Incorrect
+
+control.panel.home=Home
+control.panel.trips=Trips
+control.panel.notifications=Notifications
+control.panel.stats=Statistics
+control.panel.charts=Charts
+control.panel.vehicles=Vehicles
+control.panel.profile=Profile
+control.panel.logout=Logout

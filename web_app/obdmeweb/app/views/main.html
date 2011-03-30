@@ -5,12 +5,12 @@
         <title>#{get 'title' /}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/main.css'}">
-		<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/slide.css'}">
+		<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/cp.css'}">
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
         <script src="@{'/public/javascripts/jquery-1.5.1.js'}" type="text/javascript" charset="utf-8"></script>
 		<script src="@{'/public/javascripts/jquery.easing.1.3.js'}" type="text/javascript" charset="utf-8"></script>
-		<script src="@{'/public/javascripts/slide.js'}" type="text/javascript" charset="utf-8"></script>
+		<script src="@{'/public/javascripts/cp.js'}" type="text/javascript" charset="utf-8"></script>
         #{get 'moreScripts' /}
 		<script type="text/javascript">
 		        $(function() {
@@ -28,6 +28,73 @@
 		
     </head>
     <body>
+		<!-- Control Panel -->
+		<hr id="header_stripe"/>
+		<div id="page_container">
+			<div id="toppanel">
+				<div id="panel">
+					<div id="panel_contents"> 
+						<table class="cpTable">
+							<tr>
+								<td>
+									<div id="cpIconContainer">
+										<img class="cpIcon" src="/public/images/cp_icons/home.png" />
+										<p>&{'control.panel.home'}</p>
+									</div>
+								</td>
+								<td>
+									<div id="cpIconContainer">
+										<img class="cpIcon" src="/public/images/cp_icons/trip.png" />
+										<p>&{'control.panel.trips'}</p>
+									</div>
+								</td>
+								<td>
+									<div id="cpIconContainer">
+										<img class="cpIcon" src="/public/images/cp_icons/notifications.png" />
+										<p>&{'control.panel.notifications'}</p>
+									</div>
+								</td>
+								<td>
+									<div id="cpIconContainer">
+										<img class="cpIcon" src="/public/images/cp_icons/stats.png" />
+										<p>&{'control.panel.stats'}</p>
+									</div>
+								</td>
+								<td>
+									<div id="cpIconContainer">
+										<img class="cpIcon" src="/public/images/cp_icons/charts.png" />
+										<p>&{'control.panel.charts'}</p>
+									</div>
+								</td>
+								<td>
+									<div id="cpIconContainer">
+										<img class="cpIcon" src="/public/images/cp_icons/vehicle.png" />
+										<p>&{'control.panel.vehicles'}</p>
+									</div>
+								</td>
+								<td>
+									<div id="cpIconContainer">
+										<img class="cpIcon" src="/public/images/cp_icons/profile.png" />
+										<p>&{'control.panel.profile'}</p>
+									</div>
+								</td>
+								<td>
+									<div id="cpIconContainer">
+										<a href="@{Secure.logout()}">
+											<img class="cpIcon" src="/public/images/cp_icons/logout.png" />
+										</a>
+										<p>&{'control.panel.logout'}</p>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="panel_button" style="display: visible;"><a href="#">Control Panel</a> </div>
+				<div class="panel_button" id="hide_button" style="display: none;"><a href="#">Control Panel</a> </div>
+			</div>
+		</div>
+		<!-- End Control Panel -->
         #{doLayout /}
     </body>
 </html>
