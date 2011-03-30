@@ -11,9 +11,11 @@ import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
-import edu.unl.csce.obdme.api.entities.graph.vehicles.GraphEntry;
-import edu.unl.csce.obdme.api.entities.graph.vehicles.GraphPoint;
-import edu.unl.csce.obdme.api.entities.graph.vehicles.GraphPush;
+import edu.unl.csce.obdme.api.entities.graph.statistics.StatDataPoint;
+import edu.unl.csce.obdme.api.entities.graph.statistics.StatDataset;
+import edu.unl.csce.obdme.api.entities.graph.statistics.VehicleStatPush;
+import edu.unl.csce.obdme.client.http.exception.CommException;
+import edu.unl.csce.obdme.client.http.exception.ObdmeException;
 import edu.unl.csce.obdme.database.OBDMeDatabaseHelper;
 import edu.unl.csce.obdme.utilities.AppSettings;
 
@@ -74,94 +76,213 @@ public class DataUploadTask implements Runnable {
 					Log.e(context.getResources().getString(R.string.debug_tag_datauploaderthread),
 							"Could not get writable database: " + e.getMessage());
 				}
+				
+				// TODO ok by inserting this return statement? should probably exit this thread if we cannot open the database.
+				return;
 			}
 
 			//If logging is enabled, print a nice message that we are starting a graph push
 			if(context.getResources().getBoolean(R.bool.debug)) {
 				Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-				"Starting a graph push");
+				"Starting a vehicle data push");
 			}
-
-			//Get the first rows from the database 
-			Cursor queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
-					null, null, null, null, null, null, 
-					Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
-
+			
+			//Get a VIN to upload by selecting the top-most entry
+			Cursor queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME, 
+					null, null, null, null, null, null, Integer.toString(1));
+			
+			String vinToUpload = null;
+			
+			if (queryResults.getCount() > 0 && queryResults.moveToFirst()) {
+				//Get the top-most VIN
+				vinToUpload = queryResults.getString(queryResults.getColumnIndex("vin"));
+				//Close the query
+				queryResults.close();
+				//run a new query for entries matching the VIN
+				queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
+						null, String.format("vin=%s", vinToUpload), null,null, null, null, Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
+			}
+			
 			StringBuffer sb = new StringBuffer();
-
-			//If we are ready to upload (requirements met)
-			if(checkIfReadyForUpload(queryResults)) {
-
-				//Make a new graph push object
-				GraphPush graphPush = new GraphPush();
-
-				//Move to the first row of the query
+			// TODO - do we really want to check to ensure there are the minimum number of rows here?
+			// Otherwise, we may end up with rows that never make it to the server.			
+			if (queryResults.getCount() > 0) {
+				
+				VehicleStatPush statPush = new VehicleStatPush(vinToUpload);
 				queryResults.moveToFirst();
-
+				
 				do {
-
-					//Make a new graph entry
-					GraphEntry graphEntry = new GraphEntry();
-
-					//For all the columns
-					for (int i = 0; i < queryResults.getColumnCount(); i++) {
-
-						//If the cell is not empty
+					StatDataset dataset = new StatDataset();
+					// TODO - set the email of the corresponding user
+					// dataset.email = xx;
+				
+					//traverse the columns
+					for (int i=0; i<queryResults.getColumnCount(); i++) {
+						
+						// If the cell is not empty
 						if (!queryResults.isNull(i)) {
-
+							
 							//Get the column name
 							String columnName = queryResults.getColumnName(i);
-
+							
+							//Keep track of id's to delete upon completion
 							if (columnName.equals(OBDMeDatabaseHelper.TABLE_KEY)) {
 								sb.append(Integer.toString(queryResults.getInt(i)) + ",");
 							}
-
-							//If the column contains PID data
+							
+							//if the column contains PID data
 							if (columnName.contains("data_")) {
 								String modeHex = columnName.substring(5,7);
 								String pidHex = columnName.substring(7);
-								graphEntry.getPoints().add(new GraphPoint(modeHex, pidHex, queryResults.getString(i)));
+								dataset.datapoints.add(new StatDataPoint(modeHex, pidHex, queryResults.getDouble(i)));
 							}
-
-							//Otherwise if the column is the timestamp
+						
+							//otherwise this is the timestamp of the collection
 							else if (columnName.equals("timestamp")) {
-								graphEntry.setTimestamp(new Date(queryResults.getString(i)));
+								dataset.timestamp = new Date(queryResults.getString(i));
 							}
-
-							//Otherwise if the column is the VIN
-							else if (columnName.equals("vin")) {
-								graphEntry.setVIN(queryResults.getString(i));
-							}
-						}	
+						}
 					}
-
-					//Add the graph entry to the graph push
-					graphPush.getEntries().add(graphEntry);
-
-					//While there are still rows, continue
-				} while(queryResults.moveToNext());
-
-				sb.deleteCharAt(sb.length()-1);
-
+					
+					//if there are any datapoints, send 'er off
+					if (dataset.datapoints.size() > 0) {
+						statPush.statSets.add(dataset);
+					}
+					
+				} while (queryResults.moveToNext());
+				
+				//done with the query results, so close it up
+				queryResults.close();
+				
+				//remove the trailing comma from the id's to remove.
+				sb.deleteCharAt(sb.length() - 1);
+				
 				if(context.getResources().getBoolean(R.bool.debug)) {
 					Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
 					"Pushing a graph to the web service");
 				}
+				
+				boolean bDataPushSuccessful = false;
+				
+				try {
+					//send the vehicle data off to persistent storage
+					bDataPushSuccessful = webFramework.getStatisticsService().logVehicleStatistics(vinToUpload, statPush);
+				} catch (ObdmeException e) {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+						"ObdmeException pushing data to web service.", e);
+					}
+					bDataPushSuccessful = false;
+				} catch (CommException e) {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+						"CommException pushing data to web service.", e);
+					}
+					bDataPushSuccessful = false;
+				}
+				
+				if (bDataPushSuccessful) {
+					//successful data submission, remove the rows from the database.
+					int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+								"Datasets removed from the database: " + affectedRows);
+					}					
+				}
+			}
+			
+			//done with the database.
+			sqldb.close();
+			
+			
 
-				//Send the graph push to the vehicle graph service
-				// TODO: get this fixed (below)
-				//webFramework.getVehicleGraphService().pushVehicleGraphData(graphPush, dataUploadHandler);	
-
-				//int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
-
+			
+			/*** BEGIN ORIGINAL DATA UPLOAD CODE ***/			
+//			//Get the first rows from the database 
+//			Cursor queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
+//					null, null, null, null, null, null, 
+//					Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
+//			
+//			
+//
+//
+//			StringBuffer sb = new StringBuffer();
+//
+//			//If we are ready to upload (requirements met)
+//			if(checkIfReadyForUpload(queryResults)) {
+//				
+//				//Make a new graph push object
+//				GraphPush graphPush = new GraphPush();
+//
+//				//Move to the first row of the query
+//				queryResults.moveToFirst();
+//
+//				do {
+//
+//					//Make a new graph entry
+//					GraphEntry graphEntry = new GraphEntry();
+//
+//					//For all the columns
+//					for (int i = 0; i < queryResults.getColumnCount(); i++) {
+//
+//						//If the cell is not empty
+//						if (!queryResults.isNull(i)) {
+//
+//							//Get the column name
+//							String columnName = queryResults.getColumnName(i);
+//
+//							if (columnName.equals(OBDMeDatabaseHelper.TABLE_KEY)) {
+//								sb.append(Integer.toString(queryResults.getInt(i)) + ",");
+//							}
+//
+//							//If the column contains PID data
+//							if (columnName.contains("data_")) {
+//								String modeHex = columnName.substring(5,7);
+//								String pidHex = columnName.substring(7);
+//								graphEntry.getPoints().add(new GraphPoint(modeHex, pidHex, queryResults.getString(i)));
+//							}
+//
+//							//Otherwise if the column is the timestamp
+//							else if (columnName.equals("timestamp")) {
+//								graphEntry.setTimestamp(new Date(queryResults.getString(i)));
+//							}
+//
+//							//Otherwise if the column is the VIN
+//							else if (columnName.equals("vin")) {
+//								graphEntry.setVIN(queryResults.getString(i));
+//							}
+//						}	
+//					}
+//
+//					//Add the graph entry to the graph push
+//					graphPush.getEntries().add(graphEntry);
+//
+//					//While there are still rows, continue
+//				} while(queryResults.moveToNext());
+//
+//				sb.deleteCharAt(sb.length()-1);
+//
 //				if(context.getResources().getBoolean(R.bool.debug)) {
 //					Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-//							"Datasets removed from the database: " + affectedRows);
+//					"Pushing a graph to the web service");
 //				}
-			}
-			//Close the connection, we're done.
-			queryResults.close();
-			sqldb.close();
+//
+//				//Send the graph push to the vehicle graph service
+//				// TODO: get this fixed (below)
+//				//webFramework.getVehicleGraphService().pushVehicleGraphData(graphPush, dataUploadHandler);	
+//
+//				//int affectedRows = sqldb.delete(OBDMeDatabaseHelper.TABLE_NAME, OBDMeDatabaseHelper.TABLE_KEY + " in (" + sb.toString() + ")", null);
+//
+////				if(context.getResources().getBoolean(R.bool.debug)) {
+////					Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
+////							"Datasets removed from the database: " + affectedRows);
+////				}
+//			}
+//			//Close the connection, we're done.
+//			queryResults.close();
+//			sqldb.close();
+			
+			/*** END ORIGINAL DATA UPLOAD CODE ***/
 		}
 		else {
 			if(context.getResources().getBoolean(R.bool.debug)) {
