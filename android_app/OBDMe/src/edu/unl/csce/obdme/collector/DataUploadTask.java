@@ -88,28 +88,31 @@ public class DataUploadTask implements Runnable {
 			}
 			
 			//Get a VIN to upload by selecting the top-most entry
-			Cursor queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME, 
-					null, null, null, null, null, null, Integer.toString(1));
-			
+			Cursor queryVinToUpload = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME, 
+										null, null, null, null, null, null, Integer.toString(1));
+			Cursor queryVehicleDataToUpload = null;			
 			String vinToUpload = null;
 			
-			if (queryResults.getCount() > 0 && queryResults.moveToFirst()) {
+			if (queryVinToUpload.getCount() > 0 && queryVinToUpload.moveToFirst()) {
 				//Get the top-most VIN
-				vinToUpload = queryResults.getString(queryResults.getColumnIndex("vin"));
+				vinToUpload = queryVinToUpload.getString(queryVinToUpload.getColumnIndex("vin"));
 				//Close the query
-				queryResults.close();
+				queryVinToUpload.close();
 				//run a new query for entries matching the VIN
-				queryResults = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
+				queryVehicleDataToUpload = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
 						null, String.format("vin=%s", vinToUpload), null,null, null, null, Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
+			} else {
+				this.sqldb.close();
+				return;
 			}
 			
 			StringBuffer sb = new StringBuffer();
 			// TODO - do we really want to check to ensure there are the minimum number of rows here?
 			// Otherwise, we may end up with rows that never make it to the server.			
-			if (queryResults.getCount() > 0) {
+			if (queryVehicleDataToUpload.getCount() > 0) {
 				
 				VehicleStatPush statPush = new VehicleStatPush(vinToUpload);
-				queryResults.moveToFirst();
+				queryVehicleDataToUpload.moveToFirst();
 				
 				do {
 					StatDataset dataset = new StatDataset();
@@ -117,29 +120,29 @@ public class DataUploadTask implements Runnable {
 					// dataset.email = xx;
 				
 					//traverse the columns
-					for (int i=0; i<queryResults.getColumnCount(); i++) {
+					for (int i=0; i<queryVehicleDataToUpload.getColumnCount(); i++) {
 						
 						// If the cell is not empty
-						if (!queryResults.isNull(i)) {
+						if (!queryVehicleDataToUpload.isNull(i)) {
 							
 							//Get the column name
-							String columnName = queryResults.getColumnName(i);
+							String columnName = queryVehicleDataToUpload.getColumnName(i);
 							
 							//Keep track of id's to delete upon completion
 							if (columnName.equals(OBDMeDatabaseHelper.TABLE_KEY)) {
-								sb.append(Integer.toString(queryResults.getInt(i)) + ",");
+								sb.append(Integer.toString(queryVehicleDataToUpload.getInt(i)) + ",");
 							}
 							
 							//if the column contains PID data
 							if (columnName.contains("data_")) {
 								String modeHex = columnName.substring(5,7);
 								String pidHex = columnName.substring(7);
-								dataset.datapoints.add(new StatDataPoint(modeHex, pidHex, queryResults.getDouble(i)));
+								dataset.datapoints.add(new StatDataPoint(modeHex, pidHex, queryVehicleDataToUpload.getDouble(i)));
 							}
 						
 							//otherwise this is the timestamp of the collection
 							else if (columnName.equals("timestamp")) {
-								dataset.timestamp = new Date(queryResults.getString(i));
+								dataset.timestamp = new Date(queryVehicleDataToUpload.getString(i));
 							}
 						}
 					}
@@ -149,10 +152,10 @@ public class DataUploadTask implements Runnable {
 						statPush.statSets.add(dataset);
 					}
 					
-				} while (queryResults.moveToNext());
+				} while (queryVehicleDataToUpload.moveToNext());
 				
 				//done with the query results, so close it up
-				queryResults.close();
+				queryVehicleDataToUpload.close();
 				
 				//remove the trailing comma from the id's to remove.
 				sb.deleteCharAt(sb.length() - 1);
