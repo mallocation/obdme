@@ -61,6 +61,66 @@ public class ObdPid {
 	public static final ObdPid ABSOLUTE_THROTTLE_POSITION_B = new ObdPid("01", "47", "Absolute throttle position B");
 	public static final ObdPid ACCELERATOR_PEDAL_POSITION_D = new ObdPid("01", "49", "Accelerator pedal position D");
 	public static final ObdPid ACCELERATOR_PEDAL_POSITION_E = new ObdPid("01", "4A", "Accelerator pedal position E");
-	public static final ObdPid COMMANDED_THROTTLE_ACTUATOR = new ObdPid("01", "4C", "Commanded throttle actuator");	
+	public static final ObdPid COMMANDED_THROTTLE_ACTUATOR = new ObdPid("01", "4C", "Commanded throttle actuator");
+	
+	public static ObdPid getObdPid(String mode, String pid) {
+		// TODO - This is only for the presention. this is friekin awful...
+		if (mode.equals("01")) {
+			
+			if (pid.equals("04")) {
+			return CALCULATED_ENGINE_LOAD_VALUE;
+			} else if (pid.equals( "05")) {
+			return ENGINE_COOLANT_TEMPERATURE;
+			} else if (pid.equals( "06")) {
+			return SHORT_TERM_FUEL_TRIM;
+			} else if (pid.equals( "07")) {
+			return LONG_TERM_FUEL_TRIM;
+			} else if (pid.equals( "0B")) {
+			return INTAKE_MANIFOLD_ABSOLUTE_PRESSURE;
+			} else if (pid.equals( "0C")) {
+			return ENGINE_RPM;
+			} else if (pid.equals( "0D")) {
+			return VEHICLE_SPEED;
+			} else if (pid.equals( "0E")) {
+			return TIMING_ADVANCE;
+			} else if (pid.equals( "0F")) {
+			return INTAKE_AIR_TEMPERATURE;
+			} else if (pid.equals( "10")) {
+			return MAF_AIR_FLOW_RATE;
+			} else if (pid.equals( "11")) {
+			return THROTTLE_POSITION;
+			} else if (pid.equals( "1F")) {
+			return RUN_TIME_SINCE_ENGINE_START;
+			} else if (pid.equals( "21")) {
+			return DISTANCE_TRAVELED_WITH_MIL_ON;
+			} else if (pid.equals( "2C")) {
+			return COMMANDED_EGR;
+			} else if (pid.equals("2D")) {
+			return EGR_ERROR;
+			} else if (pid.equals("33")) {
+			return BAROMETRIC_PRESSURE;
+			} else if (pid.equals("3C")) {
+			return CATALYST_TEMPERATURE_BANK_1_SENSOR_1;
+			} else if (pid.equals("42")) {
+			return CONTROL_MODULE_VOLTAGE;
+			} else if (pid.equals("43")) {
+			return ABSOLUTE_LOAD_VALUE;
+			} else if (pid.equals("44")) {
+			return COMMAND_EQUIVALENCE_RATIO;
+			} else if (pid.equals("45")) {
+			return RELATIVE_THROTTLE_POSITION;
+			} else if (pid.equals("47")) {
+			return ABSOLUTE_THROTTLE_POSITION_B;
+			} else if (pid.equals("49")) {
+			return ACCELERATOR_PEDAL_POSITION_D;
+			} else if (pid.equals("4A")) {
+			return ACCELERATOR_PEDAL_POSITION_E;
+			} else if (pid.equals("4C")) {
+			return COMMANDED_THROTTLE_ACTUATOR;		
+			
+			}			
+		}
+		return null;
+	}
 	
 }

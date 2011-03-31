@@ -18,6 +18,7 @@ import models.obdmedb.vehicles.Vehicle;
 import org.hibernate.annotations.GenericGenerator;
 
 import play.db.jpa.GenericModel;
+import play.db.jpa.JPA;
 
 @Entity
 @Embeddable
@@ -51,22 +52,22 @@ public class VehicleDataPoint extends GenericModel {
 	
 	public static List<Double> getLatestValuesForPid(ObdPid obdPid, String VIN, int nLatestPoints) {
 		Vehicle vehicle = Vehicle.findByVIN(VIN);
-		List<Long> datasetIds = VehicleDataset.find("select id from vehicledataset vds " +
-										"where vehicleid=? " + 
-										"order by timestamp", vehicle.getId()).fetch(nLatestPoints);
-		if (datasetIds.size() < 1) {
+		List<VehicleDataset> datasets = VehicleDataset.getLatestDatasetsForVehicle(Vehicle.findByVIN(VIN), nLatestPoints);
+		
+		if (datasets.size() < 1) {
 			return new ArrayList<Double>();
 		}
 		
-		long lSinceDataSetId = datasetIds.get(datasetIds.size() - 1).longValue();
+		long lSinceDataSetId = datasets.get(datasets.size() - 1).getId();
+		
 		
 		List<Double> values = VehicleDataPoint.find(
-				"select value from vehicledatapoint vdp" +
-				" inner join vehicledataset vds " +
-				" on vds.id = vdp.datasetid and vds.vehicleid=?" +
-				" where vdp.mode like ? and vdp.pid like ?" +
-				" and vdp.datasetid >= ?" + 
-				" order by vds.timestamp asc", vehicle.getId(), obdPid.getMode(), obdPid.getPid(), lSinceDataSetId).fetch(nLatestPoints);
+				"select vdp.value from VehicleDataPoint vdp,  VehicleDataset vds " +
+				//" inner join VehicleDataset vds" +
+				//" on vds.id = vdp.datasetid and vds.vehicleid=?" +
+				" where vdp.dataset = vds and vdp.mode like ? and vdp.pid like ?" +
+				" and vds.id >= ?" + 
+				" order by vds.timestamp asc", obdPid.getMode(), obdPid.getPid(), lSinceDataSetId).fetch(nLatestPoints);
 		
 		return values;		
 	}

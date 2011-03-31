@@ -37,4 +37,12 @@ public class VehicleDataset extends Model {
 		this.datapoints = new ArrayList<VehicleDataPoint>();
 	}
 	
+	public static List<VehicleDataset> getLatestDatasetsForVehicle(Vehicle vehicle, int count) {
+		List<VehicleDataset> datasets = VehicleDataset.find("select vds from VehicleDataset vds " +
+										"where vehicleid=? " + 
+										"order by timestamp", vehicle.getId()).fetch(count);
+		return datasets;
+	}
+	
+	
 }
