@@ -2,6 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# AJAX - everything initiated client side from web application.
+GET		/ajax/graphing/{action}					controllers.ajax.Graphing.{action}
+
 # Home page
 GET     /                                       Application.index
 
