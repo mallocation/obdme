@@ -1,54 +1,145 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
+#{set 'moreScripts'}
 <script src="@{'/public/javascripts/d3graphing/d3.min.js'}" type="text/javascript" charset="utf-8"></script>
 <script src="@{'/public/javascripts/d3graphing/d3.layout.min.js'}" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-var n = 1, // number of layers
-m = 200, // number of samples per layer
-data0 = d3.layout.stack().offset("wiggle")(stream_layers(n, m)),
-data1 = d3.layout.stack().offset("wiggle")(stream_layers(n, m)),
+
+/* Inspired by Lee Byron's test data generator. */
+var pid = '0D';
+var mode = '01';
+var vin = '1HGFA16537L077259';
+
+
+
+var items = [1,1,2,3,4,5,6,7,8,9];
+
+
+function stream_layers(n, m, o) {
+  if (arguments.length < 3) o = 0;
+  /*function bump(a) {
+    var x = 1 / (.1 + Math.random()),
+        y = 2 * Math.random() - .5,
+        z = 10 / (.1 + Math.random());
+    for (var i = 0; i < m; i++) {
+      var w = (i / m - y) * z;
+      a[i] += x * Math.exp(-w * w);
+    }
+  }*/
+
+  return d3.range(n).map(function() {
+      var a = [], i;
+      for (i = 0; i < 10; i++) a[i] = items[i];
+      //for (i = 0; i < 5; i++) bump(a);
+      return a.map(stream_index);
+    });
+}
+
+/* Another layer generator using gamma distributions. */
+/*function stream_waves(n, m) {
+  return d3.range(n).map(function(i) {
+    return d3.range(m).map(function(j) {
+        var x = 20 * j / m - i / 3;
+        return 2 * x * Math.exp(-.5 * x);
+      }).map(stream_index);
+    });
+}*/
+
+function stream_index(d, i) {
+  return {x: i, y: Math.max(0, d)};
+}
+
+
+$(function() {
+/*
+$.get('http://obdme.com/ajax/graphing/getLatestDataPointsForVehicle?VIN=1HGFA16537L077259&mode=01&pid=0C&count=64', function(data) {
+	alert(data);
+	items = data;
+	data = d3.layout.stack()(stream_layers(new Array(1),n, m, 0)),
+});*/
+	
+var n = 2, // number of layers
+m = 64, // number of samples per layer
+data = d3.layout.stack()(stream_layers(n, m, 0)),
 color = d3.interpolateRgb("#aad", "#556");
 
-var w = 960,
-h = 500,
-mx = m - 1,
-my = d3.max(data0.concat(data1), function(d) {
+
+var p = 20,
+w = 960,
+h = 500 - .5 - p,
+mx = m,
+my = d3.max(data, function(d) {
   return d3.max(d, function(d) {
     return d.y0 + d.y;
   });
-});
-
-var area = d3.svg.area()
-.x(function(d) { return d.x * w / mx; })
-.y0(function(d) { return h - d.y0 * h / my; })
-.y1(function(d) { return h - (d.y + d.y0) * h / my; });
+}),
+mz = d3.max(data, function(d) {
+  return d3.max(d, function(d) {
+    return d.y;
+  });
+}),
+x = function(d) { return d.x * w / mx; },
+y0 = function(d) { return h - d.y0 * h / my; },
+y1 = function(d) { return h - (d.y + d.y0) * h / my; },
+y2 = function(d) { return d.y * h / mz; }; // or `my` to not rescale
 
 var vis = d3.select("#chart")
 .append("svg:svg")
 .attr("width", w)
 .attr("height", h);
 
-vis.selectAll("path")
-.data(data0)
-.enter().append("svg:path")
-.attr("fill", function() { return color(Math.random()); })
-.attr("d", area);
+group.select("#stack")
+  .attr("class", "last");
 
-function transition() {
-d3.selectAll("path")
-  .data(function() {
-    var d = data1;
-    data1 = data0;
-    return data0 = d;
-  })
+group.selectAll("g.layer rect")
 .transition()
-  .delay(500)
-  .duration(2500)
-  .attr("d", area);
+  .duration(500)
+  .delay(function(d, i) { return (i % m) * 10; })
+  .attr("x", function(d, i) { return x({x: .9 * ~~(i / m) / n}); })
+  .attr("width", x({x: .9 / n}))
+  .each("end", transitionEnd);
+
+function transitionEnd() {
+d3.select(this)
+  .transition()
+    .duration(500)
+    .attr("y", function(d) { return h - y2(d); })
+    .attr("height", y2);
+}
 }
 
+function transitionStack() {
+var stack = d3.select("#chart");
+
+stack.select("#group")
+  .attr("class", "first");
+
+stack.select("#stack")
+  .attr("class", "last active");
+
+stack.selectAll("g.layer rect")
+.transition()
+  .duration(500)
+  .delay(function(d, i) { return (i % m) * 10; })
+  .attr("y", y1)
+  .attr("height", function(d) { return y0(d) - y1(d); })
+  .each("end", transitionEnd);
+
+function transitionEnd() {
+d3.select(this)
+  .transition()
+    .duration(500)
+    .attr("x", 0)
+    .attr("width", x({x: .9}));
+}
+}
 </script>
+
+#{/set}
+
+
+
 
 <!-- Application Index Body -->
 <div class="pageContainer">
@@ -61,4 +152,6 @@ d3.selectAll("path")
 		</div>
 	<div id="button"><input type="submit" class="submit" value="Select PID" /></div>
 	</div>
+	
+	<div id="chart"></div>
 </div>
