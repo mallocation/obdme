@@ -13,7 +13,7 @@ var vin = '1HGFA16537L077259';
 
 
 
-var items = [1,1,2,3,4,5,6,7,8,9];
+var items = ${data};
 
 
 function stream_layers(n, m, o) {
@@ -30,7 +30,7 @@ function stream_layers(n, m, o) {
 
   return d3.range(n).map(function() {
       var a = [], i;
-      for (i = 0; i < 10; i++) a[i] = items[i];
+      for (i = 0; i < 64; i++) a[i] = items[i];
       //for (i = 0; i < 5; i++) bump(a);
       return a.map(stream_index);
     });
@@ -52,6 +52,7 @@ function stream_index(d, i) {
 
 
 $(function() {
+	alert(${data});
 /*
 $.get('http://obdme.com/ajax/graphing/getLatestDataPointsForVehicle?VIN=1HGFA16537L077259&mode=01&pid=0C&count=64', function(data) {
 	alert(data);
@@ -87,7 +88,53 @@ y2 = function(d) { return d.y * h / mz; }; // or `my` to not rescale
 var vis = d3.select("#chart")
 .append("svg:svg")
 .attr("width", w)
-.attr("height", h);
+.attr("height", h + p);
+
+var layers = vis.selectAll("g.layer")
+.data(data)
+.enter().append("svg:g")
+.attr("fill", function(d, i) { return color(i / (n - 1)); })
+.attr("class", "layer");
+
+var bars = layers.selectAll("g.bar")
+.data(function(d) { return d; })
+.enter().append("svg:g")
+.attr("class", "bar")
+.attr("transform", function(d) { return "translate(" + x(d) + ",0)"; });
+
+bars.append("svg:rect")
+.attr("width", x({x: .9}))
+.attr("x", 0)
+.attr("y", h)
+.attr("height", 0)
+.transition()
+.delay(function(d, i) { return i * 10; })
+.attr("y", y1)
+.attr("height", function(d) { return y0(d) - y1(d); });
+
+var labels = vis.selectAll("text.label")
+.data(data[0])
+.enter().append("svg:text")
+.attr("class", "label")
+.attr("x", x)
+.attr("y", h + 6)
+.attr("dx", x({x: .45}))
+.attr("dy", ".71em")
+.attr("text-anchor", "middle")
+.text(function(d, i) { return i; });
+
+vis.append("svg:line")
+.attr("x1", 0)
+.attr("x2", w - x({x: .1}))
+.attr("y1", h)
+.attr("y2", h);
+});
+
+function transitionGroup() {
+var group = d3.selectAll("#chart");
+
+group.select("#group")
+  .attr("class", "first active");
 
 group.select("#stack")
   .attr("class", "last");
@@ -145,13 +192,11 @@ d3.select(this)
 <div class="pageContainer">
 	<div class="logoHeaderImage">
 		<div id="popupContent">  
-		        <a id="popupContentClose">X</a>
-		        <h1>Please Select a PID</h1>
-		    </div>  
-		    <div id="backgroundPopup"></div>
-		</div>
-	<div id="button"><input type="submit" class="submit" value="Select PID" /></div>
+			<a id="popupContentClose">X</a>
+		    <h1>Please Select a PID</h1>
+		</div>  
+		<div id="backgroundPopup"></div>
 	</div>
-	
+	<div id="button"><input type="submit" class="submit" value="Select PID" /></div>
 	<div id="chart"></div>
 </div>
