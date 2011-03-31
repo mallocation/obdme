@@ -7,8 +7,7 @@
 	top: 0;
 	left: 0;
 	background: #000000;
-	border: 1px solid #cecece;
-	z-index: 1;
+	z-index: 100;
 }
 #popupContent {
 	display: none;
@@ -18,7 +17,7 @@
 	width: 408px;
 	background: #191919;
 	border: 2px solid #333;
-	z-index: 2;
+	z-index: 101;
 	padding: 12px;
 	font-size: 13px;
 }
@@ -40,8 +39,4 @@
 	color: #333;
 	font-weight: 700;
 	display: block;
-}
-#button {
-	text-align: center;
-	margin: 100px;
 }
