@@ -52,7 +52,6 @@ function stream_index(d, i) {
 
 
 $(function() {
-	alert(${data});
 /*
 $.get('http://obdme.com/ajax/graphing/getLatestDataPointsForVehicle?VIN=1HGFA16537L077259&mode=01&pid=0C&count=64', function(data) {
 	alert(data);
@@ -60,15 +59,15 @@ $.get('http://obdme.com/ajax/graphing/getLatestDataPointsForVehicle?VIN=1HGFA165
 	data = d3.layout.stack()(stream_layers(new Array(1),n, m, 0)),
 });*/
 	
-var n = 2, // number of layers
+var n = 1, // number of layers
 m = 64, // number of samples per layer
 data = d3.layout.stack()(stream_layers(n, m, 0)),
 color = d3.interpolateRgb("#aad", "#556");
 
 
 var p = 20,
-w = 960,
-h = 500 - .5 - p,
+w = 500//960,
+h = 300//500 - .5 - p,
 mx = m,
 my = d3.max(data, function(d) {
   return d3.max(d, function(d) {
@@ -93,7 +92,7 @@ var vis = d3.select("#chart")
 var layers = vis.selectAll("g.layer")
 .data(data)
 .enter().append("svg:g")
-.attr("fill", function(d, i) { return color(i / (n - 1)); })
+.attr("fill", function(d, i) { return color(i);})// / (n - 1)); })
 .attr("class", "layer");
 
 var bars = layers.selectAll("g.bar")
