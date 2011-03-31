@@ -11,7 +11,7 @@ import play.mvc.With;
 public class Application extends Controller {
 
     public static void index() {    	
-    	List<Double> values = VehicleDataPoint.getLatestValuesForPid(ObdPid.getObdPid("01", "3C"), "1HGFA16537L077259", 250);
+    	List<Double> values = VehicleDataPoint.getLatestValuesForPid(ObdPid.getObdPid("01", "3C"), "1HGFA16537L077259", 500);
     	StringBuffer sb = new StringBuffer();
     	sb.append("[");
     	for (Double val : values) {
