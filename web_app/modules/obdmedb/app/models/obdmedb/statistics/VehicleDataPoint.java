@@ -52,7 +52,7 @@ public class VehicleDataPoint extends GenericModel {
 	
 	public static List<Double> getLatestValuesForPid(ObdPid obdPid, String VIN, int nLatestPoints) {
 		Vehicle vehicle = Vehicle.findByVIN(VIN);
-		List<VehicleDataset> datasets = VehicleDataset.getLatestDatasetsForVehicle(Vehicle.findByVIN(VIN), nLatestPoints);
+		List<VehicleDataset> datasets = VehicleDataset.getLatestDatasetsForVehicle(vehicle, nLatestPoints);
 		
 		if (datasets.size() < 1) {
 			return new ArrayList<Double>();

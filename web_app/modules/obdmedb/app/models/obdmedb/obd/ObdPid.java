@@ -1,11 +1,5 @@
 package models.obdmedb.obd;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import models.obdmedb.statistics.VehicleDataPoint;
-import models.obdmedb.statistics.VehicleDataset;
-import models.obdmedb.vehicles.Vehicle;
 
 public class ObdPid {
 	
@@ -62,6 +56,14 @@ public class ObdPid {
 	public static final ObdPid ACCELERATOR_PEDAL_POSITION_D = new ObdPid("01", "49", "Accelerator pedal position D");
 	public static final ObdPid ACCELERATOR_PEDAL_POSITION_E = new ObdPid("01", "4A", "Accelerator pedal position E");
 	public static final ObdPid COMMANDED_THROTTLE_ACTUATOR = new ObdPid("01", "4C", "Commanded throttle actuator");
+	
+	public static final ObdPid[] DEFINED_OBD_PIDS = new ObdPid[] {CALCULATED_ENGINE_LOAD_VALUE, 
+		ENGINE_COOLANT_TEMPERATURE, SHORT_TERM_FUEL_TRIM, LONG_TERM_FUEL_TRIM, INTAKE_MANIFOLD_ABSOLUTE_PRESSURE, 
+		ENGINE_RPM, VEHICLE_SPEED, TIMING_ADVANCE, INTAKE_AIR_TEMPERATURE, MAF_AIR_FLOW_RATE, THROTTLE_POSITION, RUN_TIME_SINCE_ENGINE_START, 
+		DISTANCE_TRAVELED_WITH_MIL_ON, COMMANDED_EGR, EGR_ERROR, BAROMETRIC_PRESSURE, CATALYST_TEMPERATURE_BANK_1_SENSOR_1, CONTROL_MODULE_VOLTAGE, 
+		ABSOLUTE_LOAD_VALUE, COMMAND_EQUIVALENCE_RATIO, RELATIVE_THROTTLE_POSITION, ABSOLUTE_THROTTLE_POSITION_B, ACCELERATOR_PEDAL_POSITION_D, 
+		ACCELERATOR_PEDAL_POSITION_E, COMMANDED_THROTTLE_ACTUATOR};
+	
 	
 	public static ObdPid getObdPid(String mode, String pid) {
 		// TODO - This is only for the presention. this is friekin awful...
