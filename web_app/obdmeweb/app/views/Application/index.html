@@ -66,8 +66,8 @@ color = d3.interpolateRgb("#aad", "#556");
 
 
 var p = 20,
-w = 500//960,
-h = 300//500 - .5 - p,
+w = 960,
+h = 500 - .5 - p,
 mx = m,
 my = d3.max(data, function(d) {
   return d3.max(d, function(d) {
@@ -197,5 +197,5 @@ d3.select(this)
 		<div id="backgroundPopup"></div>
 	</div>
 	<div id="button"><input type="submit" class="submit" value="Select PID" /></div>
-	<div id="chart"></div>
+	<div id="chart" style="margin-top: 55px;"></div>
 </div>
