@@ -11,7 +11,7 @@ var pid = '0D';
 var mode = '01';
 var vin = '1HGFA16537L077259';
 
-
+var m = ${numPoints};
 
 var items = ${data};
 
@@ -30,7 +30,7 @@ function stream_layers(n, m, o) {
 
   return d3.range(n).map(function() {
       var a = [], i;
-      for (i = 0; i < 64; i++) a[i] = items[i];
+      for (i = 0; i < m; i++) a[i] = items[i];
       //for (i = 0; i < 5; i++) bump(a);
       return a.map(stream_index);
     });
@@ -52,15 +52,15 @@ function stream_index(d, i) {
 
 
 $(function() {
-/*
-$.get('http://obdme.com/ajax/graphing/getLatestDataPointsForVehicle?VIN=1HGFA16537L077259&mode=01&pid=0C&count=64', function(data) {
+
+/*$.get('http://obdme.com/ajax/graphing/getLatestDataPointsForVehicle?VIN=1HGFA16537L077259&mode=01&pid=0C&count=64', function(data) {
 	alert(data);
 	items = data;
 	data = d3.layout.stack()(stream_layers(new Array(1),n, m, 0)),
 });*/
 	
 var n = 1, // number of layers
-m = 64, // number of samples per layer
+//m = 64, // number of samples per layer
 data = d3.layout.stack()(stream_layers(n, m, 0)),
 color = d3.interpolateRgb("#aad", "#556");
 
