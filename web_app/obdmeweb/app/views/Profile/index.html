@@ -1,0 +1,97 @@
+#{extends 'main.html' /}
+#{set title:'Profile' /}
+
+#{set 'moreStyles'}
+	<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/profile.css'}">
+#{/set}
+
+#{set 'moreScripts'}
+	<script src="@{'/public/javascripts/jquery-placeholder-profile-0.1.js'}" type="text/javascript" charset="utf-8"></script>
+	<script src="@{'/public/javascripts/jquery.iphone-switch.js'}" type="text/javascript" charset="utf-8"></script>
+#{/set}
+
+<!-- Profile Index Body -->
+<div class="pageContainer">
+	<div class="logoHeaderImage">
+		<div class="profileSectionContainerTop">
+			<h1 class="profileSectionHeader">&{'profile.account'}</h1>
+			<table class="profileTable">
+				<tr>
+					<td><p class="profileText">&{'profile.account.email.address'}</p></td>
+					<td>
+						<input type="text" name="lastname" id="email" class="profileInputField" 
+						spellcheck="false" style="width:300px;" placeholder="name@example.com" autocomplete="off"/>
+					</td>
+				</tr>
+				<tr>
+					<td><p class="profileText">&{'profile.account.password'}</p></td>
+					<td>
+						<div id="button"><input type="submit" class="submit" id="changepassword" value="Change" /></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="profileSectionContainer">
+			<h1 class="profileSectionHeader">&{'profile.about'}</h1>
+			<table class="profileTable">
+				<tr>
+					<td><p class="profileText">&{'profile.about.first.name'}</p></td>
+					<td>
+						<input type="text" name="firstname" id="firstname" class="profileInputField" 
+						spellcheck="false" style="width:300px;" placeholder="John" autocomplete="off"/>
+					</td>
+				</tr>
+				<tr>
+					<td><p class="profileText">&{'profile.about.last.name'}</p></td>
+					<td>
+						<input type="text" name="lastname" id="lastname" class="profileInputField" 
+						spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
+					</td>
+				</tr>
+				<tr>
+					<td><p class="profileText">&{'profile.about.picture'}</p></td>
+					<td>
+						<div id="button"><input type="submit" class="submit" id="changepassword" value="Change" /></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="profileSectionContainer">
+			<h1 class="profileSectionHeader">&{'profile.notifications'}</h1>
+			<table class="profileTable">
+				<tr>
+					<td><p class="profileText">&{'profile.notifications.send.email'}</p></td>
+					<td>
+						<div class="switchContainer" id="emailSwitch">
+							<script type="text/javascript">
+							$('#emailSwitch').iphoneSwitch("off",function() {
+								//AJAX CALL
+							}, function() {
+								//AJAX CALL
+							}, {
+								switch_on_container_path: '/public/images/switch/switch_container_off.png'
+							});
+							</script>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><p class="profileText">&{'profile.notifications.send.sms'}</p></td>
+					<td>
+						<div class="switchContainer" id="smsSwitch">
+							<script type="text/javascript">
+							$('#smsSwitch').iphoneSwitch("off",function() {
+								//AJAX CALL
+							}, function() {
+								//AJAX CALL
+							}, {
+								switch_on_container_path: '/public/images/switch/switch_container_off.png'
+							});
+							</script>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

@@ -6,7 +6,14 @@
 GET		/ajax/graphing/{action}					controllers.ajax.Graphing.{action}
 
 # Home page
-GET     /                                       Application.index
+GET		/										Application.index
+GET     /home                                   Home.index
+GET     /trips                                  Trips.index
+GET     /notifications                          Notifications.index
+GET     /statistics                             Statistics.index
+GET     /charts                                 Charts.index
+GET     /vehicles                               Vehicles.index
+GET     /profile                                Profile.index
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public

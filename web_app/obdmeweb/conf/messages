@@ -12,3 +12,17 @@ control.panel.charts=Charts
 control.panel.vehicles=Vehicles
 control.panel.profile=Profile
 control.panel.logout=Logout
+
+
+profile.account=My Account
+profile.account.email.address=Email Address
+profile.account.password=Password
+
+profile.about=About Me
+profile.about.first.name=First Name
+profile.about.last.name=Last Name
+profile.about.picture=Profile Picture
+
+profile.notifications=Notification Settings
+profile.notifications.send.email=Send Email
+profile.notifications.send.sms=Send SMS

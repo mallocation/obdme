@@ -1,0 +1,70 @@
+
+input.profileInputField {
+	padding: 10px;
+	border: 0px solid black;
+	background-color: white !important;
+	font-size: 16px;
+	border-radius:8px;
+	outline:none;
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	text-shadow: 1px 1px 3px #CCC;
+	-webkit-border-radius:8px; 
+    -khtml-border-radius:8px; 
+    -moz-border-radius:8px;
+	-webkit-box-shadow: 2px 2px 0px #666;
+    -moz-box-shadow: 2px 2px 0px #666;
+
+	box-shadow: 2px 2px 0px #666;
+	-webkit-transition: -webkit-box-shadow 0.5s ease-out;;
+	-moz-transition: -moz-box-shadow 0.5s ease-out;
+	-o-transition: box-shadow 0.5s ease-out;
+}
+
+input.profileInputField:focus {
+	-moz-box-shadow: 0px 0px 10px white;
+	-webkit-box-shadow: 0px 0px 10px white;
+	box-shadow: 0px 0px 10px white;
+}
+
+table.profileTable {
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+	text-align: left;
+	border: none;
+    position: relative;
+}
+
+.profileContainer{
+	text-align: left;
+	padding: 150px 0 0 0;
+}
+
+.profileSectionContainerTop{
+	padding: 100px 0 0 0;
+}
+.profileSectionContainer{
+	margin: 50px 0 0 0;
+}
+
+.switchContainer{
+	height: 27px;
+}
+
+p.profileText {
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	color: white;
+	text-align: left;
+	text-shadow:rgba(0,0,0,0.4) 0 1px 2px;
+	font-weight:bold
+}
+
+h1.profileSectionHeader {
+	text-align: left;
+	color: white;
+	font-size: 24px;
+	font-weight: 700;
+	border-bottom: 1px dotted #D3D3D3;
+	padding-bottom: 2px;
+	margin-bottom: 20px;
+}
