@@ -1,35 +1,35 @@
 var popupStatus = 0;
 var fadeRate = 500;
-function loadPopup() {
+function loadPopup(popUpContent, backgroundPopup) {
     if (popupStatus == 0) {
-        $("#backgroundPopup").css({
+        $(backgroundPopup).css({
             "opacity": "0.7"
         });
-        $("#backgroundPopup").fadeIn(fadeRate);
-        $("#popupContent").fadeIn(fadeRate);
+        $(backgroundPopup).fadeIn(fadeRate);
+        $(popUpContent).fadeIn(fadeRate);
         popupStatus = 1;
     }
 }
 
-function disablePopup() {
+function disablePopup(popUpContent, backgroundPopup) {
     if (popupStatus == 1) {
-        $("#backgroundPopup").fadeOut(fadeRate);
-        $("#popupContent").fadeOut(fadeRate);
+        $(backgroundPopup).fadeOut(fadeRate);
+        $(popUpContent).fadeOut(fadeRate);
         popupStatus = 0;
     }
 }
 
-function centerPopup() {
+function centerPopup(popUpContent, backgroundPopup) {
     var windowWidth = document.documentElement.clientWidth;
     var windowHeight = document.documentElement.clientHeight;
-    var popupHeight = $("#popupContent").height();
-    var popupWidth = $("#popupContent").width();
-    $("#popupContent").css({
+    var popupHeight = $(popUpContent).height();
+    var popupWidth = $(popUpContent).width();
+    $(popUpContent).css({
         "position": "absolute",
         "top": windowHeight / 2 - popupHeight / 2,
         "left": windowWidth / 2 - popupWidth / 2
     });
-    $("#backgroundPopup").css({
+    $(backgroundPopup).css({
         "height": windowHeight
     });
 

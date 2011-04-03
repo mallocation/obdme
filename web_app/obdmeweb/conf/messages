@@ -4,6 +4,11 @@
 secure.title=Sign in with your OBDme ID
 secure.error=Your Username or Password is Incorrect
 
+home.welcome.popup.title=Welcome to OBDme!
+home.welcome.popup.text=It looks like it's the first time you've logged on to OBDme.com.  Would you like to set up your OBDme profile now?
+home.welcome.popup.sure=Sure!
+home.welcome.popup.nah=Nah...
+
 control.panel.home=Home
 control.panel.trips=Trips
 control.panel.notifications=Notifications

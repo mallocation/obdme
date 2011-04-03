@@ -1,5 +1,7 @@
 package controllers;
 
+import com.sun.medialib.mlib.Image;
+
 import models.StatusMessage;
 import models.obdmedb.User;
 import play.Logger;
@@ -72,8 +74,6 @@ public class Profile extends Controller {
     	}
     	
     	user._save();
-    	
-    	Logger.info("Send SMS switch changed to " + value);
     }
     
     public static void firstNameAJAX(String value) {
@@ -83,8 +83,6 @@ public class Profile extends Controller {
     	String previousFirstName = user.getFirstname();
        	user.setFirstname(value);
     	user._save();
-    	
-    	Logger.info("Lastname changed from " + previousFirstName + " to " + value);
     }
     
     public static void lastNameAJAX(String value) {
@@ -94,14 +92,10 @@ public class Profile extends Controller {
     	String previousLastName = user.getLastname();
     	user.setLastname(value);
     	user._save();
-    	
-    	Logger.info("Lastname changed from " + previousLastName + " to " + value);
     }
     
     public static void passwordChangeAJAX(String currentPassword, String newPassword) {
-    	
-    	Logger.info(currentPassword + newPassword);
-    	//Save the users information
+       	//Save the users information
     	User user = User.find("byEmail", Security.connected()).first();
     	if (User.isValidCredentialsClearText(user.getEmail(), currentPassword)) {
     		User.changeUserPassword(user.getEmail(), currentPassword, newPassword);
@@ -111,4 +105,20 @@ public class Profile extends Controller {
     		renderJSON(new StatusMessage("fail", "Password Not Updated", ""));
     	}
     }
+
+	public static void newProfileAJAX() {
+    
+    	//Save the users information
+    	User user = User.find("byEmail", Security.connected()).first();
+    	if (user.getFirstname() == null && user.getLastname() == null) {
+    		renderJSON(new StatusMessage("new", "Connected User is New", ""));
+    	}
+    	else {
+    		renderJSON(new StatusMessage("existing", "Connected User is existing", ""));
+    	}
+    }
+	
+	public static void uploadAvatar(String title, Image image) {
+		Logger.info("image upload");
+	}
 }

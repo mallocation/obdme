@@ -159,6 +159,9 @@
 					<td><p class="profileText">&{'profile.about.picture'}</p></td>
 					<td>
 						<div id="button"><input type="submit" class="submit" id="changePicture" value="&{'profile.account.change'}" /></div>
+						
+						<input type="file" id="photo" name="photo" />
+						<input type="submit" value="Send it..." />
 					</td>
 				</tr>
 			</table>
@@ -190,7 +193,7 @@
 							$('#smsSwitch').iphoneSwitch(${sendSMS},function() {
 								$.post("/profile/sendsms", {value: "on"} );
 							}, function() {
-								$.post("/profile/sendsms", {value: "on"} );
+								$.post("/profile/sendsms", {value: "off"} );
 							}, {
 								switch_on_container_path: '/public/images/switch/switch_container_off.png'
 							});

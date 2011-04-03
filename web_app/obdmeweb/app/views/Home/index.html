@@ -1,9 +1,50 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
+<!-- New User Popup -->
+<div class="popupContent" id="popupContentNewUser">  
+	<a class="popupContentClose" id="popupContentCloseNewUser">X</a>
+    <h1>&{'home.welcome.popup.title'}</h1>
+	<p class="popUpText">&{'home.welcome.popup.text'}</p>
+	<p class="popUpText"><br></p>
+	<input type="submit" class="submit" id="updateProfileSure" value="&{'home.welcome.popup.sure'}" />
+	<input type="submit" class="submit" id="updateProfileNah" value="&{'home.welcome.popup.nah'}" />
+</div>  
+<div class="backgroundPopup" id="backgroundPopupNewUser"></div>
+<script type="text/javascript">
+    $.post("/profile/newprofile", {}, 
+	function(data) {
+		if (data.status == "new") {
+			centerPopup("#popupContentNewUser", "#backgroundPopupNewUser");
+	        loadPopup("#popupContentNewUser", "#backgroundPopupNewUser");
+		}
+	}, "json");
+	
+	$("#updateProfileNah").click(function() {
+		disablePopup("#popupContentNewUser", "#backgroundPopupNewUser");
+	});
+	
+	$("#updateProfileSure").click(function() {
+		window.location.replace("/profile");
+	});
+	
+	$("#popupContentCloseNewUser").click(function() {
+        disablePopup("#popupContentNewUser", "#backgroundPopupNewUser");
+    });
+
+    $("#backgroundPopupNewUser").click(function() {
+        disablePopup("#popupContentNewUser", "#backgroundPopupNewUser");
+    });
+
+    $(document).keypress(function(e) {
+        if (e.keyCode == 27 && popupStatus == 1) {
+            disablePopup();
+        }
+    });
+</script>
+
 <!-- Application Index Body -->
 <div class="pageContainer">
 	<div class="logoHeaderImage">
-		
 	</div>
 </div>
