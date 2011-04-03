@@ -27,12 +27,18 @@ public class User extends Model {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="regdate")
 	public Date regdate;
+
+	@Column(name="firstname", length=255)
+	public String firstname;
 	
-//	public User (String email, String clearTextPassword) {
-//		this.email = email;
-//		this.passwordhash = EncryptionUtils.encryptPassword(clearTextPassword);
-//		this.regdate = new Date();
-//	}
+	@Column(name="lastname", length=255)
+	public String lastname;
+	
+	@Column(name="sendemail", nullable=false, columnDefinition="boolean default false")
+	public Boolean sendemail;
+	
+	@Column(name="sendsms", nullable=false, columnDefinition="boolean default false")
+	public Boolean sendsms;
 	
 	public static User createUserFromClearTextCredentials(String email, String clearTextPassword) {
 		String encryptedPassword = EncryptionUtils.encryptPassword(clearTextPassword);
@@ -76,11 +82,60 @@ public class User extends Model {
 		return find("email like ? and passwordhash like ?", email, encryptedPassword).first();
 	}
 	
+	public static void changeUserPassword(String email, String clearTextCurrentPassword, String clearTextNewPassword) {
+		String encryptedPassword = EncryptionUtils.encryptPassword(clearTextCurrentPassword);
+		User userFound = validateUserCredentialsEncrypted(email, encryptedPassword);
+		if (userFound != null) {
+			userFound.setPasswordhash(EncryptionUtils.encryptPassword(clearTextNewPassword));
+			userFound.save();
+		}
+	}
+	
 	public String getEmail() {
 		return email.toLowerCase();
 	}
 
 	public void setEmail(String email) {
 		this.email = email.toLowerCase().trim();
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname.trim();
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname.trim();
+	}
+
+	public Boolean isSendemail() {
+		return sendemail;
+	}
+
+	public void setSendemail(Boolean sendemail) {
+		this.sendemail = sendemail;
+	}
+
+	public Boolean isSendsms() {
+		return sendsms;
+	}
+
+	public void setSendsms(Boolean sendsms) {
+		this.sendsms = sendsms;
+	}
+
+	public String getPasswordhash() {
+		return passwordhash;
+	}
+
+	public void setPasswordhash(String passwordhash) {
+		this.passwordhash = passwordhash;
 	}
 }
