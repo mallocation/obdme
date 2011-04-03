@@ -39,6 +39,15 @@ table.profileTable {
 	padding: 150px 0 0 0;
 }
 
+.profileChangePasswordContainer{
+	padding: 0 0 10px 0;
+	display:none;
+}
+
+.profileChangePasswordBoxes{
+	margin: 10px 0;
+}
+
 .profileSectionContainerTop{
 	padding: 100px 0 0 0;
 }
@@ -57,6 +66,24 @@ p.profileText {
 	text-align: left;
 	text-shadow:rgba(0,0,0,0.4) 0 1px 2px;
 	font-weight:bold
+}
+
+p.profileFieldUpdatedText {
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: rgba(255,255,255,0.5);
+	text-align: left;
+	text-shadow:rgba(0,0,0,0.4) 0 1px 2px;
+	display: none;
+}
+
+p.profileFieldErrorText {
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #F33B3B;
+	text-align: left;
+	text-shadow:rgba(0,0,0,0.4) 0 1px 2px;
+	display: none;
 }
 
 h1.profileSectionHeader {

@@ -14,15 +14,22 @@ control.panel.profile=Profile
 control.panel.logout=Logout
 
 
+profile.account.updated=UPDATED
+profile.account.change=Change
+profile.account.cancel=Cancel
 profile.account=My Account
 profile.account.email.address=Email Address
 profile.account.password=Password
-
+profile.account.password.current.placeholder=Current Password
+profile.account.password.new.placeholder=New Password
+profile.account.password.confirm.placeholder=Confirm New Password
+profile.account.password.error.current=Your current password is incorrect
+profile.account.password.error.length=Your new password must be six characters long
+profile.account.password.error.match=Your passwords do not match
 profile.about=About Me
 profile.about.first.name=First Name
 profile.about.last.name=Last Name
 profile.about.picture=Profile Picture
-
 profile.notifications=Notification Settings
 profile.notifications.send.email=Send Email
 profile.notifications.send.sms=Send SMS

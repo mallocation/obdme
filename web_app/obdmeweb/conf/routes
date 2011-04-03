@@ -13,7 +13,14 @@ GET     /notifications                          Notifications.index
 GET     /statistics                             Statistics.index
 GET     /charts                                 Charts.index
 GET     /vehicles                               Vehicles.index
+
+
 GET     /profile                                Profile.index
+POST	/profile/sendemail						Profile.sendEmailAJAX
+POST	/profile/sendsms						Profile.sendSMSAJAX
+POST	/profile/firstname						Profile.firstNameAJAX
+POST	/profile/lastname						Profile.lastNameAJAX
+POST	/profile/password						Profile.passwordChangeAJAX
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public

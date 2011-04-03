@@ -2,12 +2,12 @@
 #{set title:'Profile' /}
 
 #{set 'moreStyles'}
-	<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/profile.css'}">
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/profile.css'}">
 #{/set}
 
 #{set 'moreScripts'}
-	<script src="@{'/public/javascripts/jquery-placeholder-profile-0.1.js'}" type="text/javascript" charset="utf-8"></script>
-	<script src="@{'/public/javascripts/jquery.iphone-switch.js'}" type="text/javascript" charset="utf-8"></script>
+<script src="@{'/public/javascripts/jquery-placeholder-profile-0.1.js'}" type="text/javascript" charset="utf-8"></script>
+<script src="@{'/public/javascripts/jquery.iphone-switch.js'}" type="text/javascript" charset="utf-8"></script>
 #{/set}
 
 <!-- Profile Index Body -->
@@ -17,16 +17,101 @@
 			<h1 class="profileSectionHeader">&{'profile.account'}</h1>
 			<table class="profileTable">
 				<tr>
-					<td><p class="profileText">&{'profile.account.email.address'}</p></td>
-					<td>
-						<input type="text" name="lastname" id="email" class="profileInputField" 
+					<td width=150px><p class="profileText">&{'profile.account.email.address'}</p></td>
+					<td width=330px>
+						<input type="text" name="email" id="email" class="profileInputField" value="${userEmail}"
 						spellcheck="false" style="width:300px;" placeholder="name@example.com" autocomplete="off"/>
+						<script type="text/javascript">
+							$("#lastname").change(function(){
+								$.post("/profile/email", {value: $("#email").val()} );
+								$("#emailUpdatedText").fadeIn("slow", function() {
+									$("#emailUpdatedText").delay(1000).fadeOut("slow");
+								});
+							});
+						</script>
+					</td>
+					<td style="text-align: left;">
+						<p class="profileFieldUpdatedText" id="emailUpdatedText">&{'profile.account.updated'}</p>
 					</td>
 				</tr>
 				<tr>
 					<td><p class="profileText">&{'profile.account.password'}</p></td>
 					<td>
-						<div id="button"><input type="submit" class="submit" id="changepassword" value="Change" /></div>
+						<div class="profileChangePasswordContainer">
+							<p class="profileFieldErrorText" id="oldPassMatch">&{'profile.account.password.error.current'}</p>
+							<input type="password" name="currentPassword" id="currentPassword" class="profileInputField profileChangePasswordBoxes"
+							spellcheck="false" style="width:300px;" placeholder="&{'profile.account.password.current.placeholder'}" autocomplete="off"/>
+						
+							<p class="profileFieldErrorText" id="newPassTooShort">&{'profile.account.password.error.length'}</p>
+							<input type="password" name="newPassword" id="newPassword" class="profileInputField profileChangePasswordBoxes"
+							spellcheck="false" style="width:300px;" placeholder="&{'profile.account.password.new.placeholder'}" autocomplete="off"/>
+							
+							<p class="profileFieldErrorText" id="confirmPassDoesNotMatch">&{'profile.account.password.error.match'}</p>
+							<input type="password" name="confirmPassword" id="confirmPassword" class="profileInputField profileChangePasswordBoxes"
+							spellcheck="false" style="width:300px;" placeholder="&{'profile.account.password.confirm.placeholder'}" autocomplete="off"/>
+						</div>
+						<input type="submit" class="submit" id="changePassword" value="&{'profile.account.change'}" />
+						<input type="submit" class="submit" id="changePasswordCancel" style="display:none;" value="&{'profile.account.cancel'}" />
+						<td>
+						<p class="profileFieldUpdatedText" id="passwordUpdatedText">&{'profile.account.updated'}</p>
+						</td>
+						<script type="text/javascript">
+							var isShown = false;
+							$("#changePassword").click(function() {
+								if(isShown) {
+									if($("#newPassword").val().length < 6) {
+										$("#newPassTooShort").slideDown("slow", function() {
+											$("#newPassTooShort").delay(5000).slideUp("slow");
+										});
+									}
+									else if ($("#newPassword").val() != $("#confirmPassword").val()) {
+										$("#confirmPassDoesNotMatch").slideDown("slow", function() {
+											$("#confirmPassDoesNotMatch").delay(5000).slideUp("slow");
+										});
+									}
+									else {
+										$.post("/profile/password", {
+											currentPassword: $("#currentPassword").val(),
+											newPassword: $("#newPassword").val()
+										}, function(data) {
+											if (data.status == "ok") {
+												$("#changePasswordCancel").fadeOut("slow");
+												$(".profileChangePasswordContainer").slideUp("slow", function() {
+													$("#currentPassword").val("");
+													$("#newPassword").val("");
+													$("#confirmPassword").val("");
+												});
+												isShown = false;
+												$("#passwordUpdatedText").fadeIn("slow", function() {
+													$("#passwordUpdatedText").delay(2000).fadeOut("slow");
+												});
+											}
+											else {
+												$("#oldPassMatch").slideDown("slow", function() {
+													$("#oldPassMatch").delay(5000).slideUp("slow");
+												});
+											}
+										}, "json");
+									}
+								}
+								else {
+									$(".profileChangePasswordContainer").slideDown("slow", function() {
+										$("#changePasswordCancel").fadeIn("slow");
+									});
+									isShown = true;
+								}
+							});
+							$("#changePasswordCancel").click(function() {
+								$("#changePasswordCancel").fadeOut("slow");
+								$(".profileChangePasswordContainer").slideUp("slow", function() {
+									$("#currentPassword").val("");
+									$("#newPassword").val("");
+									$("#confirmPassword").val("");
+								});
+								isShown = false;
+							});
+						</script>
+						
 					</td>
 				</tr>
 			</table>
@@ -35,23 +120,45 @@
 			<h1 class="profileSectionHeader">&{'profile.about'}</h1>
 			<table class="profileTable">
 				<tr>
-					<td><p class="profileText">&{'profile.about.first.name'}</p></td>
-					<td>
-						<input type="text" name="firstname" id="firstname" class="profileInputField" 
+					<td width=150px><p class="profileText">&{'profile.about.first.name'}</p></td>
+					<td width=330px>
+						<input type="text" name="firstname" id="firstname" class="profileInputField" value="${userFirstName}"
 						spellcheck="false" style="width:300px;" placeholder="John" autocomplete="off"/>
+						<script type="text/javascript">
+							$("#firstname").change(function(){
+								$.post("/profile/firstname", {value: $("#firstname").val()});
+								$("#firstNameUpdatedText").fadeIn("slow", function() {
+									$("#firstNameUpdatedText").delay(1000).fadeOut("slow");
+								});
+							});
+						</script>
+					</td>
+					<td style="text-align: left;">
+						<p class="profileFieldUpdatedText" id="firstNameUpdatedText">&{'profile.account.updated'}</p>
 					</td>
 				</tr>
 				<tr>
 					<td><p class="profileText">&{'profile.about.last.name'}</p></td>
 					<td>
-						<input type="text" name="lastname" id="lastname" class="profileInputField" 
+						<input type="text" name="lastname" id="lastname" class="profileInputField" value="${userLastName}"
 						spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
+						<script type="text/javascript">
+							$("#lastname").change(function(){
+								$.post("/profile/lastname", {value: $("#lastname").val()} );
+								$("#lastNameUpdatedText").fadeIn("slow", function() {
+									$("#lastNameUpdatedText").delay(1000).fadeOut("slow");
+								});
+							});
+						</script>
+					</td>
+					<td style="text-align: left;">
+						<p class="profileFieldUpdatedText" id="lastNameUpdatedText">&{'profile.account.updated'}</p>
 					</td>
 				</tr>
 				<tr>
 					<td><p class="profileText">&{'profile.about.picture'}</p></td>
 					<td>
-						<div id="button"><input type="submit" class="submit" id="changepassword" value="Change" /></div>
+						<div id="button"><input type="submit" class="submit" id="changePicture" value="&{'profile.account.change'}" /></div>
 					</td>
 				</tr>
 			</table>
@@ -60,14 +167,14 @@
 			<h1 class="profileSectionHeader">&{'profile.notifications'}</h1>
 			<table class="profileTable">
 				<tr>
-					<td><p class="profileText">&{'profile.notifications.send.email'}</p></td>
+					<td width=150px><p class="profileText">&{'profile.notifications.send.email'}</p></td>
 					<td>
 						<div class="switchContainer" id="emailSwitch">
 							<script type="text/javascript">
-							$('#emailSwitch').iphoneSwitch("off",function() {
-								//AJAX CALL
+							$('#emailSwitch').iphoneSwitch(${sendEmail},function() {
+								$.post("/profile/sendemail", {value: "on"} );
 							}, function() {
-								//AJAX CALL
+								$.post("/profile/sendemail", {value: "off"} );
 							}, {
 								switch_on_container_path: '/public/images/switch/switch_container_off.png'
 							});
@@ -80,10 +187,10 @@
 					<td>
 						<div class="switchContainer" id="smsSwitch">
 							<script type="text/javascript">
-							$('#smsSwitch').iphoneSwitch("off",function() {
-								//AJAX CALL
+							$('#smsSwitch').iphoneSwitch(${sendSMS},function() {
+								$.post("/profile/sendsms", {value: "on"} );
 							}, function() {
-								//AJAX CALL
+								$.post("/profile/sendsms", {value: "on"} );
 							}, {
 								switch_on_container_path: '/public/images/switch/switch_container_off.png'
 							});
