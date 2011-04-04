@@ -15,8 +15,6 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
-import com.sun.medialib.mlib.Image;
-
 import models.StatusMessage;
 import models.obdmedb.User;
 import play.Logger;
