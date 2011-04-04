@@ -16,6 +16,8 @@ GET     /vehicles                               Vehicles.index
 
 
 GET     /profile                                Profile.index
+GET		/profile/avatar							Profile.getAvatar
+POST	/profile/avatar							Profile.uploadAvatar
 POST	/profile/newprofile						Profile.newProfileAJAX
 POST	/profile/sendemail						Profile.sendEmailAJAX
 POST	/profile/sendsms						Profile.sendSMSAJAX
