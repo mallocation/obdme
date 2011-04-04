@@ -1,5 +1,6 @@
 package controllers;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -144,14 +145,25 @@ public class Profile extends Controller {
 			//First convert the image to png (this is our standard)
 			try {
 				BufferedImage bufferedImage = ImageIO.read(photo);
+				BufferedImage resizedImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 				
-				BufferedImage resizedImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, bufferedImage.getType());
 				Graphics2D imageGraphic = resizedImage.createGraphics();
 				imageGraphic.drawImage(bufferedImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
-		
 				BufferedImage bufferedOverlayImage = ImageIO.read(VirtualFile.fromRelativePath("/app/files/avatar_overlay.png").getRealFile());
 				imageGraphic.drawImage(bufferedOverlayImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
 				imageGraphic.dispose();
+				
+				BufferedImage bufferedOverlayMask = ImageIO.read(VirtualFile.fromRelativePath("/app/files/avatar_mask.png").getRealFile());
+				Color transparentColor = new Color(0, 0, 0, 0);
+				Color maskColor = new Color(255,0,255);
+				
+				for (int i = 0; i < IMAGE_WIDTH; i++) {
+					for (int j = 0; j < IMAGE_HEIGHT; j++) {
+						if (bufferedOverlayMask.getRGB(i, j) == maskColor.getRGB()) {
+							resizedImage.setRGB(i, j, transparentColor.getRGB());
+						}
+					}
+				}
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				ImageIO.write(resizedImage, "png", baos);
@@ -169,6 +181,7 @@ public class Profile extends Controller {
 				e.printStackTrace();
 				Logger.error("There was an IO exception", e);
 			}
+			
 			Profile.index();
 	}
 	
