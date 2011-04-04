@@ -120,6 +120,41 @@
 			<h1 class="profileSectionHeader">&{'profile.about'}</h1>
 			<table class="profileTable">
 				<tr>
+					<td><p class="profileText">&{'profile.about.picture'}</p></td>
+					<td>
+						<img id="profileAvatar" src="@{Profile.getAvatar()}">
+						<div class="profileChangeAvatarContainer">
+							<form id="fileUploadForm" action="@{Profile.uploadAvatar()}" method="POST" enctype="multipart/form-data" target="null">
+							    <input type="file" class="submit" id="photo" name="photo" />
+							</form>
+							<input type="submit" class="submit" id="changePictureSubmit" value="Upload" />
+							<input type="submit" class="submit" id="changePictureCancel" value="&{'profile.account.cancel'}" />
+						</div>
+						<script type="text/javascript">
+							var isShown = false;
+							$("#profileAvatar").click(function() {
+								if(isShown) {
+									$(".profileChangeAvatarContainer").slideUp("slow");
+									isShown = false;
+								}
+								else {
+									$(".profileChangeAvatarContainer").slideDown("slow");
+									isShown = true;
+								}
+							});
+							$("#changePictureCancel").click(function() {
+								$(".profileChangeAvatarContainer").slideUp("slow");
+								isShown = false;
+							});
+							$("#changePictureSubmit").click(function() {
+								$(".profileChangeAvatarContainer").slideUp("slow", function() {
+									$('#fileUploadForm').submit();
+								});
+							});
+						</script>
+					</td>
+				</tr>
+				<tr>
 					<td width=150px><p class="profileText">&{'profile.about.first.name'}</p></td>
 					<td width=330px>
 						<input type="text" name="firstname" id="firstname" class="profileInputField" value="${userFirstName}"
@@ -153,15 +188,6 @@
 					</td>
 					<td style="text-align: left;">
 						<p class="profileFieldUpdatedText" id="lastNameUpdatedText">&{'profile.account.updated'}</p>
-					</td>
-				</tr>
-				<tr>
-					<td><p class="profileText">&{'profile.about.picture'}</p></td>
-					<td>
-						<div id="button"><input type="submit" class="submit" id="changePicture" value="&{'profile.account.change'}" /></div>
-						
-						<input type="file" id="photo" name="photo" />
-						<input type="submit" value="Send it..." />
 					</td>
 				</tr>
 			</table>

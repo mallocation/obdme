@@ -1,13 +1,30 @@
 package controllers;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
+
 import com.sun.medialib.mlib.Image;
 
 import models.StatusMessage;
 import models.obdmedb.User;
 import play.Logger;
+import play.db.jpa.Blob;
+import play.libs.Images;
 import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.With;
+import play.vfs.VirtualFile;
 
 @With(Secure.class)
 public class Profile extends Controller {
@@ -118,7 +135,45 @@ public class Profile extends Controller {
     	}
     }
 	
-	public static void uploadAvatar(String title, Image image) {
-		Logger.info("image upload");
+	public static void uploadAvatar(File photo) {	
+		
+			int IMAGE_WIDTH = 100;
+			int IMAGE_HEIGHT = 100;
+		
+			Logger.info("upload photo");
+			//First convert the image to png (this is our standard)
+			try {
+				BufferedImage bufferedImage = ImageIO.read(photo);
+				
+				BufferedImage resizedImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, bufferedImage.getType());
+				Graphics2D imageGraphic = resizedImage.createGraphics();
+				imageGraphic.drawImage(bufferedImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
+		
+				BufferedImage bufferedOverlayImage = ImageIO.read(VirtualFile.fromRelativePath("/app/files/avatar_overlay.png").getRealFile());
+				imageGraphic.drawImage(bufferedOverlayImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
+				imageGraphic.dispose();
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ImageIO.write(resizedImage, "png", baos);
+				
+				//Read the image back in and 
+				InputStream imageIS = new ByteArrayInputStream(baos.toByteArray());
+				Blob imageBlob = new Blob();
+				imageBlob.set(imageIS, "image");
+				
+				//Save the users avatar
+				User user = User.find("byEmail", Security.connected()).first();
+				user.setAvatar(imageBlob);
+				user.save();
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logger.error("There was an IO exception", e);
+			}
+			Profile.index();
+	}
+	
+	public static void getAvatar() {
+		User user = User.find("byEmail", Security.connected()).first();
+		renderBinary(user.getAvatar().get());
 	}
 }
