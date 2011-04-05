@@ -1,18 +1,24 @@
 #{extends 'main.html' /}
 #{set title:'Trips' /}
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/trips.css'}">
+#{/set}
 #{set 'moreScripts'}
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&region=US"></script> 
 <script type="text/javascript">
 
 function initializeGoogleMaps() {
-	var myLatlng = new google.maps.LatLng(-112.2549277039738,36.08117083492122);
+	var myLatlng = new google.maps.LatLng(53.7199,-114.041);
+
 	var myOptions = {
 		zoom: 8,
 		center: myLatlng,
-		mapTypeId: google.maps.MapTypeId.ROADMAP}
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	}
 	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	var ctaLayer = new google.maps.KmlLayer('/trips/getKml');
-	ctaLayer.setMap(map);
+	var kmlData = new google.maps.KmlLayer('http://localhost:9090/trips/getKml');
+	kmlData.setMap(map);
+
 }
 $(function() {
 	initializeGoogleMaps();
@@ -25,5 +31,8 @@ $(function() {
 <!-- Application Index Body -->
 <div class="pageContainer">
 	<div class="logoHeaderImage"></div>
-	<div id="map_canvas" style="width:800px;height:600px;"></div>
+	
+	<div class="tripsMainContent">
+		<div id="map_canvas" class="trips-map-canvas"></div>
+	</div>
 </div>
