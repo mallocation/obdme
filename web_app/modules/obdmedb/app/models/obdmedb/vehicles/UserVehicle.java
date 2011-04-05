@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import models.obdmedb.User;
+import play.db.jpa.Blob;
 import play.db.jpa.Model;
 
 @Entity
@@ -25,6 +26,14 @@ public class UserVehicle extends Model {
 	
 	@Column(name="alias")
 	public String alias;
+
+	public static List<UserVehicle> getVehiclesForUser(User user) {
+		return UserVehicle.find("userid=?", user.getId()).fetch();
+	}
+	
+	public static UserVehicle getVehicleForUser(User user, Vehicle vehicle) {
+		return UserVehicle.find("userid=? and vehicleid=?", user.getId(), vehicle.getId()).first();
+	}
 	
 	public User getUser() {
 		return user;
@@ -48,13 +57,5 @@ public class UserVehicle extends Model {
 
 	public void setAlias(String alias) {
 		this.alias = alias.trim();
-	}
-
-	public static List<UserVehicle> getVehiclesForUser(User user) {
-		return UserVehicle.find("userid=?", user.getId()).fetch();
-	}
-	
-	public static UserVehicle getVehicleForUser(User user, Vehicle vehicle) {
-		return UserVehicle.find("userid=? and vehicleid=?", user.getId(), vehicle.getId()).first();
 	}
 }

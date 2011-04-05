@@ -26,14 +26,19 @@ public class VehicleDataset extends Model {
 	@Column(name="timestamp")
 	public Date timestamp;
 	
+	@OneToOne(optional=true)
+	@JoinColumn(name="locationid", referencedColumnName="id")
+	public VehicleLocation location;
+	
 	@OneToMany
 	@JoinColumn(name="datasetid", referencedColumnName="id")
 	public List<VehicleDataPoint> datapoints;
 	
-	public VehicleDataset(Vehicle vehicle, User user, Date timestamp) {
+	public VehicleDataset(Vehicle vehicle, User user, Date timestamp, VehicleLocation location) {
 		this.vehicle = vehicle;
 		this.user = user;
 		this.timestamp = timestamp;
+		this.location = location;
 		this.datapoints = new ArrayList<VehicleDataPoint>();
 	}
 	
