@@ -8,9 +8,12 @@ import models.obdmedb.statistics.VehicleDataPoint;
 import models.obdmedb.statistics.VehicleDataset;
 import models.obdmedb.vehicles.Vehicle;
 
+import org.hibernate.Session;
+import org.hibernate.StatelessSession;
 import org.junit.Before;
 import org.junit.Test;
 
+import play.db.jpa.JPA;
 import play.test.Fixtures;
 import play.test.UnitTest;
 
@@ -30,11 +33,23 @@ public class VehicleDatasetTest extends UnitTest {
 		//Create the vehicle
 		Vehicle v = Vehicle.addVehicleIfNotExist(VIN);
 		VehicleDataset ds = new VehicleDataset(v, null, new Date());
-		ds.validateAndSave();
+		assertTrue(ds.validateAndSave());
+		
+		//create a stateless session - this will ensure a speedy batch insert.
+		Session session = (Session)JPA.em().getDelegate();
+		StatelessSession statelessSession = session.getSessionFactory().openStatelessSession();		
+		statelessSession.beginTransaction();
+		
+		
 		for (int i=0; i<500; i++) {
 			VehicleDataPoint dp = new VehicleDataPoint(ds, "01", "0C", 14.4);
-			dp.validateAndSave();
+			statelessSession.insert(dp);
 		}
+		
+		//commit the transactions and close the stateless session
+		statelessSession.getTransaction().commit();
+		statelessSession.close();
+		
 		assertTrue(ds.validateAndSave());
 	}
 	
