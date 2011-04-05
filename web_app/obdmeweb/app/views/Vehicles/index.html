@@ -1,9 +1,57 @@
 #{extends 'main.html' /}
 #{set title:'Vehicles' /}
 
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/vehicle.css'}">
+#{/set}
+
 <!-- Application Index Body -->
 <div class="pageContainer">
 	<div class="logoHeaderImage">
-
+		<div class="vehicleSectionContainerTop">
+			#{list items:vehicles, as:'currentVehicle'}
+				<h1 class="vehicleHeader">${currentVehicle.getAlias()}</h1>
+				<table class="vehicleTable">
+					<tr>
+						<td width=270px><img id="profileAvatar" src="@{Vehicles.getAvatar(currentVehicle.getVehicle().getId())}"></td>
+						<td>
+							<table class="vehicleTable">
+								<tr>
+									<td><p class="vehicleText">VIN</p></td><td><p class="vehicleContentText">${currentVehicle.getVehicle().getVIN()}</p></td>
+								</tr>
+								<tr>
+									<td><p class="vehicleText">Alias</p></td>
+									<td>
+										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
+										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
+									</td>
+								</tr>
+								<tr>
+									<td><p class="vehicleText">Make</p></td>
+									<td>
+										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
+										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
+									</td>
+								</tr>
+								<tr>
+									<td><p class="vehicleText">Model</p></td>
+									<td>
+										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
+										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
+									</td>
+								</tr>
+								<tr>
+									<td><p class="vehicleText">Year</p></td>
+									<td>
+										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
+										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			#{/list}
+		</div>
 	</div>
 </div>

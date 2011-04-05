@@ -96,7 +96,6 @@ public class Profile extends Controller {
     	
     	//Save the users information
     	User user = User.find("byEmail", Security.connected()).first();
-    	String previousFirstName = user.getFirstname();
        	user.setFirstname(value);
     	user._save();
     }
@@ -105,7 +104,6 @@ public class Profile extends Controller {
     	
     	//Save the users information
     	User user = User.find("byEmail", Security.connected()).first();
-    	String previousLastName = user.getLastname();
     	user.setLastname(value);
     	user._save();
     }
@@ -140,21 +138,32 @@ public class Profile extends Controller {
 			int IMAGE_HEIGHT = 100;
 		
 			Logger.info("upload photo");
-			//First convert the image to png (this is our standard)
 			try {
+				//Read in the uploaded image
 				BufferedImage bufferedImage = ImageIO.read(photo);
+				
+				//Make a new image to store the final image in
 				BufferedImage resizedImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 				
+				//Create a manipulatable graphics object
 				Graphics2D imageGraphic = resizedImage.createGraphics();
+				
+				//Draw the input image
 				imageGraphic.drawImage(bufferedImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
-				BufferedImage bufferedOverlayImage = ImageIO.read(VirtualFile.fromRelativePath("/app/files/avatar_overlay.png").getRealFile());
+				
+				//Load and draw the icon overall
+				BufferedImage bufferedOverlayImage = ImageIO.read(VirtualFile.fromRelativePath("/app/files/profile/avatar_overlay.png").getRealFile());
 				imageGraphic.drawImage(bufferedOverlayImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
+				
+				//Dispose
 				imageGraphic.dispose();
 				
-				BufferedImage bufferedOverlayMask = ImageIO.read(VirtualFile.fromRelativePath("/app/files/avatar_mask.png").getRealFile());
+				//Load the icon mask
+				BufferedImage bufferedOverlayMask = ImageIO.read(VirtualFile.fromRelativePath("/app/files/profile/avatar_mask.png").getRealFile());
 				Color transparentColor = new Color(0, 0, 0, 0);
 				Color maskColor = new Color(255,0,255);
 				
+				//for each mask pixel 
 				for (int i = 0; i < IMAGE_WIDTH; i++) {
 					for (int j = 0; j < IMAGE_HEIGHT; j++) {
 						if (bufferedOverlayMask.getRGB(i, j) == maskColor.getRGB()) {
@@ -163,28 +172,37 @@ public class Profile extends Controller {
 					}
 				}
 				
+				//Output the image as a Byte Array Output Stream
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				ImageIO.write(resizedImage, "png", baos);
 				
-				//Read the image back in and 
+				//Save the Byte Array Output Stream into the blob
 				InputStream imageIS = new ByteArrayInputStream(baos.toByteArray());
 				Blob imageBlob = new Blob();
 				imageBlob.set(imageIS, "image");
 				
-				//Save the users avatar
+				//Commit the image to the database
 				User user = User.find("byEmail", Security.connected()).first();
 				user.setAvatar(imageBlob);
 				user.save();
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 				Logger.error("There was an IO exception", e);
 			}
 			
+			//Redirect back to the profile page
 			Profile.index();
 	}
 	
 	public static void getAvatar() {
 		User user = User.find("byEmail", Security.connected()).first();
-		renderBinary(user.getAvatar().get());
+		Blob avatar = user.getAvatar();
+		if (avatar.exists()) {
+			renderBinary(avatar.get());
+		}
+		else {
+			renderBinary(VirtualFile.fromRelativePath("/app/files/profile/avatar_default.png").getRealFile());
+		}
 	}
 }

@@ -24,6 +24,7 @@ POST	/profile/sendsms						Profile.sendSMSAJAX
 POST	/profile/firstname						Profile.firstNameAJAX
 POST	/profile/lastname						Profile.lastNameAJAX
 POST	/profile/password						Profile.passwordChangeAJAX
+GET		/vehicle/avatar/{id}					Vehicles.getAvatar
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
