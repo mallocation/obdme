@@ -25,6 +25,21 @@ public class StatDataset {
 	@JsonSerialize(using=CustomDateSerializer.class)
 	public Date timestamp;
 	
+	@JsonProperty("accuracy")
+	public Float accuracy;
+	
+	@JsonProperty("bearing")
+	public Float bearing;
+	
+	@JsonProperty("altitude")
+	public Double altitude;
+	
+	@JsonProperty("latitude")
+	public Double latitude;
+	
+	@JsonProperty("longitude")
+	public Double longitude;
+	
 	public StatDataset() {
 		this.datapoints = new ArrayList<StatDataPoint>();
 	}
