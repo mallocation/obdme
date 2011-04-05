@@ -7,6 +7,10 @@ api.graph.statistics.error.vehiclenotexist=Vehicle %s does not exist in the OBDm
 api.users.error.adduser.errorexists=User %s already exists.
 api.users.error.login.invalid=Invalid email/password combination.
 api.users.error.user.notexist=User %s does not exist in the OBDme system.
+
+
 api.error.user.notexist=User %s does not exist in the OBDme system.
+
+api.trips.error.tripnotexist=Could not locate trip.
 
 api.vehicles.error.vehicle.notexist=Vehicle %s does not exist in the OBDme system.
