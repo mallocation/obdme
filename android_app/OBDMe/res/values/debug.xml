@@ -22,23 +22,26 @@
 	<string name="debug.tag.setupwizard.complete">OBDMeSetupWizardComplete</string>
 
 	<!-- debug tags for the OBD Framework -->
-	<string name="debug.tag.obdframework.parseconfig">OBDFrameworkParseConfig</string>
-	<string name="debug.tag.obdframework.parseprotocol">OBDFrameworkParseProtocol</string>
+	<string name="debug.tag.obdframework.parseconfig">OBDMeFrameworkParseConfig</string>
+	<string name="debug.tag.obdframework.parseprotocol">OBDMeFrameworkParseProtocol</string>
 
 	<!-- Debug tags for the ELM Framework -->
-	<string name="debug.tag.elmframework">ELMFramework</string>
-	<string name="debug.tag.elmframework.ignpoller">ELMIgnitionPoller</string>
-	<string name="debug.tag.elmframework.acpoller">ELMAutoConnectPoller</string>
-	<string name="debug.tag.elmframework.chpoller">ELMCheckHardwarePoller</string>
+	<string name="debug.tag.elmframework">OBDMeELMFramework</string>
+	<string name="debug.tag.elmframework.ignpoller">OBDMeELMIgnitionPoller</string>
+	<string name="debug.tag.elmframework.acpoller">OBDMeELMAutoConnectPoller</string>
+	<string name="debug.tag.elmframework.chpoller">OBDMeELMCheckHardwarePoller</string>
+
+	<!-- debug tags for the Database Helper -->
+	<string name="debug.tag.database.helper">OBDMeDatabaseHelper</string>
 
 	<!-- Debug tags for the Data Collector -->
-	<string name="debug.tag.datacollector">DataCollector</string>
-	<string name="debug.tag.databasewriter">DatabaseWriterThread</string>
-	<string name="debug.tag.datauploader">DataUploader</string>
-	<string name="debug.tag.datauploaderthread">DataUploaderThread</string>
-	<string name="debug.tag.gpsservice">GPSService</string>
+	<string name="debug.tag.datacollector">OBDMeDataCollector</string>
+	<string name="debug.tag.databasewriter">OBDMeDatabaseWriterThread</string>
+	<string name="debug.tag.datauploader">OBDMeDataUploader</string>
+	<string name="debug.tag.datauploaderthread">OBDMeDataUploaderThread</string>
+	<string name="debug.tag.locationcollector">OBDMeLocationCollector</string>
 	
 	<!-- Debug tags for the Settings Activities -->
-	<string name="debug.tag.settings.account">AccountInformation</string>
-	<string name="debug.tag.settings.vehicle">VehicleInformation</string>
+	<string name="debug.tag.settings.account">OBDMeAccountInformation</string>
+	<string name="debug.tag.settings.vehicle">OBDMeVehicleInformation</string>
 </resources>

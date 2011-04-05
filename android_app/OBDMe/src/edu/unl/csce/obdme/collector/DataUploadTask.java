@@ -51,10 +51,15 @@ public class DataUploadTask implements Runnable {
 		this.webFramework = ((OBDMeApplication)context.getApplicationContext()).getWebFramework();
 		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
 
+		//Set this thread to be low priority
+		Thread t = Thread.currentThread();
+		t.setPriority(Thread.MIN_PRIORITY);
+		
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
 			"Initializing the Data Uploader Task.");
 		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -100,8 +105,9 @@ public class DataUploadTask implements Runnable {
 				queryVinToUpload.close();
 				//run a new query for entries matching the VIN
 				queryVehicleDataToUpload = this.sqldb.query(OBDMeDatabaseHelper.TABLE_NAME,
-						null, String.format("vin=%s", vinToUpload), null,null, null, null, Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
+						null, String.format("vin='%s'", vinToUpload), null,null, null, null, Integer.toString(context.getResources().getInteger(R.integer.uploader_setcount_max)));
 			} else {
+				queryVinToUpload.close();
 				this.sqldb.close();
 				return;
 			}
@@ -143,6 +149,31 @@ public class DataUploadTask implements Runnable {
 							//otherwise this is the timestamp of the collection
 							else if (columnName.equals("timestamp")) {
 								dataset.timestamp = new Date(queryVehicleDataToUpload.getString(i));
+							}
+							
+							//If the current key is the GPS Accuracy (Location Services enabled)
+							else if (columnName.equals("gps_accuracy")) {
+								dataset.accuracy = queryVehicleDataToUpload.getFloat(i);
+							}
+							
+							//If the current key is the GPS Bearing (Location Services enabled)
+							else if (columnName.equals("gps_bearing")) {
+								dataset.bearing = queryVehicleDataToUpload.getFloat(i);
+							}
+							
+							//If the current key is the GPS Altitude (Location Services enabled)
+							else if (columnName.equals("gps_altitude")) {
+								dataset.altitude = queryVehicleDataToUpload.getDouble(i);
+							}
+							
+							//If the current key is the GPS Latitude (Location Services enabled)
+							else if (columnName.equals("gps_latitude")) {
+								dataset.latitude = queryVehicleDataToUpload.getDouble(i);
+							}
+							
+							//If the current key is the GPS Longitude (Location Services enabled)
+							else if (columnName.equals("gps_longitude")) {
+								dataset.longitude = queryVehicleDataToUpload.getDouble(i);
 							}
 						}
 					}

@@ -79,14 +79,39 @@ public class DatabaseWriterThread extends Thread {
 
 			//For all the values that were recorded
 			for (String currentKey : currentSet.keySet()) {
-
 				//If the current key is the timestamp
 				if (currentKey.equals("timestamp")) {
 					cv.put("timestamp", currentSet.get(currentKey));
 				}
 				
+				//If the current key is the VIN
 				else if (currentKey.equals("vin")) {
 					cv.put("vin", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the GPS Accuracy (Location Services enabled)
+				else if (currentKey.equals("gps_accuracy")) {
+					cv.put("gps_accuracy", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the GPS Bearing (Location Services enabled)
+				else if (currentKey.equals("gps_bearing")) {
+					cv.put("gps_bearing", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the GPS Altitude (Location Services enabled)
+				else if (currentKey.equals("gps_altitude")) {
+					cv.put("gps_altitude", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the GPS Latitude (Location Services enabled)
+				else if (currentKey.equals("gps_latitude")) {
+					cv.put("gps_latitude", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the GPS Longitude (Location Services enabled)
+				else if (currentKey.equals("gps_longitude")) {
+					cv.put("gps_longitude", currentSet.get(currentKey));
 				}
 
 				//Otherwise it is a PID data item

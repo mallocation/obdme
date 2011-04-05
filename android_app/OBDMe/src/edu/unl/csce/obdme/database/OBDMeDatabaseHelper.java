@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.hardware.obd.OBDMode;
 import edu.unl.csce.obdme.hardware.obd.configuration.OBDConfigurationManager;
 
@@ -17,7 +19,7 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "obdme.db";
     
     /** The Constant DATABASE_VERSION. */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     
     /** The Constant TABLE_NAME. */
     public static final String TABLE_NAME = "loggeddata";
@@ -70,13 +72,26 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(sb.toString());
     }
 
-
 	/* (non-Javadoc)
 	 * @see android.database.sqlite.SQLiteOpenHelper#onUpgrade(android.database.sqlite.SQLiteDatabase, int, int)
 	 */
 	@Override
-	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-		// TODO Auto-generated method stub
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		
+		if(context.getResources().getBoolean(R.bool.debug)) {
+			Log.d(context.getResources().getString(R.string.debug_tag_database_helper),
+			"Upgrading the database from " + oldVersion + " to " + newVersion);
+		}
+		
+		//Update for location services
+		if (oldVersion <= 1) {
+			String alterStatement = "ALTER TABLE " + TABLE_NAME + " ADD COLUMN ";
+			db.execSQL(alterStatement + "gps_accuracy TEXT;");
+			db.execSQL(alterStatement + "gps_bearing TEXT;");
+			db.execSQL(alterStatement + "gps_altitude TEXT;");
+			db.execSQL(alterStatement + "gps_latitude TEXT;");
+			db.execSQL(alterStatement + "gps_longitude TEXT;");
+		}
 		
 	}
 }

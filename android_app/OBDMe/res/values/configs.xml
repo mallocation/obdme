@@ -5,13 +5,19 @@
 	<integer name="splash.wait.milliseconds">6000</integer>
 	<integer name="setupwizard.toast.time">3000</integer>
 	<integer name="settings.toast.time">3000</integer>
+	
 	<integer name="bluetooth.response.timeout">500</integer>
 	<integer name="bluetooth.response.maxretries">5</integer>
+	
 	<integer name="collector.system.memory.threshold">25</integer>
+	<integer name="collector.locatio.min.distance">3</integer>
+	<integer name="collector.locatio.min.time">60000</integer>
+	
 	<integer name="uploader.setcount.min">5</integer>
-	<integer name="uploader.setcount.max">15</integer>
+	<integer name="uploader.setcount.max">50</integer>
 	<integer name="uploader.thread.sucessive.delay">10</integer>
-	<integer name="uploader.thread.pool.size">5</integer>
+	<integer name="uploader.thread.pool.size">3</integer>
+	
 	<string name="webservice.apikey">abcd</string>
 	
 </resources>

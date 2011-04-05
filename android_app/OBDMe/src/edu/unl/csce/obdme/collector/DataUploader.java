@@ -62,6 +62,8 @@ public class DataUploader extends Thread {
 		this.scheduledExecutor = Executors.newScheduledThreadPool(
 				context.getResources().getInteger(R.integer.uploader_thread_pool_size));
 		
+		
+		
 		this.scheduledExecutor.scheduleWithFixedDelay(new DataUploadTask(context, dataUploadHander), 
 				15, 
 				context.getResources().getInteger(R.integer.uploader_thread_sucessive_delay),
@@ -87,7 +89,10 @@ public class DataUploader extends Thread {
 		this.scheduledExecutor = Executors.newScheduledThreadPool(
 				context.getResources().getInteger(R.integer.uploader_thread_pool_size));
 		
-		this.scheduledExecutor.scheduleWithFixedDelay(new DataUploadTask(context, dataUploadHander), 15, 30, TimeUnit.SECONDS);
+		this.scheduledExecutor.scheduleWithFixedDelay(new DataUploadTask(context, dataUploadHander), 
+				15, 
+				context.getResources().getInteger(R.integer.uploader_thread_sucessive_delay), 
+				TimeUnit.SECONDS);
 
 		messageState = UPLOADER_WAITING;
 	}

@@ -3,9 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="src" path="OBDme_Api_Android_Client_src"/>
 	<classpathentry kind="lib" path="/OBDme_Api_Android_Client/lib/jackson-core-asl-1.7.4.jar"/>
 	<classpathentry kind="lib" path="/OBDme_Api_Android_Client/lib/jackson-mapper-asl-1.7.4.jar"/>
 	<classpathentry kind="lib" path="/OBDme_Api_Android_Client/lib/obdme-http-utils.jar"/>
+	<classpathentry kind="src" path="OBDme_Api_Android_Client_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

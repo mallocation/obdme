@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
@@ -55,6 +56,9 @@ public class DataCollector {
 	/** The app settings. */
 	private AppSettings appSettings;
 
+	/** The location collector. */
+	private LocationCollector locationCollector;
+
 	/** The Constant STATE_CHANGE. */
 	public static final int STATE_CHANGE = 738264738;
 
@@ -87,7 +91,7 @@ public class DataCollector {
 		this.context = context;
 		this.elmFramework = ((OBDMeApplication)context.getApplicationContext()).getELMFramework();
 		this.appSettings = ((OBDMeApplication)context.getApplicationContext()).getApplicationSettings();
-		
+
 		if(context.getResources().getBoolean(R.bool.debug)) {
 			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 			"Initializing the DataCollector.");
@@ -95,7 +99,6 @@ public class DataCollector {
 
 		currentData = new ConcurrentHashMap<String, String>();
 		currentDataQueue = new ConcurrentLinkedQueue<HashMap<String, String>>();
-
 		messageState = COLLECTOR_NONE;
 	}
 
@@ -113,7 +116,7 @@ public class DataCollector {
 			Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
 			"Initializing the DataCollector.");
 		}
-		
+
 		currentData = new ConcurrentHashMap<String, String>();
 		currentDataQueue = new ConcurrentLinkedQueue<HashMap<String, String>>();
 
@@ -167,9 +170,22 @@ public class DataCollector {
 			collectorThread.cancel();
 			collectorThread = null;
 		}
-
+		
+		if (locationCollector == null) {
+			if(appSettings.isGpsEnabled()) {
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+					"Location Collection Enabled.  Starting the location collector.");
+				}
+				locationCollector = new LocationCollector(this.context);
+				locationCollector.run();
+				locationCollector.requestLocationUpdates();
+			}
+		}
+		
 		collectorThread = new DataCollectorThread();
 		collectorThread.start();
+
 		setState(COLLECTOR_POLLING);
 	}
 
@@ -191,6 +207,15 @@ public class DataCollector {
 		if (collectorThread != null) {
 			collectorThread.pause();
 			setState(COLLECTOR_PAUSED);
+		}
+	}
+
+	/**
+	 * Settings update.
+	 */
+	public synchronized void settingsUpdate() {
+		if (collectorThread != null) {
+			collectorThread.setAppSettingsUpdate(true);
 		}
 	}
 
@@ -312,6 +337,10 @@ public class DataCollector {
 		/** The collection paused. */
 		private boolean collectionPaused;
 
+		/** The app settings update. */
+		private boolean appSettingsUpdate = false;
+
+
 		/**
 		 * Instantiates a new data collector thread.
 		 */
@@ -352,6 +381,19 @@ public class DataCollector {
 
 			//If we want to continue polling
 			while(continuePolling) {
+
+				if(isAppSettingsUpdate()) {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+								"Collected PIDs changed, updating the local data collector list.");
+					}
+
+					//Update the list
+					this.pollableEnabledPIDS = elmFramework.getObdFramework().getCollectedPIDList();
+
+					//Set the update flag to false
+					setAppSettingsUpdate(false);
+				}
 
 				//Create a hash map to store the polling data in (this is for one complete data set
 				HashMap<String, String> currentDataForQueue = new HashMap<String, String>();
@@ -489,6 +531,44 @@ public class DataCollector {
 				//Record the VIN
 				currentDataForQueue.put("vin", appSettings.getAccountVIN());
 
+				//Read location data if enabled
+				if(appSettings.isGpsEnabled()) {
+
+					//If the user changed the settings mid collector, start it
+					if (locationCollector == null) {
+						if(appSettings.isGpsEnabled()) {
+							if(context.getResources().getBoolean(R.bool.debug)) {
+								Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+								"Location Collection Enabled.  Starting the location collector.");
+							}
+							locationCollector = new LocationCollector(context);
+							locationCollector.run();
+							locationCollector.requestLocationUpdates();
+						}
+					}
+
+					//Get the current location
+					Location currentLocation = locationCollector.getCurrentLocation();
+
+					//If there is a location to be collected
+					if (currentLocation != null) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+									"gps_accuracy " + Float.toString(locationCollector.getCurrentLocation().getAccuracy()) + ", " +
+									"gps_bearing " + Float.toString(locationCollector.getCurrentLocation().getBearing()) + ", " +
+									"gps_altitude " + Double.toString(locationCollector.getCurrentLocation().getAltitude()) + ", " +
+									"gps_latitude " + Double.toString(locationCollector.getCurrentLocation().getLatitude()) + ", " +
+									"gps_longitude " + Double.toString(locationCollector.getCurrentLocation().getLongitude()) + ", ");
+						}
+						//Save the location information
+						currentDataForQueue.put("gps_accuracy", Float.toString(locationCollector.getCurrentLocation().getAccuracy()));
+						currentDataForQueue.put("gps_bearing", Float.toString(locationCollector.getCurrentLocation().getBearing()));
+						currentDataForQueue.put("gps_altitude", Double.toString(locationCollector.getCurrentLocation().getAltitude()));
+						currentDataForQueue.put("gps_latitude", Double.toString(locationCollector.getCurrentLocation().getLatitude()));
+						currentDataForQueue.put("gps_longitude", Double.toString(locationCollector.getCurrentLocation().getLongitude()));
+					}
+				}
+
 				//If the user does not want to upload data, then dont collect it.
 				if (appSettings.getDataUpload() != OBDMe.DATA_USAGE_NEVER) {
 					//Add the current collection to the queue
@@ -574,6 +654,24 @@ public class DataCollector {
 		@SuppressWarnings("unused")
 		public synchronized void setCollectionPaused(boolean collectionPaused) {
 			this.collectionPaused = collectionPaused;
+		}
+
+		/**
+		 * Checks if is app settings update.
+		 *
+		 * @return true, if is app settings update
+		 */
+		public synchronized boolean isAppSettingsUpdate() {
+			return appSettingsUpdate;
+		}
+
+		/**
+		 * Sets the app settings update.
+		 *
+		 * @param appSettingsUpdate the new app settings update
+		 */
+		public synchronized void setAppSettingsUpdate(boolean appSettingsUpdate) {
+			this.appSettingsUpdate = appSettingsUpdate;
 		}
 
 	};

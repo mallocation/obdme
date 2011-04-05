@@ -726,7 +726,7 @@ public class OBDMe extends Activity {
 
 					//Update the polling interval so it is much less frequent
 					if(ignitionPoller != null){
-						ignitionPoller.setPollingInterval(2000);
+						ignitionPoller.setPollingInterval(5000);
 					}
 
 					break;
@@ -764,7 +764,7 @@ public class OBDMe extends Activity {
 
 					//Update the polling interval so it is much less frequent
 					if(autoConnectPoller != null){
-						autoConnectPoller.setPollingInterval(2000);
+						autoConnectPoller.setPollingInterval(5000);
 					}
 					break;
 
