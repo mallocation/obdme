@@ -20,6 +20,7 @@ import api.entities.graph.statistics.VehicleGraphPush;
 import models.obdmedb.User;
 import models.obdmedb.statistics.VehicleDataPoint;
 import models.obdmedb.statistics.VehicleDataset;
+import models.obdmedb.statistics.VehicleLocation;
 import models.obdmedb.vehicles.Vehicle;
 import play.db.jpa.JPA;
 import play.i18n.Messages;
@@ -72,8 +73,26 @@ public class Statistics extends Controller {
 		
 		//insert the datasets and datapoints
 		for (StatDataset dataset : graphPush.getDatasets()) {
-			User loggedUser = User.findByEmail(dataset.getEmail());
-			VehicleDataset ds = new VehicleDataset(vehicle, loggedUser, dataset.getTimestamp());
+			User loggedUser = User.findByEmail(dataset.getEmail());			
+			
+			//Make the location null initially
+			VehicleLocation vl = null;
+			
+			//If there is location information define (at least the latitude and logitude)
+			if (dataset.getLatitude() != null && dataset.getLongitude() != null) {
+				
+				//Make a new vehicle location
+				vl = new VehicleLocation(dataset.getAccuracy(),
+						dataset.getBearing(),
+						dataset.getAltitude(), 
+						dataset.getLatitude(), 
+						dataset.getLongitude()); 
+				
+				//Insert the location
+				statelessSession.insert(vl);
+			}
+			
+			VehicleDataset ds = new VehicleDataset(vehicle, loggedUser, dataset.getTimestamp(), vl);
 			statelessSession.insert(ds);
 			for(StatDataPoint datapoint : dataset.getDatapoints()) {
 				VehicleDataPoint dp = new VehicleDataPoint(ds, datapoint.getMode(), datapoint.getPid(), datapoint.getValue());
