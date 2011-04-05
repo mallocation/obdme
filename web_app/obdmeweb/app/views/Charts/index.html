@@ -184,18 +184,45 @@ d3.select(this)
 
 #{/set}
 
+<div class="popupContent" id="popupContentSelectPID">  
+	<a class="popupContentClose" id="popupContentCloseSelectPID">X</a>
+    <h1>Select a PID</h1>
+	#{list items:pidList, as:'obdPid'}
+	<input type="submit" class="submit" style="font-size: 14px;" id="${obdPid.pidTitle}" value="${obdPid.pidTitle}" />
+	#{/list}
+</div>  
+<div class="backgroundPopup" id="backgroundPopupSelectPID"></div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#selectPID").click(function() {
+			alert("tits");
+			centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+			loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		});
+
+		$(".submit").click(function() {
+			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		});
+
+		$("#popupContentCloseSelectPID").click(function() {
+			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		});
+
+		$("#backgroundPopupSelectPID").click(function() {
+			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		});
+
+		$(document).keypress(function(e) {
+			if (e.keyCode == 27 && popupStatus == 1) {
+				disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+			}
+		});
+	});
+</script>
+
 <!-- Application Index Body -->
 <div class="pageContainer">
-	<div class="logoHeaderImage">
-		<div id="popupContent">  
-			<a id="popupContentClose">X</a>
-		    <h1>Select a PID</h1>
-			#{list items:pidList, as:'obdPid'}
-			<input type="submit" class="submit" style="font-size: 14px;" id="${obdPid.pidTitle}" value="${obdPid.pidTitle}" />
-			#{/list}
-		</div>  
-		<div id="backgroundPopup"></div>
-	</div>
-	<div id="button"><input type="submit" class="submit" value="Select PID" /></div>
+	<div class="logoHeaderImage"></div>
+	<input type="submit" class="submit" id="selectPID" value="Select PID" />
 	<div id="chart" style="margin-top: 55px;"></div>
 </div>
