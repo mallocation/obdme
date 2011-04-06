@@ -95,7 +95,7 @@ public class VehicleStatPush implements Serializable {
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeStringField("mode", dp.mode);
 					jsonGenerator.writeStringField("pid", dp.pid);
-					jsonGenerator.writeNumberField("value", dp.value);
+					jsonGenerator.writeStringField("value", dp.value);
 					jsonGenerator.writeEndObject();
 				}
 				jsonGenerator.writeEndArray();

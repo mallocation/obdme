@@ -8,7 +8,7 @@ public class StatDataPoint implements Serializable {
 	
 	private static final long serialVersionUID = -7551017654799099864L;
 	
-	public StatDataPoint(String mode, String pid, double value) {
+	public StatDataPoint(String mode, String pid, String value) {
 		this.mode = mode;
 		this.pid = pid;
 		this.value = value;
@@ -21,6 +21,6 @@ public class StatDataPoint implements Serializable {
 	public String pid;
 	
 	@JsonProperty("value")
-	public double value;
+	public String value;
 
 }
