@@ -79,14 +79,15 @@ public class Statistics extends Controller {
 			VehicleLocation vl = null;
 			
 			//If there is location information define (at least the latitude and logitude)
-			if (dataset.getLatitude() != null && dataset.getLongitude() != null) {
+			if (dataset.getLocation() != null) {
 				
 				//Make a new vehicle location
-				vl = new VehicleLocation(dataset.getAccuracy(),
-						dataset.getBearing(),
-						dataset.getAltitude(), 
-						dataset.getLatitude(), 
-						dataset.getLongitude()); 
+				vl = new VehicleLocation(dataset.getLocation().getAccuracy(),
+						dataset.getLocation().getBearing(),
+						dataset.getLocation().getAltitude(), 
+						dataset.getLocation().getLatitude(), 
+						dataset.getLocation().getLongitude()
+					); 
 				
 				//Insert the location
 				statelessSession.insert(vl);

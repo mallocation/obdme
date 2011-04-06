@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import api.entities.graph.spatial.VehicleLocation;
+import api.entities.graph.inertial.StatAcceleration;
+import api.entities.graph.spatial.StatLocation;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -20,10 +21,11 @@ public class StatDataset implements Serializable {
 	@SerializedName("email")
 	private String email;
 	
-	@SerializedName("vehiclelocation")
-	private VehicleLocation location;
+	@SerializedName("location")
+	private StatLocation location;
 	
-	
+	@SerializedName("acceleration")
+	private StatAcceleration acceleration;
 	
 
 	public String getEmail() {
@@ -50,12 +52,20 @@ public class StatDataset implements Serializable {
 		this.datapoints = datapoints;
 	}
 
-	public void setLocation(VehicleLocation location) {
+	public void setLocation(StatLocation location) {
 		this.location = location;
 	}
 
-	public VehicleLocation getLocation() {
+	public StatLocation getLocation() {
 		return location;
+	}
+
+	public void setAcceleration(StatAcceleration acceleration) {
+		this.acceleration = acceleration;
+	}
+
+	public StatAcceleration getAcceleration() {
+		return acceleration;
 	}
 
 }
