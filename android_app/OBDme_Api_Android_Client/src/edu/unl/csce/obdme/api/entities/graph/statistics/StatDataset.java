@@ -13,6 +13,9 @@ import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import edu.unl.csce.obdme.api.entities.graph.inertial.VehicleAcceleration;
+import edu.unl.csce.obdme.api.entities.graph.spatial.VehicleLocation;
+
 public class StatDataset {
 	
 	@JsonProperty("datapoints")
@@ -25,30 +28,15 @@ public class StatDataset {
 	@JsonSerialize(using=CustomDateSerializer.class)
 	public Date timestamp;
 	
-	@JsonProperty("accuracy")
-	public Float accuracy;
+	@JsonProperty("location")
+	public VehicleLocation location;
 	
-	@JsonProperty("bearing")
-	public Float bearing;
-	
-	@JsonProperty("altitude")
-	public Double altitude;
-	
-	@JsonProperty("latitude")
-	public Double latitude;
-	
-	@JsonProperty("longitude")
-	public Double longitude;
+	@JsonProperty("acceleration")
+	public VehicleAcceleration acceleration;
 	
 	public StatDataset() {
 		this.datapoints = new ArrayList<StatDataPoint>();
 	}
-	
-//	public StatDataset(String email, Date timestamp) {
-//		this.email = email;
-//		this.timestamp = timestamp;
-//		this.datapoints = new ArrayList<StatDataPoint>();
-//	}
 	
 	private static class CustomDateSerializer extends JsonSerializer<Date> {
 		@Override
