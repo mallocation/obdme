@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("serial")
 public class User implements Serializable {
 	
 	public User(Long id, String email) {

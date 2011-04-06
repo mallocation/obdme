@@ -2,6 +2,7 @@ package api.entities;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class ApiError implements Serializable {
 	
 	private Error error;

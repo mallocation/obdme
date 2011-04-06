@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("serial")
 public class UserVehicle implements Serializable {
 	
 	@SerializedName("vehicleid")
