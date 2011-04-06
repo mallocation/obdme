@@ -124,8 +124,7 @@ public class DataUploadTask implements Runnable {
 				
 				do {
 					StatDataset dataset = new StatDataset();
-					// TODO - set the email of the corresponding user
-					// dataset.email = xx;
+					dataset.email = appSettings.getAccountUsername();
 				
 					//traverse the columns
 					for (int i=0; i<queryVehicleDataToUpload.getColumnCount(); i++) {
@@ -145,7 +144,7 @@ public class DataUploadTask implements Runnable {
 							if (columnName.contains("data_")) {
 								String modeHex = columnName.substring(5,7);
 								String pidHex = columnName.substring(7);
-								dataset.datapoints.add(new StatDataPoint(modeHex, pidHex, queryVehicleDataToUpload.getString(i)));
+								dataset.datapoints.add(new StatDataPoint(modeHex, pidHex, removeChar(queryVehicleDataToUpload.getString(i), ',')));
 							}
 						
 							//otherwise this is the timestamp of the collection
@@ -390,28 +389,15 @@ public class DataUploadTask implements Runnable {
 			}
 		}
 	}
+	
+	public static String removeChar(String s, char c) {
 
-	/**
-	 * Check if ready for upload.
-	 *
-	 * @param queryResults the query results
-	 * @return true, if successful
-	 */
-	private boolean checkIfReadyForUpload(Cursor queryResults) {
+		   String r = "";
 
-		//If the query results are less that our minimum upload amount (for batch processing)
-		if (queryResults.getCount() < context.getResources().getInteger(R.integer.uploader_setcount_min)){
+		   for (int i = 0; i < s.length(); i ++) {
+		      if (s.charAt(i) != c) r += s.charAt(i);
+		   }
 
-			if(context.getResources().getBoolean(R.bool.debug)) {
-				Log.d(context.getResources().getString(R.string.debug_tag_datauploaderthread),
-				"There is not enough data in the database to batch upload. Quit.");
-			}
-
-			//Return false
-			return false;
+		   return r;
 		}
-
-		//Otherwise, we are ready to upload!
-		return true;
-	}
 }

@@ -13,10 +13,9 @@
 	<integer name="collector.locatio.min.distance">3</integer>
 	<integer name="collector.locatio.min.time">60000</integer>
 	
-	<integer name="uploader.setcount.min">5</integer>
-	<integer name="uploader.setcount.max">50</integer>
+	<integer name="uploader.setcount.max">25</integer>
 	<integer name="uploader.thread.sucessive.delay">10</integer>
-	<integer name="uploader.thread.pool.size">3</integer>
+	<integer name="uploader.thread.pool.size">1</integer>
 	
 	<string name="webservice.apikey">abcd</string>
 	

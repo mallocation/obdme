@@ -1,10 +1,13 @@
 package edu.unl.csce.obdme;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import edu.unl.csce.obdme.api.ObdMeService;
 import edu.unl.csce.obdme.bluetooth.BluetoothService;
 import edu.unl.csce.obdme.collector.DataCollector;
 import edu.unl.csce.obdme.collector.DataUploader;
+import edu.unl.csce.obdme.database.OBDMeDatabaseHelper;
 import edu.unl.csce.obdme.hardware.elm.ELMFramework;
 import edu.unl.csce.obdme.utilities.AppSettings;
 
@@ -147,6 +150,33 @@ public class OBDMeApplication extends Application {
 	 * @see android.app.Application#onCreate()
 	 */
 	public void onCreate() {
+		
+		SQLiteDatabase sqldb = null;
+		
+		if (getResources().getBoolean(R.bool.debug_database_fresh)) {
+			try {
+				OBDMeDatabaseHelper dbh = new OBDMeDatabaseHelper(this);
+				sqldb = dbh.getWritableDatabase();
+			} catch (Exception e) {
+
+				//Failed... Print of the error.
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.e(getResources().getString(R.string.debug_tag_databasewriter),
+							"Could not get writable database: " + e.getMessage());
+				}
+			}
+			
+			if (sqldb != null) {
+				if(getResources().getBoolean(R.bool.debug)) {
+					Log.d(getResources().getString(R.string.debug_tag_databasewriter),
+					"Cleaning all rows from the database.");
+				}
+				sqldb.execSQL("DELETE FROM " + OBDMeDatabaseHelper.TABLE_NAME + ";");
+				sqldb.close();
+			}
+		}
+		
+		
 		super.onCreate();
 		//provide an instance for our static accessors
 		instance = this;

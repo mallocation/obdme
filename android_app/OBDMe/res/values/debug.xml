@@ -4,6 +4,7 @@
 	<!-- Global Debugging Settings -->
 	<bool name="debug">true</bool>
 	<bool name="debug.setupwizard">false</bool>
+	<bool name="debug.database.fresh">false</bool>
 	
 	
 	<!-- Debug Tags for the Main Application-->

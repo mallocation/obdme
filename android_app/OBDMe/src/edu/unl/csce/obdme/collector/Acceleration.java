@@ -8,20 +8,12 @@ public class Acceleration {
 	/** The x accel. */
 	private volatile float xAccel;
 	
-	/** The x accel count. */
-	private volatile float xAccelCount;
-	
 	/** The y accel. */
 	private volatile float yAccel;
-	
-	/** The y accel count. */
-	private volatile float yAccelCount;
 	
 	/** The z accel. */
 	private volatile float zAccel;
 	
-	/** The z accel count. */
-	private volatile float zAccelCount;
 	
 	/**
 	 * Instantiates a new acceleration.
@@ -30,9 +22,6 @@ public class Acceleration {
 		xAccel = 0;
 		yAccel = 0;
 		zAccel = 0;
-		xAccelCount = 0;
-		yAccelCount = 0;
-		zAccelCount = 0;
 	}
 	
 	/**
@@ -41,7 +30,7 @@ public class Acceleration {
 	 * @return the x accel
 	 */
 	public synchronized float getXAccel() {
-		return xAccel/xAccelCount;
+		return xAccel;
 	}
 
 	/**
@@ -50,8 +39,7 @@ public class Acceleration {
 	 * @param xAccel the new x accel
 	 */
 	public synchronized void setXAccel(float xAccel) {
-		this.xAccel += xAccel;
-		xAccelCount++;
+		this.xAccel = xAccel;
 	}
 
 	/**
@@ -60,7 +48,7 @@ public class Acceleration {
 	 * @return the y accel
 	 */
 	public synchronized float getYAccel() {
-		return yAccel / yAccelCount;
+		return yAccel;
 	}
 
 	/**
@@ -69,8 +57,7 @@ public class Acceleration {
 	 * @param yAccel the new y accel
 	 */
 	public synchronized void setYAccel(float yAccel) {
-		this.yAccel += yAccel;
-		xAccelCount++;
+		this.yAccel = yAccel;
 	}
 
 	/**
@@ -79,7 +66,7 @@ public class Acceleration {
 	 * @return the z accel
 	 */
 	public synchronized float getZAccel() {
-		return zAccel / zAccelCount;
+		return zAccel;
 	}
 
 	/**
@@ -88,7 +75,6 @@ public class Acceleration {
 	 * @param zAccel the new z accel
 	 */
 	public synchronized void setZAccel(float zAccel) {
-		this.zAccel += zAccel;
-		zAccelCount++;
+		this.zAccel = zAccel;
 	}
 }

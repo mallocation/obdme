@@ -558,14 +558,14 @@ public class DataCollector {
 
 					//If there is a location to be collected
 					if (currentLocation != null) {
-						if(context.getResources().getBoolean(R.bool.debug)) {
-							Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-									"gps_accuracy " + Float.toString(locationCollector.getCurrentLocation().getAccuracy()) + ", " +
-									"gps_bearing " + Float.toString(locationCollector.getCurrentLocation().getBearing()) + ", " +
-									"gps_altitude " + Double.toString(locationCollector.getCurrentLocation().getAltitude()) + ", " +
-									"gps_latitude " + Double.toString(locationCollector.getCurrentLocation().getLatitude()) + ", " +
-									"gps_longitude " + Double.toString(locationCollector.getCurrentLocation().getLongitude()) + ", ");
-						}
+//						if(context.getResources().getBoolean(R.bool.debug)) {
+//							Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+//									"gps_accuracy " + Float.toString(locationCollector.getCurrentLocation().getAccuracy()) + ", " +
+//									"gps_bearing " + Float.toString(locationCollector.getCurrentLocation().getBearing()) + ", " +
+//									"gps_altitude " + Double.toString(locationCollector.getCurrentLocation().getAltitude()) + ", " +
+//									"gps_latitude " + Double.toString(locationCollector.getCurrentLocation().getLatitude()) + ", " +
+//									"gps_longitude " + Double.toString(locationCollector.getCurrentLocation().getLongitude()) + ", ");
+//						}
 						//Save the location information
 						currentDataForQueue.put("gps_accuracy", Float.toString(locationCollector.getCurrentLocation().getAccuracy()));
 						currentDataForQueue.put("gps_bearing", Float.toString(locationCollector.getCurrentLocation().getBearing()));
@@ -619,34 +619,32 @@ public class DataCollector {
 
 				//Otherwise the collector has already been started
 				else {
-					Acceleration resultA = accelerationCollector.getAcceleration();
-					LinearAcceleration resultLA = accelerationCollector.getLinearAcceleration();
 
-					if(context.getResources().getBoolean(R.bool.debug)) {
-						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-								"linear_accel_x " + Float.toString(resultLA.getLinearXAccel()) + ", " +
-								"linear_accel_y " + Float.toString(resultLA.getLinearYAccel()) + ", " +
-								"linear_accel_z " + Float.toString(resultLA.getLinearZAccel())
-						);
-					}
-
-					if(context.getResources().getBoolean(R.bool.debug)) {
-						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-								"accel_x " + Float.toString(resultA.getXAccel()) + ", " +
-								"accel_y " + Float.toString(resultA.getYAccel()) + ", " +
-								"accel_z " + Float.toString(resultA.getZAccel())
-						);
-					}
+//					if(context.getResources().getBoolean(R.bool.debug)) {
+//						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+//								"linear_accel_x " + Float.toString(accelerationCollector.getLinearAcceleration().getLinearXAccel()) + ", " +
+//								"linear_accel_y " + Float.toString(accelerationCollector.getLinearAcceleration().getLinearYAccel()) + ", " +
+//								"linear_accel_z " + Float.toString(accelerationCollector.getLinearAcceleration().getLinearZAccel())
+//						);
+//					}
+//
+//					if(context.getResources().getBoolean(R.bool.debug)) {
+//						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+//								"accel_x " + Float.toString(accelerationCollector.getAcceleration().getXAccel()) + ", " +
+//								"accel_y " + Float.toString(accelerationCollector.getAcceleration().getYAccel()) + ", " +
+//								"accel_z " + Float.toString(accelerationCollector.getAcceleration().getZAccel())
+//						);
+//					}
 
 					//Save the acceleration information
-					currentDataForQueue.put("accel_x", Float.toString(resultA.getXAccel()));
-					currentDataForQueue.put("accel_y", Float.toString(resultA.getYAccel()));
-					currentDataForQueue.put("accel_z", Float.toString(resultA.getZAccel()));
+					currentDataForQueue.put("accel_x", Float.toString(accelerationCollector.getAcceleration().getXAccel()));
+					currentDataForQueue.put("accel_y", Float.toString(accelerationCollector.getAcceleration().getYAccel()));
+					currentDataForQueue.put("accel_z", Float.toString(accelerationCollector.getAcceleration().getZAccel()));
 
 					//Save the linear acceleration information
-					currentDataForQueue.put("linear_accel_x", Float.toString(resultLA.getLinearXAccel()));
-					currentDataForQueue.put("linear_accel_y", Float.toString(resultLA.getLinearYAccel()));
-					currentDataForQueue.put("linear_accel_z", Float.toString(resultLA.getLinearZAccel()));
+					currentDataForQueue.put("linear_accel_x", Float.toString(accelerationCollector.getLinearAcceleration().getLinearXAccel()));
+					currentDataForQueue.put("linear_accel_y", Float.toString(accelerationCollector.getLinearAcceleration().getLinearYAccel()));
+					currentDataForQueue.put("linear_accel_z", Float.toString(accelerationCollector.getLinearAcceleration().getLinearZAccel()));
 				}
 			}
 			

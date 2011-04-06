@@ -8,20 +8,11 @@ public class LinearAcceleration {
 	/** The linear x accel. */
 	private volatile float linearXAccel;
 	
-	/** The linear x accel count. */
-	private volatile float linearXAccelCount;
-	
 	/** The linear y accel. */
 	private volatile float linearYAccel;
 	
-	/** The linear y accel count. */
-	private volatile float linearYAccelCount;
-	
 	/** The linear z accel. */
 	private volatile float linearZAccel;
-	
-	/** The linear z accel count. */
-	private volatile float linearZAccelCount;
 	
 	/**
 	 * Instantiates a new linear acceleration.
@@ -30,9 +21,6 @@ public class LinearAcceleration {
 		linearXAccel = 0;
 		linearYAccel = 0;
 		linearZAccel = 0;
-		linearXAccelCount = 0;
-		linearYAccelCount = 0;
-		linearZAccelCount = 0;
 	}
 	
 	/**
@@ -41,7 +29,7 @@ public class LinearAcceleration {
 	 * @return the linear x accel
 	 */
 	public synchronized float getLinearXAccel() {
-		return linearXAccel/linearXAccelCount;
+		return linearXAccel;
 	}
 
 	/**
@@ -50,8 +38,7 @@ public class LinearAcceleration {
 	 * @param linearXAccel the new linear x accel
 	 */
 	public synchronized void setLinearXAccel(float linearXAccel) {
-		this.linearXAccel += linearXAccel;
-		linearXAccelCount++;
+		this.linearXAccel = linearXAccel;
 	}
 
 	/**
@@ -60,7 +47,7 @@ public class LinearAcceleration {
 	 * @return the linear y accel
 	 */
 	public synchronized float getLinearYAccel() {
-		return linearYAccel / linearYAccelCount;
+		return linearYAccel;
 	}
 
 	/**
@@ -69,8 +56,7 @@ public class LinearAcceleration {
 	 * @param linearYAccel the new linear y accel
 	 */
 	public synchronized void setLinearYAccel(float linearYAccel) {
-		this.linearYAccel += linearYAccel;
-		linearYAccelCount++;
+		this.linearYAccel = linearYAccel;
 	}
 
 	/**
@@ -79,7 +65,7 @@ public class LinearAcceleration {
 	 * @return the linear z accel
 	 */
 	public synchronized float getLinearZAccel() {
-		return linearZAccel / linearZAccelCount;
+		return linearZAccel;
 	}
 
 	/**
@@ -88,7 +74,6 @@ public class LinearAcceleration {
 	 * @param linearZAccel the new linear z accel
 	 */
 	public synchronized void setLinearZAccel(float linearZAccel) {
-		this.linearZAccel += linearZAccel;
-		linearZAccelCount++;
+		this.linearZAccel = linearZAccel;
 	}
 }

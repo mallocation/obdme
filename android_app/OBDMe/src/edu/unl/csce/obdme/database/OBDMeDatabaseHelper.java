@@ -19,7 +19,7 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "obdme.db";
     
     /** The Constant DATABASE_VERSION. */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     
     /** The Constant TABLE_NAME. */
     public static final String TABLE_NAME = "loggeddata";
