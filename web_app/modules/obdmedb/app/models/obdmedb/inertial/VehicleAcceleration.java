@@ -38,7 +38,9 @@ public class VehicleAcceleration extends Model {
 		this.accel_x = accel_x;
 		this.accel_y = accel_y;
 		this.accel_z = accel_z;
-		
+		this.linear_accel_x = linear_accel_x;
+		this.linear_accel_y = linear_accel_y;
+		this.linear_accel_z = linear_accel_z;
 	}
 
 }
