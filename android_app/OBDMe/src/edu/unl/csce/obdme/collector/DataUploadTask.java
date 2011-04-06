@@ -145,7 +145,7 @@ public class DataUploadTask implements Runnable {
 							if (columnName.contains("data_")) {
 								String modeHex = columnName.substring(5,7);
 								String pidHex = columnName.substring(7);
-								dataset.datapoints.add(new StatDataPoint(modeHex, pidHex, queryVehicleDataToUpload.getDouble(i)));
+								dataset.datapoints.add(new StatDataPoint(modeHex, pidHex, queryVehicleDataToUpload.getString(i)));
 							}
 						
 							//otherwise this is the timestamp of the collection
