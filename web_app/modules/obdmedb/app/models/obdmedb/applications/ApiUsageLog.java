@@ -1,15 +1,19 @@
 package models.obdmedb.applications;
 
-import play.*;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import play.data.validation.Required;
-import play.db.jpa.*;
-
-import javax.persistence.*;
-
-import java.util.*;
+import play.db.jpa.Model;
 
 @Entity
 @Table(name="apiusagelog")
+@SuppressWarnings("serial")
 public class ApiUsageLog extends Model {
 	
 	@ManyToOne(optional=false)

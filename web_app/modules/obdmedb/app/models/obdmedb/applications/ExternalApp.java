@@ -6,13 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import edu.unl.csce.obdme.encryption.EncryptionUtils;
-
-import play.data.validation.Required;
 import play.db.jpa.Model;
+import edu.unl.csce.obdme.encryption.EncryptionUtils;
 
 @Entity
 @Table(name="externalapp")
+@SuppressWarnings("serial")
 public class ExternalApp extends Model {
 	
 	@Column(name="name")

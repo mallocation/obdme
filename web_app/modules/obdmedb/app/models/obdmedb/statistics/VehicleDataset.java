@@ -1,17 +1,28 @@
 package models.obdmedb.statistics;
 
-import play.*;
-import play.db.jpa.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import models.obdmedb.User;
+import models.obdmedb.spatial.VehicleLocation;
 import models.obdmedb.vehicles.Vehicle;
+import play.db.jpa.Model;
 
-import java.util.*;
 
 @Entity
 @Table(name="vehicledataset")
+@SuppressWarnings("serial")
 public class VehicleDataset extends Model {
 	
 	@ManyToOne(optional=false)

@@ -18,11 +18,11 @@ import models.obdmedb.vehicles.Vehicle;
 import org.hibernate.annotations.GenericGenerator;
 
 import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
 
 @Entity
 @Embeddable
 @Table(name="vehicledatapoint")
+@SuppressWarnings("serial")
 public class VehicleDataPoint extends GenericModel {
 	
 	@Id

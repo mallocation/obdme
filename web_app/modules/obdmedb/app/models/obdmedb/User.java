@@ -1,18 +1,22 @@
 package models.obdmedb;
 
-import play.*;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import play.data.validation.Email;
 import play.data.validation.Required;
-import play.db.jpa.*;
-
-import javax.persistence.*;
-
+import play.db.jpa.Blob;
+import play.db.jpa.Model;
 import edu.unl.csce.obdme.encryption.EncryptionUtils;
-
-import java.util.*;
 
 @Entity
 @Table(name="userbase")
+@SuppressWarnings("serial")
 public class User extends Model {
 	
 	@Email
