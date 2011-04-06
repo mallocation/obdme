@@ -114,6 +114,36 @@ public class DatabaseWriterThread extends Thread {
 					cv.put("gps_longitude", currentSet.get(currentKey));
 				}
 
+				//If the current key is the acceleration in the x direction (Acceleration Services enabled)
+				else if (currentKey.equals("accel_x")) {
+					cv.put("accel_x", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the acceleration in the y direction (Acceleration Services enabled)
+				else if (currentKey.equals("accel_y")) {
+					cv.put("accel_y", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the acceleration in the z direction (Acceleration Services enabled)
+				else if (currentKey.equals("accel_z")) {
+					cv.put("accel_z", currentSet.get(currentKey));
+				}
+
+				//If the current key is the linear acceleration in the x direction (Acceleration Services enabled)
+				else if (currentKey.equals("linear_accel_x")) {
+					cv.put("linear_accel_x", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the linear acceleration in the y direction (Acceleration Services enabled)
+				else if (currentKey.equals("linear_accel_y")) {
+					cv.put("linear_accel_y", currentSet.get(currentKey));
+				}
+				
+				//If the current key is the linear acceleration in the z direction (Acceleration Services enabled)
+				else if (currentKey.equals("linear_accel_z")) {
+					cv.put("linear_accel_z", currentSet.get(currentKey));
+				}
+				
 				//Otherwise it is a PID data item
 				else {
 					//add them to the table

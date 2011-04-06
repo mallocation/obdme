@@ -192,6 +192,11 @@
 	<string name="menu.prefs.gps.summary">Collect location data for location aware statistics
 	</string>
 
+	<string name="menu.prefs.accel.title">Acceleration Data</string>
+	<string name="menu.prefs.accel.summary">Collect linear acceleration data for inertial aware
+		statistics
+	</string>
+
 	<!-- Setup Wizard Account Activity -->
 	<string name="settings.account.label">Account Information</string>
 	<string name="settings.account.heading.text">Account Information</string>
@@ -221,7 +226,8 @@
 	<!-- Setup Wizard Account Activity -->
 	<string name="settings.vehicle.label">Vehicle Information</string>
 	<string name="settings.vehicle.heading.text">Vehicle Information</string>
-	<string name="settings.vehicle.body.text.describe">The following describes the vehicle currently paired with this device.</string>
+	<string name="settings.vehicle.body.text.describe">The following describes the vehicle currently
+		paired with this device.</string>
 	<string name="settings.vehicle.button.change.text">Save Changes</string>
 	<string name="settings.vehicle.vin.title.text">VIN (Vehicle Identification Number)</string>
 	<string name="settings.vehicle.alias.title.text">Vehicle Alias:</string>
@@ -241,7 +247,7 @@
 	<string name="settings.dataupload">Data Upload Options</string>
 	<string name="settings.datacollection">Data Collection Rate</string>
 	<string name="settings.displaydata">Data To Display</string>
-	
+
 
 	<!-- Mechanic Mode -->
 	<string name="mechanicmode.title">Mechanic Mode</string>

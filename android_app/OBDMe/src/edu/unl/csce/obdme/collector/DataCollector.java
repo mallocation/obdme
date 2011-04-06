@@ -59,6 +59,9 @@ public class DataCollector {
 	/** The location collector. */
 	private LocationCollector locationCollector;
 
+	/** The acceleration collector. */
+	private AccelerationCollector accelerationCollector;
+
 	/** The Constant STATE_CHANGE. */
 	public static final int STATE_CHANGE = 738264738;
 
@@ -170,7 +173,7 @@ public class DataCollector {
 			collectorThread.cancel();
 			collectorThread = null;
 		}
-		
+
 		if (locationCollector == null) {
 			if(appSettings.isGpsEnabled()) {
 				if(context.getResources().getBoolean(R.bool.debug)) {
@@ -182,7 +185,19 @@ public class DataCollector {
 				locationCollector.requestLocationUpdates();
 			}
 		}
-		
+
+		if(appSettings.isAccelEnabled()) {
+			if (accelerationCollector == null) {
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+					"Acceleration Collection Enabled.  Starting the acceleration collector.");
+				}
+				accelerationCollector = new AccelerationCollector(this.context);
+				accelerationCollector.run();
+				accelerationCollector.requestAccelerometerUpdates();
+			}
+		}
+
 		collectorThread = new DataCollectorThread();
 		collectorThread.start();
 
@@ -382,192 +397,31 @@ public class DataCollector {
 			//If we want to continue polling
 			while(continuePolling) {
 
-				if(isAppSettingsUpdate()) {
-					if(context.getResources().getBoolean(R.bool.debug)) {
-						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-								"Collected PIDs changed, updating the local data collector list.");
-					}
+				//Check for settings updates
+				checkForSettingsUpdates();
 
-					//Update the list
-					this.pollableEnabledPIDS = elmFramework.getObdFramework().getCollectedPIDList();
-
-					//Set the update flag to false
-					setAppSettingsUpdate(false);
+				//If the collection is paused, Loop for a while
+				while(collectionPaused) {
+					SystemClock.sleep(2000);
 				}
 
 				//Create a hash map to store the polling data in (this is for one complete data set
 				HashMap<String, String> currentDataForQueue = new HashMap<String, String>();
 
-				//For all the pollable and enabled PIDS
-				for (String modeHex : pollableEnabledPIDS.keySet()) {
-					for (Iterator<String> pidIrt = pollableEnabledPIDS.get(modeHex).iterator(); pidIrt.hasNext(); ) {
-						String currentPID = pidIrt.next();
-						try {
+				//Get OPD Data
+				getOBDData(currentDataForQueue);
 
-							//If the collection is paused, Loop for a while
-							while(collectionPaused) {
-								SystemClock.sleep(2000);
-							}
+				//Get GPS Data
+				getGPSData(currentDataForQueue);
 
-							//Make the request for the current pollable and enabled mode and PID
-							OBDResponse response = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID(modeHex, currentPID));
-
-							//If the response isn't null
-							if (response != null) {
-								try {
-
-									//If the return value is a double
-									if (response.getProcessedResponse() instanceof Double) {
-
-										//Get the processed double
-										Double responseDouble = (Double)response.getProcessedResponse();
-
-										//Put the processed response into the current data for the queue (we do not want to convert to english units, they are always metric
-										currentDataForQueue.put((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(
-												modeHex, currentPID).getDecimalFormat().format(responseDouble));
-
-										//If we need to convert to English units
-										if(appSettings.isEnglishUnits()) {
-											responseDouble = UnitConversion.convertToEnglish(elmFramework.getConfiguredPID(modeHex, currentPID)
-													.getPidUnit(), responseDouble);
-										}
-
-										//Add the user configured unit value (Metric or English) to the current data hash map
-										putCurrentData((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(modeHex, currentPID)
-												.getDecimalFormat().format(responseDouble));
-									}
-
-									//If the return value is a string
-									else if (response.getProcessedResponse() instanceof String) {
-
-										//Put the string in the current data for the queue 
-										putCurrentData((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
-
-										//Put the string in the current data hash map
-										currentDataForQueue.put((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
-									}
-
-									//If the return value is a List
-									else if (response.getProcessedResponse() instanceof List) {
-										@SuppressWarnings("unchecked")
-										//Not nice but we ALWAYS return a list of strings... 
-										//So we can make some assumptions here and ignore the warnings
-										List<String> resultsList = (List<String>) response.getProcessedResponse();
-
-										//Store the list
-										putCurrentData((modeHex+currentPID).toString(), resultsList.toString());
-										currentDataForQueue.put((modeHex+currentPID).toString(), resultsList.toString());
-									}
-
-								} catch (Exception e) {
-									if(context.getResources().getBoolean(R.bool.debug)) {
-										Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-												"Error converting the result: " + e.getMessage());
-									}
-								}
-							}
-
-							//If we are exceeding the maximum tries on a request, reestablish collection
-						} catch (BluetoothServiceRequestMaxRetriesException bsrmre) {
-							if(context.getResources().getBoolean(R.bool.debug)) {
-								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-										"Bluetooth Service Request Max Retries Exception: " + bsrmre.getMessage() 
-										+ ".  Stopping the collector.");
-							}
-
-							//Set the state to failed
-							failedPolling();
-						} 
-
-						//If the ELM is unable to connect with the ECU, reestablish collection
-						catch (ELMUnableToConnectException euce) {
-							if(context.getResources().getBoolean(R.bool.debug)) {
-								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-										"ELM Unable to connect exception: " + euce.getMessage() 
-										+ ".  Stopping the collector.");
-							}
-
-							//Set the state to failed
-							failedPolling();
-
-						} 
-
-						//If the ELM is not getting any data from the ECU, reestablish collection
-						catch (ELMDeviceNoDataException edne) {
-							if(context.getResources().getBoolean(R.bool.debug)) {
-								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-										"ELM no data exception: " + edne.getMessage() 
-										+ ".  Stopping the collector.");
-							}
-
-							//Set the state to failed
-							failedPolling();
-
-						}
-
-						//Some general ELM exception that we don't particularly care about
-						catch (ELMException elme) {
-							if(context.getResources().getBoolean(R.bool.debug)) {
-								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-										"General ELM Exception: " + elme.getMessage());
-							}
-						}
-
-						//Who the fuck knows what caused this...
-						catch (Exception e) {
-							if(context.getResources().getBoolean(R.bool.debug)) {
-								Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
-										"There was a general exception", e);
-							}
-						}
-
-
-					}
-				}
+				//Get Accelerometer Data
+				getAccelerometerData(currentDataForQueue);
 
 				//Record the timestamp
 				currentDataForQueue.put("timestamp", new Date().toString());
 
 				//Record the VIN
 				currentDataForQueue.put("vin", appSettings.getAccountVIN());
-
-				//Read location data if enabled
-				if(appSettings.isGpsEnabled()) {
-
-					//If the user changed the settings mid collector, start it
-					if (locationCollector == null) {
-						if(appSettings.isGpsEnabled()) {
-							if(context.getResources().getBoolean(R.bool.debug)) {
-								Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-								"Location Collection Enabled.  Starting the location collector.");
-							}
-							locationCollector = new LocationCollector(context);
-							locationCollector.run();
-							locationCollector.requestLocationUpdates();
-						}
-					}
-
-					//Get the current location
-					Location currentLocation = locationCollector.getCurrentLocation();
-
-					//If there is a location to be collected
-					if (currentLocation != null) {
-						if(context.getResources().getBoolean(R.bool.debug)) {
-							Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
-									"gps_accuracy " + Float.toString(locationCollector.getCurrentLocation().getAccuracy()) + ", " +
-									"gps_bearing " + Float.toString(locationCollector.getCurrentLocation().getBearing()) + ", " +
-									"gps_altitude " + Double.toString(locationCollector.getCurrentLocation().getAltitude()) + ", " +
-									"gps_latitude " + Double.toString(locationCollector.getCurrentLocation().getLatitude()) + ", " +
-									"gps_longitude " + Double.toString(locationCollector.getCurrentLocation().getLongitude()) + ", ");
-						}
-						//Save the location information
-						currentDataForQueue.put("gps_accuracy", Float.toString(locationCollector.getCurrentLocation().getAccuracy()));
-						currentDataForQueue.put("gps_bearing", Float.toString(locationCollector.getCurrentLocation().getBearing()));
-						currentDataForQueue.put("gps_altitude", Double.toString(locationCollector.getCurrentLocation().getAltitude()));
-						currentDataForQueue.put("gps_latitude", Double.toString(locationCollector.getCurrentLocation().getLatitude()));
-						currentDataForQueue.put("gps_longitude", Double.toString(locationCollector.getCurrentLocation().getLongitude()));
-					}
-				}
 
 				//If the user does not want to upload data, then dont collect it.
 				if (appSettings.getDataUpload() != OBDMe.DATA_USAGE_NEVER) {
@@ -674,5 +528,290 @@ public class DataCollector {
 			this.appSettingsUpdate = appSettingsUpdate;
 		}
 
+		/**
+		 * Gets the gPS data.
+		 *
+		 * @param currentDataForQueue the current data for queue
+		 * @return the gPS data
+		 */
+		private void getGPSData(HashMap<String, String> currentDataForQueue) {
+			//Read location data if enabled
+			if(appSettings.isGpsEnabled()) {
+
+				//If the user changed the settings mid collection, and the collector hasn't started
+				if (locationCollector == null) {
+					if(appSettings.isGpsEnabled()) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+							"Location Collection Enabled.  Starting the location collector.");
+						}
+						locationCollector = new LocationCollector(context);
+						locationCollector.run();
+						locationCollector.requestLocationUpdates();
+					}
+				}
+				
+				//Otherwise, the collector has already been started
+				else {
+					//Get the current location
+					Location currentLocation = locationCollector.getCurrentLocation();
+
+					//If there is a location to be collected
+					if (currentLocation != null) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+									"gps_accuracy " + Float.toString(locationCollector.getCurrentLocation().getAccuracy()) + ", " +
+									"gps_bearing " + Float.toString(locationCollector.getCurrentLocation().getBearing()) + ", " +
+									"gps_altitude " + Double.toString(locationCollector.getCurrentLocation().getAltitude()) + ", " +
+									"gps_latitude " + Double.toString(locationCollector.getCurrentLocation().getLatitude()) + ", " +
+									"gps_longitude " + Double.toString(locationCollector.getCurrentLocation().getLongitude()) + ", ");
+						}
+						//Save the location information
+						currentDataForQueue.put("gps_accuracy", Float.toString(locationCollector.getCurrentLocation().getAccuracy()));
+						currentDataForQueue.put("gps_bearing", Float.toString(locationCollector.getCurrentLocation().getBearing()));
+						currentDataForQueue.put("gps_altitude", Double.toString(locationCollector.getCurrentLocation().getAltitude()));
+						currentDataForQueue.put("gps_latitude", Double.toString(locationCollector.getCurrentLocation().getLatitude()));
+						currentDataForQueue.put("gps_longitude", Double.toString(locationCollector.getCurrentLocation().getLongitude()));
+					}
+				}
+			}
+			
+			//Otherwise location collection isn't enabled
+			else {
+				
+				//If location collector is running, destroy it
+				if (locationCollector != null) {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+						"Location Collection Disabled.  Stopping the location collector.");
+					}
+					locationCollector.stop();
+					locationCollector = null;
+				}
+			}
+		}
+
+		//		I make ugly comments.
+
+		/**
+		 * Gets the accelerometer data.
+		 *
+		 * @param currentDataForQueue the current data for queue
+		 * @return the accelerometer data
+		 */
+		private void getAccelerometerData(HashMap<String, String> currentDataForQueue) {
+
+			//Read accelerometer data if enabled
+			if(appSettings.isAccelEnabled()) {
+
+				//If the user changed the settings mid collection, and the collector hasn't started
+				if (accelerationCollector == null) {
+					if(appSettings.isAccelEnabled()) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+							"Acceleration Collection Enabled.  Starting the acceleration collector.");
+						}
+						accelerationCollector = new AccelerationCollector(context);
+						accelerationCollector.run();
+						accelerationCollector.requestAccelerometerUpdates();
+					}
+				}
+
+				//Otherwise the collector has already been started
+				else {
+					Acceleration resultA = accelerationCollector.getAcceleration();
+					LinearAcceleration resultLA = accelerationCollector.getLinearAcceleration();
+
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+								"linear_accel_x " + Float.toString(resultLA.getLinearXAccel()) + ", " +
+								"linear_accel_y " + Float.toString(resultLA.getLinearYAccel()) + ", " +
+								"linear_accel_z " + Float.toString(resultLA.getLinearZAccel())
+						);
+					}
+
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+								"accel_x " + Float.toString(resultA.getXAccel()) + ", " +
+								"accel_y " + Float.toString(resultA.getYAccel()) + ", " +
+								"accel_z " + Float.toString(resultA.getZAccel())
+						);
+					}
+
+					//Save the acceleration information
+					currentDataForQueue.put("accel_x", Float.toString(resultA.getXAccel()));
+					currentDataForQueue.put("accel_y", Float.toString(resultA.getYAccel()));
+					currentDataForQueue.put("accel_z", Float.toString(resultA.getZAccel()));
+
+					//Save the linear acceleration information
+					currentDataForQueue.put("linear_accel_x", Float.toString(resultLA.getLinearXAccel()));
+					currentDataForQueue.put("linear_accel_y", Float.toString(resultLA.getLinearYAccel()));
+					currentDataForQueue.put("linear_accel_z", Float.toString(resultLA.getLinearZAccel()));
+				}
+			}
+			
+			//Otherwise acceleration collection isn't enabled
+			else {
+				
+				//If acceleration collector is running, destroy it 
+				if (accelerationCollector != null) {
+					if(context.getResources().getBoolean(R.bool.debug)) {
+						Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+						"Acceleration Collection Disabled.  Stopping the acceleration collector.");
+					}
+					accelerationCollector.stop();
+					accelerationCollector = null;
+				}
+			}
+		}
+
+		/**
+		 * Gets the oBD data.
+		 *
+		 * @param currentDataForQueue the current data for queue
+		 * @return the oBD data
+		 */
+		private void getOBDData(HashMap<String, String> currentDataForQueue) {
+			//For all the pollable and enabled PIDS
+			for (String modeHex : pollableEnabledPIDS.keySet()) {
+				for (Iterator<String> pidIrt = pollableEnabledPIDS.get(modeHex).iterator(); pidIrt.hasNext(); ) {
+					String currentPID = pidIrt.next();
+					try {
+
+						//Make the request for the current pollable and enabled mode and PID
+						OBDResponse response = elmFramework.sendOBDRequest(elmFramework.getConfiguredPID(modeHex, currentPID));
+
+						//If the response isn't null
+						if (response != null) {
+							try {
+
+								//If the return value is a double
+								if (response.getProcessedResponse() instanceof Double) {
+
+									//Get the processed double
+									Double responseDouble = (Double)response.getProcessedResponse();
+
+									//Put the processed response into the current data for the queue (we do not want to convert to english units, they are always metric
+									currentDataForQueue.put((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(
+											modeHex, currentPID).getDecimalFormat().format(responseDouble));
+
+									//If we need to convert to English units
+									if(appSettings.isEnglishUnits()) {
+										responseDouble = UnitConversion.convertToEnglish(elmFramework.getConfiguredPID(modeHex, currentPID)
+												.getPidUnit(), responseDouble);
+									}
+
+									//Add the user configured unit value (Metric or English) to the current data hash map
+									putCurrentData((modeHex+currentPID).toString(), elmFramework.getConfiguredPID(modeHex, currentPID)
+											.getDecimalFormat().format(responseDouble));
+								}
+
+								//If the return value is a string
+								else if (response.getProcessedResponse() instanceof String) {
+
+									//Put the string in the current data for the queue 
+									putCurrentData((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
+
+									//Put the string in the current data hash map
+									currentDataForQueue.put((modeHex+currentPID).toString(), (String)response.getProcessedResponse());
+								}
+
+								//If the return value is a List
+								else if (response.getProcessedResponse() instanceof List) {
+									@SuppressWarnings("unchecked")
+									//Not nice but we ALWAYS return a list of strings... 
+									//So we can make some assumptions here and ignore the warnings
+									List<String> resultsList = (List<String>) response.getProcessedResponse();
+
+									//Store the list
+									putCurrentData((modeHex+currentPID).toString(), resultsList.toString());
+									currentDataForQueue.put((modeHex+currentPID).toString(), resultsList.toString());
+								}
+
+							} catch (Exception e) {
+								if(context.getResources().getBoolean(R.bool.debug)) {
+									Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+											"Error converting the result: " + e.getMessage());
+								}
+							}
+						}
+
+						//If we are exceeding the maximum tries on a request, reestablish collection
+					} catch (BluetoothServiceRequestMaxRetriesException bsrmre) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+									"Bluetooth Service Request Max Retries Exception: " + bsrmre.getMessage() 
+									+ ".  Stopping the collector.");
+						}
+
+						//Set the state to failed
+						failedPolling();
+					} 
+
+					//If the ELM is unable to connect with the ECU, reestablish collection
+					catch (ELMUnableToConnectException euce) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+									"ELM Unable to connect exception: " + euce.getMessage() 
+									+ ".  Stopping the collector.");
+						}
+
+						//Set the state to failed
+						failedPolling();
+
+					} 
+
+					//If the ELM is not getting any data from the ECU, reestablish collection
+					catch (ELMDeviceNoDataException edne) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+									"ELM no data exception: " + edne.getMessage() 
+									+ ".  Stopping the collector.");
+						}
+
+						//Set the state to failed
+						failedPolling();
+
+					}
+
+					//Some general ELM exception that we don't particularly care about
+					catch (ELMException elme) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+									"General ELM Exception: " + elme.getMessage());
+						}
+					}
+
+					//Who the fuck knows what caused this...
+					catch (Exception e) {
+						if(context.getResources().getBoolean(R.bool.debug)) {
+							Log.e(context.getResources().getString(R.string.debug_tag_datacollector),
+									"There was a general exception", e);
+						}
+					}
+
+
+				}
+			}
+		}
+
+		/**
+		 * Check for settings updates.
+		 */
+		private void checkForSettingsUpdates() {
+
+			if(isAppSettingsUpdate()) {
+				if(context.getResources().getBoolean(R.bool.debug)) {
+					Log.d(context.getResources().getString(R.string.debug_tag_datacollector),
+					"Collected PIDs changed, updating the local data collector list.");
+				}
+
+				//Update the list
+				this.pollableEnabledPIDS = elmFramework.getObdFramework().getCollectedPIDList();
+
+				//Set the update flag to false
+				setAppSettingsUpdate(false);
+			}
+		}
 	};
 }

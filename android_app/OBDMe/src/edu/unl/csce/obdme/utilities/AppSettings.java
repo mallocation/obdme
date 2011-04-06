@@ -44,6 +44,7 @@ public class AppSettings {
 	/** The english units. */
 	private boolean englishUnits;
 	
+	/** The account vehicle alias. */
 	private String accountVehicleAlias;
 	
 	/** The context. */
@@ -51,6 +52,9 @@ public class AppSettings {
 	
 	/** The shared prefs. */
 	private SharedPreferences sharedPrefs;
+
+	/** The accel enabled. */
+	private boolean accelEnabled;
 	
 	/**
 	 * Instantiates a new app settings.
@@ -91,6 +95,7 @@ public class AppSettings {
 		dataUpload = sharedPrefs.getInt(context.getResources().getString(R.string.prefs_dataupload), OBDMe.DATA_USAGE_WIFI_AND_NETWORK);
 		collectionFrequency = sharedPrefs.getInt(context.getResources().getString(R.string.prefs_frequency), 1000);
 		gpsEnabled = sharedPrefs.getBoolean(context.getResources().getString(R.string.prefs_gps), false);
+		accelEnabled = sharedPrefs.getBoolean(context.getResources().getString(R.string.prefs_accel), false);
 		englishUnits = sharedPrefs.getBoolean(context.getResources().getString(R.string.prefs_englishunits), true);
 		
 	}
@@ -117,6 +122,7 @@ public class AppSettings {
 		editor.putInt(context.getResources().getString(R.string.prefs_frequency), collectionFrequency);
 		editor.putBoolean(context.getResources().getString(R.string.prefs_firstrun), firstRun);
 		editor.putBoolean(context.getResources().getString(R.string.prefs_gps), gpsEnabled);
+		editor.putBoolean(context.getResources().getString(R.string.prefs_accel), accelEnabled);
 		editor.putBoolean(context.getResources().getString(R.string.prefs_englishunits), englishUnits);
 
 		editor.commit();
@@ -320,12 +326,40 @@ public class AppSettings {
 		return englishUnits;
 	}
 
+	/**
+	 * Sets the account vehicle alias.
+	 *
+	 * @param accountVehicleAlias the new account vehicle alias
+	 */
 	public void setAccountVehicleAlias(String accountVehicleAlias) {
 		this.accountVehicleAlias = accountVehicleAlias;
 	}
 
+	/**
+	 * Gets the account vehicle alias.
+	 *
+	 * @return the account vehicle alias
+	 */
 	public String getAccountVehicleAlias() {
 		return accountVehicleAlias;
+	}
+
+	/**
+	 * Checks if is accel enabled.
+	 *
+	 * @return true, if is accel enabled
+	 */
+	public boolean isAccelEnabled() {
+		return accelEnabled;
+	}
+
+	/**
+	 * Sets the accel enabled.
+	 *
+	 * @param accelEnabled the new accel enabled
+	 */
+	public void setAccelEnabled(boolean accelEnabled) {
+		this.accelEnabled = accelEnabled;
 	}
 	
 

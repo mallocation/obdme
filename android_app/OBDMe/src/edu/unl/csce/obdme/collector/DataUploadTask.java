@@ -11,6 +11,8 @@ import edu.unl.csce.obdme.OBDMe;
 import edu.unl.csce.obdme.OBDMeApplication;
 import edu.unl.csce.obdme.R;
 import edu.unl.csce.obdme.api.ObdMeService;
+import edu.unl.csce.obdme.api.entities.graph.inertial.VehicleAcceleration;
+import edu.unl.csce.obdme.api.entities.graph.spatial.VehicleLocation;
 import edu.unl.csce.obdme.api.entities.graph.statistics.StatDataPoint;
 import edu.unl.csce.obdme.api.entities.graph.statistics.StatDataset;
 import edu.unl.csce.obdme.api.entities.graph.statistics.VehicleStatPush;
@@ -153,27 +155,90 @@ public class DataUploadTask implements Runnable {
 							
 							//If the current key is the GPS Accuracy (Location Services enabled)
 							else if (columnName.equals("gps_accuracy")) {
-								dataset.accuracy = queryVehicleDataToUpload.getFloat(i);
+								if(dataset.location == null) {
+									dataset.location = new VehicleLocation();
+								}
+								dataset.location.accuracy = queryVehicleDataToUpload.getString(i);
 							}
 							
 							//If the current key is the GPS Bearing (Location Services enabled)
 							else if (columnName.equals("gps_bearing")) {
-								dataset.bearing = queryVehicleDataToUpload.getFloat(i);
+								if(dataset.location == null) {
+									dataset.location = new VehicleLocation();
+								}
+								dataset.location.bearing = queryVehicleDataToUpload.getString(i);
 							}
 							
 							//If the current key is the GPS Altitude (Location Services enabled)
 							else if (columnName.equals("gps_altitude")) {
-								dataset.altitude = queryVehicleDataToUpload.getDouble(i);
+								if(dataset.location == null) {
+									dataset.location = new VehicleLocation();
+								}
+								dataset.location.altitude = queryVehicleDataToUpload.getString(i);
 							}
 							
 							//If the current key is the GPS Latitude (Location Services enabled)
 							else if (columnName.equals("gps_latitude")) {
-								dataset.latitude = queryVehicleDataToUpload.getDouble(i);
+								if(dataset.location == null) {
+									dataset.location = new VehicleLocation();
+								}
+								dataset.location.latitude = queryVehicleDataToUpload.getString(i);
 							}
 							
 							//If the current key is the GPS Longitude (Location Services enabled)
 							else if (columnName.equals("gps_longitude")) {
-								dataset.longitude = queryVehicleDataToUpload.getDouble(i);
+								if(dataset.location == null) {
+									dataset.location = new VehicleLocation();
+								}
+								dataset.location.longitude = queryVehicleDataToUpload.getString(i);
+							}
+							
+							//If the current key is the acceleration in the x direction (Acceleration Services enabled)
+							else if (columnName.equals("accel_x")) {
+								if(dataset.acceleration == null) {
+									dataset.acceleration = new VehicleAcceleration();
+								}
+								dataset.acceleration.accel_x = queryVehicleDataToUpload.getString(i);
+							}
+							
+							//If the current key is the acceleration in the y direction (Acceleration Services enabled)
+							else if (columnName.equals("accel_y")) {
+								if(dataset.acceleration == null) {
+									dataset.acceleration = new VehicleAcceleration();
+								}
+								dataset.acceleration.accel_y = queryVehicleDataToUpload.getString(i);
+							}
+							
+							//If the current key is the acceleration in the z direction (Acceleration Services enabled)
+							else if (columnName.equals("accel_z")) {
+								if(dataset.acceleration == null) {
+									dataset.acceleration = new VehicleAcceleration();
+								}
+								dataset.acceleration.accel_z = queryVehicleDataToUpload.getString(i);
+							}
+							
+							//If the current key is the linear acceleration in the x direction (Acceleration Services enabled)
+							else if (columnName.equals("linear_accel_x")) {
+								if(dataset.acceleration == null) {
+									dataset.acceleration = new VehicleAcceleration();
+								}
+								dataset.acceleration.linear_accel_x = queryVehicleDataToUpload.getString(i);
+							}
+							
+							//If the current key is the linear acceleration in the y direction (Acceleration Services enabled)
+							else if (columnName.equals("linear_accel_y")) {
+								if(dataset.acceleration == null) {
+									dataset.acceleration = new VehicleAcceleration();
+								}
+								dataset.acceleration.linear_accel_y = queryVehicleDataToUpload.getString(i);
+							}
+							
+							//If the current key is the linear acceleration in the z direction (Acceleration Services enabled)
+							else if (columnName.equals("linear_accel_z")) {
+								if(dataset.acceleration == null) {
+									dataset.acceleration = new VehicleAcceleration();
+								}
+								dataset.acceleration.linear_accel_z = queryVehicleDataToUpload.getString(i);
 							}
 						}
 					}

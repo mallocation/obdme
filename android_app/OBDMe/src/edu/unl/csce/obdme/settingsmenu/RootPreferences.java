@@ -224,8 +224,15 @@ public class RootPreferences extends PreferenceActivity {
         gpsPref.setTitle(getResources().getString(R.string.menu_prefs_gps_title));
         gpsPref.setKey(getResources().getString(R.string.prefs_gps));
         gpsPref.setSummary(getResources().getString(R.string.menu_prefs_gps_summary));
-        
         applicationCategory.addPreference(gpsPref);
+        
+        //Acceleration option
+        CheckBoxPreference accelPref = new CheckBoxPreference(this);
+        accelPref.setPersistent(true);
+        accelPref.setTitle(getResources().getString(R.string.menu_prefs_accel_title));
+        accelPref.setKey(getResources().getString(R.string.prefs_accel));
+        accelPref.setSummary(getResources().getString(R.string.menu_prefs_accel_summary));
+        applicationCategory.addPreference(accelPref);
         
         return applicationCategory;
     	

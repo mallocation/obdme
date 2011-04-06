@@ -18,5 +18,6 @@
 	<string name="prefs.dataupload">OBDMeDataUpload</string>
 	<string name="prefs.englishunits">OBDMeEnglishUnits</string>
 	<string name="prefs.gps">OBDMeCaptureGPS</string>
+	<string name="prefs.accel">OBDMeCaptureAccel</string>
 	<string name="prefs.frequency">OBDMeCollectionFrequency</string>
 </resources>

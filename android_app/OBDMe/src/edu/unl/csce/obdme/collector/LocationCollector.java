@@ -1,13 +1,12 @@
 package edu.unl.csce.obdme.collector;
 
-import edu.unl.csce.obdme.R;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
+import edu.unl.csce.obdme.R;
 
 /**
  * The Class LocationCollector.
@@ -26,6 +25,7 @@ public class LocationCollector extends Thread{
 	/** The provider status. */
 	private boolean providerStatus;
 	
+	/** The location listener. */
 	private LocationListener locationListener;
 
 	/**
@@ -103,6 +103,9 @@ public class LocationCollector extends Thread{
 		return providerStatus;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run() {
 		
 		// Define a listener that responds to location updates

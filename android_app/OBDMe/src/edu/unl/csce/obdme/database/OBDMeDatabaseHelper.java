@@ -57,6 +57,21 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
     	//Setup the vin column
     	sb.append(" , vin" + " TEXT");
     	
+    	//Setup the location columns
+    	sb.append(" , gps_accuracy" + " TEXT");
+    	sb.append(" , gps_bearing" + " TEXT");
+    	sb.append(" , gps_altitude" + " TEXT");
+    	sb.append(" , gps_latitude" + " TEXT");
+    	sb.append(" , gps_longitude" + " TEXT");
+    	
+    	//Setup the acceleration columns
+    	sb.append(" , accel_x" + " TEXT");
+    	sb.append(" , accel_y" + " TEXT");
+    	sb.append(" , accel_z" + " TEXT");
+    	sb.append(" , linear_accel_x" + " TEXT");
+    	sb.append(" , linear_accel_y" + " TEXT");
+    	sb.append(" , linear_accel_z" + " TEXT");
+    	
     	//For all the modes that exist in the full protocol
 		for ( String currentMode : protocol.keySet() ) {
 			//For all the pids that exist in the full protocol
@@ -84,13 +99,24 @@ public class OBDMeDatabaseHelper extends SQLiteOpenHelper {
 		}
 		
 		//Update for location services
-		if (oldVersion <= 1) {
+		if (oldVersion == 1 && newVersion == 2) {
 			String alterStatement = "ALTER TABLE " + TABLE_NAME + " ADD COLUMN ";
 			db.execSQL(alterStatement + "gps_accuracy TEXT;");
 			db.execSQL(alterStatement + "gps_bearing TEXT;");
 			db.execSQL(alterStatement + "gps_altitude TEXT;");
 			db.execSQL(alterStatement + "gps_latitude TEXT;");
 			db.execSQL(alterStatement + "gps_longitude TEXT;");
+		}
+		
+		//Update for acceleration services
+		else if (oldVersion == 2 && newVersion == 3) {
+			String alterStatement = "ALTER TABLE " + TABLE_NAME + " ADD COLUMN ";
+			db.execSQL(alterStatement + "accel_x TEXT;");
+			db.execSQL(alterStatement + "accel_y TEXT;");
+			db.execSQL(alterStatement + "accel_z TEXT;");
+			db.execSQL(alterStatement + "linear_accel_x TEXT;");
+			db.execSQL(alterStatement + "linear_accel_y TEXT;");
+			db.execSQL(alterStatement + "linear_accel_z TEXT;");
 		}
 		
 	}
