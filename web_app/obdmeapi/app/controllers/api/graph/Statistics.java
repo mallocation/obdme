@@ -59,9 +59,7 @@ public class Statistics extends Controller {
 		} catch (IOException e) {
 			throw new BadRequest();
 		}
-		
-		Logger.info(sb.toString());
-		
+				
 		// Parse the vehicle stat data
 		VehicleGraphPush graphPush = new Gson().fromJson(sb.toString(), VehicleGraphPush.class);
 		
