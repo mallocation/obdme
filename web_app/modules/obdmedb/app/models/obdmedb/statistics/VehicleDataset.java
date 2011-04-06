@@ -15,6 +15,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import models.obdmedb.User;
+import models.obdmedb.inertial.VehicleAcceleration;
 import models.obdmedb.spatial.VehicleLocation;
 import models.obdmedb.vehicles.Vehicle;
 import play.db.jpa.Model;
@@ -41,15 +42,20 @@ public class VehicleDataset extends Model {
 	@JoinColumn(name="locationid", referencedColumnName="id")
 	public VehicleLocation location;
 	
+	@OneToOne(optional=true)
+	@JoinColumn(name="accelerationid", referencedColumnName="id")
+	public VehicleAcceleration acceleration;
+	
 	@OneToMany
 	@JoinColumn(name="datasetid", referencedColumnName="id")
 	public List<VehicleDataPoint> datapoints;
 	
-	public VehicleDataset(Vehicle vehicle, User user, Date timestamp, VehicleLocation location) {
+	public VehicleDataset(Vehicle vehicle, User user, Date timestamp, VehicleLocation location, VehicleAcceleration acceleration) {
 		this.vehicle = vehicle;
 		this.user = user;
 		this.timestamp = timestamp;
 		this.location = location;
+		this.acceleration = acceleration;
 		this.datapoints = new ArrayList<VehicleDataPoint>();
 	}
 	
