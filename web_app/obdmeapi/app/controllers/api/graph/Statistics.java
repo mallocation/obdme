@@ -18,9 +18,10 @@ import api.entities.graph.statistics.StatDataPoint;
 import api.entities.graph.statistics.StatDataset;
 import api.entities.graph.statistics.VehicleGraphPush;
 import models.obdmedb.User;
+import models.obdmedb.inertial.VehicleAcceleration;
+import models.obdmedb.spatial.VehicleLocation;
 import models.obdmedb.statistics.VehicleDataPoint;
 import models.obdmedb.statistics.VehicleDataset;
-import models.obdmedb.statistics.VehicleLocation;
 import models.obdmedb.vehicles.Vehicle;
 import play.db.jpa.JPA;
 import play.i18n.Messages;
@@ -78,7 +79,7 @@ public class Statistics extends Controller {
 			//Make the location null initially
 			VehicleLocation vl = null;
 			
-			//If there is location information define (at least the latitude and logitude)
+			//If there is location information defined
 			if (dataset.getLocation() != null) {
 				
 				//Make a new vehicle location
@@ -93,7 +94,27 @@ public class Statistics extends Controller {
 				statelessSession.insert(vl);
 			}
 			
-			VehicleDataset ds = new VehicleDataset(vehicle, loggedUser, dataset.getTimestamp(), vl);
+			//Make the acceleration null initially
+			VehicleAcceleration va = null;
+			
+			//If there is acceleration information defined
+			if (dataset.getAcceleration() != null) {
+				
+				//Make a new vehicle location
+				va = new VehicleAcceleration(
+						dataset.getAcceleration().getAccel_x(),
+						dataset.getAcceleration().getAccel_y(),
+						dataset.getAcceleration().getAccel_z(),
+						dataset.getAcceleration().getLinear_accel_x(),
+						dataset.getAcceleration().getLinear_accel_y(),
+						dataset.getAcceleration().getLinear_accel_z()
+					); 
+				
+				//Insert the location
+				statelessSession.insert(va);
+			}
+			
+			VehicleDataset ds = new VehicleDataset(vehicle, loggedUser, dataset.getTimestamp(), vl, va);
 			statelessSession.insert(ds);
 			for(StatDataPoint datapoint : dataset.getDatapoints()) {
 				VehicleDataPoint dp = new VehicleDataPoint(ds, datapoint.getMode(), datapoint.getPid(), datapoint.getValue());

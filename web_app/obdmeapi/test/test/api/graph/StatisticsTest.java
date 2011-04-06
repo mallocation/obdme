@@ -45,7 +45,7 @@ public class StatisticsTest extends FunctionalTest {
 				StatDataPoint dp = new StatDataPoint();
 				dp.setMode("01");
 				dp.setPid("01");
-				dp.setValue(14.4);
+				dp.setValue("14.4");
 				datapoints.add(dp);
 			}
 			ds.setDatapoints(datapoints);

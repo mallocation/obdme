@@ -10,8 +10,6 @@
 //@Table(name="location")
 //public class Location extends GenericModel {
 //	
-//	/* Persisted Fields */
-//	
 //	@Column(name="latitude", nullable=false)
 //	public double latitude;
 //	
@@ -24,8 +22,5 @@
 //	@Column(name="bearing", nullable=true)
 //	public float bearing;
 //	
-//	/* End Persisted Fields */
-//	
-//	/* Default Constructor. */
 //	public Location(){}
 //} 

@@ -14,7 +14,7 @@ public class StatDataPoint implements Serializable {
 	private String pid;
 	
 	@SerializedName("value")
-	private double value;
+	private String value;
 	
 	public String getMode() {
 		return mode;
@@ -33,10 +33,10 @@ public class StatDataPoint implements Serializable {
 	}
 
 	public double getValue() {
-		return value;
+		return Double.parseDouble(value);
 	}
 
-	public void setValue(double value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 
