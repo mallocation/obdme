@@ -13,3 +13,10 @@
 obdme.Vehicles.Vehicle(v1):
 id: 1
 VIN: ABCD123ABCD
+
+models.obdmedb.User(a):
+email: a@a.com
+password: secret
+sendemail: false
+sendsms: false
+regdate: 1/1/1901
