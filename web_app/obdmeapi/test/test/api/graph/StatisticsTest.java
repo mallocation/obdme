@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import models.obdmedb.vehicles.Vehicle;
+
 import org.junit.Test;
 
-import com.google.gson.Gson;
-
-import api.entities.graph.statistics.StatDataPoint;
-import api.entities.graph.statistics.StatDataset;
-import api.entities.graph.statistics.VehicleGraphPush;
-import models.obdmedb.statistics.VehicleDataset;
-import models.obdmedb.vehicles.Vehicle;
 import play.mvc.Before;
 import play.mvc.Http.Response;
 import play.test.Fixtures;
 import play.test.FunctionalTest;
+import api.entities.graph.statistics.StatDataPoint;
+import api.entities.graph.statistics.StatDataset;
+import api.entities.graph.statistics.VehicleGraphPush;
+
+import com.google.gson.Gson;
 
 public class StatisticsTest extends FunctionalTest {
 	
@@ -45,7 +45,7 @@ public class StatisticsTest extends FunctionalTest {
 				StatDataPoint dp = new StatDataPoint();
 				dp.setMode("01");
 				dp.setPid("01");
-				dp.setValue("14.4");
+				dp.setValue("13.42");
 				datapoints.add(dp);
 			}
 			ds.setDatapoints(datapoints);
