@@ -1,6 +1,7 @@
 package edu.unl.csce.obdme.api;
 
 import edu.unl.csce.obdme.api.client.base.StatisticsService;
+import edu.unl.csce.obdme.api.client.base.TripService;
 import edu.unl.csce.obdme.api.client.base.UserService;
 import edu.unl.csce.obdme.api.client.base.VehicleService;
 
@@ -21,6 +22,8 @@ public class ObdMeService {
 	
 	private final StatisticsService statisticsService;
 	
+	private final TripService tripService;
+	
 	/**
 	 * Construct a new OBDMe Service reference
 	 * 
@@ -30,6 +33,7 @@ public class ObdMeService {
 		this.usersService = new UserService(apiKey);
 		this.vehicleService = new VehicleService(apiKey);
 		this.statisticsService = new StatisticsService();
+		this.tripService = new TripService();
 	}
 	
 	/**
@@ -52,6 +56,10 @@ public class ObdMeService {
 	
 	public StatisticsService getStatisticsService() {
 		return this.statisticsService;
+	}
+	
+	public TripService getTripService() {
+		return this.tripService;
 	}
 	
 //	/**
