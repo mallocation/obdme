@@ -32,7 +32,7 @@ public class VehicleDatasetTest extends UnitTest {
 	public void testLogDataForVehicle() {
 		//Create the vehicle
 		Vehicle v = Vehicle.addVehicleIfNotExist(VIN);
-		VehicleDataset ds = new VehicleDataset(v, null, new Date());
+		VehicleDataset ds = new VehicleDataset(v, null, new Date(), null, null);
 		assertTrue(ds.validateAndSave());
 		
 		//create a stateless session - this will ensure a speedy batch insert.
