@@ -14,8 +14,8 @@ GET     /                                       Application.index
 #/----------------------BEGIN OBDME API------------------------------------/
 
 
-POST	/api/graph/trips/email/{email} 			controllers.api.graph.Trips.createTripForUserByVIN
-PUT		/api/graph/trips/email/{email}			controllers.api.graph.Trips.updateTripForUser
+POST	/api/graph/trips/email/{email} 			controllers.api.graph.Trips.createTripForUser
+PUT		/api/graph/trips/email/{email}/id/{id}	controllers.api.graph.Trips.updateTripForUser
 
 #Graph
 POST 	/api/graph/statistics/vehicle/{VIN}		controllers.api.graph.Statistics.postGraphDataForVehicle
