@@ -44,9 +44,10 @@ public class User extends Model {
 	@Column(name="sendsms", nullable=false, columnDefinition="boolean default false")
 	public Boolean sendsms;
 	
-	@Column(name="avatar", columnDefinition="BLOB")
+	@Column(name="avatar")//, columnDefinition="BLOB")
 	public Blob avatar;
-	
+
+
 	public static User createUserFromClearTextCredentials(String email, String clearTextPassword) {
 		String encryptedPassword = EncryptionUtils.encryptPassword(clearTextPassword);
 		return createUserFromEncryptedCredentials(email, encryptedPassword);
@@ -57,6 +58,8 @@ public class User extends Model {
 		user.email = email;
 		user.passwordhash = encryptedPassword;
 		user.regdate = new Date();
+		user.sendemail = false;
+		user.sendsms = false;
 		return user.validateAndSave() ? user : null;		
 	}
 	
