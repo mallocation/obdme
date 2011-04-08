@@ -46,7 +46,7 @@ public class TripsServiceTest extends AndroidTestCase {
 				
 			}
 		};
-		service.getTripService().createTrip(email, tripAlias, handler);
+		service.getTripService().createTripAsync(email, tripAlias, handler);
 	}
 	
 }
