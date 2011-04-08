@@ -25,9 +25,11 @@ public class StatisticsServiceTest extends AndroidTestCase {
 		String email = "farmboy30@gmail.com";
 		VehicleStatPush statPush = new VehicleStatPush(VIN);
 		for (int i=0; i<20; i++) {
-			StatDataset ds = new StatDataset(email, new Date());
+			StatDataset ds = new StatDataset();
+			ds.email = email;
+			ds.timestamp = new Date();
 			for (int j=0;j<20;j++) {
-				StatDataPoint dp = new StatDataPoint("01", "0C", 14.4);
+				StatDataPoint dp = new StatDataPoint("01", "0C", Double.toString(14.4));
 				ds.datapoints.add(dp);
 			}
 			statPush.statSets.add(ds);
@@ -50,9 +52,11 @@ public class StatisticsServiceTest extends AndroidTestCase {
 		//create the data push
 		VehicleStatPush statPush = new VehicleStatPush(VIN);
 		for (int i=0; i<20; i++) {
-			StatDataset ds = new StatDataset(email, new Date());
+			StatDataset ds = new StatDataset();
+			ds.email = email;
+			ds.timestamp = new Date();
 			for (int j=0;j<20;j++) {
-				StatDataPoint dp = new StatDataPoint("01", "0C", 14.4);
+				StatDataPoint dp = new StatDataPoint("01", "0C", Double.toString(14.4));
 				ds.datapoints.add(dp);
 			}
 			statPush.statSets.add(ds);
