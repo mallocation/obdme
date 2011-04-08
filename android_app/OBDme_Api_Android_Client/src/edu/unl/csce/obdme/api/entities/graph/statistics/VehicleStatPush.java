@@ -68,6 +68,12 @@ public class VehicleStatPush implements Serializable {
 				jsonGenerator.writeStartObject();
 				jsonGenerator.writeStringField("email", ds.email);
 				jsonGenerator.writeStringField("timestamp", DateFormat.getDateTimeInstance().format(ds.timestamp));
+				
+				if (ds.tripId == null || ds.tripId < 1L) {
+					jsonGenerator.writeNullField("tripid");
+				} else {
+					jsonGenerator.writeNumberField("tripid", ds.tripId);
+				}
 
 
 				//VehicleLocation Object

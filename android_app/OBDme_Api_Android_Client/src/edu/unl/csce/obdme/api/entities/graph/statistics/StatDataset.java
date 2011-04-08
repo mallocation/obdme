@@ -34,8 +34,17 @@ public class StatDataset {
 	@JsonProperty("acceleration")
 	public VehicleAcceleration acceleration;
 	
+	@JsonProperty("tripid")
+	public Long tripId;
+	
 	public StatDataset() {
 		this.datapoints = new ArrayList<StatDataPoint>();
+		this.tripId = -1L;
+	}
+	
+	public StatDataset(Long tripId) {
+		this.datapoints = new ArrayList<StatDataPoint>();
+		this.tripId = tripId;
 	}
 	
 	private static class CustomDateSerializer extends JsonSerializer<Date> {

@@ -12,8 +12,8 @@ import edu.unl.csce.obdme.client.http.request.AsyncHttpRequest;
 import edu.unl.csce.obdme.client.http.request.HttpRequest;
 
 public class ServiceWrapper {
-	private static final String OBDME_API_BASE_PATH = "http://obdme.com/api";
-	//private static final String OBDME_API_BASE_PATH = "http://192.168.1.110:10050/api";
+	//private static final String OBDME_API_BASE_PATH = "http://obdme.com/api";
+	private static final String OBDME_API_BASE_PATH = "http://192.168.1.110:10050/api";
 	
 	/* Synchronous requests */	
 	protected String performGet(String requestPath, List<NameValuePair> parameters) throws ObdmeException, CommException {
