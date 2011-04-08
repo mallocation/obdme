@@ -21,6 +21,9 @@ public class StatDataset implements Serializable {
 	@SerializedName("email")
 	private String email;
 	
+	@SerializedName("tripid")
+	private Long tripId;
+	
 	@SerializedName("location")
 	private StatLocation location;
 	
@@ -34,6 +37,14 @@ public class StatDataset implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public Long getTripId() {
+		return tripId;
+	}
+
+	public void setTripId(Long tripId) {
+		this.tripId = tripId;
 	}
 
 	public Date getTimestamp() {

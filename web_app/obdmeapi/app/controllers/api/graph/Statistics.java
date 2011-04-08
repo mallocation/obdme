@@ -22,6 +22,7 @@ import models.obdmedb.inertial.VehicleAcceleration;
 import models.obdmedb.spatial.VehicleLocation;
 import models.obdmedb.statistics.VehicleDataPoint;
 import models.obdmedb.statistics.VehicleDataset;
+import models.obdmedb.trips.Trip;
 import models.obdmedb.vehicles.Vehicle;
 import play.Logger;
 import play.db.jpa.JPA;
@@ -115,7 +116,14 @@ public class Statistics extends Controller {
 				statelessSession.insert(va);
 			}
 			
-			VehicleDataset ds = new VehicleDataset(vehicle, loggedUser, dataset.getTimestamp(), vl, va);
+			Trip trip = null;
+			
+			//Get the trip.
+			if (dataset.getTripId() != null && (dataset.getTripId() > 0L && loggedUser != null)) {
+				trip = Trip.getTripForUser(dataset.getTripId(), loggedUser);				
+			}
+
+			VehicleDataset ds = new VehicleDataset(vehicle, loggedUser, dataset.getTimestamp(), vl, va, trip);
 			statelessSession.insert(ds);
 			for(StatDataPoint datapoint : dataset.getDatapoints()) {
 				VehicleDataPoint dp = new VehicleDataPoint(ds, datapoint.getMode(), datapoint.getPid(), datapoint.getValue());
