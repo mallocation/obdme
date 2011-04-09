@@ -4,6 +4,7 @@
 
 # AJAX - everything initiated client side from web application.
 GET		/ajax/graphing/{action}					controllers.ajax.Graphing.{action}
+GET		/ajax/kml/trip/{tripid}.kml				controllers.ajax.Kml.getKmlForTrip
 
 # Home page
 GET		/										Application.index
@@ -25,9 +26,11 @@ POST	/profile/firstname						Profile.firstNameAJAX
 POST	/profile/lastname						Profile.lastNameAJAX
 POST	/profile/password						Profile.passwordChangeAJAX
 
+
 GET		/vehicle/avatar/{id}/{size}				Vehicles.getAvatar
 POST	/vehicle/avatar							Vehicles.uploadAvatar
 POST	/vehicle/update							Vehicles.updateVehicleAJAX
+
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
