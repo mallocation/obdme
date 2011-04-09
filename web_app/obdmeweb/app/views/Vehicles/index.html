@@ -10,48 +10,240 @@
 	<div class="logoHeaderImage">
 		<div class="vehicleSectionContainerTop">
 			#{list items:vehicles, as:'currentVehicle'}
-				<h1 class="vehicleHeader">${currentVehicle.getAlias()}</h1>
-				<table class="vehicleTable">
-					<tr>
-						<td width=270px><img id="profileAvatar" src="@{Vehicles.getAvatar(currentVehicle.getVehicle().getId())}"></td>
-						<td>
-							<table class="vehicleTable">
-								<tr>
-									<td><p class="vehicleText">VIN</p></td><td><p class="vehicleContentText">${currentVehicle.getVehicle().getVIN()}</p></td>
-								</tr>
-								<tr>
-									<td><p class="vehicleText">Alias</p></td>
-									<td>
-										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
-										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
-									</td>
-								</tr>
-								<tr>
-									<td><p class="vehicleText">Make</p></td>
-									<td>
-										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
-										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
-									</td>
-								</tr>
-								<tr>
-									<td><p class="vehicleText">Model</p></td>
-									<td>
-										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
-										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
-									</td>
-								</tr>
-								<tr>
-									<td><p class="vehicleText">Year</p></td>
-									<td>
-										<input type="text" name="lastname" id="lastname" class="vehicleInputField" value="${userLastName}"
-										spellcheck="false" style="width:300px;" placeholder="Doe" autocomplete="off"/>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			#{/list}
+			<div class="vehicleHeader" id="vehicleHeader${currentVehicle.getVehicle().getVIN()}">
+				<span class="vehicleHeaderAlias" id="vehicleHeaderAlias${currentVehicle.getVehicle().getVIN()}">${currentVehicle.getAlias()}</span>
+				<span class="vehicleHeaderOpenClose" style="display:none;" id="clickClose${currentVehicle.getVehicle().getVIN()}">&{'vehicle.click.close'}</span>
+				<span class="vehicleHeaderOpenClose" id="clickOpen${currentVehicle.getVehicle().getVIN()}">&{'vehicle.click.open'}</span>
+			</div>
+			<div class="vehicleContainer" id="vehicleContainer${currentVehicle.getVehicle().getVIN()}">
+				<div class="labelColumn">
+					<table class="vehicleTable">
+						<tr>
+							<td width=75px><div class="vehicleText">&{'vehicle.vin'}</div></td>
+						</tr>
+					</table>
+					<table class="vehicleTable">
+						<tr>
+							<td width=75px><div class="vehicleText">&{'vehicle.alias'}</div></td>
+						</tr>
+						<tr>
+							<td><div class="vehicleText">&{'vehicle.make'}</div></td>
+						</tr>
+						<tr>
+							<td><div class="vehicleText">&{'vehicle.model'}</div></td>
+						</tr>
+						<tr>
+							<td><div class="vehicleText">&{'vehicle.year'}</div></td>
+						</tr>
+					</table>
+				</div>
+				<div class="contentColumn">
+					<table class="vehicleTable">
+						<tr>
+							<td width=250px><div class="vehicleContentText">${currentVehicle.getVehicle().getVIN()}</div></td>
+						</tr>
+					</table>
+					<div id="vehicleTableContainer${currentVehicle.getVehicle().getVIN()}">
+						<table class="vehicleTable">
+							<tr>
+								<td width=250px>
+									<div class="vehicleContentText" id="vehicleContentTextAlias${currentVehicle.getVehicle().getVIN()}">
+										${currentVehicle.getAlias()}
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="vehicleContentText" id="vehicleContentTextMake${currentVehicle.getVehicle().getVIN()}">
+										#{if currentVehicle.getVehicle().getMaker() == null}
+										&{'global.not.set'}
+										#{/if}
+										#{else}
+										${currentVehicle.getVehicle().getMaker()}
+										#{/else}
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="vehicleContentText" id="vehicleContentTextModel${currentVehicle.getVehicle().getVIN()}">
+										#{if currentVehicle.getVehicle().getModel() == null}
+										&{'global.not.set'}
+										#{/if}
+										#{else}
+										${currentVehicle.getVehicle().getModel()}
+										#{/else}
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="vehicleContentText" id="vehicleContentTextYear${currentVehicle.getVehicle().getVIN()}">
+										#{if currentVehicle.getVehicle().getYear() == null}
+										&{'global.not.set'}
+										#{/if}
+										#{else}
+										${currentVehicle.getVehicle().getYear()}
+										#{/else}
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="vehicleTableContainerEdit" id="vehicleTableContainerEdit${currentVehicle.getVehicle().getVIN()}">
+						<table class="vehicleTable">
+							<tr>
+								<td width=250px>
+									<input type="text" name="lastname" id="alias${currentVehicle.getVehicle().getVIN()}" class="vehicleInputField" value="${currentVehicle.getAlias()}"
+									spellcheck="false" style="width:200px;" placeholder="&{'vehicle.alias.placeholder'}" autocomplete="off"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="text" name="lastname" id="make${currentVehicle.getVehicle().getVIN()}" class="vehicleInputField" value="${currentVehicle.getVehicle().getMaker()}"
+									spellcheck="false" style="width:200px;" placeholder="&{'vehicle.make.placeholder'}" autocomplete="off"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="text" name="lastname" id="model${currentVehicle.getVehicle().getVIN()}" class="vehicleInputField" value="${currentVehicle.getVehicle().getModel()}"
+									spellcheck="false" style="width:200px;" placeholder="&{'vehicle.model.placeholder'}" autocomplete="off"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="text" name="lastname" id="year${currentVehicle.getVehicle().getVIN()}" class="vehicleInputField" value="${currentVehicle.getVehicle().getYear()}"
+									spellcheck="false" style="width:200px;" placeholder="&{'vehicle.year.placeholder'}" autocomplete="off"/>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="avatarColumn">
+					<img id="vehicleAvatar${currentVehicle.getVehicle().getVIN()}" src="/vehicle/avatar/${currentVehicle.getVehicle().getId()}/256">
+				</div>
+				<div class="clear"></div>
+				<div class="contentEditColumn">
+					<input type="submit" class="submit" 
+					id="editVehicle${currentVehicle.getVehicle().getVIN()}" value="&{'global.change'}" />
+					<input type="submit" class="submit" style="display:none;" 
+					id="cancelEditVehicle${currentVehicle.getVehicle().getVIN()}" value="&{'global.cancel'}" />
+					<span class="vehicleUpdatedText" id="vehicleUpdatedText${currentVehicle.getVehicle().getVIN()}">&{'global.updated'}</span>
+				</div>
+				<div class="avatarSettingsColumn">
+					<form id="fileUploadForm${currentVehicle.getVehicle().getVIN()}" action="@{Vehicles.uploadAvatar(currentVehicle.getVehicle().getId())}" method="POST" enctype="multipart/form-data">
+						<input type="file" class="submit" style="display: none;" id="avatarFile${currentVehicle.getVehicle().getVIN()}" name="photo" />
+						<input type="button" class="submit" style="display: none;" id="changeAvatarCancel${currentVehicle.getVehicle().getVIN()}" value="&{'profile.account.cancel'}" />
+						<input type="button" class="submit" style="display: none;" id="changeAvatarSubmit${currentVehicle.getVehicle().getVIN()}" value="Upload" />
+					</form>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<script type="text/javascript">
+			var isShown${currentVehicle.getVehicle().getVIN()} = false;
+			var isEditting${currentVehicle.getVehicle().getVIN()} = false;
+			var isAvatarEdit${currentVehicle.getVehicle().getVIN()} = false;
+			$("#vehicleHeader${currentVehicle.getVehicle().getVIN()}").click(function(){
+				if(isShown${currentVehicle.getVehicle().getVIN()}) {
+					$("#vehicleContainer${currentVehicle.getVehicle().getVIN()}").slideUp("slow");
+					$("#clickOpen${currentVehicle.getVehicle().getVIN()}").show();
+					$("#clickClose${currentVehicle.getVehicle().getVIN()}").hide();
+					isShown${currentVehicle.getVehicle().getVIN()} = false;
+				}
+				else {
+					$("#vehicleContainer${currentVehicle.getVehicle().getVIN()}").slideDown("slow");
+					$("#clickOpen${currentVehicle.getVehicle().getVIN()}").hide();
+					$("#clickClose${currentVehicle.getVehicle().getVIN()}").show();
+					isShown${currentVehicle.getVehicle().getVIN()} = true;
+				}			
+			});
+
+			$("#editVehicle${currentVehicle.getVehicle().getVIN()}").click(function(){
+				if(isEditting${currentVehicle.getVehicle().getVIN()}) {
+					$.post("/vehicle/update", {
+						vehicleId: "${currentVehicle.getVehicle().getId()}",
+						alias: $("#alias${currentVehicle.getVehicle().getVIN()}").val(),
+						make: $("#make${currentVehicle.getVehicle().getVIN()}").val(),
+						model: $("#model${currentVehicle.getVehicle().getVIN()}").val(),
+						year: $("#year${currentVehicle.getVehicle().getVIN()}").val()
+					}, function(data) {
+						if (data.status == "ok") {
+							$("#vehicleHeaderAlias${currentVehicle.getVehicle().getVIN()}").text(
+								$("#alias${currentVehicle.getVehicle().getVIN()}").val()
+							);
+							$("#vehicleContentTextAlias${currentVehicle.getVehicle().getVIN()}").text(
+								$("#alias${currentVehicle.getVehicle().getVIN()}").val()
+							);
+							$("#vehicleContentTextMake${currentVehicle.getVehicle().getVIN()}").text(
+								$("#make${currentVehicle.getVehicle().getVIN()}").val()
+							);
+							$("#vehicleContentTextModel${currentVehicle.getVehicle().getVIN()}").text(
+								$("#model${currentVehicle.getVehicle().getVIN()}").val()
+							);
+							$("#vehicleContentTextYear${currentVehicle.getVehicle().getVIN()}").text(
+								$("#year${currentVehicle.getVehicle().getVIN()}").val()
+							);
+
+							$("#vehicleTableContainer${currentVehicle.getVehicle().getVIN()}").slideDown("slow");
+							$("#vehicleTableContainerEdit${currentVehicle.getVehicle().getVIN()}").slideUp("slow");
+							$("#cancelEditVehicle${currentVehicle.getVehicle().getVIN()}").fadeOut("slow", function() {
+								$("#vehicleUpdatedText${currentVehicle.getVehicle().getVIN()}").fadeIn(2000, function() {
+									$("#vehicleUpdatedText${currentVehicle.getVehicle().getVIN()}").fadeOut(2000);
+								});
+							});
+							$("#editVehicle${currentVehicle.getVehicle().getVIN()}").val("&{'global.change'}");
+							isEditting${currentVehicle.getVehicle().getVIN()} = false;
+						}
+						else {
+
+						}
+						}, "json");
+					}
+					else {
+						$("#vehicleTableContainer${currentVehicle.getVehicle().getVIN()}").slideUp("slow");
+						$("#vehicleTableContainerEdit${currentVehicle.getVehicle().getVIN()}").slideDown("slow");
+						$("#cancelEditVehicle${currentVehicle.getVehicle().getVIN()}").fadeIn("slow");
+						$("#editVehicle${currentVehicle.getVehicle().getVIN()}").val("&{'global.update'}");
+						isEditting${currentVehicle.getVehicle().getVIN()} = true;
+					}			
+				});
+
+				$("#cancelEditVehicle${currentVehicle.getVehicle().getVIN()}").click(function(){
+					if(isEditting${currentVehicle.getVehicle().getVIN()}) {
+						$("#vehicleTableContainer${currentVehicle.getVehicle().getVIN()}").slideDown("slow");
+						$("#vehicleTableContainerEdit${currentVehicle.getVehicle().getVIN()}").slideUp("slow");
+						$("#cancelEditVehicle${currentVehicle.getVehicle().getVIN()}").fadeOut("slow");
+						$("#editVehicle${currentVehicle.getVehicle().getVIN()}").val("&{'global.change'}");
+						isEditting${currentVehicle.getVehicle().getVIN()} = false;
+					}
+				});
+
+				$("#vehicleAvatar${currentVehicle.getVehicle().getVIN()}").click(function() {
+					if(isAvatarEdit${currentVehicle.getVehicle().getVIN()}) {
+						$("#avatarFile${currentVehicle.getVehicle().getVIN()}").fadeOut("slow");
+						$("#changeAvatarCancel${currentVehicle.getVehicle().getVIN()}").fadeOut("slow");
+						$("#changeAvatarSubmit${currentVehicle.getVehicle().getVIN()}").fadeOut("slow");
+						isAvatarEdit${currentVehicle.getVehicle().getVIN()} = false;
+					}
+					else {
+						$("#avatarFile${currentVehicle.getVehicle().getVIN()}").fadeIn("slow");
+						$("#changeAvatarCancel${currentVehicle.getVehicle().getVIN()}").fadeIn("slow");
+						$("#changeAvatarSubmit${currentVehicle.getVehicle().getVIN()}").fadeIn("slow");
+						isAvatarEdit${currentVehicle.getVehicle().getVIN()} = true;
+					}
+				});
+				$("#changeAvatarCancel${currentVehicle.getVehicle().getVIN()}").click(function() {
+					$("#avatarFile${currentVehicle.getVehicle().getVIN()}").fadeOut("slow");
+					$("#changeAvatarCancel${currentVehicle.getVehicle().getVIN()}").fadeOut("slow");
+					$("#changeAvatarSubmit${currentVehicle.getVehicle().getVIN()}").fadeOut("slow");
+					isAvatarEdit${currentVehicle.getVehicle().getVIN()} = false;
+				});
+				$("#changeAvatarSubmit${currentVehicle.getVehicle().getVIN()}").click(function() {
+					$('#fileUploadForm${currentVehicle.getVehicle().getVIN()}').submit();
+				});
+
+					</script>
+					#{/list}
+				</div>
+			</div>
 		</div>
-	</div>
-</div>

@@ -1,6 +1,15 @@
 # You can specialize this file for each language.
 # For example, for French create a messages.fr file
 #
+
+
+global.change=Change
+global.cancel=Cancel
+global.update=Update
+global.updated=UPDATED
+global.not.set=Not Set
+
+
 secure.title=Sign in with your OBDme ID
 secure.error=Your Username or Password is Incorrect
 
@@ -38,3 +47,16 @@ profile.about.picture=Profile Picture
 profile.notifications=Notification Settings
 profile.notifications.send.email=Send Email
 profile.notifications.send.sms=Send SMS
+
+vehicle.vin=VIN
+vehicle.alias=Alias
+vehicle.alias.placeholder=Road Brontosaurus
+vehicle.make=Make
+vehicle.make.placeholder=Ford
+vehicle.model=Model
+vehicle.model.placeholder=Expedition
+vehicle.year=Year
+vehicle.year.placeholder=1995
+vehicle.click.close=(Click To Close)
+vehicle.click.open=(Click To Open)
+

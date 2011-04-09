@@ -122,7 +122,7 @@
 				<tr>
 					<td><p class="profileText">&{'profile.about.picture'}</p></td>
 					<td>
-						<img id="profileAvatar" src="@{Profile.getAvatar()}">
+						<img id="profileAvatar" src="@{Profile.getAvatar(128)}">
 						<div class="profileChangeAvatarContainer">
 							<form id="fileUploadForm" action="@{Profile.uploadAvatar()}" method="POST" enctype="multipart/form-data">
 							    <input type="file" class="submit" id="photo" name="photo" />
