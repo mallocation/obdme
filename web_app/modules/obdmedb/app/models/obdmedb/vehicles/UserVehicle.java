@@ -35,6 +35,10 @@ public class UserVehicle extends Model {
 		return UserVehicle.find("userid=? and vehicleid=?", user.getId(), vehicle.getId()).first();
 	}
 	
+	public static UserVehicle getVehicleForUser(User user, Long vehicleId) {
+		return UserVehicle.find("userid=? and vehicleid=?", user.getId(), vehicleId).first();
+	}
+	
 	public User getUser() {
 		return user;
 	}

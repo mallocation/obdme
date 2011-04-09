@@ -25,8 +25,20 @@ public class Vehicle extends Model {
 	@Column(name="year")
 	public String year;
 	
-	@Column(name="avatar")//, columnDefinition="BLOB")
-	public Blob avatar;
+	@Column(name="avatar512")
+	public Blob avatar512;
+
+	@Column(name="avatar256")
+	public Blob avatar256;
+	
+	@Column(name="avatar128")
+	public Blob avatar128;
+	
+	@Column(name="avatar64")
+	public Blob avatar64;
+	
+	@Column(name="avatar32")
+	public Blob avatar32;
 	
 	public String getVIN() {
 		return VIN;
@@ -81,12 +93,44 @@ public class Vehicle extends Model {
 		this.year = year;
 	}
 
-	public Blob getAvatar() {
-		return avatar;
+	public Blob getAvatar512() {
+		return avatar512;
 	}
 
-	public void setAvatar(Blob avatar) {
-		this.avatar = avatar;
+	public void setAvatar512(Blob avatar512) {
+		this.avatar512 = avatar512;
+	}
+
+	public Blob getAvatar256() {
+		return avatar256;
+	}
+
+	public void setAvatar256(Blob avatar256) {
+		this.avatar256 = avatar256;
+	}
+
+	public Blob getAvatar128() {
+		return avatar128;
+	}
+
+	public void setAvatar128(Blob avatar128) {
+		this.avatar128 = avatar128;
+	}
+
+	public Blob getAvatar64() {
+		return avatar64;
+	}
+
+	public void setAvatar64(Blob avatar64) {
+		this.avatar64 = avatar64;
+	}
+
+	public Blob getAvatar32() {
+		return avatar32;
+	}
+
+	public void setAvatar32(Blob avatar32) {
+		this.avatar32 = avatar32;
 	}
     
 }
