@@ -1,28 +1,59 @@
 #{extends 'main.html' /}
 #{set title:'Trips' /}
 #{set 'moreStyles'}
-<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/trips.css'}">
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/trips.css'}"/>
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/ui-vader/jquery-ui-1.8.11.custom.css'}"/>
 #{/set}
 #{set 'moreScripts'}
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&region=US"></script> 
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&region=US"></script>
+<script type="text/javascript" src="@{'/public/javascripts/jquery-ui-1.8.11.custom.min.js'}"></script>
 <script type="text/javascript">
 
 function initializeGoogleMaps() {
-	var myLatlng = new google.maps.LatLng(53.7199,-114.041);
-
+	var myLatlng = new google.maps.LatLng(40.8077208833333,-96.6828080333333);
 	var myOptions = {
-		zoom: 8,
+		zoom: 11,
 		center: myLatlng,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}
 	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	var kmlData = new google.maps.KmlLayer('http://localhost:9090/trips/getKml');
+	var kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/1.kml");
 	kmlData.setMap(map);
 
 }
 $(function() {
 	initializeGoogleMaps();
-})
+	// var availableTrips = [
+	// 	{
+	// 		tripName: "Lincoln Trip",
+	// 		id: 1,
+	// 		status: "ACTIVE"
+	// 	},
+	// 	{
+	// 		tripName: "Omaha Trip",
+	// 		id: 2, 
+	// 		status: "ACTIVE"
+	// 	}
+	// 
+	// ];
+	// $("#tripSearch").autocomplete( {
+	// 	source: function( request, response ) {
+	// 					var term = request.term;
+	// 					
+	// 					response()
+	// 					
+	// 					lastXhr = $.getJSON( "search.php", request, function( data, status, xhr ) {
+	// 						cache[ term ] = data;
+	// 						if ( xhr === lastXhr ) {
+	// 							response( data );
+	// 						}
+	// 					});
+	// 				}
+	// 	appendTo: "#tripList"
+	// });
+	
+
+});
 
 </script>
 #{/set}
@@ -32,7 +63,44 @@ $(function() {
 <div class="pageContainer">
 	<div class="logoHeaderImage"></div>
 	
-	<div class="tripsMainContent">
+	<!-- <div class="tripsSearchContainer center">
+		<div>
+			<input type="text" id="tripSearch"></input>
+		</div>
+		<div id="searchResults" style="width:300px">
+			
+		</div>
+	<div> -->
+	
+	
+	
+	<div class="tripsMainContent center">
+		<h1 class="sectionHeader">My Trips
+			<img src="@{'/public/images/globalsearch.png'}"/></h1>
+		<div id="tripList" class="tripList">
+			<div class="trip">
+				<span class="tripName">Lincoln Trip</span>
+				<div class="tripInfo">
+					<ul class="tripInfoList">
+						<li>My awesome Car</li>
+						<li>234,233,234<span class="infoLabel">points</span></li>
+					</ul>
+				</div>
+			</div>
+			<div class="trip">
+				<span class="tripName">Lincoln Trip</span>
+				<div class="tripInfo">
+					<ul class="tripInfoList">
+						<li>My awesome Car</li>
+						<li>234,233,234<span class="infoLabel">points</span></li>
+					</ul>
+				</div>
+			</div>
+		</div>
 		<div id="map_canvas" class="trips-map-canvas"></div>
 	</div>
+	
+	<!-- <div class="tripsExtendedInfo center">
+			<h1 class="tripHeader">Lincoln Trip <span style="float:right;"> ACTIVE</span></h1>
+		</div> -->
 </div>
