@@ -16,7 +16,7 @@ function initializeGoogleMaps() {
 		center: myLatlng,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}
-	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	var kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/1.kml");
 	kmlData.setMap(map);
 }
