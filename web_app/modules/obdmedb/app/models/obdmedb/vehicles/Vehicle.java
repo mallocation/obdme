@@ -25,19 +25,19 @@ public class Vehicle extends Model {
 	@Column(name="year")
 	public String year;
 	
-	@Column(name="avatar512")
+	@Column(name="avatar512", columnDefinition="BLOB")
 	public Blob avatar512;
 
-	@Column(name="avatar256")
+	@Column(name="avatar256", columnDefinition="BLOB")
 	public Blob avatar256;
 	
-	@Column(name="avatar128")
+	@Column(name="avatar128", columnDefinition="BLOB")
 	public Blob avatar128;
 	
-	@Column(name="avatar64")
+	@Column(name="avatar64", columnDefinition="BLOB")
 	public Blob avatar64;
 	
-	@Column(name="avatar32")
+	@Column(name="avatar32", columnDefinition="BLOB")
 	public Blob avatar32;
 	
 	public String getVIN() {
