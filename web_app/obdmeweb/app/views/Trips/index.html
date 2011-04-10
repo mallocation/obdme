@@ -18,7 +18,7 @@ function initializeGoogleMaps() {
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/1.kml?d=" + new Date().getUTCMilliseconds());
+	kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/1.kml?d=" + new Date().getTime());
 	kmlData.setMap(map);
 }
 $(function() {
@@ -30,7 +30,7 @@ $(function() {
 			kmlData = null;
 		}
 		var tripId = $(this).attr('tripId');
-		kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/" + tripId + ".kml?d=" + new Date().getUTCMilliseconds());
+		kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/" + tripId + ".kml?d=" + new Date().getTime());
 		kmlData.setMap(map);
 	})
 	
