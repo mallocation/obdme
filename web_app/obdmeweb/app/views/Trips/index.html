@@ -8,6 +8,7 @@
 <script type="text/javascript">
 
 var map;
+var kmlData;
 
 function initializeGoogleMaps() {
 	var myLatlng = new google.maps.LatLng(40.8077208833333,-96.6828080333333);
@@ -24,8 +25,12 @@ $(function() {
 	initializeGoogleMaps();
 	
 	$('a.tripLink').click(function() {
+		if (kmlData) {
+			kmlData.setMap(null);
+			kmlData = null;
+		}
 		var tripId = $(this).attr('tripId');
-		var kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/" + tripId + ".kml");
+		kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/" + tripId + ".kml");
 		kmlData.setMap(map);
 	})
 	
