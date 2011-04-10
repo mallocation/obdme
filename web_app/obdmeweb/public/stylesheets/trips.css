@@ -1,4 +1,3 @@
-
 div.center {
 	width:940px;
 	margin-left:auto;
@@ -11,17 +10,16 @@ div.center {
 	margin-top:22px;	
 }
 
-
-
 .trips-map-canvas {
 	width:640px;
 	height:480px;
-	margin-left:auto;
+/*	margin-left:auto;*/
+	margin:0 auto;
 	float:right;
 }
 
 div.tripList {
-	margin-left:0px;
+	margin:0 auto;
 	float:left;
 	width: 270px;
 	padding-right:20px;
@@ -33,6 +31,48 @@ div.trip {
 	text-align:left;
 }
 
+a.tripLink {
+	display:block;
+	-webkit-border-radius:8px; 
+    -khtml-border-radius:8px; 
+    -moz-border-radius:8px;
+	padding:2px;
+	cursor: pointer;
+}
+
+a.tripLink:hover {
+	background-image: -webkit-gradient(
+    	linear,
+    	left bottom,
+    	left top,
+    	color-stop(0.24, rgb(138,138,138)),
+    	color-stop(0.61, rgb(112,112,112)));
+	background-image: -moz-linear-gradient(
+    	center bottom,
+    	rgb(138,138,138) 24%,
+    	rgb(112,112,112) 61%);
+}
+
+a.tripLink:active {
+	filter:alpha(opacity=70);
+	-moz-opacity:0.70;
+	-khtml-opacity: 0.70;
+	-webkit-opacity: 0.70;
+	background-image: -webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.61, #8A8A8A),
+	    color-stop(0.24, #707070)
+	);
+	background-image: -moz-linear-gradient(
+	    center bottom,
+	    #8A8A8A 61%,
+	    #707070 24%
+	);	
+}
+
+
 
 ul.tripInfoList {
 	color: white;
@@ -42,14 +82,16 @@ ul.tripInfoList {
 }
 
 
-
-ul.tripInfoList span.infoLabel {
+span.infoLabel {
 	font-family: 'Helvetica', Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	color: #ccc;
 	text-transform:uppercase;
 	margin-left:3px;
+	float;left
+	vertical-align:baseline;
 }
+
 
 span.tripName {
 	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
