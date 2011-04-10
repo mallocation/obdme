@@ -4,7 +4,7 @@
 
 # AJAX - everything initiated client side from web application.
 GET		/ajax/graphing/{action}					controllers.ajax.Graphing.{action}
-GET		/ajax/kml/trip/{tripid}.kml				controllers.ajax.Kml.getKmlForTrip
+GET		/ajax/kml/trip/{tripId}.kml				controllers.ajax.Kml.getKmlForTrip
 
 # Home page
 GET		/										Application.index
