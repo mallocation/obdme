@@ -1,6 +1,8 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
-
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/home.css'}"/>
+#{/set}
 <!-- New User Popup -->
 <div class="popupContent" id="popupContentNewUser">  
 	<a class="popupContentClose" id="popupContentCloseNewUser">X</a>
@@ -47,4 +49,26 @@
 <div class="pageContainer">
 	<div class="logoHeaderImage">
 	</div>
+	
+	<div class="homeMainContent center">
+		<div id="profileSection" class="profileSection roundedBorder">
+			<h1 class="subsectionHeader">Profile</h1>
+		</div>
+		<div id="vehiclesSection" class="vehiclesSection roundedBorder">
+			<h1 class="subsectionHeader">Vehicles</h1>
+		</div>
+		<div id="chartsSection" class="chartsSection roundedBorder">
+			<h1 class="subsectionHeader">Charts</h1>
+		</div>
+		<div id="statsSection" class="statsSection roundedBorder">
+			<h1 class="subsectionHeader">Statistics</h1>
+		</div>
+		<div id="notificationsSection" class="notificationsSection roundedBorder">
+			<h1 class="subsectionHeader">Notifications</h1>
+		</div>
+		<div id="tripsSection" class="tripsSection roundedBorder">
+			<h1 class="subsectionHeader">trips</h1>
+		</div>
+	</div>
+	
 </div>
