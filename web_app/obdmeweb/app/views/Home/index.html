@@ -51,24 +51,34 @@
 	</div>
 	
 	<div class="homeMainContent center">
-		<div id="profileSection" class="profileSection roundedBorder">
-			<h1 class="subsectionHeader">Profile</h1>
-		</div>
+
+		<!--<div id="profileSection" class="profileSection roundedBorder">
+			<h1 class="subsectionHeader" onclick="location.href='@{Profile.index()}';">Profile</h1>
+			<p class="profileText">&{'profile.account.email.address'}</p>
+			<img id="profileAvatar" src="@{Profile.getAvatar(128)}">
+		</div> -->
 		<div id="vehiclesSection" class="vehiclesSection roundedBorder">
 			<h1 class="subsectionHeader">Vehicles</h1>
-		</div>
-		<div id="chartsSection" class="chartsSection roundedBorder">
-			<h1 class="subsectionHeader">Charts</h1>
-		</div>
-		<div id="statsSection" class="statsSection roundedBorder">
-			<h1 class="subsectionHeader">Statistics</h1>
-		</div>
-		<div id="notificationsSection" class="notificationsSection roundedBorder">
-			<h1 class="subsectionHeader">Notifications</h1>
+			#{list items:vehicles, as:'currentVehicle'}
+			<div class="vehicleListHeader" onclick="location.href='@{Vehicles.index()}';">
+				<div class="vehicleHeaderAlias" id="vehicleHeaderAlias${currentVehicle.getVehicle().getVIN()}">${currentVehicle.getAlias()}</div>
+				<div class="vehicleHeaderVIN">VIN: ${currentVehicle.getVehicle().getVIN()}</div>
+			</div>
+			#{/list}
 		</div>
 		<div id="tripsSection" class="tripsSection roundedBorder">
-			<h1 class="subsectionHeader">trips</h1>
+			<h1 class="subsectionHeader">Trips</h1>
+			#{list items:trips, as:'trip'}
+			<div class="tripName" onclick="location.href='@{Trips.index()}';">${trip.tripName}</div>
+			#{/list}
 		</div>
+		<div id="chartsSection" class="chartsSection roundedBorder">
+			<h1 class="subsectionHeader" onclick="location.href='@{Charts.index()}';">Charts</h1>
+		</div>
+		<div id="statsSection" class="statsSection roundedBorder">
+			<h1 class="subsectionHeader" onclick="location.href='@{Statistics.index()}';">Statistics</h1>
+		</div>
+		
 	</div>
 	
 </div>
