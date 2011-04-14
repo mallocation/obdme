@@ -1,16 +1,20 @@
 package models.obdmedb.trips;
 
-import play.*;
-import play.db.DB;
-import play.db.jpa.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Query;
+import javax.persistence.Table;
 
 import models.obdmedb.User;
 import models.obdmedb.spatial.VehicleLocation;
 import models.obdmedb.statistics.VehicleDataset;
-
-import java.util.*;
+import play.db.jpa.JPA;
+import play.db.jpa.Model;
 
 @Entity
 @Table(name="trip")
@@ -44,6 +48,35 @@ public class Trip extends Model {
 		return Trip.find("operator=? order by id desc", operator).fetch(count);
 	}
 	
+	public static class LatestTripForUser {
+		public long tripId;
+		public String tripAlias;
+		public String vehicleAlias;
+	}
+	public static List<LatestTripForUser> getLatestTripsListForUser(User operator, int count) {
+		String SQL="select tp.id, tp.alias, if(uv.alias is null, veh.vin, uv.alias) as vehiclealias from trip tp, vehicledataset vd, vehicle veh, uservehicle uv "+
+			"where tp.userid=? "+
+			"and vd.tripid = tp.id "+
+			"and vd.vehicleid = veh.id "+
+			"and uv.userid=tp.userid and uv.vehicleid=veh.id "+
+			"group by tp.id "+
+			"order by tp.id desc "+
+			"limit ?";
+		Query query = JPA.em().createNativeQuery(SQL);
+		query.setParameter(1, operator.getId());
+		query.setParameter(2, count);
+		List<Object[]> queryResults = query.getResultList();
+		List<LatestTripForUser> results = new ArrayList<LatestTripForUser>();
+		for (Object[] row : queryResults) {
+			LatestTripForUser trip = new LatestTripForUser();
+			trip.tripId = Long.parseLong(row[0].toString());
+			trip.tripAlias = row[1].toString();
+			trip.vehicleAlias = row[2].toString();
+			results.add(trip);
+		}
+		return results;
+	}
+	
 	public static Trip getTripForUser(Long tripId, User operator) {
 		Trip trip = findById(tripId);
 		if (trip == null) {
@@ -73,3 +106,4 @@ public class Trip extends Model {
 		return VehicleLocation.find(hqlQuery, trip).fetch();
 	}	
 }
+	

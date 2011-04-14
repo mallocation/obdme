@@ -1,6 +1,8 @@
 package models.obdmedb.statistics;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -107,13 +109,57 @@ public class VehicleDataPoint extends GenericModel {
 		return parsedResults;
 	}
 	
-	public static Long selectDataPointCountForTrip(Trip trip) {
+	public static List<LatestDataPoint> selectDataPointsForDate(ObdPid obdPid, Vehicle vehicle, Date date) {
+		Calendar cal = Calendar.getInstance();
+		Date startDate, endDate;
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		startDate = cal.getTime();
+		
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 999);
+		
+		
+		endDate = cal.getTime();
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		String SQL = "select vd.timestamp, dp.value from vehicledataset vd " +
+					 "inner join vehicledatapoint dp on vd.id = dp.datasetid " +
+					"where vd.vehicleid=? and " +
+					"dp.mode like ? and dp.pid like ? and "+
+					"vd.timestamp between ? and ?";
+		Query query = JPA.em().createNativeQuery(SQL);
+		query.setParameter(1, vehicle.getId());
+		query.setParameter(2, obdPid.getMode());
+		query.setParameter(3, obdPid.getPid());
+		query.setParameter(4, dateFormat.format(startDate));
+		query.setParameter(5, dateFormat.format(endDate));
+		List<Object[]> queryResults = query.getResultList();
+		List<LatestDataPoint> results = new ArrayList<LatestDataPoint>();
+		for (Object[] row : queryResults) {
+			LatestDataPoint dp = new LatestDataPoint();
+			dp.timestamp = (Date) row[0];
+			dp.value = Double.parseDouble(row[1].toString());
+			results.add(dp);
+		}
+		return results;
+		
+	}
+	
+	public static Long selectDataPointCountForTrip(Long tripId) {
 		String SQL = "select count(*) from trip tr, vehicledataset vd, vehicledatapoint dp " + 
 					"where tr.id = ? " + 
 					"and vd.tripid = tr.id " + 
 					"and dp.datasetid = vd.id";
 		Query query = JPA.em().createNativeQuery(SQL);
-		query.setParameter(1, trip.getId());
+		query.setParameter(1, tripId);
 		return Long.parseLong(query.getSingleResult().toString());
 	}
 	
