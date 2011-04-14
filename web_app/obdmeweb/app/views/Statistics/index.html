@@ -1,9 +1,80 @@
 #{extends 'main.html' /}
 #{set title:'Statistics' /}
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/statistics.css'}"/>
+#{/set}
+
+<div class="popupContent" id="popupContentSelectPID">  
+	<a class="popupContentClose" id="popupContentCloseSelectPID">X</a>
+    <h1>Select a PID</h1>
+	#{list items:pidList, as:'obdPid'}
+	<input type="submit" class="submit pidSelect" mode="${obdPid.mode}" pid="${obdPid.pid}" style="font-size: 14px;" id="${obdPid.pidTitle}" value="${obdPid.pidTitle}" />
+	#{/list}
+</div>
+
+<div class="popupContent" id="popupContentSelectTimeFrame">
+	<a class="popupContentClose" id="popupContentCloseSelectTimeFrame">X</a>
+    <h1>Select a Time Frame</h1>
+	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Today" value="Today" />
+	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Week" value="Week" />
+	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Month" value="Month" />
+	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Year" value="Year" />
+	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="All Time" value="All Time" />
+</div>
+
+<div class="backgroundPopup" id="backgroundPopupSelectPID"></div>
+<div class="backgroundPopup" id="backgroundPopupSelectTimeFrame"></div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#selectPID").click(function() {
+		centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+	});
+	
+	$("#selectTimeFrame").click(function() {
+		centerPopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
+		loadPopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
+	});
+
+	/*$(".submit").click(function() {
+		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+	});*/
+	
+	$("#popupContentCloseSelectPID").click(function() {
+		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+	});
+
+	$("#backgroundPopupSelectPID").click(function() {
+		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+	});
+	
+	$("#popupContentCloseSelectTimeFrame").click(function() {
+		disablePopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
+	});
+
+	$("#backgroundPopupSelectTimeFrame").click(function() {
+		disablePopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
+	});
+
+	/*$(document).keypress(function(e) {
+		if (e.keyCode == 27 && popupStatus == 1) {
+		 	disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		}
+	});*/
+});
+</script>
+
 
 <!-- Application Index Body -->
 <div class="pageContainer">
 	<div class="logoHeaderImage">
 
+	</div>
+	
+	<div class="statsMainContent center">
+		<h1 class="statsHeader">Statistics</h1>
+		<input type="submit" class="submit" id="selectPID" value="Select PID" /><!-- id=selectPID-->
+		<input type="submit" class="submit" id="selectTimeFrame" value="Select Time Frame" />
 	</div>
 </div>
