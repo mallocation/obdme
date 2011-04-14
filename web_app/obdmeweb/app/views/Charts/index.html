@@ -2,58 +2,194 @@
 #{set title:'Charts' /}
 
 #{set 'moreScripts'}
-
+<script type="text/javascript" src="@{'/public/javascripts/highcharts/highcharts.js'}">
 <script type="text/javascript">
 var pid = '0D';
 var mode = '01';
 var vin = '1HGFA16537L077259';
-
-var m = ${numPoints};
-
-var items = ${data};
 </script>
-
 #{/set}
 
 <div class="popupContent" id="popupContentSelectPID">  
 	<a class="popupContentClose" id="popupContentCloseSelectPID">X</a>
     <h1>Select a PID</h1>
 	#{list items:pidList, as:'obdPid'}
-	<input type="submit" class="submit" style="font-size: 14px;" id="${obdPid.pidTitle}" value="${obdPid.pidTitle}" />
+	<input type="submit" class="submit pidSelect" mode="${obdPid.mode}" pid="${obdPid.pid}" style="font-size: 14px;" id="${obdPid.pidTitle}" value="${obdPid.pidTitle}" />
 	#{/list}
 </div>  
 <div class="backgroundPopup" id="backgroundPopupSelectPID"></div>
 <script type="text/javascript">
-	$(document).ready(function() {
-		$("#selectPID").click(function() {
-			alert("tits");
-			centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-			loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+var chart;
+var unit;
+$(document).ready(function() {
+   
+   // define the options
+      var options = {
+      
+         chart: {
+            renderTo: 'container'
+         },
+         
+         title: {
+            text: 'bang bang test'
+         },
+         
+         xAxis: {
+            type: 'datetime',
+            tickInterval: 7 * 24 * 3600 * 1000, // one week
+            tickWidth: 0,
+            gridLineWidth: 1,
+            labels: {
+               align: 'left',
+               x: 3,
+               y: -3 
+            },
+			name: 'Date'
+         },
+         
+         yAxis: [{ // left y axis
+            title: {
+               text: null
+            },
+            labels: {
+               align: 'left',
+               x: 3,
+               y: 16,
+               formatter: function() {
+                  return Highcharts.numberFormat(this.value, 0);
+               }
+            },
+            showFirstLabel: false
+         }, { // right y axis
+            linkedTo: 0,
+            gridLineWidth: 0,
+            opposite: true,
+            title: {
+               text: null
+            },
+            labels: {
+               align: 'right',
+               x: -3,
+               y: 16,
+               formatter: function() {
+                  return Highcharts.numberFormat(this.value, 0);
+               }
+            },
+            showFirstLabel: false
+         }],
+         
+         legend: {
+            align: 'left',
+            verticalAlign: 'top',
+            y: 0,
+            floating: true,
+            borderWidth: 0
+         },
+         
+         tooltip: {
+            shared: true,
+            crosshairs: true
+         },
+         
+         plotOptions: {
+            series: {
+               cursor: 'pointer',
+               point: {
+                  events: {
+                     click: function() {
+                        hs.htmlExpand(null, {
+                           pageOrigin: {
+                              x: this.pageX, 
+                              y: this.pageY
+                           },
+                           headingText: this.series.name,
+                           maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) +':<br/> '+ 
+                              this.y +' visits',
+                           width: 200
+                        });
+                     }
+                  }
+               },
+               marker: {
+                  lineWidth: 1
+               }
+            }
+         },
+         
+         series: [{
+            name: 'Engine RPM',
+            lineWidth: 4,
+            marker: {
+               radius: 4
+            }
+         }]
+      }
+   
+	$.getJSON('/ajax/charts/latest/vin/1HGFA16537L077259/mode/01/pid/0C', function(result) {
+		var points = [];
+		$.each(result.points, function() {
+			points.push([Date.parse(this.x), this.y]);
+		});
+		options.series[0].data = points;
+		options.yAxis[0].title.text = result.unit;
+     	chart = new Highcharts.Chart(options);
+	});
+	
+	$('#selectPID').click(function() {
+		centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+	});
+	
+	$('.pidSelect').click(function() {
+		var mode=$(this).attr('mode');
+		var pid=$(this).attr('pid');
+		var seriesName = $(this).attr('id');
+		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+
+		options.series[0].name = $(this).attr('id');
+		options.yAxis[0].title.text = $(this).attr('id');
+		
+		$.getJSON('/ajax/charts/latest/vin/1HGFA16537L077259/mode/' + mode + '/pid/' + pid, function(result) {
+			var points = [];
+			$.each(result.points, function() {
+				points.push([Date.parse(this.x), this.y]);
+			});
+			options.series[0].data = points;
+ 			options.yAxis[0].title.text += result.unit==null || result.unit=='' ? '' : '-' + result.unit;
+	     	chart = new Highcharts.Chart(options);
 		});
 
-		$(".submit").click(function() {
-			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-		});
-
-		$("#popupContentCloseSelectPID").click(function() {
-			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-		});
-
-		$("#backgroundPopupSelectPID").click(function() {
-			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-		});
-
-		$(document).keypress(function(e) {
-			if (e.keyCode == 27 && popupStatus == 1) {
-				disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-			}
-		});
+	});
+		
+		// $("#selectPID").click(function() {
+		// 		alert("tits");
+		// 		centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		// 		loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		// 	});
+		// 
+		// 	$(".submit").click(function() {
+		// 		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		// 	});
+		// 
+		// 	$("#popupContentCloseSelectPID").click(function() {
+		// 		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		// 	});
+		// 
+		// 	$("#backgroundPopupSelectPID").click(function() {
+		// 		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		// 	});
+		// 
+		// 	$(document).keypress(function(e) {
+		// 		if (e.keyCode == 27 && popupStatus == 1) {
+		// 			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		// 		}
+		// 	});
 	});
 </script>
 
 <!-- Application Index Body -->
 <div class="pageContainer">
 	<div class="logoHeaderImage"></div>
-	<input type="submit" class="submit" id="selectPID" value="Select PID" />
-	<div id="chart" style="margin-top: 55px;"></div>
+	<input type="submit" class="submit" id="selectPID" value="Select PID" /><!-- id=selectPID-->
+	<div id="container" style="width: 800px; height: 400px; margin: 0 auto"></div>
 </div>
