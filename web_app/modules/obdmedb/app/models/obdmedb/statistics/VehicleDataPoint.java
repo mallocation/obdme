@@ -12,15 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Query;
-import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 
 import models.obdmedb.obd.ObdPid;
+import models.obdmedb.trips.Trip;
 import models.obdmedb.vehicles.Vehicle;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import play.Logger;
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 
@@ -84,10 +83,10 @@ public class VehicleDataPoint extends GenericModel {
 	
 
 	public static List<LatestDataPoint> selectLatestDataPointsSinceDataset(ObdPid obdPid, Vehicle vehicle, long sinceDatasetId, int nLatestPoints) {
-		String SQL = "select vd.timestamp, dp.value from vehicledataset vd " +
+		String SQL = "select * from (select vd.timestamp, dp.value from vehicledataset vd " +
 						"inner join vehicledatapoint dp on vd.id = dp.datasetid " +
 						"where vd.id < ? and dp.mode like ? and dp.pid like ? and vd.vehicleid=? " +
-						"order by vd.timestamp desc limit ?";
+						"order by vd.timestamp desc limit ?) as tempq order by tempq.timestamp asc";
 		ArrayList<LatestDataPoint> parsedResults = new ArrayList<LatestDataPoint>();	
 		
 		Query query = JPA.em().createNativeQuery(SQL); 
@@ -106,6 +105,16 @@ public class VehicleDataPoint extends GenericModel {
 		}
 		
 		return parsedResults;
+	}
+	
+	public static Long selectDataPointCountForTrip(Trip trip) {
+		String SQL = "select count(*) from trip tr, vehicledataset vd, vehicledatapoint dp " + 
+					"where tr.id = ? " + 
+					"and vd.tripid = tr.id " + 
+					"and dp.datasetid = vd.id";
+		Query query = JPA.em().createNativeQuery(SQL);
+		query.setParameter(1, trip.getId());
+		return Long.parseLong(query.getSingleResult().toString());
 	}
 	
 	public static class LatestDataPoint {
