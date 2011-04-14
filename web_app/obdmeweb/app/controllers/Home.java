@@ -11,6 +11,7 @@ import models.obdmedb.vehicles.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 import models.obdmedb.trips.Trip;
+import models.obdmedb.trips.Trip.LatestTripForUser;
 
 @With(Secure.class)
 public class Home extends Controller {
@@ -21,25 +22,12 @@ public class Home extends Controller {
             User user = User.find("byEmail", Security.connected()).first();
             renderArgs.put("vehicles", UserVehicle.getVehiclesForUser(user));
 
-			List<Trip> userTrips = Trip.getLatestTripsForUser(user, 4);
-	    	List<IndexTripBinding> trips = new ArrayList<IndexTripBinding>();
-	    	for (Trip userTrip : userTrips) {
-	    		trips.add(new IndexTripBinding(userTrip.getId(), userTrip.getAlias()));
-	    	}
-			render(trips);
+			List<LatestTripForUser> userTrips = Trip.getLatestTripsListForUser(user, 3);
+			render(userTrips);
         }
     }
 
-	public static class IndexTripBinding {
-		public Long tripId;
-		public String tripName;
-		public IndexTripBinding(Long id, String name) {
-			this.tripId = id;
-			this.tripName = name;
-		}
-	}
-
-    public static void index() {    	
+    public static void index() {
 		render();
 	}
 
