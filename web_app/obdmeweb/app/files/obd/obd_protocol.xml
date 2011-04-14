@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- OBDII PROTOCOL DEFINITION 
+Michael Kelly (OBDMe) 
+Mode Tags 
+	hex (Attribute) - The hex value of the Mode 
+	name (Attribute) - A plain English name for the Mode PID Tags 
+	hex (Attribute) - The hex value of the PID 
+	return (Attribute) - The integer value corresponding to the number of bytes returned 
+	unit (Attribute) - The unit that the calculated response corresponds to 
+	eval (Attribute) - The evaluation type (See methods of evaluation below)
+	name (Attribute) - A plain English name for the 
+
+PID Methods of evaluation (eval attribute) 
+1) FORMULA Formulas must be properly formated with parentheses. Spaces must 
+	exist between each component ex. "(" ")" "A" "*" and so on Supported operations 
+	are "+", "-", "*", "/", "sqrt" Example Formula: "( ( ( A * 256 ) + B ) / 
+	10 ) - 40"
+
+2) BIT_ENCODED code (Node) - A node with the corresponding attributes: 
+	bit (Attribute) - Corresponds to the bit in the bit string 0 index is MSB 
+	value (Attribute) - String corresponding to a "1" bit in the "bit" index" 
+	
+3) BYTE_ENCODED code (Node) - A node with the corresponding attributes: byte-value 
+	(Attribute) - Corresponds to the integer value of the response bytes value 
+	(Attribute) - String corresponding to the integer value of the response string 
+
+4) CHAR_STRING Automatically decodes the response bytes from left (MSB) to 
+	right (LSB) 5) RAW Convert the entire byte response string to an integer 
+	value -->
+
+<obd-protocol>
+
+	<!-- MODE 1 -->
+	<mode hex="01" name="Show current data">
+
+		<!-- MODE 1 PIDS 0x01-0x20 -->
+		<suported-pid hex="00" return="4" unit="" eval="BIT_ENCODED"
+			pollable="false" name="PIDs supported [01 - 20]">
+			<code bit="0" value="01" />
+			<code bit="1" value="02" />
+			<code bit="2" value="03" />
+			<code bit="3" value="04" />
+			<code bit="4" value="05" />
+			<code bit="5" value="06" />
+			<code bit="6" value="07" />
+			<code bit="7" value="08" />
+			<code bit="8" value="09" />
+			<code bit="9" value="0A" />
+			<code bit="10" value="0B" />
+			<code bit="11" value="0C" />
+			<code bit="12" value="0D" />
+			<code bit="13" value="0E" />
+			<code bit="14" value="0F" />
+			<code bit="15" value="10" />
+			<code bit="16" value="11" />
+			<code bit="17" value="12" />
+			<code bit="18" value="13" />
+			<code bit="19" value="14" />
+			<code bit="20" value="15" />
+			<code bit="21" value="16" />
+			<code bit="22" value="17" />
+			<code bit="23" value="18" />
+			<code bit="24" value="19" />
+			<code bit="25" value="1A" />
+			<code bit="26" value="1B" />
+			<code bit="27" value="1C" />
+			<code bit="28" value="1D" />
+			<code bit="29" value="1E" />
+			<code bit="30" value="1F" />
+			<code bit="31" value="20" />
+		</suported-pid>
+
+		<pid hex="01" return="4" unit="" eval="BIT_ENCODED" pollable="false"
+			name="Monitor status since DTCs cleared">
+			<code bit="8" value="Misfire Test Enabled" />
+			<code bit="9" value="Fuel System Enabled" />
+			<code bit="10" value="Components Enabled" />
+			<code bit="11" value="Reserved Enabled" />
+			<code bit="12" value="Misfire Test Incomplete" />
+			<code bit="13" value="Fuel System Test Incomplete" />
+			<code bit="14" value="Components Test Incomplete" />
+			<code bit="15" value="Reserved Test Incomplete" />
+			<code bit="16" value="Catalyst Test Enabled" />
+			<code bit="17" value="Heated Catalyst Test Enabled" />
+			<code bit="18" value="Evaporative System Test Enabled" />
+			<code bit="19" value="Secondary Air System Test Enabled" />
+			<code bit="20" value="A/C Refrigerant Test Enabled" />
+			<code bit="21" value="Oxygen Sensor Test Enabled" />
+			<code bit="22" value="Oxygen Sensor Heater Test Enabled" />
+			<code bit="23" value="EGR System Test Enabled" />
+			<code bit="24" value="Catalyst Test Incomplete" />
+			<code bit="25" value="Heated Catalyst Test Incomplete" />
+			<code bit="26" value="Evaporative System Test Incomplete" />
+			<code bit="27" value="Secondary Air System Test Incomplete" />
+			<code bit="28" value="A/C Refrigerant Test Incomplete" />
+			<code bit="29" value="Oxygen Sensor Test Incomplete" />
+			<code bit="30" value="Oxygen Sensor Heater Test Incomplete" />
+			<code bit="31" value="EGR System Test Incomplete" />
+		</pid>
+
+		<pid hex="02" return="2" unit="" eval="RAW" name="Freeze DTC"
+			pollable="false" />
+
+		<pid hex="03" return="2" unit="" eval="BIT_ENCODED" name="Fuel system status"
+			pollable="true">
+			<code bit="0" value="Open loop due to insufficient engine temperature" />
+			<code bit="1"
+				value="Closed loop, using oxygen sensor feedback to determine fuel mix" />
+			<code bit="2"
+				value="Open loop due to engine load OR fuel cut due to deacceleration" />
+			<code bit="3" value="Open loop due to system failure" />
+			<code bit="4"
+				value="Closed loop, using at least one oxygen sensor but there is a fault in the feedback system" />
+		</pid>
+
+		<pid hex="04" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Calculated engine load value">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="05" return="1" unit="&#176;C" eval="FORMULA" pollable="true"
+			name="Engine coolant temperature">
+			<formula value="( A - 40 )" format="\###" />
+			<compiled-formula value="FORMULA_2" format="\###" />
+		</pid>
+
+		<pid hex="06" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Short term fuel trim">
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" format="\###.##" />
+		</pid>
+
+		<pid hex="07" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Long term fuel trim">
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" format="\###.##" />
+		</pid>
+
+		<pid hex="08" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Short term fuel trim">
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" format="\###.##" />
+		</pid>
+
+		<pid hex="09" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Long term fuel trim">
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" format="\###.##" />
+		</pid>
+
+		<pid hex="0A" return="1" unit="kPa" eval="FORMULA" name="Fuel pressure"
+			pollable="true">
+			<formula value="( A * 3 )" format="\###.##" />
+			<compiled-formula value="FORMULA_4" format="\###.##" />
+		</pid>
+
+		<pid hex="0B" return="1" unit="kPa" eval="FORMULA" pollable="true"
+			name="Intake manifold absolute pressure">
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" format="\###" />
+		</pid>
+
+		<pid hex="0C" return="2" unit="" eval="FORMULA" name="Engine RPM"
+			pollable="true">
+			<formula value="( ( ( A * 256 ) + B ) / 4 )" format="\##,###.##" />
+			<compiled-formula value="FORMULA_6" format="\##,###.##" />
+		</pid>
+
+		<pid hex="0D" return="1" unit="km/h" eval="FORMULA" name="Vehicle speed"
+			pollable="true">
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" format="\###" />
+		</pid>
+
+		<pid hex="0E" return="1" unit="" eval="FORMULA" name="Timing advance"
+			pollable="true">
+			<formula value="( ( A / 2 ) - 64 )" format="\##.#" />
+			<compiled-formula value="FORMULA_7" format="\##.#" />
+		</pid>
+
+		<pid hex="0F" return="1" unit="&#176;C" eval="FORMULA"
+			name="Intake air temperature" pollable="true">
+			<formula value="( A - 40 )" format="\###" />
+			<compiled-formula value="FORMULA_2" format="\###" />
+		</pid>
+
+		<pid hex="10" return="2" unit="g/s" eval="FORMULA" name="MAF air flow rate"
+			pollable="true">
+			<formula value="( ( ( A * 256 ) + B ) / 100 )" format="\###.##" />
+			<compiled-formula value="FORMULA_8" format="\###.##" />
+		</pid>
+
+		<pid hex="11" return="1" unit="%" eval="FORMULA" name="Throttle position"
+			pollable="true">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="12" return="1" unit="" eval="BIT_ENCODED" pollable="true"
+			name="Commanded secondary air status">
+			<code bit="0" value="Upstream of catalytic converter" />
+			<code bit="1" value="Downstream of catalytic converter" />
+			<code bit="2" value="From the outside atmosphere or off" />
+		</pid>
+
+		<pid hex="13" return="1" unit="" eval="RAW" name="Oxygen sensors present"
+			pollable="false" />
+
+		<pid hex="14" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 1, Sensor 1: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="15" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 1, Sensor 2: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="16" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 1, Sensor 3: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="17" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 1, Sensor 4: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="18" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 2, Sensor 1: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="19" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 2, Sensor 2: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="1A" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 2, Sensor 3: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="1B" return="2" unit="Volts %" eval="RAW" pollable="true"
+			name="Bank 2, Sensor 4: Oxygen sensor voltage, Short term fuel trim" />
+
+		<pid hex="1C" return="1" unit="" eval="BYTE_ENCODED" pollable="false"
+			name="OBD standards this vehicle conforms to">
+			<code byte-value="1" value="OBD-II as defined by the CARB" />
+			<code byte-value="2" value="OBD as defined by the EP" />
+			<code byte-value="3" value="OBD and OBD-II" />
+			<code byte-value="4" value="OBD-I" />
+			<code byte-value="5" value="Not meant to comply with any OBD standard" />
+			<code byte-value="6" value="EOBD (Europe)" />
+			<code byte-value="7" value="EOBD and OBD-II" />
+			<code byte-value="8" value="EOBD and OBD" />
+			<code byte-value="9" value="EOBD, OBD and OBD II" />
+			<code byte-value="10" value="JOBD (Japan)" />
+			<code byte-value="11" value="JOBD and OBD II" />
+			<code byte-value="12" value="JOBD and EOBD" />
+			<code byte-value="13" value="JOBD, EOBD, and OBD II" />
+		</pid>
+
+		<pid hex="1D" return="1" unit="" eval="RAW" name="Oxygen sensors present"
+			pollable="false" />
+
+		<pid hex="1E" return="1" unit="" eval="RAW" name="Auxiliary input status"
+			pollable="false" />
+
+		<pid hex="1F" return="2" unit="sec" eval="FORMULA" pollable="true"
+			name="Run time since engine start">
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" format="\##,###" />
+		</pid>
+
+		<!-- MODE 1 PIDS 0x21-0x40 -->
+		<pid hex="20" return="4" unit="" eval="BIT_ENCODED" pollable="false"
+			name="PIDs supported 21-40">
+			<code bit="0" value="21" />
+			<code bit="1" value="22" />
+			<code bit="2" value="23" />
+			<code bit="3" value="24" />
+			<code bit="4" value="25" />
+			<code bit="5" value="26" />
+			<code bit="6" value="27" />
+			<code bit="7" value="28" />
+			<code bit="8" value="29" />
+			<code bit="9" value="2A" />
+			<code bit="10" value="2B" />
+			<code bit="11" value="2C" />
+			<code bit="12" value="2D" />
+			<code bit="13" value="2E" />
+			<code bit="14" value="2F" />
+			<code bit="15" value="30" />
+			<code bit="16" value="31" />
+			<code bit="17" value="32" />
+			<code bit="18" value="33" />
+			<code bit="19" value="34" />
+			<code bit="20" value="35" />
+			<code bit="21" value="36" />
+			<code bit="22" value="37" />
+			<code bit="23" value="38" />
+			<code bit="24" value="39" />
+			<code bit="25" value="3A" />
+			<code bit="26" value="3B" />
+			<code bit="27" value="3C" />
+			<code bit="28" value="3D" />
+			<code bit="29" value="3E" />
+			<code bit="30" value="3F" />
+			<code bit="31" value="40" />
+		</pid>
+
+		<pid hex="21" return="2" unit="km" eval="FORMULA" pollable="true"
+			name="Distance traveled with MIL on">
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" format="\##,###" />
+		</pid>
+
+		<pid hex="22" return="2" unit="kPa" eval="FORMULA" pollable="true"
+			name="Fuel Rail Pressure (relative to manifold vacuum)">
+			<formula value="( ( ( ( A * 256 ) + B ) * 10 ) / 128 )"
+				format="\#,###.###" />
+			<compiled-formula value="FORMULA_10" format="\#,###.###" />
+		</pid>
+
+		<pid hex="23" return="2" unit="kPa" eval="FORMULA" pollable="true"
+			name="Fuel Rail Pressure (diesel)">
+			<formula value="( ( ( A * 256 ) + B ) * 10 )" format="\###,###" />
+			<compiled-formula value="FORMULA_11" format="\###,###" />
+		</pid>
+
+		<pid hex="24" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S1_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="25" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S2_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="26" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S3_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="27" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S4_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="28" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S5_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="29" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S6_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="2A" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S7_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="2B" return="4" unit="V" eval="RAW" pollable="false"
+			name="O2S8_WR_lambda(1): Equivalence Ratio Voltage" />
+
+		<pid hex="2C" return="1" unit="%" eval="FORMULA" name="Commanded EGR"
+			pollable="true">
+			<formula value="( ( 100 * A ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="2D" return="1" unit="%" eval="FORMULA" name="EGR Error"
+			pollable="true">
+			<formula value="( ( A - 128 ) * ( 100 / 128 ) )" format="\###.##" />
+			<compiled-formula value="FORMULA_3" format="\###.##" />
+		</pid>
+
+		<pid hex="2E" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Commanded evaporative purge">
+			<formula value="( ( 100 * A ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="2F" return="1" unit="%" eval="FORMULA" name="Fuel Level Input"
+			pollable="true">
+			<formula value="( ( 100 * A ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="30" return="1" unit="" eval="FORMULA" pollable="false"
+			name="Number of warm-ups since codes cleared">
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" format="\###" />
+		</pid>
+
+		<pid hex="31" return="2" unit="km" eval="FORMULA" pollable="false"
+			name="Distance traveled since codes cleared">
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" format="\##,###" />
+		</pid>
+
+		<pid hex="32" return="2" unit="Pa" eval="FORMULA" pollable="true"
+			name="Evap. System Vapor Pressure">
+			<formula value="( ( ( A * 256 ) + B ) / 4 )" format="\#,###" />
+			<compiled-formula value="FORMULA_6" format="\#,###" />
+		</pid>
+
+		<pid hex="33" return="1" unit="kPa" eval="FORMULA" name="Barometric pressure"
+			pollable="true">
+			<formula value="A" format="\###" />
+			<compiled-formula value="FORMULA_5" format="\###" />
+		</pid>
+
+		<pid hex="34" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S1_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="35" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S2_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="36" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S3_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="37" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S4_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="38" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S5_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="39" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S6_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="3A" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S7_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="3B" return="4" unit="" eval="RAW" pollable="false"
+			name="O2S8_WR_lambda(1): Equivalence Ratio Current" />
+
+		<pid hex="3C" return="2" unit="&#176;C" eval="FORMULA" pollable="true"
+			name="Catalyst Temperature Bank 1, Sensor 1">
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )"
+				format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" format="\#,###.#" />
+		</pid>
+
+		<pid hex="3D" return="2" unit="&#176;C" eval="FORMULA" pollable="true"
+			name="Catalyst Temperature">
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )"
+				format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" format="\#,###.#" />
+		</pid>
+
+		<pid hex="3E" return="2" unit="&#176;C" eval="FORMULA" pollable="true"
+			name="Catalyst Temperature">
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )"
+				format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" format="\#,###.#" />
+		</pid>
+
+		<pid hex="3F" return="2" unit="&#176;C" eval="FORMULA" pollable="true"
+			name="Catalyst Temperature">
+			<formula value="( ( ( ( A * 256 ) + B ) / 10 ) - 40 )"
+				format="\#,###.#" />
+			<compiled-formula value="FORMULA_13" format="\#,###.#" />
+		</pid>
+
+		<!-- MODE 1 PIDS 0x41-0x60 -->
+		<pid hex="40" return="4" unit="" eval="BIT_ENCODED" pollable="false"
+			name="PIDs supported 41-60">
+			<code bit="0" value="41" />
+			<code bit="1" value="42" />
+			<code bit="2" value="43" />
+			<code bit="3" value="44" />
+			<code bit="4" value="45" />
+			<code bit="5" value="46" />
+			<code bit="6" value="47" />
+			<code bit="7" value="48" />
+			<code bit="8" value="49" />
+			<code bit="9" value="4A" />
+			<code bit="10" value="4B" />
+			<code bit="11" value="4C" />
+			<code bit="12" value="4D" />
+			<code bit="13" value="4E" />
+			<code bit="14" value="4F" />
+			<code bit="15" value="50" />
+			<code bit="16" value="51" />
+			<code bit="17" value="52" />
+			<code bit="18" value="53" />
+			<code bit="19" value="54" />
+			<code bit="20" value="55" />
+			<code bit="21" value="56" />
+			<code bit="22" value="57" />
+			<code bit="23" value="58" />
+			<code bit="24" value="59" />
+			<code bit="25" value="5A" />
+			<code bit="26" value="5B" />
+			<code bit="27" value="5C" />
+			<code bit="28" value="5D" />
+			<code bit="29" value="5E" />
+			<code bit="30" value="5F" />
+			<code bit="31" value="60" />
+		</pid>
+
+		<pid hex="41" return="4" unit="" eval="BIT_ENCODED" pollable="false"
+			name="Monitor status this drive cycle">
+			<code bit="8" value="Misfire Test Enabled" />
+			<code bit="9" value="Fuel System Enabled" />
+			<code bit="10" value="Components Enabled" />
+			<code bit="11" value="Reserved Enabled" />
+			<code bit="12" value="Misfire Test Incomplete" />
+			<code bit="13" value="Fuel System Test Incomplete" />
+			<code bit="14" value="Components Test Incomplete" />
+			<code bit="15" value="Reserved Test Incomplete" />
+			<code bit="16" value="Catalyst Test Enabled" />
+			<code bit="17" value="Heated Catalyst Test Enabled" />
+			<code bit="18" value="Evaporative System Test Enabled" />
+			<code bit="19" value="Secondary Air System Test Enabled" />
+			<code bit="20" value="A/C Refrigerant Test Enabled" />
+			<code bit="21" value="Oxygen Sensor Test Enabled" />
+			<code bit="22" value="Oxygen Sensor Heater Test Enabled" />
+			<code bit="23" value="EGR System Test Enabled" />
+			<code bit="24" value="Catalyst Test Incomplete" />
+			<code bit="25" value="Heated Catalyst Test Incomplete" />
+			<code bit="26" value="Evaporative System Test Incomplete" />
+			<code bit="27" value="Secondary Air System Test Incomplete" />
+			<code bit="28" value="A/C Refrigerant Test Incomplete" />
+			<code bit="29" value="Oxygen Sensor Test Incomplete" />
+			<code bit="30" value="Oxygen Sensor Heater Test Incomplete" />
+			<code bit="31" value="EGR System Test Incomplete" />
+		</pid>
+
+		<pid hex="42" return="2" unit="V" eval="FORMULA" name="Control module voltage"
+			pollable="true">
+			<formula value="( ( ( A * 256 ) + B ) / 1000 )" format="\##.###" />
+			<compiled-formula value="FORMULA_14" format="\##.###" />
+		</pid>
+
+		<pid hex="43" return="2" unit="%" eval="FORMULA" name="Absolute load value"
+			pollable="true">
+			<formula value="( ( ( A * 256 ) + B ) * ( 100 / 255 ) )"
+				format="\##,###" />
+			<compiled-formula value="FORMULA_15" format="\##,###" />
+		</pid>
+
+		<pid hex="44" return="2" unit="" eval="FORMULA" name="Command equivalence ratio"
+			pollable="true">
+			<formula value="( ( ( A * 256 ) + B ) / 32768 )" format="\#" />
+			<compiled-formula value="FORMULA_16" format="\#" />
+		</pid>
+
+		<pid hex="45" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Relative throttle position">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="46" return="1" unit="&#176;C" eval="FORMULA"
+			name="Ambient air temperature" pollable="true">
+			<formula value="( A - 40 )" format="\###" />
+			<compiled-formula value="FORMULA_2" format="\###" />
+		</pid>
+
+		<pid hex="47" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Absolute throttle position B">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="48" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Absolute throttle position C">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="49" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Accelerator pedal position D">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="4A" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Accelerator pedal position E">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="4B" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Accelerator pedal position F">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="4C" return="1" unit="%" eval="FORMULA" pollable="true"
+			name="Commanded throttle actuator">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="4D" return="2" unit="min" eval="FORMULA" pollable="true"
+			name="Time run with MIL on">
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" format="\##,###" />
+		</pid>
+
+		<pid hex="4E" return="2" unit="min" eval="FORMULA" pollable="true"
+			name="Time since trouble codes cleared">
+			<formula value="( ( A * 256 ) + B )" format="\##,###" />
+			<compiled-formula value="FORMULA_9" format="\##,###" />
+		</pid>
+
+		<pid hex="51" return="1" unit="" eval="BYTE_ENCODED" name="Fuel Type"
+			pollable="true">
+			<code byte-value="1" value="Gasoline" />
+			<code byte-value="2" value="Methanol" />
+			<code byte-value="3" value="Ethanol" />
+			<code byte-value="4" value="Diesel" />
+			<code byte-value="5" value="LPG" />
+			<code byte-value="6" value="CNG" />
+			<code byte-value="7" value="Propane" />
+			<code byte-value="8" value="Electric" />
+			<code byte-value="9" value="Bifuel running Gasoline" />
+			<code byte-value="10" value="Bifuel running Methanol" />
+			<code byte-value="11" value="Bifuel running Ethanol" />
+			<code byte-value="12" value="Bifuel running LPG" />
+			<code byte-value="13" value="Bifuel running CNG" />
+			<code byte-value="14" value="Bifuel running Prop" />
+			<code byte-value="15" value="Bifuel running Electricity" />
+			<code byte-value="16" value="Bifuel mixed gas/electric" />
+			<code byte-value="17" value="Hybrid Gasoline" />
+			<code byte-value="18" value="Hybrid Ethanol" />
+			<code byte-value="19" value="Hybrid Diesel" />
+			<code byte-value="20" value="Hybrid Electric" />
+			<code byte-value="21" value="Hybrid Mixed fuel" />
+			<code byte-value="22" value="Hybrid Regenerative" />
+		</pid>
+
+		<pid hex="52" return="1" unit="%" eval="FORMULA" name="Ethanol fuel %"
+			pollable="true">
+			<formula value="( ( A * 100 ) / 255 )" format="\###" />
+			<compiled-formula value="FORMULA_1" format="\###" />
+		</pid>
+
+		<pid hex="53" return="2" unit="kPa" eval="RAW" pollable="true"
+			name="Absoulute Evap system Vapour Pressure" />
+	</mode>
+
+	<!-- MODE 2 -->
+	<mode hex="02" name="Show freeze frame data" />
+
+	<!-- MODE 3 -->
+	<mode hex="03" name="Show stored Diagnostic Trouble Codes" />
+
+	<!-- MODE 9 -->
+	<mode hex="09" name="Request vehicle information">
+
+		<!-- MODE 9 PIDS 0x01-0x20 -->
+		<suported-pid hex="00" return="4" unit="" eval="BIT_ENCODED"
+			pollable="false" name="Mode 9 supported PIDs 01 to 20">
+			<code bit="0" value="01" />
+			<code bit="1" value="02" />
+			<code bit="2" value="03" />
+			<code bit="3" value="04" />
+			<code bit="4" value="05" />
+			<code bit="5" value="06" />
+			<code bit="6" value="07" />
+			<code bit="7" value="08" />
+			<code bit="8" value="09" />
+			<code bit="9" value="0A" />
+			<code bit="10" value="0B" />
+			<code bit="11" value="0C" />
+			<code bit="12" value="0D" />
+			<code bit="13" value="0E" />
+			<code bit="14" value="0F" />
+			<code bit="15" value="10" />
+			<code bit="16" value="11" />
+			<code bit="17" value="12" />
+			<code bit="18" value="13" />
+			<code bit="19" value="14" />
+			<code bit="20" value="15" />
+			<code bit="21" value="16" />
+			<code bit="22" value="17" />
+			<code bit="23" value="18" />
+			<code bit="24" value="19" />
+			<code bit="25" value="1A" />
+			<code bit="26" value="1B" />
+			<code bit="27" value="1C" />
+			<code bit="28" value="1D" />
+			<code bit="29" value="1E" />
+			<code bit="30" value="1F" />
+			<code bit="31" value="20" />
+		</suported-pid>
+
+		<pid hex="02" return="25" unit="" eval="CHAR_STRING" pollable="false"
+			name="Vehicle identification number (VIN)" />
+	</mode>
+</obd-protocol>
