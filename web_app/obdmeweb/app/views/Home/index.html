@@ -67,7 +67,7 @@
 			#{/list}
 		</div>
 		<div id="tripsSection" class="tripsSection roundedBorder">
-			<h1 class="subsectionHeader">Trips</h1>
+			<h1 class="subsectionHeader">Trips (Most Recent)</h1>
 			#{list items:trips, as:'trip'}
 			<div class="tripName" onclick="location.href='@{Trips.index()}';">${trip.tripName}</div>
 			#{/list}
