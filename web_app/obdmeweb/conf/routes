@@ -3,6 +3,7 @@
 # ~~~~
 
 # AJAX - everything initiated client side from web application.
+GET		/ajax/charts/latest/vin/{VIN}/mode/{mode}/pid/{pid} controllers.ajax.Charts.latestPointsForVehicle
 GET		/ajax/graphing/{action}					controllers.ajax.Graphing.{action}
 GET		/ajax/kml/trip/{tripId}.kml				controllers.ajax.Kml.getKmlForTrip
 
