@@ -9,6 +9,7 @@ import javax.swing.text.NumberFormatter;
 import models.obdmedb.User;
 import models.obdmedb.statistics.VehicleDataPoint;
 import models.obdmedb.trips.Trip;
+import models.obdmedb.trips.Trip.LatestTripForUser;
 import play.libs.XML;
 import play.mvc.Before;
 import play.mvc.Controller;
@@ -23,9 +24,11 @@ public class Trips extends Controller {
 		public Long tripId;
 		public String tripName;
 		public String dataPoints;
-		public IndexTripBinding(Long id, String name, Long dataPoints) {
+		public String vehicleName;
+		public IndexTripBinding(Long id, String tripName, String vehicleName, Long dataPoints) {
 			this.tripId = id;
-			this.tripName = name;			
+			this.tripName = tripName;
+			this.vehicleName = vehicleName;
 			NumberFormat nf = NumberFormat.getNumberInstance();
 			nf.setGroupingUsed(true);
 			this.dataPoints = nf.format(dataPoints);		
@@ -36,10 +39,11 @@ public class Trips extends Controller {
     	User user = User.findByEmail(Security.connected());
     	
     	//Get the user's trips
-    	List<Trip> userTrips = Trip.getLatestTripsForUser(user, 5);
+    	//List<Trip> userTrips = Trip.getLatestTripsForUser(user, 5);
+    	List<LatestTripForUser> userTrips = Trip.getLatestTripsListForUser(user, 5);
     	List<IndexTripBinding> trips = new ArrayList<IndexTripBinding>();
-    	for (Trip userTrip : userTrips) {
-    		trips.add(new IndexTripBinding(userTrip.getId(), userTrip.getAlias(), VehicleDataPoint.selectDataPointCountForTrip(userTrip)));
+    	for (LatestTripForUser userTrip : userTrips) {
+    		trips.add(new IndexTripBinding(userTrip.tripId, userTrip.tripAlias, userTrip.vehicleAlias, VehicleDataPoint.selectDataPointCountForTrip(userTrip.tripId)));
     	} 	
     	render(trips);
 	}
