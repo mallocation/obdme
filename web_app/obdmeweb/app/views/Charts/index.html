@@ -62,7 +62,7 @@ $(function() {
 		centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
 		loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
 	});	
-	$("li").click(function() {
+	$("li").live('click', function() {
 		mode=$(this).attr('pid-mode');
 		pid=$(this).attr('pid-id');
 		var seriesName = $(this).html();
