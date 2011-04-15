@@ -1,4 +1,4 @@
-#{extends 'main.html' /}
+<em>#{extends 'main.html' /}
 #{set title:'Statistics' /}
 
 #{set 'moreStyles'}
@@ -97,6 +97,12 @@
 					#{/else}
 				</table>
 			</div>
+			<script type="text/javascript">
+			$("li").click(function() {
+				alert($(this).attr("pid-id"));
+				disablePopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
+			});
+			</script>
 		</div>
 	</div>
-</div>
+</div></em>

@@ -11,12 +11,12 @@
 	</div>
 	<ul class="pids unsorted" id="pidListUnsorted">
 		#{list items:pidListUnsorted, as:'obdPid'}
-		<li id="pidSelect" pid-id="${obdPid.pid}">${obdPid.pidTitle}</li>
+		<li id="pidSelect" pid-id="${obdPid.pid}" pid-mode="${obdPid.mode}">${obdPid.pidTitle}</li>
 		#{/list}
 	</ul>
 	<ul class="pids pidListSortedName" id="pidListSortedName">
 		#{list items:pidListSortedName, as:'obdPidSorted'}
-		<li id="pidSelect" pid-id="${obdPidSorted.pid}">${obdPidSorted.pidTitle}</li>
+		<li id="pidSelect" pid-id="${obdPidSorted.pid}" pid-mode="${obdPid.mode}">${obdPidSorted.pidTitle}</li>
 		#{/list}
 	</ul>
 </div>  
@@ -65,7 +65,6 @@ $(document).ready(function() {
 	});
 
 	$("li").click(function() {
-		alert($(this).attr("pid-id"));
 		disablePopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
 	});
 
