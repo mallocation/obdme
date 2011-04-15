@@ -9,62 +9,34 @@
 
 var map;
 var kmlData;
-
+var mapOptions;
 function initializeGoogleMaps() {
 	var myLatlng = new google.maps.LatLng(40.8077208833333,-96.6828080333333);
-	var myOptions = {
+	mapOptions = {
 		zoom: 11,
 		center: myLatlng,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}
-	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/1.kml?d=" + new Date().getTime());
+	setTripKml(${initTrip.tripId});
+}
+
+function setTripKml(tripId) {
+	map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+	if (kmlData) {
+		kmlData.setMap(null);
+		kmlData = null;
+	}
+	kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/"+tripId+".kml?d=" + new Date().getTime());
 	kmlData.setMap(map);
 }
+
+
 $(function() {
 	initializeGoogleMaps();
 	
 	$('a.tripLink').click(function() {
-		if (kmlData) {
-			kmlData.setMap(null);
-			kmlData = null;
-		}
-		var tripId = $(this).attr('tripId');
-		kmlData = new google.maps.KmlLayer("http://obdme.com/ajax/kml/trip/" + tripId + ".kml?d=" + new Date().getTime());
-		kmlData.setMap(map);
+		setTripKml($(this).attr('tripId'));
 	})
-	
-
-	// var availableTrips = [
-	// 	{
-	// 		tripName: "Lincoln Trip",
-	// 		id: 1,
-	// 		status: "ACTIVE"
-	// 	},
-	// 	{
-	// 		tripName: "Omaha Trip",
-	// 		id: 2, 
-	// 		status: "ACTIVE"
-	// 	}
-	// 
-	// ];
-	// $("#tripSearch").autocomplete( {
-	// 	source: function( request, response ) {
-	// 					var term = request.term;
-	// 					
-	// 					response()
-	// 					
-	// 					lastXhr = $.getJSON( "search.php", request, function( data, status, xhr ) {
-	// 						cache[ term ] = data;
-	// 						if ( xhr === lastXhr ) {
-	// 							response( data );
-	// 						}
-	// 					});
-	// 				}
-	// 	appendTo: "#tripList"
-	// });
-	
-
 });
 
 </script>

@@ -1,19 +1,23 @@
 #{extends 'main.html' /}
 #{set title:'Charts' /}
 
+
 #{set 'moreStyles'}
-<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/charts.css'}"></link>
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/charts.css'}"/>
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/ui-vader/jquery-ui-1.8.11.custom.css'}"/>
 #{/set}
 
+
 #{set 'moreScripts'}
-<script type="text/javascript" src="@{'/public/javascripts/quicksand/jquery.quicksand.js'}"></script>
 <script type="text/javascript" src="@{'/public/javascripts/highcharts/highcharts.js'}"></script>
+<script type="text/javascript" src="@{'/public/javascripts/jquery-ui-1.8.11.custom.min.js'}"></script>
 #{/set}
-<!-- <script type="text/javascript">
-var pid = '0D';
+<script type="text/javascript">
+
+var pid = '0C';
 var mode = '01';
 var vin = '1HGFA16537L077259';
-</script> -->
+</script>
 
 <!-- Include that fancy ass shhiiieeettt -->
 #{include 'Popups/selectPID.html' /}
@@ -25,175 +29,261 @@ var vin = '1HGFA16537L077259';
 <script type="text/javascript">
 var chart;
 var unit;
+var options;
+$(function() {
+	$("#hidDate").datepicker({
+		dateFormat: 'yy-mm-dd',
+		altField: '#hidAltDate',
+		altFormat: 'MM d, yy',
+		onSelect: function(dateText, inst) {
+			updateChartDataForDate(dateText,vin,mode,pid);
+		}
+	});
+	$('#selectDate').click(function() {
+		$("#hidDate").datepicker("show");
+	})
+	$('.dateArrowRight').click(function() {	
+		var cDate = $('#hidDate').val();
+		cDate = $.datepicker.formatDate(cDate, 'yy-mm-dd',null);
+		$('#hidDate').datepicker("setDate", incrementDate(cDate));
+		updateChartDataForDate($('#hidDate').val(),vin,mode,pid);
+	});
+	$('.dateArrowLeft').click(function() {
+		var cDate = $('#hidDate').val();
+		cDate = $.datepicker.formatDate(cDate, 'yy-mm-dd',null);
+		$('#hidDate').datepicker("setDate", decrementDate(cDate));
+		updateChartDataForDate($('#hidDate').val(),vin,mode,pid);
+				// 
+				// $('#hidDate').attr('value', decrementDate($('#hidDate').val()));
+				// $('#selectDate').datepicker("setDate", $('#hidDate').val());
+				// updateChartDataForDate($('#hidDate').val(),vin,mode,pid);
+	});
+	$('#selectPID').click(function() {
+		centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+		loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+	});	
+	$("li").click(function() {
+		mode=$(this).attr('pid-mode');
+		pid=$(this).attr('pid-id');
+		var seriesName = $(this).html();
+		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
+
+		options.series[0].name = $(this).html();
+		options.yAxis[0].title.text = $(this).html();
+		
+		updateChartDataForDate($('#hidDate').val(),vin,mode,pid);
+	});
+});
+function incrementDate(date) {
+	var setDate = $.datepicker.parseDate('yy-mm-dd', date, null);
+	var nextDate = new Date(setDate.getTime() + (1000*60*60*24));
+	return $.datepicker.formatDate('yy-mm-dd', nextDate, null);
+}
+
+function decrementDate(date) {
+	var setDate = $.datepicker.parseDate('yy-mm-dd', date, null);
+	var nextDate = new Date(setDate.getTime() - (1000*60*60*24));
+	return $.datepicker.formatDate('yy-mm-dd', nextDate, null);
+}
+
+function updateChartDataForDate(date,vin,mode,pid) {
+	$('#container').addClass('chartInactive');
+	$('.dataUnavailable').hide();
+	$('.ajaxIndicator').show();
+	$.getJSON('/ajax/charts/date/'+date+'/vin/'+vin+'/mode/'+mode+'/pid/'+pid, function(result) {
+		$('#container').removeClass('chartInactive');
+		var points = [];
+		$.each(result.points, function() {
+			points.push([this.x, this.y]);
+		});
+		$('.ajaxIndicator').hide();
+		if (points.length < 1) {
+			$('#container').addClass('chartInactive');
+			$('.dataUnavailable').show();
+		}
+		options.series[0].data = points;
+		options.yAxis[0].title.text = result.unit;
+
+     	chart = new Highcharts.Chart(options);
+	});
+	options.title.text=$('#hidAltDate').val();
+	
+}
+
 $(document).ready(function() {
-
-	// define the options
-	var options = {
-
-		chart: {
-			renderTo: 'container'
-		},
-
-		title: {
-			text: 'bang bang test'
-		},
-
+   
+   // define the options
+      options = {
+		globals: {
+			useUTC: false
+		},      
+        chart: {
+        	renderTo: 'container',
+         	defaultSeriesType: 'scatter'
+        },
+        title: {
+        	text: ''
+        },
 		xAxis: {
-			type: 'datetime',
-			tickInterval: 7 * 24 * 3600 * 1000, // one week
-			tickWidth: 0,
-			gridLineWidth: 1,
-			labels: {
-				align: 'left',
-				x: 3,
-				y: -3 
-			},
-			name: 'Date'
-		},
+        	type: 'datetime',
+            //tickInterval: 7 * 24 * 3600 * 1000, // one week
+         	tickInterval: 24*3600*1000,
+                   tickWidth: 0,
+                   gridLineWidth: 1,
+                   labels: {
+                      align: 'left',
+                      x: 3,
+                      y: -3 
+                   },
+         			name: 'Date'
+                },
+                
+                yAxis: [{ // left y axis
+                   title: {
+                      text: null
+                   },
+                   labels: {
+                      align: 'left',
+                      x: 3,
+                      y: 16,
+                      formatter: function() {
+                         return Highcharts.numberFormat(this.value, 0);
+                      }
+                   },
+                   showFirstLabel: false
+                }, { // right y axis
+                   linkedTo: 0,
+                   gridLineWidth: 0,
+                   opposite: true,
+                   title: {
+                      text: null
+                   },
+                   labels: {
+                      align: 'right',
+                      x: -3,
+                      y: 16,
+                      formatter: function() {
+                         return Highcharts.numberFormat(this.value, 0);
+                      }
+                   },
+                   showFirstLabel: false
+                }],
+                
+                legend: {
+                   align: 'left',
+                   verticalAlign: 'top',
+                   y: 0,
+                   floating: true,
+                   borderWidth: 0
+                },
+                
+                tooltip: {
+                   shared: true,
+                   crosshairs: true
+                },
 
-		yAxis: [{ // left y axis
-			title: {
-				text: null
-			},
-			labels: {
-				align: 'left',
-				x: 3,
-				y: 16,
-				formatter: function() {
-					return Highcharts.numberFormat(this.value, 0);
-				}
-			},
-			showFirstLabel: false
-			}, { // right y axis
-				linkedTo: 0,
-				gridLineWidth: 0,
-				opposite: true,
-				title: {
-					text: null
-				},
-				labels: {
-					align: 'right',
-					x: -3,
-					y: 16,
-					formatter: function() {
-						return Highcharts.numberFormat(this.value, 0);
-					}
-				},
-				showFirstLabel: false
-				}],
+  
+         
+         plotOptions: {
+			scatter: {
+			            marker: {
+			               radius: 5,
+			               states: {
+			                  hover: {
+			                     enabled: true,
+			                     lineColor: 'rgb(100,100,100)'
+			                  }
+			               }
+			            },
+			            states: {
+			               hover: {
+			                  marker: {
+			                     enabled: false
+			                  }
+			               }
+			            }
+			         }
+            // series: {
+            //    cursor: 'pointer',
+            //    point: {
+            //       events: {
+            //          click: function() {
+            //             hs.htmlExpand(null, {
+            //                pageOrigin: {
+            //                   x: this.pageX, 
+            //                   y: this.pageY
+            //                },
+            //                headingText: this.series.name,
+            //                maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) +':<br/> '+ 
+            //                   this.y +' visits',
+            //                width: 200
+            //             });
+            //          }
+            //       }
+            //    },
+            //    marker: {
+            //       lineWidth: 1
+            //    }
+            // }
+         },
+         
+         series: [{
+            name: 'Engine RPM',
+            lineWidth: 4,
+            marker: {
+               radius: 4
+            }
+         }]
+      }
+   
+	
+	
+	updateChartDataForDate($('#hidDate'),vin,mode,pid);		
+});
+</script>
 
-				legend: {
-					align: 'left',
-					verticalAlign: 'top',
-					y: 0,
-					floating: true,
-					borderWidth: 0
-				},
-
-				tooltip: {
-					shared: true,
-					crosshairs: true
-				},
-
-				plotOptions: {
-					series: {
-						cursor: 'pointer',
-						point: {
-							events: {
-								click: function() {
-									hs.htmlExpand(null, {
-										pageOrigin: {
-											x: this.pageX, 
-											y: this.pageY
-										},
-										headingText: this.series.name,
-										maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) +':<br/> '+ 
-										this.y +' visits',
-										width: 200
-									});
-								}
-							}
-						},
-						marker: {
-							lineWidth: 1
-						}
-					}
-				},
-
-				series: [{
-					name: 'Engine RPM',
-					lineWidth: 4,
-					marker: {
-						radius: 4
-					}
-					}]
-				}
-
-				$.getJSON('/ajax/charts/latest/vin/1HGFA16537L077259/mode/01/pid/0C', function(result) {
-					var points = [];
-					$.each(result.points, function() {
-						points.push([Date.parse(this.x), this.y]);
-					});
-					options.series[0].data = points;
-					options.yAxis[0].title.text = result.unit;
-					chart = new Highcharts.Chart(options);
-				});
-
-				$('#selectPID').click(function() {
-					centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-					loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-				});
-
-				$('.pidSelect').click(function() {
-					var mode=$(this).attr('mode');
-					var pid=$(this).attr('pid');
-					var seriesName = $(this).attr('id');
-					disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-
-					options.series[0].name = $(this).attr('id');
-					options.yAxis[0].title.text = $(this).attr('id');
-
-					$.getJSON('/ajax/charts/latest/vin/1HGFA16537L077259/mode/' + mode + '/pid/' + pid, function(result) {
-						var points = [];
-						$.each(result.points, function() {
-							points.push([Date.parse(this.x), this.y]);
-						});
-						options.series[0].data = points;
-						options.yAxis[0].title.text += result.unit==null || result.unit=='' ? '' : '-' + result.unit;
-						chart = new Highcharts.Chart(options);
-					});
-
-				});
-
-				// $("#selectPID").click(function() {
-					// 		alert("tits");
-					// 		centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-					// 		loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-					// 	});
-					// 
-					// 	$(".submit").click(function() {
-						// 		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-						// 	});
-						// 
-						// 	$("#popupContentCloseSelectPID").click(function() {
-							// 		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-							// 	});
-							// 
-							// 	$("#backgroundPopupSelectPID").click(function() {
-								// 		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-								// 	});
-								// 
-								// 	$(document).keypress(function(e) {
-									// 		if (e.keyCode == 27 && popupStatus == 1) {
-										// 			disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-										// 		}
-										// 	});
-									});
-									</script>
 
 <!-- Application Index Body -->
 <div class="pageContainer">
 	<div class="logoHeaderImage"></div>
-	<input type="submit" class="submit" id="selectPID" value="Select PID" /><!-- id=selectPID-->
+	<div id="graph">
+		<div id="chartControls">
+			<input type="submit" class="submit" id="selectPID" value="Select PID" /><!-- id=selectPID-->
+			<input type="hidden" id="hidDate" value="${currentDate}"/>
+			<input type="hidden" id="hidAltDate" value="${currentDateAlt}"/>
+			<input type="submit" class="submit dateArrowRight" style="float:right;" value="Next Day"/>
+			<!-- <a alt="Next Day" style="float:right;" class="submit dateArrow dateArrowRight">
+										<img src="@{'/public/images/arrow/arrowright.png'}"/>
+									</a> -->
+			
+			<input type="submit" class="submit" style="float:right;" id="selectDate" value="Change Date"/>
+			<input type="submit" class="submit dateArrowLeft" style="float:right;" value="Previous Day"/>
+			<!-- <a alt="Previous Day" style="float:right;" class="submit dateArrow dateArrowLeft">
+							<img src="@{'/public/images/arrow/arrowleft.png'}"/>
+						</a> -->
+						<!-- <div style="float:right;" class="submit dateArrow dateArrowRight">
+							<img src="@{'/public/images/arrow/arrowright.png'}"/>
+						</div>
+						<input type="submit" class="submit" style="float:right;" id="selectDate" value="Change Date"/>
+						<div alt="Previous Day" style="float:right;" class="submit dateArrow dateArrowLeft">
+							<img src="@{'/public/images/arrow/arrowleft.png'}"/>
+						</div> -->
+			
+		</div>
+		<div id="graphContainer">
+			<div id="container" style="width: 940px; height: 400px; margin: 0 auto"></div>
+			<div id="ajaxLoading" class="ajaxIndicator">
+				<img src="@{'/public/images/ajax/ajax-loader.gif'}"/><span>Loading...</span>
+			</div>
+			<div class="dataUnavailable">
+				<span>No data available.</span>
+			</div>
+			
+	</div>
+	
+	
+	
+</div>
+<!-- id=selectPID-->
 	<!-- <div id="container" style="width: 800px; height: 400px; margin: 0 auto"></div> -->
 </div>
