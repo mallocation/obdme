@@ -16,6 +16,7 @@ import play.Logger;
 import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.With;
+import utilities.obd.ObdPidUtils;
 
 import models.obdmedb.obd.ObdPid;
 import java.util.List;
@@ -43,17 +44,17 @@ public class Statistics extends Controller {
 		
 		Calendar aDayAgo = Calendar.getInstance();
 		aDayAgo.add(Calendar.DAY_OF_YEAR, -1);
-		List<TimeStatisticSet> lastDayStats = VehicleDataPoint.selectMaxMinAvgAllPIDSForRange(userFirstVehicle, aDayAgo, Calendar.getInstance());
+		List<TimeStatisticSet> lastDayStats = VehicleDataPoint.selectMaxMinAvgAllPIDSForRange(userFirstVehicle, aDayAgo, Calendar.getInstance(), ObdPidUtils.getInstance());
 		renderArgs.put("lastDayStats", lastDayStats);
     	
     	Calendar aWeekAgo = Calendar.getInstance();
     	aWeekAgo.add(Calendar.DAY_OF_YEAR, -7);
-    	List<TimeStatisticSet> lastWeekStats = VehicleDataPoint.selectMaxMinAvgAllPIDSForRange(userFirstVehicle, aWeekAgo, Calendar.getInstance());
+    	List<TimeStatisticSet> lastWeekStats = VehicleDataPoint.selectMaxMinAvgAllPIDSForRange(userFirstVehicle, aWeekAgo, Calendar.getInstance(), ObdPidUtils.getInstance());
     	renderArgs.put("lastWeekStats", lastWeekStats);
     	
     	Calendar aMonthAgo = Calendar.getInstance();
     	aMonthAgo.add(Calendar.DAY_OF_YEAR, -31);
-    	List<TimeStatisticSet> lastMonthStats = VehicleDataPoint.selectMaxMinAvgAllPIDSForRange(userFirstVehicle, aMonthAgo, Calendar.getInstance());
+    	List<TimeStatisticSet> lastMonthStats = VehicleDataPoint.selectMaxMinAvgAllPIDSForRange(userFirstVehicle, aMonthAgo, Calendar.getInstance(), ObdPidUtils.getInstance());
     	renderArgs.put("lastMonthStats", lastMonthStats);
     	
 	}

@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import models.obdmedb.obd.ObdPid;
+import models.obdmedb.statistics.VehicleDataPoint.IObdPidHelper;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -19,7 +20,18 @@ import org.xml.sax.SAXException;
 import play.Logger;
 import play.vfs.VirtualFile;
 
-public class ObdPidUtils { 
+public class ObdPidUtils implements IObdPidHelper {
+	
+	private static ObdPidUtils _instance;
+	
+	private ObdPidUtils(){}
+	
+	public static ObdPidUtils getInstance() {
+		if (_instance == null) {
+			_instance = new ObdPidUtils();
+		}
+		return _instance;
+	}
 	
 	private static Document loadObdProtocolFile() {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -42,6 +54,7 @@ public class ObdPidUtils {
 			return null;
 		}		
 	}
+	
 	
 	
 	
@@ -71,6 +84,16 @@ public class ObdPidUtils {
 			Logger.error(e, "Problem compiling unit xpath expression in obd protocol.");
 			return null;
 		}
+	}
+
+	@Override
+	public String getObdPidDecimalFormat(ObdPid obdPid) {
+		return getPidDecimalFormat(obdPid);
+	}
+
+	@Override
+	public String getObdPidUnit(ObdPid obdPid) {
+		return getPidUnit(obdPid);
 	}
 
 }
