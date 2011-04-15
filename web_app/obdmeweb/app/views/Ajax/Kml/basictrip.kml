@@ -14,6 +14,23 @@
     <color>7f00ff00</color>
   </PolyStyle>
 </Style>
+
+<Style id="mapPointA">
+	<IconStyle>
+	    <Icon>
+			<href>@{'/public/images/trips/A.png'}</href>
+		</Icon>
+	</IconStyle>
+</Style>
+
+<Style id="mapPointB">
+	<IconStyle>
+	    <Icon>
+			<href>@{'/public/images/trips/B.png'}</href>
+		</Icon>
+	</IconStyle>
+</Style>
+
 <Placemark>
   <name>Start</name>
   <description>Transparent green wall with yellow outlines</description>
@@ -29,5 +46,20 @@
   	</coordinates>
   </LineString>
 </Placemark>
+
+<Placemark>
+	<styleUrl>#mapPointA</styleUrl>
+	<Point>
+		<coordinates>${renderKml.startPoint.lon}, ${renderKml.startPoint.lat}, ${renderKml.startPoint.alt}</coordinates>
+	</Point>
+</Placemark>
+
+<Placemark>
+	<styleUrl>#mapPointB</styleUrl>
+	<Point>
+		<coordinates>${renderKml.endPoint.lon}, ${renderKml.endPoint.lat}, ${renderKml.endPoint.alt}</coordinates>
+	</Point>
+</Placemark>
+
 </Document>
 </kml>
