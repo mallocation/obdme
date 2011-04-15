@@ -22,6 +22,7 @@ import models.obdmedb.vehicles.Vehicle;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import play.Logger;
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
 
@@ -207,7 +208,7 @@ public class VehicleDataPoint extends GenericModel {
 		return statSet;
 	}
 
-	public static PIDStatistic selectMaxMinAvgPIDSForRange(Vehicle vehicle, Calendar startDate, Calendar endDate, ObdPid obdpid) {
+	public static PIDStatistic selectMaxMinAvgPIDSForRange(Vehicle vehicle, Calendar startDate, Calendar endDate, ObdPid obdpid, IObdPidHelper pidHelper) {
 
 		String SQL = "select Min(dp.value), Max(dp.value), Avg(dp.value) " +
 		"from vehicledataset vd " +
@@ -233,9 +234,9 @@ public class VehicleDataPoint extends GenericModel {
 		if (row[0] != null) {
 			PIDStatistic sp = new PIDStatistic();
 			sp.pid = obdpid;
-			sp.unit = ObdPidUtils.getPidUnit(sp.pid);
+			//sp.unit = ObdPidUtils.getPidUnit(sp.pid);
 			DecimalFormat df = new DecimalFormat();
-			df.applyPattern(ObdPidUtils.getPidDecimalFormat(sp.pid));
+			df.applyPattern(pidHelper.getObdPidDecimalFormat(sp.pid));
 			sp.minimum = df.format(Double.parseDouble(row[0].toString()));
 			sp.maximum = df.format(Double.parseDouble(row[1].toString()));
 			sp.average = df.format(Double.parseDouble(row[2].toString()));
