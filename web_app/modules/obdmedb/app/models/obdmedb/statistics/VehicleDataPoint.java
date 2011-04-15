@@ -16,18 +16,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Query;
 import javax.persistence.Table;
-import javax.persistence.TemporalType;
 
 import models.obdmedb.obd.ObdPid;
-import models.obdmedb.trips.Trip;
 import models.obdmedb.vehicles.Vehicle;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import play.Logger;
 import play.db.jpa.GenericModel;
 import play.db.jpa.JPA;
-import utilities.obd.ObdPidUtils;
 
 @Entity
 @Embeddable
@@ -166,8 +162,13 @@ public class VehicleDataPoint extends GenericModel {
 		query.setParameter(1, tripId);
 		return Long.parseLong(query.getSingleResult().toString());
 	}
+	
+	public static interface IObdPidHelper {
+		String getObdPidUnit(ObdPid obdPid);
+		String getObdPidDecimalFormat(ObdPid obdPid);		
+	}
 
-	public static List<TimeStatisticSet> selectMaxMinAvgAllPIDSForRange(Vehicle vehicle, Calendar startDate, Calendar endDate) {
+	public static List<TimeStatisticSet> selectMaxMinAvgAllPIDSForRange(Vehicle vehicle, Calendar startDate, Calendar endDate, IObdPidHelper pidHelper) {
 
 		String SQL = "select dp.pid, Min(dp.value), Max(dp.value), Avg(dp.value) " +
 		"from vehicledataset vd " +
@@ -191,9 +192,11 @@ public class VehicleDataPoint extends GenericModel {
 			TimeStatisticSet sp = new TimeStatisticSet();
 			if (ObdPid.getObdPid("01", (String)row[0]) != null) {
 				sp.pid = ObdPid.getObdPid("01", (String)row[0]) ;
-				sp.unit = ObdPidUtils.getPidUnit(sp.pid);
+				sp.unit = pidHelper.getObdPidUnit(sp.pid);
+				//sp.unit = ObdPidUtils.getPidUnit(sp.pid);
 				DecimalFormat df = new DecimalFormat();
-				df.applyPattern(ObdPidUtils.getPidDecimalFormat(sp.pid));
+				//df.applyPattern(ObdPidUtils.getPidDecimalFormat(sp.pid));
+				df.applyPattern(pidHelper.getObdPidDecimalFormat(sp.pid));
 				sp.minimum = df.format(Double.parseDouble(row[1].toString()));
 				sp.maximum = df.format(Double.parseDouble(row[2].toString()));
 				sp.average = df.format(Double.parseDouble(row[3].toString()));
