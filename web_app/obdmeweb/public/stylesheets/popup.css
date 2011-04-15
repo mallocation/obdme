@@ -79,7 +79,7 @@ p.popUpText {
 	color: white;
 }
 
-li:hover {
+.pids li:hover {
     background: -webkit-gradient(linear, left top, left bottom, from(#316494), to(#6099D2));
     background: -moz-linear-gradient(top, #316494, #6099D2);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#316494", endColorstr="#6099D2"); 
@@ -87,7 +87,7 @@ li:hover {
     color: white;
 }
 
-li:active {
+.pids li:active {
     background: -webkit-gradient(linear, left top, left bottom, from(#6099D2), to(#316494));
     background: -moz-linear-gradient(top, #6099D2, #316494);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#6099D2", endColorstr="#316494"); 

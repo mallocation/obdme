@@ -16,86 +16,87 @@
 	<div class="logoHeaderImage"></div>
 
 	<div class="statsMainContent center">
-		<input type="submit" class="submit" id="selectPID" value="Select PID" /><!-- id=selectPID-->
+		<input type="submit" class="submit" id="selectPID" value="Select PID" />
 		<input type="submit" class="submit" id="selectTimeFrame" value="Select Time Frame" />
-		<div class="statisticsSectionContainer" id="statisticsSectionContainerLastDay">
-			<h1 class="statsHeader" id="statsHeaderLastDay">&{'statistics.section.last.day'}</h1>
-			<table class="statisticsTable">
-				#{if lastDayStats.isEmpty()}
-				<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
-				#{/if}
-				#{else}
-				<tr>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
-				</tr>
-				#{list items:lastDayStats, as:'currentPid'}
-				<tr>
-					<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
-					<td><div class="statisticsText">${currentPid.minimum}</div></td>
-					<td><div class="statisticsText">${currentPid.maximum}</div></td>
-					<td><div class="statisticsText">${currentPid.average}</div></td>
-					<td><div class="statisticsText">${currentPid.unit}</div></td>
-				</tr>
-				#{/list}
-				#{/else}
-			</table>
+		<div id="statsContentDefault">
+			<div class="statisticsSectionContainer" id="statisticsSectionContainerLastDay">
+				<h1 class="statsHeader" id="statsHeaderLastDay">&{'statistics.section.last.day'}</h1>
+				<table class="statisticsTable">
+					#{if lastDayStats.isEmpty()}
+					<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
+					#{/if}
+					#{else}
+					<tr>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
+					</tr>
+					#{list items:lastDayStats, as:'currentPid'}
+					<tr>
+						<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
+						<td><div class="statisticsText">${currentPid.minimum}</div></td>
+						<td><div class="statisticsText">${currentPid.maximum}</div></td>
+						<td><div class="statisticsText">${currentPid.average}</div></td>
+						<td><div class="statisticsText">${currentPid.unit}</div></td>
+					</tr>
+					#{/list}
+					#{/else}
+				</table>
+			</div>
+			<div class="statisticsSectionContainer" id="statisticsSectionContainerLastWeek">
+				<h1 class="statsHeader">&{'statistics.section.last.week'}</h1>
+				<table class="statisticsTable">
+					#{if lastWeekStats.isEmpty()}
+					<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
+					#{/if}
+					#{else}
+					<tr>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
+					</tr>
+					#{list items:lastWeekStats, as:'currentPid'}
+					<tr>
+						<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
+						<td><div class="statisticsText">${currentPid.minimum}</div></td>
+						<td><div class="statisticsText">${currentPid.maximum}</div></td>
+						<td><div class="statisticsText">${currentPid.average}</div></td>
+						<td><div class="statisticsText">${currentPid.unit}</div></td>
+					</tr>
+					#{/list}
+					#{/else}
+				</table>
+			</div>
+			<div class="statisticsSectionContainer" id="statisticsSectionContainerLastMonth">
+				<h1 class="statsHeader">&{'statistics.section.last.month'}</h1>
+				<table class="statisticsTable">
+					#{if lastMonthStats.isEmpty()}
+					<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
+					#{/if}
+					#{else}
+					<tr>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
+						<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
+					</tr>
+					#{list items:lastMonthStats, as:'currentPid'}
+					<tr>
+						<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
+						<td><div class="statisticsText">${currentPid.minimum}</div></td>
+						<td><div class="statisticsText">${currentPid.maximum}</div></td>
+						<td><div class="statisticsText">${currentPid.average}</div></td>
+						<td><div class="statisticsText">${currentPid.unit}</div></td>
+					</tr>
+					#{/list}
+					#{/else}
+				</table>
+			</div>
 		</div>
-		<div class="statisticsSectionContainer" id="statisticsSectionContainerLastWeek">
-			<h1 class="statsHeader">&{'statistics.section.last.week'}</h1>
-			<table class="statisticsTable">
-				#{if lastWeekStats.isEmpty()}
-				<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
-				#{/if}
-				#{else}
-				<tr>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
-				</tr>
-				#{list items:lastWeekStats, as:'currentPid'}
-				<tr>
-					<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
-					<td><div class="statisticsText">${currentPid.minimum}</div></td>
-					<td><div class="statisticsText">${currentPid.maximum}</div></td>
-					<td><div class="statisticsText">${currentPid.average}</div></td>
-					<td><div class="statisticsText">${currentPid.unit}</div></td>
-				</tr>
-				#{/list}
-				#{/else}
-			</table>
-		</div>
-		<div class="statisticsSectionContainer" id="statisticsSectionContainerLastMonth">
-			<h1 class="statsHeader">&{'statistics.section.last.month'}</h1>
-			<table class="statisticsTable">
-				#{if lastMonthStats.isEmpty()}
-				<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
-				#{/if}
-				#{else}
-				<tr>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
-					<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
-				</tr>
-				#{list items:lastMonthStats, as:'currentPid'}
-				<tr>
-					<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
-					<td><div class="statisticsText">${currentPid.minimum}</div></td>
-					<td><div class="statisticsText">${currentPid.maximum}</div></td>
-					<td><div class="statisticsText">${currentPid.average}</div></td>
-					<td><div class="statisticsText">${currentPid.unit}</div></td>
-				</tr>
-				#{/list}
-				#{/else}
-			</table>
-		</div>
-		
 	</div>
 </div>
