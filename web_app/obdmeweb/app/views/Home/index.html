@@ -68,13 +68,13 @@
 		</div>
 		<div id="tripsSection" class="tripsSection roundedBorder">
 			<h1 class="subsectionHeader">Trips (Most Recent)</h1>
-			#{list items:trips, as:'trip'}
-			<div class="tripName" onclick="location.href='@{Trips.index()}';">${trip.tripName}</div>
+			#{list items:userTrips, as:'trip'}
+			<div class="tripName" onclick="location.href='@{Trips.index()}';">${trip.tripAlias}</div>
 			#{/list}
 		</div>
-		<div id="chartsSection" class="chartsSection roundedBorder">
+		<!--<div id="chartsSection" class="chartsSection roundedBorder">
 			<h1 class="subsectionHeader" onclick="location.href='@{Charts.index()}';">Charts</h1>
-		</div>
+		</div>-->
 		<div id="statsSection" class="statsSection roundedBorder">
 			<h1 class="subsectionHeader" onclick="location.href='@{Statistics.index()}';">Statistics</h1>
 		</div>
