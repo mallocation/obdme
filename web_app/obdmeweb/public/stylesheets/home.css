@@ -33,7 +33,6 @@ div.tripsSection {
 	width:300px;
 	height:300px;
 	float:right;
-	margin-top: 150px;
 	/*border-style: solid;
 	border-color: #ccc;
 	border-width: 2px;*/
@@ -103,4 +102,16 @@ div.tripName {
 	float: left;
 	font-weight: 700;
 	cursor: pointer;
+}
+
+div.stats {
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	font-size: 24px;
+	color: white;
+	text-shadow:rgba(0,0,0,0.4) 0 1px 2px;
+	margin-left: 6px;
+	margin-bottom: 6px;
+	float: left;
+	font-weight: 700;
+	clear: both;
 }
