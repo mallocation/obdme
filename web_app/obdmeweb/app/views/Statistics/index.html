@@ -1,23 +1,24 @@
 <em>#{extends 'main.html' /}
-#{set title:'Statistics' /}
+	#{set title:'Statistics' /}
 
-#{set 'moreStyles'}
-<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/statistics.css'}"></link>
-#{/set}
+	#{set 'moreStyles'}
+	<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/statistics.css'}"></link>
+	#{/set}
 
-#{set 'moreScripts'}
-<script type="text/javascript" src="@{'/public/javascripts/highcharts/highcharts.js'}"></script>
-#{/set}
+	#{set 'moreScripts'}
+	<script type="text/javascript" src="@{'/public/javascripts/highcharts/highcharts.js'}"></script>
+	#{/set}
 
-#{include 'Popups/selectPID.html' /}
+	#{include 'Popups/selectPID.html' /}
 
 <!-- Application Index Body -->
 <div class="pageContainer">
 	<div class="logoHeaderImage"></div>
 
 	<div class="statsMainContent center">
+		<input type="submit" class="submit" id="DefaultScreen" value="Default" />
 		<input type="submit" class="submit" id="selectPID" value="Select PID" />
-		<input type="submit" class="submit" id="selectTimeFrame" value="Select Time Frame" />
+		<!-- <input type="submit" class="submit" id="selectTimeFrame" value="Select Time Frame" /> -->
 		<div id="statsContentDefault">
 			<div class="statisticsSectionContainer" id="statisticsSectionContainerLastDay">
 				<h1 class="statsHeader" id="statsHeaderLastDay">&{'statistics.section.last.day'}</h1>
@@ -98,9 +99,19 @@
 				</table>
 			</div>
 			<script type="text/javascript">
-			$("li").click(function() {
-				alert($(this).attr("pid-id"));
-				disablePopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
+			$("li").live('click', function() {
+				$.get('statistics/' + $(this).attr("pid-mode") + '/' + $(this).attr("pid-id"), function(data) {
+					$('#statsContentDefault').html(data);
+					$('#statsContentDefault').slideDown(2000);
+				});
+				$('#statsContentDefault').slideUp(2000);
+			});
+			$("#DefaultScreen").click(function() {
+				$.get('statistics/default', function(data) {
+					$('#statsContentDefault').html(data);
+					$('#statsContentDefault').slideDown(2000);
+				});
+				$('#statsContentDefault').slideUp(2000);
 			});
 			</script>
 		</div>

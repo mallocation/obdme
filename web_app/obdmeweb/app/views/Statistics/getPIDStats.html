@@ -1,0 +1,79 @@
+<div class="statisticsSectionContainer" id="statisticsSectionContainerLastDay">
+	<h1 class="statsHeader" id="statsHeaderLastDay">${lastWeekStats.pid.getPidTitle()}</h1>
+	<table class="statisticsTable">
+		<tr>
+			<td><div class="statisticsTableHeader">&{'statistics.table.header.time'}</div></td>
+			<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
+			<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
+			<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
+			<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
+		</tr>
+		#{if lastDayStats == null}
+		<td><div class="statisticsText">&{'statistics.section.last.day'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText"></div></td>
+		#{/if}
+		#{else}
+		<tr>
+			<td><div class="statisticsText">&{'statistics.section.last.day'}</div></td>
+			<td><div class="statisticsText">${lastDayStats.minimum}</div></td>
+			<td><div class="statisticsText">${lastDayStats.maximum}</div></td>
+			<td><div class="statisticsText">${lastDayStats.average}</div></td>
+			<td><div class="statisticsText">${lastDayStats.unit}</div></td>
+		</tr>
+		#{/else}
+		
+		#{if lastWeekStats == null}
+		<td><div class="statisticsText">&{'statistics.section.last.week'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText"></div></td>
+		#{/if}
+		#{else}
+		<tr>
+			<td><div class="statisticsText">&{'statistics.section.last.week'}</div></td>
+			<td><div class="statisticsText">${lastWeekStats.minimum}</div></td>
+			<td><div class="statisticsText">${lastWeekStats.maximum}</div></td>
+			<td><div class="statisticsText">${lastWeekStats.average}</div></td>
+			<td><div class="statisticsText">${lastWeekStats.unit}</div></td>
+		</tr>
+		#{/else}
+		
+		#{if lastMonthStats == null}
+		<td><div class="statisticsText">&{'statistics.section.last.month'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText"></div></td>
+		#{/if}
+		#{else}
+		<tr>
+			<td><div class="statisticsText">&{'statistics.section.last.month'}</div></td>
+			<td><div class="statisticsText">${lastMonthStats.minimum}</div></td>
+			<td><div class="statisticsText">${lastMonthStats.maximum}</div></td>
+			<td><div class="statisticsText">${lastMonthStats.average}</div></td>
+			<td><div class="statisticsText">${lastMonthStats.unit}</div></td>
+		</tr>
+		#{/else}
+		
+		#{if lastYearStats == null}
+		<td><div class="statisticsText">&{'statistics.section.last.year'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText">&{'statistics.error.no.data.short'}</div></td>
+		<td><div class="statisticsText"></div></td>
+		#{/if}
+		#{else}
+		<tr>
+			<td><div class="statisticsText">&{'statistics.section.last.year'}</div></td>
+			<td><div class="statisticsText">${lastYearStats.minimum}</div></td>
+			<td><div class="statisticsText">${lastYearStats.maximum}</div></td>
+			<td><div class="statisticsText">${lastYearStats.average}</div></td>
+			<td><div class="statisticsText">${lastYearStats.unit}</div></td>
+		</tr>
+		#{/else}
+	</table>
+</div>
