@@ -207,12 +207,58 @@ public class VehicleDataPoint extends GenericModel {
 		return statSet;
 	}
 
+	public static PIDStatistic selectMaxMinAvgPIDSForRange(Vehicle vehicle, Calendar startDate, Calendar endDate, ObdPid obdpid) {
+
+		String SQL = "select Min(dp.value), Max(dp.value), Avg(dp.value) " +
+		"from vehicledataset vd " +
+		"inner join vehicledatapoint dp on vd.id = dp.datasetid " +
+		"where vd.vehicleid=? and " +
+		"dp.pid like ? and dp.mode like ? and " +
+		"vd.timestamp between ? and ? ";
+
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Query query = JPA.em().createNativeQuery(SQL); 
+		query.setParameter(1, vehicle.getId());
+		query.setParameter(2, obdpid.getPid());
+		query.setParameter(3, obdpid.getMode());
+		query.setParameter(4, dateFormat.format(startDate.getTime()));
+		query.setParameter(5, dateFormat.format(endDate.getTime()));
+
+		List<Object[]> queryResults = query.getResultList();
+
+		Object[] row = queryResults.get(0);
+		Logger.info(queryResults.size()+"");
+
+		if (row[0] != null) {
+			PIDStatistic sp = new PIDStatistic();
+			sp.pid = obdpid;
+			sp.unit = ObdPidUtils.getPidUnit(sp.pid);
+			DecimalFormat df = new DecimalFormat();
+			df.applyPattern(ObdPidUtils.getPidDecimalFormat(sp.pid));
+			sp.minimum = df.format(Double.parseDouble(row[0].toString()));
+			sp.maximum = df.format(Double.parseDouble(row[1].toString()));
+			sp.average = df.format(Double.parseDouble(row[2].toString()));
+			return sp;
+		}
+
+		return null;
+	}
+
 	public static class LatestDataPoint {
 		public Date timestamp;
 		public double value;
 	}
 
 	public static class TimeStatisticSet {
+		public ObdPid pid;
+		public String unit;
+		public String minimum;
+		public String maximum;
+		public String average;
+	}
+
+	public static class PIDStatistic {
 		public ObdPid pid;
 		public String unit;
 		public String minimum;
