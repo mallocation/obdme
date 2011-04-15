@@ -15,6 +15,16 @@
   </PolyStyle>
 </Style>
 
+<Style id="blueLine">
+    <LineStyle>
+	    <color>7dff0000</color>
+	    <width>4</width>
+	</LineStyle>
+	<PolyStyle>
+		<color>7dff0000</color>
+	</PolyStyle>
+</Style>
+
 <Style id="mapPointA">
 	<IconStyle>
 	    <Icon>
@@ -34,7 +44,7 @@
 <Placemark>
   <name>Start</name>
   <description>Transparent green wall with yellow outlines</description>
-  <styleUrl>#yellowLineGreenPoly</styleUrl>
+  <styleUrl>#blueLine</styleUrl>
   <LineString>
     <extrude>0</extrude>
     <tessellate>1</tessellate>
@@ -48,6 +58,8 @@
 </Placemark>
 
 <Placemark>
+	<name>Start</name>
+	<description>Start point of trip.</description>
 	<styleUrl>#mapPointA</styleUrl>
 	<Point>
 		<coordinates>${renderKml.startPoint.lon}, ${renderKml.startPoint.lat}, ${renderKml.startPoint.alt}</coordinates>
@@ -55,6 +67,8 @@
 </Placemark>
 
 <Placemark>
+	<name>End</name>
+	<description>End point of trip.</description>
 	<styleUrl>#mapPointB</styleUrl>
 	<Point>
 		<coordinates>${renderKml.endPoint.lon}, ${renderKml.endPoint.lat}, ${renderKml.endPoint.alt}</coordinates>
