@@ -1,80 +1,101 @@
 #{extends 'main.html' /}
 #{set title:'Statistics' /}
+
 #{set 'moreStyles'}
-<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/statistics.css'}"/>
+<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/statistics.css'}"></link>
 #{/set}
 
-<div class="popupContent" id="popupContentSelectPID">  
-	<a class="popupContentClose" id="popupContentCloseSelectPID">X</a>
-    <h1>Select a PID</h1>
-	#{list items:pidList, as:'obdPid'}
-	<input type="submit" class="submit pidSelect" mode="${obdPid.mode}" pid="${obdPid.pid}" style="font-size: 14px;" id="${obdPid.pidTitle}" value="${obdPid.pidTitle}" />
-	#{/list}
-</div>
+#{set 'moreScripts'}
+<script type="text/javascript" src="@{'/public/javascripts/highcharts/highcharts.js'}"></script>
+#{/set}
 
-<div class="popupContent" id="popupContentSelectTimeFrame">
-	<a class="popupContentClose" id="popupContentCloseSelectTimeFrame">X</a>
-    <h1>Select a Time Frame</h1>
-	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Today" value="Today" />
-	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Week" value="Week" />
-	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Month" value="Month" />
-	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="Year" value="Year" />
-	<input type="submit" class="submit pidSelect" style="font-size: 14px;" id="All Time" value="All Time" />
-</div>
-
-<div class="backgroundPopup" id="backgroundPopupSelectPID"></div>
-<div class="backgroundPopup" id="backgroundPopupSelectTimeFrame"></div>
-
-<script type="text/javascript">
-$(document).ready(function() {
-	$("#selectPID").click(function() {
-		centerPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-		loadPopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-	});
-	
-	$("#selectTimeFrame").click(function() {
-		centerPopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
-		loadPopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
-	});
-
-	/*$(".submit").click(function() {
-		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-	});*/
-	
-	$("#popupContentCloseSelectPID").click(function() {
-		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-	});
-
-	$("#backgroundPopupSelectPID").click(function() {
-		disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-	});
-	
-	$("#popupContentCloseSelectTimeFrame").click(function() {
-		disablePopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
-	});
-
-	$("#backgroundPopupSelectTimeFrame").click(function() {
-		disablePopup("#popupContentSelectTimeFrame", "#backgroundPopupSelectTimeFrame");
-	});
-
-	/*$(document).keypress(function(e) {
-		if (e.keyCode == 27 && popupStatus == 1) {
-		 	disablePopup("#popupContentSelectPID", "#backgroundPopupSelectPID");
-		}
-	});*/
-});
-</script>
-
+#{include 'Popups/selectPID.html' /}
 
 <!-- Application Index Body -->
 <div class="pageContainer">
-	<div class="logoHeaderImage">
+	<div class="logoHeaderImage"></div>
 
-	</div>
-	
 	<div class="statsMainContent center">
-		<h1 class="statsHeader">Statistics</h1>
 		<input type="submit" class="submit" id="selectPID" value="Select PID" /><!-- id=selectPID-->
 		<input type="submit" class="submit" id="selectTimeFrame" value="Select Time Frame" />
+		<div class="statisticsSectionContainer" id="statisticsSectionContainerLastDay">
+			<h1 class="statsHeader" id="statsHeaderLastDay">&{'statistics.section.last.day'}</h1>
+			<table class="statisticsTable">
+				#{if lastDayStats.isEmpty()}
+				<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
+				#{/if}
+				#{else}
+				<tr>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
+				</tr>
+				#{list items:lastDayStats, as:'currentPid'}
+				<tr>
+					<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
+					<td><div class="statisticsText">${currentPid.minimum}</div></td>
+					<td><div class="statisticsText">${currentPid.maximum}</div></td>
+					<td><div class="statisticsText">${currentPid.average}</div></td>
+					<td><div class="statisticsText">${currentPid.unit}</div></td>
+				</tr>
+				#{/list}
+				#{/else}
+			</table>
+		</div>
+		<div class="statisticsSectionContainer" id="statisticsSectionContainerLastWeek">
+			<h1 class="statsHeader">&{'statistics.section.last.week'}</h1>
+			<table class="statisticsTable">
+				#{if lastWeekStats.isEmpty()}
+				<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
+				#{/if}
+				#{else}
+				<tr>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
+				</tr>
+				#{list items:lastWeekStats, as:'currentPid'}
+				<tr>
+					<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
+					<td><div class="statisticsText">${currentPid.minimum}</div></td>
+					<td><div class="statisticsText">${currentPid.maximum}</div></td>
+					<td><div class="statisticsText">${currentPid.average}</div></td>
+					<td><div class="statisticsText">${currentPid.unit}</div></td>
+				</tr>
+				#{/list}
+				#{/else}
+			</table>
+		</div>
+		<div class="statisticsSectionContainer" id="statisticsSectionContainerLastMonth">
+			<h1 class="statsHeader">&{'statistics.section.last.month'}</h1>
+			<table class="statisticsTable">
+				#{if lastMonthStats.isEmpty()}
+				<div class="statisticsSectionNoData">&{'statistics.error.no.data'}</div>
+				#{/if}
+				#{else}
+				<tr>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.statistic'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.minimum'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.maximum'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.average'}</div></td>
+					<td><div class="statisticsTableHeader">&{'statistics.table.header.unit'}</div></td>
+				</tr>
+				#{list items:lastMonthStats, as:'currentPid'}
+				<tr>
+					<td><div class="statisticsText">${currentPid.pid.getPidTitle()}</div></td>
+					<td><div class="statisticsText">${currentPid.minimum}</div></td>
+					<td><div class="statisticsText">${currentPid.maximum}</div></td>
+					<td><div class="statisticsText">${currentPid.average}</div></td>
+					<td><div class="statisticsText">${currentPid.unit}</div></td>
+				</tr>
+				#{/list}
+				#{/else}
+			</table>
+		</div>
+		
 	</div>
 </div>

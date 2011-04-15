@@ -12,7 +12,8 @@
 .popupContent {
 	display: none;
 	position: fixed;
-	_position: absolute; /* hack for internet explorer 6*/  
+	overflow: visible;
+/*	_position: absolute;*/
 	height: auto;
 	width: 50%;
 	background: #191919;
@@ -51,3 +52,85 @@ p.popUpText {
 	text-shadow:rgba(0,0,0,0.4) 0 1px 2px;
 }
 
+.pids li {
+	overflow: visible;
+	display: inline-block;
+	padding: 5px 10px 5px 10px;
+	margin: 2px;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	color: #000;
+	width: auto;
+	text-decoration: none;
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	background: -webkit-gradient(linear, left top, left bottom, from(#B8B8B8), to(#777));
+	background: -moz-linear-gradient(top, #B8B8B8, #777);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#B8B8B8", endColorstr="#777777");
+	-webkit-border-radius: 8px;
+	-khtml-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	-webkit-box-shadow: 0 1px 2px #000;
+	-moz-box-shadow: 0 1px 2px #000;
+	box-shadow: 0 1px 2px #000;
+	text-shadow: 1px 1px 1px #000;
+	color: white;
+}
+
+li:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#316494), to(#6099D2));
+    background: -moz-linear-gradient(top, #316494, #6099D2);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#316494", endColorstr="#6099D2"); 
+    text-shadow: 1px 1px 1px #000;
+    color: white;
+}
+
+li:active {
+    background: -webkit-gradient(linear, left top, left bottom, from(#6099D2), to(#316494));
+    background: -moz-linear-gradient(top, #6099D2, #316494);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#6099D2", endColorstr="#316494"); 
+    position:relative; 
+    top:1px;
+    text-shadow: 1px 1px 1px #000;
+    color: white;
+}
+
+.pidListSortedName { 
+	display:none;
+}
+
+.popupHeader {
+	width: auto;
+	border-bottom: 1px dotted #D3D3D3;
+	padding-bottom: 2px;
+	margin-bottom: 20px;
+	text-align: left;
+}
+
+.popupHeaderTitle {
+	width: auto;
+	color: white;
+	font-size: 24px;
+	font-weight: 700;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}
+
+.popHeaderSort {
+	color: rgba(255,255,255,0.1);
+	font-size: 24px;
+	font-weight: 300;
+	padding-left: 10px;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+	text-align: right;
+	float: right;
+}
+
+.pidListContainer {
+	overflow: visible;
+	padding: 20px;
+	
+}

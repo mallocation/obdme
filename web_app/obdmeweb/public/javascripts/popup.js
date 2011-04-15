@@ -34,26 +34,3 @@ function centerPopup(popUpContent, backgroundPopup) {
     });
 
 }
-
-$(document).ready(function() {
-
-    $("#button").click(function() {
-        centerPopup();
-        loadPopup();
-    });
-
-    $("#popupContentClose").click(function() {
-        disablePopup();
-    });
-
-    $("#backgroundPopup").click(function() {
-        disablePopup();
-    });
-
-    $(document).keypress(function(e) {
-        if (e.keyCode == 27 && popupStatus == 1) {
-            disablePopup();
-        }
-    });
-
-});

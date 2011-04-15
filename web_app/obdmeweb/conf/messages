@@ -60,3 +60,13 @@ vehicle.year.placeholder=1995
 vehicle.click.close=(Click To Close)
 vehicle.click.open=(Click To Open)
 
+statistics.section.last.day=Last Day
+statistics.section.last.week=Last Week
+statistics.section.last.month=Last Month
+statistics.table.header.statistic=Statistic
+statistics.table.header.minimum=Minimum
+statistics.table.header.maximum=Maximum
+statistics.table.header.average=Average
+statistics.table.header.unit=Unit
+statistics.error.no.data=No Data to Display
+

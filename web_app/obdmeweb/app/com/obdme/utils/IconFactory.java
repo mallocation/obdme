@@ -2,6 +2,7 @@ package com.obdme.utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
@@ -63,12 +64,18 @@ public class IconFactory {
 
 			//Create a manipulatable graphics object
 			Graphics2D imageGraphic = resizedImage.createGraphics();
+			imageGraphic.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			imageGraphic.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+			imageGraphic.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			imageGraphic.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			imageGraphic.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 
 			//Draw the input image
 			imageGraphic.drawImage(bufferedImage, 1, 1, size-2, size-2, null);
 
 			//Load and draw the icon overall
 			BufferedImage bufferedOverlayImage = ImageIO.read(VirtualFile.fromRelativePath("/app/files/icon_factory/overlay/" + size + ".png").getRealFile());
+
 			imageGraphic.drawImage(bufferedOverlayImage, 0, 0, size, size, null);
 
 			//Dispose

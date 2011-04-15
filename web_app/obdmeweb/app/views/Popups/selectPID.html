@@ -1,0 +1,81 @@
+#{set 'moreScripts'}
+<script type="text/javascript" src="@{'/public/javascripts/quicksand/jquery.quicksand.js'}"></script>
+#{/set}
+
+<div class="popupContent" id="popupContentSelectPID">  
+	<a class="popupContentClose" id="popupContentClose">X</a>
+	<div class="popupHeader" id="popupHeader">
+		<span class="popupHeaderTitle">Select a PID</span>
+		<span class="popHeaderSort" id="popHeaderSortName">Sort by PID Name</span>
+		<span class="popHeaderSort" style="display:none;" id="popHeaderSortPID">Sort by PID Value</span>
+	</div>
+	<ul class="pids unsorted" id="pidListUnsorted">
+		#{list items:pidListUnsorted, as:'obdPid'}
+		<li pid-id="${obdPid.pid}">${obdPid.pidTitle}</li>
+		#{/list}
+	</ul>
+	<ul class="pids pidListSortedName" id="pidListSortedName">
+		#{list items:pidListSortedName, as:'obdPidSorted'}
+		<li pid-id="${obdPidSorted.pid}">${obdPidSorted.pidTitle}</li>
+		#{/list}
+	</ul>
+</div>  
+<div class="backgroundPopup" id="popupBackgroundSelectPID"></div>
+<script type="text/javascript">
+$(function() {
+	var $unsorted = $('#pidListUnsorted');
+	var $unsorteddata = $unsorted.clone().find('li');
+
+	var $sorted = $('#pidListSortedName');
+	var $sorteddata = $sorted.clone().find('li');
+	$('#popHeaderSortName').click(function(e) {
+		$('#pidListUnsorted').quicksand( $sorteddata, {
+			duration: 2000,
+			adjustHeight: 'dynamic',
+			attribute: 'pid-id',
+			useScaling: true,
+			easing: 'jswing'
+		});
+		$('#popHeaderSortName').fadeOut("slow", function() {
+			$('#popHeaderSortPID').fadeIn("slow");
+		})
+	});
+	$('#popHeaderSortPID').click(function(e) {
+		$('#pidListUnsorted').quicksand($unsorteddata, {
+			duration: 2000,
+			adjustHeight: 'dynamic',
+			attribute: 'pid-id',
+			easing: 'jswing'
+		});
+		$('#popHeaderSortPID').fadeOut("slow", function() {
+			$('#popHeaderSortName').fadeIn("slow");
+		})
+	});
+});
+
+$(document).ready(function() {
+    $("#selectPID").click(function() {
+		centerPopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
+		loadPopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
+
+	});
+
+	$("#popupContentClose").click(function() {
+		disablePopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
+	});
+
+	$("#pidSelect").click(function() {
+		disablePopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
+	});
+
+	$("#popupBackgroundSelectPID").click(function() {
+		disablePopup("#popupContentSelectPID", "#popupBackgroundSelectPID");
+	});
+
+	$(document).keypress(function(e) {
+		if (e.keyCode == 27 && popupStatus == 1) {
+			disablePopup();
+		}
+	});
+});
+</script>

@@ -58,5 +58,19 @@ public class ObdPidUtils {
 			return null;
 		}
 	}
+	
+	public static String getPidDecimalFormat(ObdPid obdPid) {
+		XPathFactory xpathFact = XPathFactory.newInstance();
+		XPath xpath = xpathFact.newXPath();
+		
+		String unitXPathExpression = "//mode[@hex='%s']/pid[@hex='%s']/formula/@format";
+		try {
+			XPathExpression unitExpression = xpath.compile(String.format(unitXPathExpression, obdPid.getMode(), obdPid.getPid()));
+			return unitExpression.evaluate(loadObdProtocolFile(), XPathConstants.STRING).toString();
+		} catch (XPathExpressionException e) {
+			Logger.error(e, "Problem compiling unit xpath expression in obd protocol.");
+			return null;
+		}
+	}
 
 }
