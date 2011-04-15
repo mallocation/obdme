@@ -3,20 +3,7 @@ package controllers.api.graph;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.hibernate.Session;
-import org.hibernate.StatelessSession;
-
-import com.google.gson.Gson;
-
-import api.entities.ApiError;
-import api.entities.graph.statistics.StatDataPoint;
-import api.entities.graph.statistics.StatDataset;
-import api.entities.graph.statistics.VehicleGraphPush;
 import models.obdmedb.User;
 import models.obdmedb.inertial.VehicleAcceleration;
 import models.obdmedb.spatial.VehicleLocation;
@@ -24,11 +11,20 @@ import models.obdmedb.statistics.VehicleDataPoint;
 import models.obdmedb.statistics.VehicleDataset;
 import models.obdmedb.trips.Trip;
 import models.obdmedb.vehicles.Vehicle;
-import play.Logger;
+
+import org.hibernate.Session;
+import org.hibernate.StatelessSession;
+
 import play.db.jpa.JPA;
 import play.i18n.Messages;
-import play.mvc.*;
+import play.mvc.Controller;
 import play.mvc.results.BadRequest;
+import api.entities.ApiError;
+import api.entities.graph.statistics.StatDataPoint;
+import api.entities.graph.statistics.StatDataset;
+import api.entities.graph.statistics.VehicleGraphPush;
+
+import com.google.gson.Gson;
 
 /**
  * This controller handles everything dealing with vehicle statistics in the obdme api.
