@@ -1,7 +1,7 @@
 package models.obdmedb.obd;
 
 
-public class ObdPid {
+public class ObdPid implements Comparable<ObdPid>{
 	
 	private String mode;
 	
@@ -25,6 +25,11 @@ public class ObdPid {
 	
 	public String getPidTitle() {
 		return this.pidTitle;
+	}
+	
+	@Override
+	public int compareTo(ObdPid that) {
+		return this.pidTitle.compareTo(that.getPidTitle());
 	}
 	
 	public static final ObdPid CALCULATED_ENGINE_LOAD_VALUE = new ObdPid("01", "04", "Calculated Engine Load Value");
@@ -63,6 +68,7 @@ public class ObdPid {
 		DISTANCE_TRAVELED_WITH_MIL_ON, COMMANDED_EGR, EGR_ERROR, BAROMETRIC_PRESSURE, CATALYST_TEMPERATURE_BANK_1_SENSOR_1, CONTROL_MODULE_VOLTAGE, 
 		ABSOLUTE_LOAD_VALUE, COMMAND_EQUIVALENCE_RATIO, RELATIVE_THROTTLE_POSITION, ABSOLUTE_THROTTLE_POSITION_B, ACCELERATOR_PEDAL_POSITION_D, 
 		ACCELERATOR_PEDAL_POSITION_E, COMMANDED_THROTTLE_ACTUATOR};
+	
 	
 	
 	public static ObdPid getObdPid(String mode, String pid) {

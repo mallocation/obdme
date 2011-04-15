@@ -44,19 +44,19 @@ public class User extends Model {
 	@Column(name="sendsms", nullable=false, columnDefinition="boolean default false")
 	public Boolean sendsms;
 	
-	@Column(name="avatar512", columnDefinition="BLOB")
+	@Column(name="avatar512")
 	public Blob avatar512;
 
-	@Column(name="avatar256", columnDefinition="BLOB")
+	@Column(name="avatar256")
 	public Blob avatar256;
 	
-	@Column(name="avatar128", columnDefinition="BLOB")
+	@Column(name="avatar128")
 	public Blob avatar128;
 	
-	@Column(name="avatar64", columnDefinition="BLOB")
+	@Column(name="avatar64")
 	public Blob avatar64;
 	
-	@Column(name="avatar32", columnDefinition="BLOB")
+	@Column(name="avatar32")
 	public Blob avatar32;
 
 	public static User createUserFromClearTextCredentials(String email, String clearTextPassword) {
