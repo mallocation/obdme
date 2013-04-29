@@ -1,0 +1,14 @@
+\contentsline {section}{\numberline {1}Introduction}{3}
+\contentsline {section}{\numberline {2}Projected Functionality}{3}
+\contentsline {subsection}{\numberline {2.1}Android Application}{3}
+\contentsline {subsection}{\numberline {2.2}Web Application}{6}
+\contentsline {section}{\numberline {3}Proposed Approaches}{7}
+\contentsline {subsection}{\numberline {3.1}Hardware Interface}{7}
+\contentsline {subsection}{\numberline {3.2}Android Application}{7}
+\contentsline {subsection}{\numberline {3.3}Data Storage}{8}
+\contentsline {subsection}{\numberline {3.4}User Interaction}{8}
+\contentsline {subsection}{\numberline {3.5}Server Architecture}{9}
+\contentsline {section}{\numberline {4}Quality Assurance}{9}
+\contentsline {section}{\numberline {5}Risk Analysis}{10}
+\contentsline {section}{\numberline {6}Project Plan}{11}
+\contentsline {subsection}{\numberline {6.1}Monthly Target Dates}{11}
